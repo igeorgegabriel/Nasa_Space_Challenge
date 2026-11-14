@@ -41,6 +41,7 @@ flowchart LR
 
 - **It knows where the evidence stops.** The model refuses habitats outside the tested range and says by how much. Moon base air is 0.14 atm below any FLEX test.
 - **Gravity, not just oxygen.** The lunar gravity check uses NASA Glenn's 2025 lunar-g tests: a 1-g margin can shrink by up to 2.3 O2 points, and some materials went the other way.
+- **The newest flights, as data.** The 9 Saffire IV-VI flight tests that are not in PSI yet are rows in the app, each tied to a verbatim quote from its NASA report. Six burned solids between 25.4% and 31.0% oxygen, above PSI's 22.2% ceiling.
 - **Checked, not just cited.** Each Ask answer shows how many of its numbers match NASA data or the cited NASA sentence. Quotes on every page are machine-checked against saved source text.
 
 ## Challenge objectives
@@ -72,6 +73,7 @@ py -3.12 pipeline/verify_findings.py
 py -3.12 pipeline/audit_unified.py
 py -3.12 pipeline/verify_earth.py
 py -3.12 pipeline/verify_lunar_g.py
+py -3.12 pipeline/verify_outside_psi.py
 py -3.12 pipeline/build_models.py
 py -3.12 -m unittest discover -s tests
 ```
@@ -80,7 +82,7 @@ The site in `public/` is static. The Ask function is `api/ask.py` (Vercel Python
 
 ## Verification
 
-- Every quoted finding is checked word for word against its NASA source text (`pipeline/verify_findings.py`, `pipeline/verify_earth.py`).
+- Every quoted finding is checked word for word against its NASA source text (`pipeline/verify_findings.py`, `pipeline/verify_earth.py`, `pipeline/verify_lunar_g.py`), and the Saffire IV-VI rows and sourced solid pressures against their NTRS reports (`pipeline/verify_outside_psi.py`, 57 of 57 quotes).
 - The unified table is re-checked against the original PSI files (`pipeline/audit_unified.py`).
 - Habitat values are either cited to a NASA source or shown as not specified; nothing is assumed.
 - The Ask assistant was scored on 100 questions whose checks were committed before the run (`eval/ask_eval_set_v2.json`, `eval/run_ask_eval_v2.py`, results in `eval/results/`): 94 passed, all 25 trap questions were refused, 98.2% of the numbers in answers matched the data, with the failures listed on the Verification page.
