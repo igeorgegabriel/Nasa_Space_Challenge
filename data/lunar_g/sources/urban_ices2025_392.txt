@@ -1,0 +1,184 @@
+Urban et al., NASA GRC, ICES-2025-392 (plain-text snapshot of PDF pages 9-11, ASCII-folded)
+Source: https://ntrs.nasa.gov/api/citations/20250002114/downloads/ICES_2025-392-correctedcaptions.pdf
+Fetched: 2026-11-14
+Pages kept: 9,10,11 of 12
+
+=====PAGE 9
+9
+International Conference on Environmental Systems
+was also found by multiple passes (usually 4) below the lowest oxygen concentration fail. In figures 7, 8 and 9, the
+lunar-g buoyant limit was found to be less than the extrapolated value (for any assumed buoyant velocity) from the
+WSTF testing. This result is contrary to expected behavior. The WSTF upward ignition is expected to heat the material
+more effectively thereby increasing the fuel concentration and increasing the Damkohler number seen in equation 8.
+The lower extinction concentration for the lunar-g testing for PMMA, P213 and flaming Beefy-T suggest that the
+buoyant velocity is very low, but it does not correlate with the WSTF data. Various differences in the test methods
+have been considered (turbulence at high flow rates, ignition times, delay after ignition before initiating the test,
+oxygen augmentation during ignition, and buoyancy-enhanced ignition heat transfer to the unburned fuel due to the
+sample orientation with respect to gravity) but have not been definitively found to be the cause. Further study of this
+unexplained behavior is warranted to before the UHOI can be accepted as a material flammability standard. Comparing
+the results for polycarbonate with Takahashis16 low gravity tests, good agreement is seen in figure 13. Less good
+agreement is seen for the Nomex tests. This is likely because the Takahashi tested a Nomex fabric while this test series
+used a much thicker Nomex Velcro product.
+The extinction curves in figure 13 were calculated similarly to figure 4 using the values in table 1 and equations 8
+and 9. Ambient properties were determined at a reference temperature of 1250 K, which is approximately the mean
+between Tf and To, rendering: g=0.275 [kg/m3], kg=24.3510-3  [W/mK], cp=1.38103  [J/kgK].
+Figure11: Polycarbonate, 8.2 psia UHOI values
+with the best fit for the WSTF data with the GRC
+lunar gravity data shown as a horizontal line.
+Figure 12: Nomex Velcro, 8.2 psi UHOI values
+with the best fit for the WSTF data with the GRC
+lunar gravity data shown as a horizontal line.
+Table 1 Material Properties used to calculate the limits
+Property
+PMMA 21,22
+Nomex 23
+Polycarbonate24,25
+ kg/m
+1190
+1370
+1200
+c J/kgK
+1400
+1255
+1150
+0.9
+0.9
+0.9
+H J/kg
+1350 10
+1350 10
+1350 10
+H J/kg
+60.2 10
+44.1 10
+33.6 10
+EJ/mol
+125000
+408000
+200000
+Acm/gs
+1.2 10
+4.3 10
+3.04 10
+a [-]
+1
+1
+1
+b [-]
+1
+1
+1
+T K
+618
+750
+700
+=====PAGE 10
+10
+International Conference on Environmental Systems
+A. Compensation Factor Determination
+The method to determine the compensation factor involved performing a best fit line to the WSTF limit points
+(black circles).  The best fit line to those points is the estimated dependence of the limiting oxygen concentration on
+forced flow velocity.  To get a conservative estimate of the slope (and thus the compensation factor) we used the one-
+tailed 95 percent confidence interval.  Table 2 shows both the best fit line and the conservative estimate from the 95
+percent confidence interval. To estimate the change in the flammability limit at 1-g  compared to lunar-g, the
+extrapolated value from the WSTF testing can be compared to the extrapolated value at lunar g. A major limitation to
+this analysis is identification of the relevant buoyant velocity which is an area worthy of significant research. In a
+forced-flow low-gravity experiment, the average duct velocity can be known exactly, however, due to effects such as
+boundary layer growth and thermal expansion, the velocity varies with time and location so while the average duct
+velocity is representative of the flow field, it is not necessarily the same value as the velocity at the controlling location.
+For buoyant flames, with or without forced flow, the velocity at any location varies similarly to the non-buoyant case
+but it is not easily measured, particularly because the location of greatest interest is not known. For flames on the CKL
+side, the velocity at the flame tip can be assumed to be likely the most important location but this has not been verified
+or measured accurately. In a buoyant boundary layer, the velocity at the flame tip would not be comparable to the
+average duct velocity in non-buoyant cases. The 1-g buoyant velocity was estimated by Takahashi16 to be 35 cm/s,
+but the lunar gravity velocity is not known. The lunar gravity velocity has been estimated20, for spreading flames, by
+equating the buoyant boundary layer thickness with the forced flow boundary layer. However, both of these estimates
+are difficult to verify. Furthermore, near the extinction limit, the flame is weaker resulting in less buoyant flow.
+Consequently, given the absence of a common understanding of the relevant velocity, the buoyant velocity is
+considered to be not determined in this paper. Given this uncertainty, 35 cm/s could be considered to be a
+conservatively high estimate of the buoyant 1-g velocity. Since the lunar velocity is also not known, extrapolating to
+zero flow would give a conservative estimate of the limit. Extrapolating the worst-case 95% confidence interval slope
+from the data for each material (Table 2) from the presumed 1-g buoyant velocity of 35 cm/s to zero would give a
+conservative 1-g to lunar-g flammability delta that could be applied to other test methods. These values are tabulated
+in Table 2. The worst-case delta for these materials can be seen to be 2.3%.
+The Beefy-T smoldering data are included because the NASA emphasis is on complete extinction, however since
+smoldering is a surface reaction rather than a gas-phase flame, the Damkohler number blow-off limit would not be
+expected to be applicable.  However, it is clear in figure 10 that the extinction shows similar flow dependence.
+Figure 13: Comparison of the Nomex and Polycarbonate data with the opposed flow data of Takahashi16
+and the polycarbonate and Nomex data with corresponding data of Takahashi. Closed symbols are from
+this work and open symbols are Takahashi16 the colors identify the material. The closed symbols at ~25 cm/s are
+the centrifuge data. The predictions are developed as described above with the PMMA and P213 grouped together
+since both are forms of PMMA.
+=====PAGE 11
+11
+International Conference on Environmental Systems
+Figures 11 and 12 present the extinction data for polycarbonate and Nomex Velcro. For both of these materials,
+the lunar-g buoyant extinction is at substantially higher oxygen concentrations that the WSTF data. One possible
+explanation for this is that the quench boundary for these materials shift to higher velocities than seen in the lunar-g
+tests, putting the lunar-gravity tests on the quenching (HTL) branch. This shift of the HTL could be attributed to
+increased radiative loss (Eq. 8) resulting from higher pyrolysis temperatures. This mechanism was suggested by
+Takahashi16 who saw similar behavior for several high temperature materials in downward spread. This mechanism
+merits additional study as it suggests that high temperature materials may not exhibit enhanced flammability at lunar-
+g. This would be significant because most of the candidate materials for enhanced oxygen use are higher pyrolysis
+temperature materials. In addition, this behavior requires additional study because there may still be a flammability
+enhancement at Martian-g levels since Martian buoyant flows may still be on the blow-off (CKL) branch.
+IV. Conclusion
+Comparative testing in 1-g under forced flow and buoyant flow at lunar-g conditions has demonstrated that for
+some materials, there is a clear increased flammability at lunar gravity conditions. Other, higher temperature materials
+may show decreased flammability at lunar conditions than would be predicted from 1-g testing. This suggests that
+increased flammability at lunar conditions may not be a universal issue, however further research is needed to validate
+this possibility. At Martian g-levels, the buoyant flow will be higher and increased flammability is possible for
+materials that do not exhibit it at lunar-g levels.
+Acknowledgments
+The authors would like to acknowledge the support of the testing teams at the NASA GRC Zero-Gravity facility
+and the NASA WSTF.  The support of the NASA Engineering and Safety Center (NESC) and the Mars Campaign
+Office are gratefully acknowledged.
+References
+[1] NASA STD 6001 NASA-STD-6001B Flammability, Offgassing, and Compatibility Requirements and Test Procedures,
+National Aeronautics and Space Administration. Washington, DC, 2011.
+[2] Sacksteder, K.R., and T'ien, J. S., Buoyant Downward Diffusion Flame Spread and Extinction in Partial Gravity
+Accelerations, Twenty-Fifth Symposium (International) on Combustion, The Combustion Institute, Pittsburgh, PA, 1994, pp.
+1685-1692.
+[3] Ferkul, P.V., and Olson, S.L., "Zero-gravity centrifuge used for the evaluation of material flammability in lunar gravity."
+Journal of Thermophysics and Heat Transfer Vol. 25, no. 3, 2011, pp. 457-461.
+[4] NASA-STD-3001, Volume 2, Revision D, Nasa Spaceflight Human-System Standard, Volume 2: Human Factors,
+Habitability, And Environmental Health, National Aeronautics and Space Administration. Washington, DC, 2011.
+[5] Foutch, D.W., and Tien, J.S., Extinction of a Stagnation-Point Diffusion Flame at Reduced Gravity, AIAA Journal, Vol.
+25, No. 7, 1987, pp. 972-976.
+[6] Olson, Sandra L., Ferkul, Paul V., and T'ien, James S., Near-Limit Flame Spread Over a Thin Solid Fuels in Microgravity,
+Twenty-Second Symposium (International) on Combustion, The Combustion Institute, Pittsburgh, PA, 1988, pp.1213-1222.
+[7] Fernandez-Pello, A. C. "The solid phase," Combustion Fundamentals of Fire, 1995, pp. 31-100.
+Table 2 Flammability Compensation Factors
+Extinction Limit Slope for Oxygen
+Concentration Versus Flow Rate
+Best Fit Slope
+(s/cm)
+95%
+Confidence
+Interval Slope (s/cm)
+O2% (at 35 cm/s) for 95%
+Confidence Interval
+PMMA
+0.00022
+0.00056
+1.9
+Polycarbonate
+0.00040
+0.00065
+2.3
+Nomex Velcro
+0.000016
+0.000090
+0.32
+P 213
+0.00030
+0.00040
+1.4
+Beefy-T (flaming)
+0.00017
+0.00023
+0.82
+Beefy-T (smolder)
+0.00034
+0.00050
+1.8

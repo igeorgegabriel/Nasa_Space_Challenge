@@ -1,0 +1,30 @@
+{
+ "paper": {
+  "id": "urban_ices2025_392",
+  "authors": "Urban et al., NASA Glenn Research Center",
+  "title": "ICES-2025-392: lunar gravity flammability compared with 1-g forced-flow testing",
+  "url": "https://ntrs.nasa.gov/api/citations/20250002114/downloads/ICES_2025-392-correctedcaptions.pdf",
+  "table": "Table 2, Flammability Compensation Factors (PDF page 11)",
+  "reference_velocity_cm_s": 35,
+  "worst_case_delta_o2_points": 2.3
+ },
+ "materials": [
+  {"id": "pmma", "name": "PMMA", "best_fit_slope_s_per_cm": 0.00022, "ci95_slope_s_per_cm": 0.00056, "delta_o2_points": 1.9, "direction": "more_flammable", "direction_quote": "lower_extinction"},
+  {"id": "polycarbonate", "name": "Polycarbonate", "best_fit_slope_s_per_cm": 0.00040, "ci95_slope_s_per_cm": 0.00065, "delta_o2_points": 2.3, "direction": "less_flammable", "direction_quote": "higher_extinction"},
+  {"id": "nomex_velcro", "name": "Nomex Velcro", "best_fit_slope_s_per_cm": 0.000016, "ci95_slope_s_per_cm": 0.000090, "delta_o2_points": 0.32, "direction": "less_flammable", "direction_quote": "higher_extinction"},
+  {"id": "p213", "name": "P 213", "best_fit_slope_s_per_cm": 0.00030, "ci95_slope_s_per_cm": 0.00040, "delta_o2_points": 1.4, "direction": "more_flammable", "direction_quote": "lower_extinction"},
+  {"id": "beefy_t_flaming", "name": "Beefy-T (flaming)", "best_fit_slope_s_per_cm": 0.00017, "ci95_slope_s_per_cm": 0.00023, "delta_o2_points": 0.82, "direction": "more_flammable", "direction_quote": "lower_extinction"},
+  {"id": "beefy_t_smolder", "name": "Beefy-T (smolder)", "best_fit_slope_s_per_cm": 0.00034, "ci95_slope_s_per_cm": 0.00050, "delta_o2_points": 1.8, "direction": "not_stated", "direction_quote": null}
+ ],
+ "quotes": [
+  {"id": "worst_case", "page": 10, "source_text_file": "data/lunar_g/sources/urban_ices2025_392.txt", "source_title": "Urban et al., ICES-2025-392", "source_url": "https://ntrs.nasa.gov/api/citations/20250002114/downloads/ICES_2025-392-correctedcaptions.pdf", "quote": "The worst-case delta for these materials can be seen to be 2.3%."},
+  {"id": "velocity_unknown", "page": 10, "source_text_file": "data/lunar_g/sources/urban_ices2025_392.txt", "source_title": "Urban et al., ICES-2025-392", "source_url": "https://ntrs.nasa.gov/api/citations/20250002114/downloads/ICES_2025-392-correctedcaptions.pdf", "quote": "but the lunar gravity velocity is not known."},
+  {"id": "velocity_1g", "page": 10, "source_text_file": "data/lunar_g/sources/urban_ices2025_392.txt", "source_title": "Urban et al., ICES-2025-392", "source_url": "https://ntrs.nasa.gov/api/citations/20250002114/downloads/ICES_2025-392-correctedcaptions.pdf", "quote": "35 cm/s could be considered to be a conservatively high estimate of the buoyant 1-g velocity."},
+  {"id": "delta_method", "page": 10, "source_text_file": "data/lunar_g/sources/urban_ices2025_392.txt", "source_title": "Urban et al., ICES-2025-392", "source_url": "https://ntrs.nasa.gov/api/citations/20250002114/downloads/ICES_2025-392-correctedcaptions.pdf", "quote": "would give a conservative 1-g to lunar-g flammability delta that could be applied to other test methods."},
+  {"id": "lower_extinction", "page": 9, "source_text_file": "data/lunar_g/sources/urban_ices2025_392.txt", "source_title": "Urban et al., ICES-2025-392", "source_url": "https://ntrs.nasa.gov/api/citations/20250002114/downloads/ICES_2025-392-correctedcaptions.pdf", "quote": "The lower extinction concentration for the lunar-g testing for PMMA, P213 and flaming Beefy-T suggest that the buoyant velocity is very low"},
+  {"id": "higher_extinction", "page": 11, "source_text_file": "data/lunar_g/sources/urban_ices2025_392.txt", "source_title": "Urban et al., ICES-2025-392", "source_url": "https://ntrs.nasa.gov/api/citations/20250002114/downloads/ICES_2025-392-correctedcaptions.pdf", "quote": "For both of these materials, the lunar-g buoyant extinction is at substantially higher oxygen concentrations that the WSTF data."},
+  {"id": "conclusion", "page": 11, "source_text_file": "data/lunar_g/sources/urban_ices2025_392.txt", "source_title": "Urban et al., ICES-2025-392", "source_url": "https://ntrs.nasa.gov/api/citations/20250002114/downloads/ICES_2025-392-correctedcaptions.pdf", "quote": "Other, higher temperature materials may show decreased flammability at lunar conditions than would be predicted from 1-g testing."},
+  {"id": "bass_blowoff", "page": null, "source_text_file": "data/findings/sources/PSI-25_20160000593.txt", "source_title": "BASS-II, NTRS 20160000593", "source_url": "https://ntrs.nasa.gov/citations/20160000593", "quote": "whereas we obtained steady spreading at 13.6% oxygen in BASS-II."},
+  {"id": "fm2_plan", "page": 1, "source_text_file": "data/lunar_g/sources/ferkul_lpsc2026.txt", "source_title": "Ferkul, Kralik and Liao, LPSC 2026, NTRS 20260000646", "source_url": "https://ntrs.nasa.gov/api/citations/20260000646/downloads/Ferkul-Lunar%20and%20Planetary%20Science%20Conference%202026.pdf", "quote": "will be performed, with a planned launch date of late 2026."}
+ ]
+}

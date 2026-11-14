@@ -11,6 +11,7 @@ sys.path.insert(0, HERE)
 
 import outside_psi
 import scoring
+import verify_lunar_g
 from build_unified import to_ascii
 
 UNIFIED_DIR = os.path.join(ROOT, "data", "unified")
@@ -1185,6 +1186,60 @@ EARTH_CORPUS_ID = "EARTH-APPLICATIONS"
 EARTH_CORPUS_TITLE = "Earth applications - water mist, smoke detection, firefighter gear"
 
 
+LUNAR_G_PATH = os.path.join(ROOT, "data", "lunar_g", "compensation.json")
+LUNAR_G_CORPUS_ID = "LUNAR-GRAVITY"
+LUNAR_G_CORPUS_TITLE = "Lunar gravity check - measured 1-g to lunar-g flammability deltas"
+LUNAR_G_DIRECTION_TEXT = {
+    "more_flammable": "lunar-g test: burned at lower O2 than the 1-g data predicts",
+    "less_flammable": "lunar-g test: burned only at higher O2 than the 1-g data predicts",
+    "not_stated": "lunar-g test direction not stated in the paper",
+}
+
+
+def build_lunar_g():
+    with open(LUNAR_G_PATH, "r", encoding="ascii") as handle:
+        data = json.load(handle)
+    errors = verify_lunar_g.verify(data)
+    if errors:
+        raise SystemExit("lunar_g quotes failed verification: " + "; ".join(errors))
+    quotes = {q["id"]: q for q in data["quotes"]}
+    materials = []
+    for item in data["materials"]:
+        row = dict(item)
+        row["direction_text"] = LUNAR_G_DIRECTION_TEXT[item["direction"]]
+        materials.append(row)
+    out = {
+        "paper": data["paper"],
+        "materials": materials,
+        "quotes": [
+            {"id": q["id"], "text": q["quote"], "page": q["page"], "source_title": q["source_title"], "url": q["source_url"]}
+            for q in data["quotes"]
+        ],
+        "verification": {"checked": len(data["quotes"]), "failed": 0},
+    }
+    out["quote_ids"] = sorted(quotes)
+    return out
+
+
+def lunar_g_corpus_document(lunar):
+    paper = lunar["paper"]
+    quotes = {q["id"]: q for q in lunar["quotes"]}
+    lines = ["Does lunar gravity change flammability? Measured answer from %s (%s). Partial gravity cannot be interpolated between 0 g and 1 g: the flammability map has a low-flow quenching branch and a high-flow blowoff branch." % (paper["authors"], paper["url"])]
+    lines.append("Table 2, Flammability Compensation Factors: best-fit slope and 95 percent confidence interval slope of the oxygen limit against flow velocity (s/cm), and the conservative 1-g to lunar-g delta in oxygen percentage points at the presumed 1-g buoyant velocity of %s cm/s." % paper["reference_velocity_cm_s"])
+    for m in lunar["materials"]:
+        lines.append("%s: best-fit slope %s, 95 percent slope %s, delta %s O2 points; %s." % (
+            m["name"], format(m["best_fit_slope_s_per_cm"], "g"), format(m["ci95_slope_s_per_cm"], "g"), format(m["delta_o2_points"], "g"), m["direction_text"]))
+    lines.append("The 35 cm/s 1-g buoyant velocity is a conservatively high estimate and the lunar-g velocity is not known, so no lunar-g flammability limit is stated for any material and nothing is interpolated.")
+    lines.append("Habitat reading: the paper's conservative allowance is that a 1-g test margin may be read as up to %s oxygen points smaller (worst case across these materials). The allowance extrapolates the 1-g forced-flow slope from 35 cm/s to zero flow and is not a measured lunar-g limit. In the lunar-g tests themselves, PMMA, P 213 and flaming Beefy-T burned at lower oxygen, while polycarbonate and Nomex Velcro burned only at higher oxygen." % format(paper["worst_case_delta_o2_points"], "g"))
+    for qid in ("worst_case", "velocity_unknown", "lower_extinction", "higher_extinction", "conclusion", "bass_blowoff", "fm2_plan"):
+        q = quotes[qid]
+        page = (", page %s" % q["page"]) if q["page"] else ""
+        lines.append("Verbatim from %s%s (%s): \"%s\"" % (q["source_title"], page, q["url"], q["text"]))
+    lines.append("Cross-check: BASS-II reported 16 percent oxygen as the 1-g blowoff limit and steady spread at 13.6 percent in microgravity, a different configuration (quarter-inch PMMA rod), so only order-of-magnitude agreement is claimed.")
+    lines.append("Flammability of Materials on the Moon (FM2) will burn samples in actual lunar gravity, planned launch late 2026 (Ferkul, Kralik and Liao, LPSC 2026).")
+    return {"psi_id": LUNAR_G_CORPUS_ID, "title": LUNAR_G_CORPUS_TITLE, "body": "\n".join(lines)}
+
+
 def source_text(block):
     if not block:
         return "no recorded values"
@@ -1210,7 +1265,7 @@ def fmt_num(value):
     return ("%.4f" % value).rstrip("0").rstrip(".")
 
 
-def build_corpus(investigations, rankings, outside=None, psi_max=None, environments=None, test_next=None, earth=None):
+def build_corpus(investigations, rankings, outside=None, psi_max=None, environments=None, test_next=None, earth=None, lunar=None):
     docs = []
     for inv in investigations:
         lines = []
@@ -1272,6 +1327,8 @@ def build_corpus(investigations, rankings, outside=None, psi_max=None, environme
             "title": "%s %s - %s" % (inv["psi_id"], inv["acronym"], inv["title"]),
             "body": "\n".join(lines),
         })
+    if lunar:
+        docs.append(lunar_g_corpus_document(lunar))
     if outside and outside["tests"]:
         docs.append(outside_psi.corpus_document(outside, psi_max))
     if environments and test_next:
@@ -2033,13 +2090,15 @@ def build():
     }
     test_next = build_test_next(rows, environments, outside)
     earth = build_earth()
-    corpus = build_corpus(investigations, default_rankings, outside, outside["summary"]["psi_solid_max_o2"], environments, test_next, earth)
+    lunar = build_lunar_g()
+    corpus = build_corpus(investigations, default_rankings, outside, outside["summary"]["psi_solid_max_o2"], environments, test_next, earth, lunar)
     return {
         "investigations": investigations,
         "conditions": slim_conditions(rows),
         "environments": environments,
         "insights": insights,
         "earth": {"applications": earth},
+        "lunar_g": lunar,
         "model_readiness": build_model_readiness(rows, environments),
         "rank_reference": reference,
         "test_next": test_next,
@@ -2058,6 +2117,7 @@ def main():
     dump(os.path.join(SITE_DATA_DIR, "environments.json"), result["environments"])
     dump(os.path.join(SITE_DATA_DIR, "insights.json"), result["insights"])
     dump(os.path.join(SITE_DATA_DIR, "earth.json"), result["earth"])
+    dump(os.path.join(SITE_DATA_DIR, "lunar_g.json"), result["lunar_g"])
     dump(os.path.join(SITE_DATA_DIR, "model_readiness.json"), result["model_readiness"])
     dump(os.path.join(SITE_DATA_DIR, "rank_reference.json"), result["rank_reference"])
     dump(os.path.join(SITE_DATA_DIR, "test_next.json"), result["test_next"])
