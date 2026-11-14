@@ -1246,8 +1246,12 @@ function drawGapChart(node) {
   const top = small ? 48 : 40;
   const axisY = Math.round(H - (small ? 46 : 52));
   const plotH = axisY - top;
-  const r = small ? 2.5 : 3.5;
-  const swarm = swarmPoints(d.solid, xo, r);
+  let r = small ? 3.6 : 5.6;
+  let swarm = swarmPoints(d.solid, xo, r);
+  while (r > (small ? 2.4 : 3.4) && Math.max.apply(null, swarm.map(function (p) { return p.up; })) + r > plotH * 0.62) {
+    r -= 0.2;
+    swarm = swarmPoints(d.solid, xo, r);
+  }
   const x0 = swarm[0].x;
   const xN = swarm[swarm.length - 1].x;
   const burned = d.flights.filter(function (t) { return t.outcome_short === "Burned"; });
@@ -1257,7 +1261,7 @@ function drawGapChart(node) {
   const bandL = Math.round(xo(d.moonLo)) + 0.5;
   const bandR = Math.round(xo(d.moonHi)) + 0.5;
   const moonX = xo(d.moon);
-  const dimY = Math.round(top + plotH * 0.56) + 0.5;
+  const dimY = Math.round(top + plotH * 0.36) + 0.5;
   const laneY = top + 20;
   const seen = {};
   const flights = d.flights.slice().sort(function (a, b) { return a.o2_percent - b.o2_percent; }).map(function (t) {
@@ -1389,7 +1393,7 @@ function gapRender(q, force) {
   if (force || a0 !== m.c0 || a3 !== m.c3) {
     m.c0 = a0;
     m.c3 = a3;
-    const dim = 1 - 0.55 * a3;
+    const dim = 1 - 0.3 * a3;
     for (let i = 0; i < m.dots.length; i += 1) {
       const dt = m.dots[i];
       const e = gapEaseOut(gapClamp(a0 * 1.8 - 0.8 * dt.order));
