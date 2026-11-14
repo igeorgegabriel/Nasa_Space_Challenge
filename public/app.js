@@ -1016,9 +1016,12 @@ function rv(index, tagName, props) {
 }
 
 function gapChartData() {
-  const rows = state.data.conditions.filter(function (r) {
-    return r.fuel_class === "solid" && r.o2_frac !== undefined && r.o2_basis === "ambient";
-  }).sort(function (a, b) { return a.o2_frac - b.o2_frac; });
+  const all = state.data.conditions.filter(function (r) {
+    return r.o2_frac !== undefined && r.o2_frac !== null && r.o2_basis === "ambient";
+  });
+  const byO2 = function (a, b) { return a.o2_frac - b.o2_frac; };
+  const rows = all.filter(function (r) { return r.fuel_class === "solid"; }).sort(byO2);
+  const others = all.filter(function (r) { return r.fuel_class !== "solid"; }).sort(byO2);
   const solid = rows.map(function (r) { return r.o2_frac * 100; });
   const lunar = envById("lunar");
   const lo = lunar.o2.window_min !== undefined ? lunar.o2.window_min : lunar.o2.min;
@@ -1026,6 +1029,8 @@ function gapChartData() {
   return {
     solid: solid,
     rows: rows,
+    others: others,
+    total: all.length,
     flights: state.data.outside_psi.tests,
     moonLo: lo * 100,
     moonHi: hi * 100,
@@ -1034,9 +1039,12 @@ function gapChartData() {
   };
 }
 
-const GAP_COL = { psi: "#e06d34", fl: "#5b95e8", t1: "#eef2fb", t2: "#c9d2e6", t3: "#8f9bb8", grid: "#1a2340", axis: "#34405f" };
-const GAP_ANIM = 0.45;
-const GAP_TRAVEL = 2600;
+const GAP_COL = { psi: "#e06d34", fl: "#5b95e8", gray: "#8f9bb8", surf: "#0e152b", t1: "#eef2fb", t2: "#c9d2e6", t3: "#8f9bb8", grid: "#1a2340", axis: "#34405f" };
+const GAP_ANIM = 0.35;
+const GAP_TRAVEL = 1300;
+const GAP_BINS = 48;
+const GAP_GRAY_DIM = 0.35;
+const GAP_SOLID_DIM = 0.7;
 let gapModel = null;
 let gapQ = 0;
 let gapCapsRef = null;
@@ -1088,16 +1096,26 @@ function swarmPoints(values, xo, r) {
   });
 }
 
+function gapRand(seed) {
+  let a = (seed * 2654435761 + 1013904223) >>> 0;
+  a = (a + 0x6D2B79F5) >>> 0;
+  let t = Math.imul(a ^ (a >>> 15), 1 | a);
+  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+}
+
 function gapKpa(atm) {
   return atm === undefined || atm === null ? null : fmt(atm * 101.325, 1) + " kPa";
 }
 
 function gapTipLines(mk) {
-  if (mk.kind === "p") {
+  if (mk.kind === "p" || mk.kind === "g") {
     const r = mk.row;
     const lines = [[fmt(r.o2_frac * 100, 1) + "% oxygen", "v"], [(r.investigation || "Unknown investigation") + (r.psi_id ? " (" + r.psi_id + ")" : ""), "n"]];
     if (r.fuel) {
-      lines.push([r.fuel, "s"]);
+      lines.push([r.fuel + (FUEL_LABELS[r.fuel_class] ? ", " + FUEL_LABELS[r.fuel_class].toLowerCase() : ""), "s"]);
+    } else if (FUEL_LABELS[r.fuel_class]) {
+      lines.push([FUEL_LABELS[r.fuel_class], "s"]);
     }
     const kpa = gapKpa(r.pressure_atm);
     if (kpa) {
@@ -1121,7 +1139,7 @@ function gapTipLines(mk) {
 function gapBindTips(node, svg, tip, live, m) {
   let cur = null;
   function visible() {
-    return m.marks.filter(function (k) { return k.kind === "p" ? m.vis.p : m.vis.f; });
+    return m.marks.filter(function (k) { return k.kind === "f" ? m.vis.f : m.vis.p; });
   }
   function hide() {
     cur = null;
@@ -1224,7 +1242,8 @@ function gapLegend() {
     return el("span", { class: "lg", "data-s": String(stage) }, swatch, el("span", { text: text }));
   }
   return el("div", { class: "gap-legend" },
-    item(0, el("i", { class: "lg-dot" }), "PSI solid-fuel test (one dot each)"),
+    item(0, el("i", { class: "lg-dot" }), "PSI solid-fuel test"),
+    item(0, el("i", { class: "lg-dot gray" }), "Droplet or gas-flame test"),
     item(2, el("i", { class: "lg-ring on" }), "Newest NASA flight, burned"),
     item(2, el("i", { class: "lg-ring" }), "did not ignite"),
     item(3, el("i", { class: "lg-band" }), "Moon base air"),
@@ -1240,20 +1259,12 @@ function drawGapChart(node) {
   const fs = small ? 12 : 13;
   const pad = small ? 16 : 26;
   const lo = 12;
-  const hi = 36;
+  const hi = 41;
   const px = (w - 2 * pad) / (hi - lo);
   function xo(v) { return pad + (v - lo) * px; }
   const top = small ? 48 : 40;
   const axisY = Math.round(H - (small ? 46 : 52));
   const plotH = axisY - top;
-  let r = small ? 3.6 : 5.6;
-  let swarm = swarmPoints(d.solid, xo, r);
-  while (r > (small ? 2.4 : 3.4) && Math.max.apply(null, swarm.map(function (p) { return p.up; })) + r > plotH * 0.62) {
-    r -= 0.2;
-    swarm = swarmPoints(d.solid, xo, r);
-  }
-  const x0 = swarm[0].x;
-  const xN = swarm[swarm.length - 1].x;
   const burned = d.flights.filter(function (t) { return t.outcome_short === "Burned"; });
   const maxBurn = Math.max.apply(null, burned.map(function (t) { return t.o2_percent; }));
   const ruleX = Math.round(xo(d.psiMax)) + 0.5;
@@ -1261,16 +1272,41 @@ function drawGapChart(node) {
   const bandL = Math.round(xo(d.moonLo)) + 0.5;
   const bandR = Math.round(xo(d.moonHi)) + 0.5;
   const moonX = xo(d.moon);
-  const dimY = Math.round(top + plotH * 0.36) + 0.5;
   const laneY = top + 20;
   const seen = {};
+  let flightRows = 1;
   const flights = d.flights.slice().sort(function (a, b) { return a.o2_percent - b.o2_percent; }).map(function (t) {
     const key = t.o2_percent.toFixed(1);
     seen[key] = seen[key] || 0;
     const row = seen[key];
     seen[key] += 1;
+    flightRows = Math.max(flightRows, row + 1);
     return { t: t, x: xo(t.o2_percent), y: laneY + row * 15 };
   });
+  const flightsBottom = laneY + (flightRows - 1) * 15 + 9;
+  const grayTop = flightsBottom + (small ? 30 : 28);
+  const grayH = Math.max(40, Math.round((axisY - grayTop) * 0.32));
+  const grayBot = grayTop + grayH;
+  const solidTop = grayBot + 12;
+  const solidH = axisY - solidTop;
+  const gr = small ? 1.6 : 2.2;
+  let r = small ? 3 : 4.4;
+  let swarm = swarmPoints(d.solid, xo, r);
+  const swarmLimit = Math.max(30, solidH - (small ? 40 : 34));
+  while (r > (small ? 2 : 2.6) && Math.max.apply(null, swarm.map(function (p) { return p.up; })) + r > swarmLimit) {
+    r -= 0.2;
+    swarm = swarmPoints(d.solid, xo, r);
+  }
+  const span = w - 2 * pad;
+  function binOf(x) {
+    return Math.max(0, Math.min(GAP_BINS - 1, Math.floor((x - pad) / span * GAP_BINS)));
+  }
+  const grayPts = d.others.map(function (row, i) {
+    const x = xo(row.o2_frac * 100);
+    const y = grayTop + gr + gapRand(i + 11) * (grayH - 2 * gr);
+    return { x: x, y: y, row: row };
+  });
+  const dimY = axisY - (small ? 34 : 28) + 0.5;
   const step = small ? 4 : 2;
   const grid = [];
   const ticks = [];
@@ -1278,6 +1314,16 @@ function drawGapChart(node) {
     const gx = Math.round(xo(v)) + 0.5;
     grid.push("<line x1=\"" + gx + "\" y1=\"" + top + "\" x2=\"" + gx + "\" y2=\"" + axisY + "\" stroke=\"" + GAP_COL.grid + "\" stroke-width=\"1\"/>");
     ticks.push("<text x=\"" + xo(v).toFixed(1) + "\" y=\"" + (axisY + 19) + "\" font-size=\"" + fs + "\" text-anchor=\"middle\" fill=\"" + GAP_COL.t3 + "\">" + v + "</text>");
+  }
+  function binned(points, draw) {
+    const bins = [];
+    for (let i = 0; i < GAP_BINS; i += 1) {
+      bins.push([]);
+    }
+    points.forEach(function (p) {
+      bins[binOf(p.x)].push(draw(p));
+    });
+    return bins.map(function (b) { return "<g class=\"gb\">" + b.join("") + "</g>"; }).join("");
   }
   let s = "";
   s += "<g shape-rendering=\"crispEdges\">" + grid.join("") + "</g>";
@@ -1288,9 +1334,13 @@ function drawGapChart(node) {
   s += "<line x1=\"" + pad + "\" y1=\"" + (axisY + 0.5) + "\" x2=\"" + (w - pad) + "\" y2=\"" + (axisY + 0.5) + "\" stroke=\"" + GAP_COL.axis + "\" stroke-width=\"1\" shape-rendering=\"crispEdges\"/>";
   s += ticks.join("");
   s += "<text x=\"" + (w / 2) + "\" y=\"" + (H - 8) + "\" font-size=\"" + (fs - 1) + "\" text-anchor=\"middle\" fill=\"" + GAP_COL.t3 + "\">Oxygen in the air (percent)</text>";
-  swarm.forEach(function (p) {
-    s += "<circle class=\"gd\" cx=\"" + p.x.toFixed(1) + "\" cy=\"" + (axisY - p.up).toFixed(1) + "\" r=\"" + r + "\" fill=\"" + GAP_COL.psi + "\" opacity=\"0\"/>";
-  });
+  s += "<text class=\"gglab\" x=\"" + pad + "\" y=\"" + (grayTop - 6) + "\" font-size=\"" + (fs - 1) + "\" fill=\"" + GAP_COL.t3 + "\" opacity=\"0\">Droplet and gas flames</text>";
+  s += "<g class=\"ggray\">" + binned(grayPts, function (p) {
+    return "<circle cx=\"" + p.x.toFixed(1) + "\" cy=\"" + p.y.toFixed(1) + "\" r=\"" + gr + "\" fill=\"" + GAP_COL.gray + "\" fill-opacity=\"0.6\"/>";
+  }) + "</g>";
+  s += "<g class=\"gsol\">" + binned(swarm, function (p) {
+    return "<circle cx=\"" + p.x.toFixed(1) + "\" cy=\"" + (axisY - p.up).toFixed(1) + "\" r=\"" + r + "\" fill=\"" + GAP_COL.psi + "\" stroke=\"" + GAP_COL.surf + "\" stroke-width=\"1\"/>";
+  }) + "</g>";
   s += "<line class=\"grule\" x1=\"" + ruleX + "\" y1=\"" + axisY + "\" x2=\"" + ruleX + "\" y2=\"" + axisY + "\" stroke=\"" + GAP_COL.t2 + "\" stroke-width=\"1\" shape-rendering=\"crispEdges\"/>";
   const ruleText = "Highest PSI solid test: " + fmt(d.psiMax, 1) + "%";
   if (small) {
@@ -1325,7 +1375,7 @@ function drawGapChart(node) {
     s += "<text class=\"gdlab\" x=\"" + gapMid + "\" y=\"" + (dimY - 10) + "\" font-size=\"" + fs + "\" font-weight=\"600\" text-anchor=\"middle\" fill=\"" + GAP_COL.t1 + "\" opacity=\"0\">Untested by PSI: " + fmt(d.psiMax, 1) + "% to " + d.moon + "%</text>";
   }
   s += "<circle class=\"ghov\" r=\"8\" fill=\"none\" stroke=\"" + GAP_COL.t1 + "\" stroke-width=\"1.5\" opacity=\"0\" pointer-events=\"none\"/>";
-  const label = "Oxygen axis from 12 to 36 percent: " + d.solid.length + " PSI solid-fuel tests end at " + fmt(d.psiMax, 1) + " percent, newest NASA flights burned solids up to " + fmt(maxBurn, 1) + " percent, Moon base air is " + d.moon + " percent. Focus the chart and use arrow keys to read each test, or open the rows link.";
+  const label = "Oxygen axis from " + lo + " to " + hi + " percent: " + d.total + " NASA flame tests. " + d.solid.length + " PSI solid-fuel tests end at " + fmt(d.psiMax, 1) + " percent while droplet and gas flames go on to " + fmt(d.others[d.others.length - 1].o2_frac * 100, 0) + " percent. Newest NASA flights burned solids up to " + fmt(maxBurn, 1) + " percent, Moon base air is " + d.moon + " percent. Focus the chart and use arrow keys to read each test, or open the rows link.";
   clear(node);
   const legend = gapLegend();
   node.appendChild(legend);
@@ -1338,19 +1388,24 @@ function drawGapChart(node) {
   node.appendChild(tip);
   node.appendChild(live);
   const q = function (sel) { return svg.querySelector(sel); };
-  const dotEls = svg.querySelectorAll(".gd");
   const flEls = svg.querySelectorAll(".gf");
+  const binEls = svg.querySelectorAll(".gb");
+  const bins = [];
+  for (let i = 0; i < binEls.length; i += 1) {
+    bins.push({ el: binEls[i], order: (i % GAP_BINS) / (GAP_BINS - 1), c: -1 });
+  }
   const m = {
     w: w,
     axisY: axisY,
     ruleTop: ruleTop,
     dimA: gapA,
     dimB: gapB,
-    dots: swarm.map(function (p, i) {
-      return { el: dotEls[i], order: xN > x0 ? (p.x - x0) / (xN - x0) : 0 };
-    }),
+    bins: bins,
+    gray: q(".ggray"),
+    sol: q(".gsol"),
+    grayLab: q(".gglab"),
     flights: flights.map(function (f, i) {
-      return { el: flEls[i], x: f.x, y: f.y, order: flights.length > 1 ? i / (flights.length - 1) : 0 };
+      return { el: flEls[i], x: f.x, y: f.y, order: flights.length > 1 ? i / (flights.length - 1) : 0, c: -1 };
     }),
     shade: q(".gshade"),
     band: q(".gband"),
@@ -1371,6 +1426,9 @@ function drawGapChart(node) {
   swarm.forEach(function (p, i) {
     m.marks.push({ kind: "p", x: p.x, y: axisY - p.up, r: r, row: d.rows[i] });
   });
+  grayPts.forEach(function (p) {
+    m.marks.push({ kind: "g", x: p.x, y: p.y, r: gr, row: p.row });
+  });
   m.flights.forEach(function (f, i) {
     m.marks.push({ kind: "f", x: f.x, y: f.y, r: 7, row: flights[i].t });
   });
@@ -1390,16 +1448,19 @@ function gapRender(q, force) {
   const a1 = gapStage(q, 1);
   const a2 = gapStage(q, 2);
   const a3 = gapStage(q, 3);
-  if (force || a0 !== m.c0 || a3 !== m.c3) {
+  if (force || a0 !== m.c0) {
     m.c0 = a0;
-    m.c3 = a3;
-    const dim = 1 - 0.3 * a3;
-    for (let i = 0; i < m.dots.length; i += 1) {
-      const dt = m.dots[i];
-      const e = gapEaseOut(gapClamp(a0 * 1.8 - 0.8 * dt.order));
-      dt.el.setAttribute("opacity", (e * dim).toFixed(3));
-      dt.el.setAttribute("transform", "translate(0 " + ((1 - e) * 18).toFixed(2) + ")");
+    for (let i = 0; i < m.bins.length; i += 1) {
+      const b = m.bins[i];
+      const e = gapEaseOut(gapClamp(a0 * 1.8 - 0.8 * b.order));
+      const key = Math.round(e * 40);
+      if (key !== b.c) {
+        b.c = key;
+        b.el.setAttribute("opacity", (key / 40).toFixed(3));
+        b.el.setAttribute("transform", "translate(0 " + ((1 - key / 40) * 14).toFixed(2) + ")");
+      }
     }
+    m.grayLab.setAttribute("opacity", gapClamp((a0 - 0.3) / 0.7).toFixed(3));
     m.vis.p = a0 > 0.6;
   }
   if (force || a1 !== m.c1) {
@@ -1408,6 +1469,7 @@ function gapRender(q, force) {
     m.rule.setAttribute("y2", (m.axisY - (m.axisY - m.ruleTop) * dr).toFixed(2));
     m.ruleLab.setAttribute("opacity", gapClamp((a1 - 0.55) / 0.45).toFixed(3));
     m.shade.setAttribute("opacity", dr.toFixed(3));
+    m.gray.setAttribute("opacity", (1 - (1 - GAP_GRAY_DIM) * a1).toFixed(3));
   }
   if (force || a2 !== m.c2) {
     m.c2 = a2;
@@ -1415,14 +1477,19 @@ function gapRender(q, force) {
     for (let i = 0; i < n; i += 1) {
       const f = m.flights[i];
       const e = gapEaseOut(gapClamp(a2 * 1.7 - 0.7 * f.order));
-      f.el.setAttribute("opacity", e.toFixed(3));
-      f.el.setAttribute("transform", "translate(" + f.x.toFixed(1) + " " + f.y + ") scale(" + (0.6 + 0.4 * e).toFixed(3) + ")");
+      const key = Math.round(e * 40);
+      if (key !== f.c) {
+        f.c = key;
+        f.el.setAttribute("opacity", e.toFixed(3));
+        f.el.setAttribute("transform", "translate(" + f.x.toFixed(1) + " " + f.y + ") scale(" + (0.6 + 0.4 * e).toFixed(3) + ")");
+      }
     }
     m.lane.setAttribute("opacity", gapClamp((a2 - 0.3) / 0.7).toFixed(3));
     m.vis.f = a2 > 0.6;
   }
-  if (force || a3 !== m.c3b) {
-    m.c3b = a3;
+  if (force || a3 !== m.c3) {
+    m.c3 = a3;
+    m.sol.setAttribute("opacity", (1 - (1 - GAP_SOLID_DIM) * a3).toFixed(3));
     m.band.setAttribute("opacity", a3.toFixed(3));
     m.moonLab.setAttribute("opacity", gapClamp((a3 - 0.35) / 0.65).toFixed(3));
     const dd = gapEaseOut(gapClamp(a3 / 0.85));
@@ -1449,8 +1516,12 @@ function gapRender(q, force) {
       const un = k < caps.items.length - 1 ? gapClamp((q - k - 1) / GAP_ANIM) : 0;
       const inn = k === 0 ? gapEaseIO(gapClamp(u / 0.6)) : gapEaseIO(gapClamp((u - 0.5) / 0.5));
       const o = inn * (1 - gapEaseIO(gapClamp(un / 0.45)));
-      caps.items[k].style.opacity = o.toFixed(3);
-      caps.items[k].style.transform = "translateY(" + ((1 - o) * 10).toFixed(2) + "px)";
+      const ok = Math.round(o * 100);
+      if (force || ok !== caps.c[k]) {
+        caps.c[k] = ok;
+        caps.items[k].style.opacity = o.toFixed(3);
+        caps.items[k].style.transform = "translateY(" + ((1 - o) * 10).toFixed(2) + "px)";
+      }
       caps.dots[k].style.setProperty("--a", av[k].toFixed(3));
     }
   }
@@ -1465,8 +1536,8 @@ function gapCaptionTexts() {
   const d = gapChartData();
   const top = Math.max.apply(null, d.flights.filter(function (t) { return t.outcome_short === "Burned"; }).map(function (t) { return t.o2_percent; }));
   return [
-    ["Every solid ", "NASA test in PSI"],
-    ["Solid tests stop at ", fmt(d.psiMax, 1) + "%"],
+    [d.total + " NASA flame tests, ", "by oxygen"],
+    ["Solid materials stop at ", fmt(d.psiMax, 1) + "%"],
     ["Newest flights burned solids at ", fmt(top, 1) + "%"],
     ["Moon base air: ", d.moon + "%"]
   ];
@@ -1479,7 +1550,7 @@ function gapCaptions() {
       el("span", { class: "gap-cap-k", text: t[0] }), t[1]);
   });
   const dots = el("span", { class: "gap-dots", "aria-hidden": "true" }, texts.map(function () { return el("i"); }));
-  return { node: el("div", { class: "gap-caps" }, items, dots), items: items, dots: dots.children };
+  return { node: el("div", { class: "gap-caps" }, items, dots), items: items, dots: dots.children, c: texts.map(function () { return -1; }) };
 }
 
 function gapGeometry(track) {
@@ -1516,7 +1587,7 @@ function gapWatch(section, track, chart, caps) {
     }
     const dt = Math.min(64, Math.max(1, now - last));
     last = now;
-    q += (p - q) * (1 - Math.exp(-dt / 140));
+    q += (p - q) * (1 - Math.exp(-dt / 90));
     const settled = Math.abs(p - q) < 0.0005;
     if (settled) {
       q = p;
@@ -1609,7 +1680,7 @@ function playWords(sel) {
 }
 
 function playDwell(words) {
-  return Math.max(2800, 1200 + 260 * words);
+  return Math.max(2000, 700 + 200 * words);
 }
 
 function playPoints() {
@@ -1622,7 +1693,7 @@ function playPoints() {
   [["#s-quote", ["#s-quote .big-quote p"]], ["#s-air", ["#s-air h2", "#s-air .story-line"]]].forEach(function (p) {
     const y = at(p[0]);
     if (y !== null) {
-      pts.push({ y: y, dwell: playDwell(playWords(p[1])), settle: 1000, gap: false });
+      pts.push({ y: y, dwell: playDwell(playWords(p[1])), settle: 600, gap: false });
     }
   });
   const track = document.querySelector("#s-gap .gap-track");
@@ -1630,16 +1701,13 @@ function playPoints() {
     const g = gapGeometry(track);
     for (let k = 0; k < 4; k += 1) {
       const sel = ["#s-gap .gap-cap:nth-child(" + (k + 1) + ")"];
-      if (k === 0) {
-        sel.push("#s-gap h2", "#s-gap .story-sub");
-      }
-      pts.push({ y: Math.max(0, g.plateauY(k)), dwell: playDwell(playWords(sel)), settle: 450, gap: true });
+      pts.push({ y: Math.max(0, g.plateauY(k)), dwell: playDwell(playWords(sel)), settle: 250, gap: true });
     }
   }
   [["#s-grav", ["#s-grav h2", "#s-grav .story-line"]], ["#s-next", []]].forEach(function (p) {
     const y = at(p[0]);
     if (y !== null) {
-      pts.push({ y: y, dwell: p[1].length ? playDwell(playWords(p[1])) : 0, settle: p[1].length ? 1000 : 0, gap: false });
+      pts.push({ y: y, dwell: p[1].length ? playDwell(playWords(p[1])) : 0, settle: p[1].length ? 600 : 0, gap: false });
     }
   });
   return pts;
@@ -1694,7 +1762,7 @@ function playStory() {
       dwell();
       return;
     }
-    let dur = Math.max(1000, Math.min(2400, 700 + 0.6 * dist));
+    let dur = Math.max(700, Math.min(1600, 500 + 0.45 * dist));
     if (p.gap && i > 0 && pts[i - 1].gap) {
       dur = Math.max(dur, GAP_TRAVEL);
     }
@@ -2273,7 +2341,7 @@ function renderHome() {
     el("div", { class: "gap-pin" },
       el("div", { class: "story-in" },
         rv(0, "h2", { text: "Has NASA tested that air?" }),
-        rv(1, "p", { class: "story-sub", text: "Solid-material tests in the PSI database" }),
+        rv(1, "p", { class: "story-sub", text: "Every ambient-oxygen flame test in the PSI database" }),
         chart,
         caps.node)),
     el("span", { class: "gap-end", "aria-hidden": "true" }));

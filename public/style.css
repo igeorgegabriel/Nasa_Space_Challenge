@@ -438,6 +438,8 @@ table.preview th, table.preview td { white-space: nowrap; }
 
 .lg-dot { width: 8px; height: 8px; border-radius: 50%; background: #e06d34; }
 
+.lg-dot.gray { background: #8f9bb8; opacity: 0.75; }
+
 .lg-ring { width: 11px; height: 11px; border-radius: 50%; border: 2px solid #5b95e8; }
 
 .lg-ring.on { background: #5b95e8; }
@@ -460,7 +462,7 @@ table.preview th, table.preview td { white-space: nowrap; }
 
 .gap-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-.gap-track { position: relative; height: calc(100vh - var(--gap-top) + 440vh); height: calc(100svh - var(--gap-top) + 440svh); --gap-top: 64px; }
+.gap-track { position: relative; height: calc(100vh - var(--gap-top) + 260vh); height: calc(100svh - var(--gap-top) + 260svh); --gap-top: 64px; }
 
 .gap-pin { position: sticky; top: var(--gap-top); height: calc(100vh - var(--gap-top)); height: calc(100svh - var(--gap-top)); display: flex; align-items: center; padding: clamp(0.8rem, 2.5vh, 2rem) clamp(1.25rem, 6vw, 6rem); }
 
