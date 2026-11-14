@@ -2,6 +2,7 @@
 
 const REPO_URL = "https://github.com/igeorgegabriel/Nasa_Space_Challenge";
 const TEAM_WHY = "";
+const TEAM_URL = "https://www.spaceappschallenge.org/2026/find-a-team/kenyalang-blue-flame/?tab=details";
 
 const NAV = [
   ["home", "Story"],
@@ -1157,7 +1158,8 @@ function renderHome() {
     rv(4, "div", { class: "who" },
       el("h2", { text: "Who we are" }),
       el("p", { class: "who-name" }, el("strong", { text: "Kenyalang Blue Flame" }), " - Bintulu, Sarawak, Malaysia."),
-      TEAM_WHY ? el("blockquote", { id: "team-why", class: "team-why", text: TEAM_WHY }) : null)
+      TEAM_WHY ? el("blockquote", { id: "team-why", class: "team-why", text: TEAM_WHY }) : null,
+      el("p", { class: "who-link" }, ntrsLink(TEAM_URL, "Meet the team on NASA Space Apps")))
   ]);
   const view = setView(hero, quote, air, gap, next, explore);
   drawGapChart(chart);
