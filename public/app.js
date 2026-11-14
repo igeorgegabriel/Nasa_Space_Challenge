@@ -1256,6 +1256,20 @@ function scenarioFlight(entry) {
     ntrsLink(o.source_url, "NTRS " + o.source_id));
 }
 
+function scenarioVerdict(entry, rows) {
+  const kinds = rows.map(function (r) { return r.className.replace("sc-row ", ""); });
+  const names = ["Oxygen", "pressure", "airflow"];
+  const matched = names.filter(function (n, i) { return kinds[i] === "ok"; });
+  const missing = names.filter(function (n, i) { return kinds[i] === "na"; });
+  const partly = entry.inside === 0 && kinds.indexOf("no") < 0 && matched.length > 0;
+  const listText = function (list) { return list.length > 1 ? list.slice(0, -1).join(", ") + " and " + list[list.length - 1] : list[0]; };
+  const capital = function (t) { return t.charAt(0).toUpperCase() + t.slice(1); };
+  const word = entry.inside > 0 ? "Tested" : (partly ? "Partly tested" : "Not tested");
+  const sub = entry.inside > 0 ? entry.inside + (entry.inside === 1 ? " NASA test matches this air" : " NASA tests match this air") :
+    (partly ? capital(listText(matched).toLowerCase()) + (matched.length > 1 ? " match" : " matches") + "; " + listText(missing.map(function (m) { return m.toLowerCase(); })) + " not recorded." : "No NASA test matches all three conditions.");
+  return { word: word, sub: sub, partly: partly };
+}
+
 function scenarioCard() {
   const habRow = el("div", { class: "pills sc-seg", role: "group", "aria-label": "Habitat" });
   const fuelRow = el("div", { class: "pills sc-seg", role: "group", "aria-label": "Fuel type" });
@@ -1288,16 +1302,9 @@ function scenarioCard() {
     });
     const fuelName = NEXT_LABELS[entry.fuel_class] || FUEL_LABELS[entry.fuel_class];
     const rows = scenarioRows(entry, block);
-    const kinds = rows.map(function (r) { return r.className.replace("sc-row ", ""); });
-    const names = ["Oxygen", "pressure", "airflow"];
-    const matched = names.filter(function (n, i) { return kinds[i] === "ok"; });
-    const missing = names.filter(function (n, i) { return kinds[i] === "na"; });
-    const partly = entry.inside === 0 && kinds.indexOf("no") < 0 && matched.length > 0;
-    const listText = function (list) { return list.length > 1 ? list.slice(0, -1).join(", ") + " and " + list[list.length - 1] : list[0]; };
-    const capital = function (t) { return t.charAt(0).toUpperCase() + t.slice(1); };
-    const word = entry.inside > 0 ? "Tested" : (partly ? "Partly tested" : "Not tested");
-    const sub = entry.inside > 0 ? entry.inside + (entry.inside === 1 ? " NASA test matches this air" : " NASA tests match this air") :
-      (partly ? capital(listText(matched).toLowerCase()) + (matched.length > 1 ? " match" : " matches") + "; " + listText(missing.map(function (m) { return m.toLowerCase(); })) + " not recorded." : "No NASA test matches all three conditions.");
+    const verdict = scenarioVerdict(entry, rows);
+    const word = verdict.word;
+    const sub = verdict.sub;
     appendKids(result, [
       el("p", { class: "sc-for", text: hab + " air - " + fuelName + " fuel" }),
       el("div", { class: "sc-verdict" },
@@ -1503,6 +1510,90 @@ function buildTourToggle() {
   ask.parentNode.insertBefore(button, ask);
 }
 
+function heroSolidEntry(block) {
+  return block.classes.find(function (c) { return c.fuel_class === "solid"; }) || block.classes[0];
+}
+
+function heroAir(block) {
+  const win = block.windows;
+  const parts = ["O2 " + dashSpan(win.o2.min * 100, win.o2.max * 100, 1, "%")];
+  if (win.pressure_atm) {
+    parts.push(dashSpan(psia(win.pressure_atm.min), psia(win.pressure_atm.max), 1, "psia"));
+  }
+  return parts.join(", ");
+}
+
+function heroVerdict() {
+  const envs = state.data.environments.environments.filter(function (e) { return state.data.test_next.environments[e.id]; });
+  let envId = envs.some(function (e) { return e.id === "lunar"; }) ? "lunar" : envs[0].id;
+  const chips = el("div", { class: "pills hv-chips", role: "group", "aria-label": "Habitat" });
+  const body = el("div", { class: "hv-body", "aria-live": "polite" });
+  const go = el("a", { class: "btn hv-go", text: "See what NASA should test next" });
+  function draw(animate) {
+    const env = envs.find(function (e) { return e.id === envId; });
+    const block = state.data.test_next.environments[envId];
+    const entry = heroSolidEntry(block);
+    const verdict = scenarioVerdict(entry, scenarioRows(entry, block));
+    const n = entry.nearest;
+    const inv = n ? invById(n.psi_id) : null;
+    const o = entry.fuel_class === "solid" ? entry.outside_nearest : null;
+    const num = el("span", { class: "hv-num", text: fmt(entry.inside, 0) });
+    const tone = entry.inside > 0 ? "ok" : (verdict.partly ? "part" : "none");
+    clear(chips);
+    envs.forEach(function (e) {
+      chips.appendChild(el("button", { type: "button", class: "pill" + (e.id === envId ? " active" : ""), "aria-pressed": e.id === envId ? "true" : "false", "data-env": e.id, text: envShort(e), onclick: function () {
+        envId = e.id;
+        draw(true);
+        const again = chips.querySelector("[data-env=\"" + e.id + "\"]");
+        if (again) {
+          again.focus();
+        }
+      } }));
+    });
+    clear(body);
+    appendKids(body, [
+      el("p", { class: "hv-air", text: envShort(env) + " air: " + heroAir(block) }),
+      el("div", { class: "hv-main" },
+        el("p", { class: "hv-big" }, num, el("span", { class: "hv-of", text: " of " + fmt(entry.classified_rows, 0) })),
+        el("div", { class: "hv-side" },
+          el("p", { class: "hv-unit", text: "solid-fuel NASA tests ran in this air" }),
+          el("span", { class: "hv-word " + tone, text: verdict.word }))),
+      n ? el("p", { class: "hv-line", text: "Closest: " + (inv ? invLabel(inv) : n.psi_id) + " at " + percent(n.o2_frac) + "% O2" }) : null,
+      o ? el("p", { class: "hv-line hv-out", text: o.label + " " + (/not/i.test(o.outcome_short) ? "did not ignite" : "burned") + " at " + percent(o.o2_frac) + "% O2 - not in the PSI database" }) : null
+    ]);
+    go.setAttribute("href", "#/rank?habitat=" + encodeURIComponent(envId) + "&at=test-next");
+    if (animate) {
+      countUp(num, entry.inside);
+      body.classList.remove("swap");
+      void body.offsetWidth;
+      body.classList.add("swap");
+    }
+  }
+  draw(false);
+  const card = el("div", { class: "hv", role: "group", "aria-label": "Verdict for a habitat" },
+    el("p", { class: "hv-label", text: "Computed from NASA PSI data" }), chips, body);
+  return { card: card, go: go };
+}
+
+function heroStats() {
+  const data = state.data;
+  const v = data.verification;
+  const rows = data.investigations.reduce(function (sum, inv) { return sum + inv.row_count; }, 0);
+  const items = [
+    [data.investigations.length.toLocaleString("en-US"), "investigations"],
+    [rows.toLocaleString("en-US"), "test rows"]
+  ];
+  if (v.present && v.quotes) {
+    items.push([v.quotes.verified.toLocaleString("en-US"), "quotes verified"]);
+  }
+  if (v.present && v.audit) {
+    items.push([v.audit.passed.toLocaleString("en-US") + " of " + v.audit.checked.toLocaleString("en-US"), "audit checks passed"]);
+  }
+  return el("ul", { class: "hero-stats" }, items.map(function (it) {
+    return el("li", null, el("strong", { text: it[0] }), el("span", { text: it[1] }));
+  }));
+}
+
 function renderHome() {
   const data = state.data;
   const lunar = envById("lunar");
@@ -1513,11 +1604,14 @@ function renderHome() {
     sections.push(section);
     return section;
   }
+  const verdictBox = heroVerdict();
   const hero = el("section", { class: "story hero in", id: "s-hero" },
     el("div", { class: "hero-copy" },
       rv(0, "h1", { text: "Flame in Freefall" }),
       rv(1, "p", { class: "hero-line", text: "Fire behaves differently in space. We checked every NASA test so Moon crews know where the evidence stops." }),
-      rv(2, "p", { class: "hero-cta" }, el("button", { type: "button", class: "btn ghost hero-tour", text: "60-second tour", onclick: function () { tourStart(); } }))),
+      rv(2, "div", { class: "hv-wrap" }, verdictBox.card),
+      rv(3, "p", { class: "hero-cta" }, verdictBox.go, el("button", { type: "button", class: "btn ghost hero-tour", text: "60-second tour", onclick: function () { tourStart(); } })),
+      rv(4, "div", { class: "hv-stats" }, heroStats())),
     el("button", { type: "button", class: "scroll-cue", "aria-label": "Scroll to the next section", onclick: function () {
       document.getElementById("s-quote").scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth" });
     } }, el("span", { text: "Scroll" }), el("i")),
@@ -1702,6 +1796,7 @@ function renderBrief(params) {
 function renderRank() {
   const data = state.data;
   const list = el("ol", { class: "rank-cards" });
+  const noteHolder = el("div", { class: "rank-note-holder" });
   const moreHolder = el("div", { class: "more" });
   const nextHolder = el("div");
   const sourcesHolder = el("div");
@@ -1721,7 +1816,8 @@ function renderRank() {
         el("span", { class: "rank-num", text: String(item.rank) }),
         el("div", { class: "rank-main" },
           el("h3", null, invLink(inv)),
-          el("p", { class: "rank-why", text: shortReason(inv, item, env) })),
+          el("p", { class: "rank-why", text: shortReason(inv, item, env) }),
+          el("span", { class: "rank-range", text: stability[item.psi_id].min === stability[item.psi_id].max ? "rank stable" : "rank " + stability[item.psi_id].min + "-" + stability[item.psi_id].max + " if weights move 20%" })),
         el("div", { class: "rank-score" },
           el("span", { class: "bar", role: "img", "aria-label": "Overall score " + fmt(item.score, 2) },
             el("span", { class: "bar-fill-s", style: "width:" + Math.round(item.score * 100) + "%" })),
@@ -1745,6 +1841,26 @@ function renderRank() {
           st.min === st.max ? String(item.rank) : st.min + " to " + st.max];
       }))));
     drawHow(ranking, stability);
+  }
+
+  function drawNote() {
+    clear(noteHolder);
+    const env = currentEnv();
+    const block = state.data.test_next.environments[env.id];
+    if (!block) {
+      return;
+    }
+    const total = block.classes.reduce(function (sum, c) { return sum + c.inside; }, 0);
+    const gap = total === 0 ? "No investigation has tests inside " + envShort(env) + " air." :
+      "Only " + total + (total === 1 ? " NASA test lies" : " NASA tests lie") + " inside " + envShort(env) + " air.";
+    noteHolder.appendChild(el("p", { class: "rank-note" },
+      "Rank shows relevance: fuel, fire-safety role, data, and how close an investigation's tests come. " + gap + " ",
+      el("button", { type: "button", class: "textlink", text: "See what NASA should test next", onclick: function () {
+        const target = document.getElementById("test-next");
+        if (target) {
+          target.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth", block: "start" });
+        }
+      } })));
   }
 
   function drawHow(ranking, stability) {
@@ -1805,6 +1921,7 @@ function renderRank() {
   }
 
   function drawAll() {
+    drawNote();
     drawRanking();
     drawSliders();
     drawSources();
@@ -1814,6 +1931,7 @@ function renderRank() {
   const buttons = envButtons(drawAll);
   const root = setView(
     pageHead("Rank experiments for a habitat", null, buttons),
+    noteHolder,
     list,
     moreHolder,
     expander("Details", el("div", null, sourcesHolder, sliderHolder, tableHolder, howHolder)),
@@ -2105,6 +2223,10 @@ function renderEarth() {
     return el("article", { class: "card wide" },
       el("h3", { text: app.application }),
       el("p", { text: app.statement }),
+      app.label ? el("p", { class: "small muted", text: app.label }) : null,
+      app.quote ? el("blockquote", { class: "quote" },
+        el("p", { text: "\"" + app.quote.text + "\"" }),
+        el("cite", null, el("a", { href: app.quote.url, text: app.quote.source_title + ", " + app.quote.source_publisher }))) : null,
       ids.length ? el("p", { class: "small" }, el("strong", { text: "PSI investigations: " }),
         ids.map(function (inv, i) { return [i ? ", " : "", invLink(inv)]; })) : null,
       near.length ? el("p", { class: "small" }, el("strong", { text: "Closest PSI data, not a direct test: " }),
@@ -2364,7 +2486,7 @@ function readinessRanges(item) {
   return parts.join("; ");
 }
 
-function readinessPanel() {
+function readinessPanel(compact) {
   const mr = state.data.model_readiness;
   const holder = el("div");
   const titles = {};
@@ -2376,8 +2498,7 @@ function readinessPanel() {
     holder.appendChild(plainTable(["Relationship", "Status", "Why"], block.items.map(function (item) {
       return [titles[item.id], tag(item.status, STATUS_CLASS[item.status]), item.short];
     })));
-    holder.appendChild(el("h3", { text: "What would close each gap" }));
-    holder.appendChild(el("div", null, block.items.map(function (item) {
+    const detail = el("div", null, block.items.map(function (item) {
       const invList = item.investigations.length ? el("ul", null, item.investigations.map(function (i) {
         const inv = invById(i.psi_id);
         return el("li", null, inv ? invLink(inv) : i.psi_id,
@@ -2390,10 +2511,18 @@ function readinessPanel() {
         item.investigations.length ? el("p", { class: "small muted", text: readinessRanges(item) + (item.diluents && item.diluents.length ? "; diluents: " + item.diluents.join(", ") : "") + "." }) : null,
         el("p", { class: "small", text: item.gap }),
         item.investigations.length ? el("a", { class: "small", href: "#/data?" + qs(Object.assign({ at: "extractor" }, item.link)), text: "Open these rows in the extractor" }) : null);
-    })));
-    holder.appendChild(el("p", { class: "small muted", text: mr.rule }));
-    holder.appendChild(el("p", { class: "small muted", text: mr.no_model_note }));
-    holder.appendChild(el("p", { class: "small muted", text: mr.grouped_validation_note }));
+    }));
+    const notes = el("div", null,
+      el("p", { class: "small muted", text: mr.rule }),
+      el("p", { class: "small muted", text: mr.no_model_note }),
+      el("p", { class: "small muted", text: mr.grouped_validation_note }));
+    if (compact) {
+      holder.appendChild(expander("What would close each gap", el("div", null, detail, notes)));
+    } else {
+      holder.appendChild(el("h3", { text: "What would close each gap" }));
+      holder.appendChild(detail);
+      holder.appendChild(notes);
+    }
   }
 
   const root = el("div", { class: "panel" }, envButtons(draw), holder);
@@ -2558,7 +2687,14 @@ function renderData(params) {
   const bits = verificationFacts();
   const v = data.verification;
   const map = mapPanel();
-  const drawers = {};
+  const mapBlock = el("section", { class: "data-block", id: "map" },
+    el("h2", { text: "Where a model built on this data can be trusted" }),
+    el("p", { class: "data-cap", text: "Each dot is a NASA test. Boxes are habitat air. A model is only trustworthy inside the dots." }),
+    map.body);
+  const readyBlock = el("section", { class: "data-block", id: "readiness" },
+    el("h2", { text: "Model readiness" }),
+    readinessPanel(true));
+  const drawers = { readiness: readyBlock };
   function drawer(id, label, body, onOpen) {
     const node = expander(label, body, false, id);
     node.addEventListener("toggle", function () {
@@ -2593,18 +2729,20 @@ function renderData(params) {
       el("div", { class: "card-actions" }, link("verification", "Details"), el("a", { class: "textlink", href: "#/verification", text: "Full record" }))));
   }
   const list = [
-    drawer("readiness", "Model readiness", readinessPanel()),
     drawer("extractor", "Filter and download", extractor),
     bits ? drawer("verification", "How we checked it", el("div", null, el("ul", null, bits.map(function (b) { return el("li", { text: b }); })),
       el("p", null, el("a", { class: "btn", href: "#/verification", text: "Open the full verification" })))) : null,
-    drawer("map", "Oxygen and pressure map", map.body, map.draw),
     drawer("insights", "What the numbers say", insightsPanel())
   ];
-  return setView(
+  const view = setView(
     pageHead("Data and models", "What the data can support, and how to use it."),
     el("div", { class: "dcards" }, cards),
+    mapBlock,
+    readyBlock,
     el("div", { class: "drawer-list" }, list)
   );
+  map.draw();
+  return view;
 }
 
 function checkDrawer(id, title, body) {
@@ -3575,7 +3713,7 @@ function mapPanel() {
       chart.textContent = "Chart library not loaded.";
     });
   }
-  return { body: el("div", null, chart, notes), draw: draw };
+  return { body: el("div", null, chart, expander("About this map", notes)), draw: draw };
 }
 
 init();
