@@ -52,7 +52,7 @@ flowchart LR
 
 ## Reproduce
 
-Python 3.12, standard library (Pillow only for images).
+Python 3.12, standard library (Pillow for images; numpy and scipy for the model in `build_models.py`).
 
 ```
 py -3.12 pipeline/build_unified.py
@@ -60,6 +60,7 @@ py -3.12 pipeline/build_site_data.py
 py -3.12 pipeline/verify_findings.py
 py -3.12 pipeline/audit_unified.py
 py -3.12 pipeline/verify_earth.py
+py -3.12 pipeline/build_models.py
 py -3.12 -m unittest discover -s tests
 ```
 

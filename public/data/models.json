@@ -1,0 +1,838 @@
+{
+ "diluents": {
+  "band_o2": [
+   0.15,
+   0.25
+  ],
+  "note": "Counts straight from the rows. Not adjusted for pressure or droplet size. CO2 mixes mostly cover lower O2 than He mixes, so shares are not like for like. No published comparison is cited here.",
+  "table": [
+   {
+    "band_extinction_share": 0.467,
+    "band_rows": 30,
+    "diluent": "N2 only",
+    "extinction_share": 0.404,
+    "fuel": "Heptane",
+    "o2_max": 0.34,
+    "o2_min": 0.13,
+    "rows": 47
+   },
+   {
+    "band_extinction_share": 0.562,
+    "band_rows": 48,
+    "diluent": "N2 with CO2",
+    "extinction_share": 0.562,
+    "fuel": "Heptane",
+    "o2_max": 0.25,
+    "o2_min": 0.17,
+    "rows": 48
+   },
+   {
+    "band_extinction_share": 0.636,
+    "band_rows": 22,
+    "diluent": "N2 with He",
+    "extinction_share": 0.636,
+    "fuel": "Heptane",
+    "o2_max": 0.24,
+    "o2_min": 0.16,
+    "rows": 22
+   },
+   {
+    "band_extinction_share": 0.833,
+    "band_rows": 24,
+    "diluent": "N2 only",
+    "extinction_share": 0.722,
+    "fuel": "Methanol",
+    "o2_max": 0.34,
+    "o2_min": 0.12,
+    "rows": 54
+   },
+   {
+    "band_extinction_share": 0.806,
+    "band_rows": 72,
+    "diluent": "N2 with CO2",
+    "extinction_share": 0.811,
+    "fuel": "Methanol",
+    "o2_max": 0.25,
+    "o2_min": 0.14,
+    "rows": 74
+   },
+   {
+    "band_extinction_share": 0.92,
+    "band_rows": 25,
+    "diluent": "N2 with He",
+    "extinction_share": 0.929,
+    "fuel": "Methanol",
+    "o2_max": 0.24,
+    "o2_min": 0.13,
+    "rows": 28
+   }
+  ]
+ },
+ "limiting_oxygen": {
+  "fuels": {
+   "Heptane": {
+    "completion_rows": 19,
+    "lowest_o2_completion": 0.14,
+    "lowest_o2_with_flame_any_diluent": 0.13,
+    "lowest_o2_with_flame_n2_only": 0.13,
+    "published": {
+     "quote": "",
+     "source": "Dietrich 2014, as reported in the project research notes",
+     "title": "",
+     "url": "",
+     "value_text": "about 15 percent O2",
+     "verified_in_repo": false
+    },
+    "rows": 117,
+    "rows_at_that_o2": 3
+   },
+   "Methanol": {
+    "completion_rows": 8,
+    "lowest_o2_completion": 0.18,
+    "lowest_o2_with_flame_any_diluent": 0.12,
+    "lowest_o2_with_flame_n2_only": 0.12,
+    "published": {
+     "quote": "The experiments also show that the limiting oxygen index for methanol in these diluent gases is around 12% to 13% oxygen by volume.",
+     "source": "NTRS 20130014061",
+     "title": "Methanol Droplet Combustion in Oxygen-Inert Environments in Microgravity",
+     "url": "https://ntrs.nasa.gov/citations/20130014061",
+     "value_text": "about 12 to 13 percent O2",
+     "verified_in_repo": true
+    },
+    "rows": 156,
+    "rows_at_that_o2": 8
+   }
+  },
+  "what_the_rows_show": "Every FLEX row records a flame, so the lowest O2 in the rows is the lowest O2 NASA tested with a flame seen, not a measured limit. Published limits mark where quasi-steady burning stops, a stricter test."
+ },
+ "models": [
+  {
+   "curve": {
+    "fuels": {
+     "Heptane": {
+      "hi": [
+       0.977,
+       0.971,
+       0.965,
+       0.955,
+       0.943,
+       0.928,
+       0.912,
+       0.893,
+       0.872,
+       0.848,
+       0.814,
+       0.78,
+       0.743,
+       0.698,
+       0.653,
+       0.612,
+       0.569,
+       0.522,
+       0.473,
+       0.429,
+       0.382,
+       0.345,
+       0.309,
+       0.277,
+       0.248,
+       0.221,
+       0.197,
+       0.174,
+       0.155,
+       0.137,
+       0.12,
+       0.106,
+       0.094,
+       0.082,
+       0.073,
+       0.065,
+       0.057,
+       0.05
+      ],
+      "lo": [
+       0.841,
+       0.823,
+       0.801,
+       0.776,
+       0.749,
+       0.721,
+       0.691,
+       0.657,
+       0.621,
+       0.586,
+       0.549,
+       0.507,
+       0.467,
+       0.421,
+       0.372,
+       0.333,
+       0.295,
+       0.255,
+       0.213,
+       0.177,
+       0.147,
+       0.122,
+       0.1,
+       0.082,
+       0.067,
+       0.054,
+       0.044,
+       0.036,
+       0.029,
+       0.023,
+       0.018,
+       0.014,
+       0.012,
+       0.009,
+       0.007,
+       0.006,
+       0.005,
+       0.004
+      ],
+      "o2": [
+       0.135,
+       0.14,
+       0.145,
+       0.15,
+       0.155,
+       0.16,
+       0.165,
+       0.17,
+       0.175,
+       0.18,
+       0.185,
+       0.19,
+       0.195,
+       0.2,
+       0.205,
+       0.21,
+       0.215,
+       0.22,
+       0.225,
+       0.23,
+       0.235,
+       0.24,
+       0.245,
+       0.25,
+       0.255,
+       0.26,
+       0.265,
+       0.27,
+       0.275,
+       0.28,
+       0.285,
+       0.29,
+       0.295,
+       0.3,
+       0.305,
+       0.31,
+       0.315,
+       0.32
+      ],
+      "p": [
+       0.919,
+       0.906,
+       0.89,
+       0.872,
+       0.851,
+       0.828,
+       0.802,
+       0.773,
+       0.742,
+       0.707,
+       0.67,
+       0.631,
+       0.59,
+       0.548,
+       0.504,
+       0.461,
+       0.419,
+       0.378,
+       0.338,
+       0.3,
+       0.265,
+       0.233,
+       0.204,
+       0.177,
+       0.153,
+       0.132,
+       0.114,
+       0.097,
+       0.083,
+       0.071,
+       0.06,
+       0.051,
+       0.044,
+       0.037,
+       0.031,
+       0.026,
+       0.022,
+       0.019
+      ],
+      "tested_o2_at_curve_pressure": [
+       0.135,
+       0.32
+      ]
+     },
+     "Methanol": {
+      "hi": [
+       0.996,
+       0.995,
+       0.994,
+       0.992,
+       0.99,
+       0.987,
+       0.984,
+       0.98,
+       0.976,
+       0.97,
+       0.964,
+       0.955,
+       0.945,
+       0.932,
+       0.92,
+       0.908,
+       0.893,
+       0.872,
+       0.853,
+       0.83,
+       0.805,
+       0.778,
+       0.747,
+       0.715,
+       0.683,
+       0.649,
+       0.617,
+       0.584,
+       0.55,
+       0.512,
+       0.476,
+       0.445,
+       0.414,
+       0.383,
+       0.349,
+       0.317,
+       0.288,
+       0.262,
+       0.237,
+       0.214
+      ],
+      "lo": [
+       0.969,
+       0.965,
+       0.961,
+       0.955,
+       0.949,
+       0.942,
+       0.933,
+       0.924,
+       0.912,
+       0.901,
+       0.886,
+       0.869,
+       0.849,
+       0.83,
+       0.808,
+       0.777,
+       0.74,
+       0.704,
+       0.67,
+       0.627,
+       0.582,
+       0.523,
+       0.466,
+       0.406,
+       0.353,
+       0.303,
+       0.258,
+       0.215,
+       0.18,
+       0.149,
+       0.123,
+       0.1,
+       0.081,
+       0.064,
+       0.051,
+       0.04,
+       0.032,
+       0.025,
+       0.02,
+       0.016
+      ],
+      "o2": [
+       0.125,
+       0.13,
+       0.135,
+       0.14,
+       0.145,
+       0.15,
+       0.155,
+       0.16,
+       0.165,
+       0.17,
+       0.175,
+       0.18,
+       0.185,
+       0.19,
+       0.195,
+       0.2,
+       0.205,
+       0.21,
+       0.215,
+       0.22,
+       0.225,
+       0.23,
+       0.235,
+       0.24,
+       0.245,
+       0.25,
+       0.255,
+       0.26,
+       0.265,
+       0.27,
+       0.275,
+       0.28,
+       0.285,
+       0.29,
+       0.295,
+       0.3,
+       0.305,
+       0.31,
+       0.315,
+       0.32
+      ],
+      "p": [
+       0.987,
+       0.984,
+       0.981,
+       0.978,
+       0.974,
+       0.969,
+       0.963,
+       0.957,
+       0.949,
+       0.94,
+       0.929,
+       0.917,
+       0.903,
+       0.887,
+       0.868,
+       0.847,
+       0.824,
+       0.797,
+       0.768,
+       0.735,
+       0.701,
+       0.663,
+       0.624,
+       0.582,
+       0.54,
+       0.497,
+       0.454,
+       0.411,
+       0.37,
+       0.331,
+       0.294,
+       0.259,
+       0.228,
+       0.199,
+       0.173,
+       0.149,
+       0.129,
+       0.111,
+       0.095,
+       0.081
+      ],
+      "tested_o2_at_curve_pressure": [
+       0.125,
+       0.32
+      ]
+     }
+    },
+    "gas": "N2 balance",
+    "pressure_atm": 1.0
+   },
+   "domain": {
+    "edge_tolerance": {
+     "o2": 0.01,
+     "pressure_atm": 0.02
+    },
+    "fuels": {
+     "Heptane": {
+      "n2_only_o2": [
+       0.13,
+       0.34
+      ],
+      "n2_only_pressure_atm": [
+       0.704,
+       1.015
+      ],
+      "n2_only_rows": 47,
+      "o2": [
+       0.13,
+       0.34
+      ],
+      "pressure_atm": [
+       0.695,
+       3.053
+      ],
+      "rows": 117
+     },
+     "Methanol": {
+      "n2_only_o2": [
+       0.12,
+       0.34
+      ],
+      "n2_only_pressure_atm": [
+       0.703,
+       1.019
+      ],
+      "n2_only_rows": 54,
+      "o2": [
+       0.12,
+       0.34
+      ],
+      "pressure_atm": [
+       0.693,
+       3.052
+      ],
+      "rows": 156
+     }
+    },
+    "gas_assumption": "O2 plus N2 balance",
+    "hull_uses_all_diluents": true,
+    "rule": "Predict only if the habitat window and its mid-point lie inside the convex hull of tested (O2, pressure) points for that fuel. Within 0.02 atm and 0.01 O2 of the tested range the verdict is edge. Otherwise the model refuses."
+   },
+   "family": "FLEX droplet flames, 0 g, quiescent",
+   "features": [
+    "O2 mole fraction",
+    "ln of pressure (atm)",
+    "fuel (heptane or methanol)"
+   ],
+   "habitats": [
+    {
+     "fuels": {
+      "Heptane": {
+       "margin": {
+        "o2": 0.0,
+        "pressure_atm": 0.0
+       },
+       "nearest_tested": {
+        "o2": 0.24,
+        "pressure_atm": 1.005
+       },
+       "prediction": {
+        "estimate": 0.335,
+        "hi": 0.469,
+        "lo": 0.21
+       },
+       "refusal": null,
+       "status": "inside"
+      },
+      "Methanol": {
+       "margin": {
+        "o2": 0.0,
+        "pressure_atm": 0.0
+       },
+       "nearest_tested": {
+        "o2": 0.21,
+        "pressure_atm": 0.997
+       },
+       "prediction": {
+        "estimate": 0.698,
+        "hi": 0.804,
+        "lo": 0.579
+       },
+       "refusal": null,
+       "status": "inside"
+      }
+     },
+     "id": "iss",
+     "name": "ISS / spacecraft cabin",
+     "o2": {
+      "max": 0.241,
+      "mid": 0.2255,
+      "min": 0.21
+     },
+     "pressure_atm": {
+      "max": 1.034,
+      "mid": 0.99,
+      "min": 0.946
+     },
+     "status": "inside"
+    },
+    {
+     "fuels": {
+      "Heptane": {
+       "margin": {
+        "o2": 0.0,
+        "pressure_atm": 0.0007
+       },
+       "nearest_tested": {
+        "o2": 0.25,
+        "pressure_atm": 0.706
+       },
+       "prediction": {
+        "estimate": 0.136,
+        "hi": 0.244,
+        "lo": 0.058
+       },
+       "refusal": null,
+       "status": "edge"
+      },
+      "Methanol": {
+       "margin": {
+        "o2": 0.0,
+        "pressure_atm": 0.0
+       },
+       "nearest_tested": {
+        "o2": 0.25,
+        "pressure_atm": 0.707
+       },
+       "prediction": {
+        "estimate": 0.42,
+        "hi": 0.624,
+        "lo": 0.213
+       },
+       "refusal": null,
+       "status": "edge"
+      }
+     },
+     "id": "gateway",
+     "name": "Gateway-class station",
+     "o2": {
+      "max": 0.265,
+      "mid": 0.2625,
+      "min": 0.26
+     },
+     "pressure_atm": {
+      "max": 0.714,
+      "mid": 0.694,
+      "min": 0.674
+     },
+     "status": "edge"
+    },
+    {
+     "fuels": {
+      "Heptane": {
+       "margin": {
+        "o2": 0.0025,
+        "pressure_atm": 0.1367
+       },
+       "nearest_tested": {
+        "o2": 0.34,
+        "pressure_atm": 0.704
+       },
+       "prediction": null,
+       "refusal": "Heptane: 0.14 atm below the lowest tested pressure (0.695 atm); 0.3 points of O2 above the highest tested (34 percent). Lunar surface habitat air is 0.56 atm.",
+       "status": "outside"
+      },
+      "Methanol": {
+       "margin": {
+        "o2": 0.0025,
+        "pressure_atm": 0.1345
+       },
+       "nearest_tested": {
+        "o2": 0.34,
+        "pressure_atm": 0.703
+       },
+       "prediction": null,
+       "refusal": "Methanol: 0.13 atm below the lowest tested pressure (0.693 atm); 0.3 points of O2 above the highest tested (34 percent). Lunar surface habitat air is 0.56 atm.",
+       "status": "outside"
+      }
+     },
+     "id": "lunar",
+     "name": "Lunar surface habitat",
+     "o2": {
+      "max": 0.35,
+      "mid": 0.3425,
+      "min": 0.335
+     },
+     "pressure_atm": {
+      "max": 0.565,
+      "mid": 0.558,
+      "min": 0.551
+     },
+     "status": "outside"
+    },
+    {
+     "fuels": {
+      "Heptane": {
+       "margin": {
+        "o2": 0.0,
+        "pressure_atm": 0.0722
+       },
+       "nearest_tested": {
+        "o2": 0.34,
+        "pressure_atm": 0.704
+       },
+       "prediction": null,
+       "refusal": "Heptane: 0.07 atm below the lowest tested pressure (0.695 atm). Pressurized rover (lunar) air is 0.62 atm.",
+       "status": "outside"
+      },
+      "Methanol": {
+       "margin": {
+        "o2": 0.0,
+        "pressure_atm": 0.0699
+       },
+       "nearest_tested": {
+        "o2": 0.34,
+        "pressure_atm": 0.703
+       },
+       "prediction": null,
+       "refusal": "Methanol: 0.07 atm below the lowest tested pressure (0.693 atm). Pressurized rover (lunar) air is 0.62 atm.",
+       "status": "outside"
+      }
+     },
+     "id": "rover",
+     "name": "Pressurized rover (lunar)",
+     "o2": {
+      "max": 0.35,
+      "mid": 0.325,
+      "min": 0.3
+     },
+     "pressure_atm": {
+      "max": 0.6941,
+      "mid": 0.6226,
+      "min": 0.551
+     },
+     "status": "outside"
+    },
+    {
+     "fuels": {
+      "Heptane": {
+       "margin": {
+        "o2": 0.0025,
+        "pressure_atm": 0.1367
+       },
+       "nearest_tested": {
+        "o2": 0.34,
+        "pressure_atm": 0.704
+       },
+       "prediction": null,
+       "refusal": "Heptane: 0.14 atm below the lowest tested pressure (0.695 atm); 0.3 points of O2 above the highest tested (34 percent). Mars surface habitat air is 0.56 atm.",
+       "status": "outside"
+      },
+      "Methanol": {
+       "margin": {
+        "o2": 0.0025,
+        "pressure_atm": 0.1345
+       },
+       "nearest_tested": {
+        "o2": 0.34,
+        "pressure_atm": 0.703
+       },
+       "prediction": null,
+       "refusal": "Methanol: 0.13 atm below the lowest tested pressure (0.693 atm); 0.3 points of O2 above the highest tested (34 percent). Mars surface habitat air is 0.56 atm.",
+       "status": "outside"
+      }
+     },
+     "id": "mars",
+     "name": "Mars surface habitat",
+     "o2": {
+      "max": 0.35,
+      "mid": 0.3425,
+      "min": 0.335
+     },
+     "pressure_atm": {
+      "max": 0.565,
+      "mid": 0.558,
+      "min": 0.551
+     },
+     "status": "outside"
+    }
+   ],
+   "id": "flex_radiative_extinction",
+   "label_note": "The not-extinguished class mixes disruption, partly a test artefact, with completion, where the fuel burned out. Completion alone has too few rows to model separately.",
+   "limits": [
+    "FLEX is droplets of heptane and methanol in still gas at 0 g. It says nothing about solids, flow or other fuels.",
+    "No FLEX test ran below 0.693 atm.",
+    "Only 17 FLEX rows have O2 of 30 percent or more below 0.8 atm, and 0 of them ended in radiative extinction.",
+    "All numbers are cross-validated within one facility's campaigns. No independent test set exists.",
+    "The burning-rate value is not modelled: its unit in the PSI file header is not stated."
+   ],
+   "method": "Ridge-penalised logistic regression, 3 inputs, fitted on all labelled rows. Diluent identity is not an input, so gas other than O2 is assumed to be N2.",
+   "name": "Does a droplet flame go out on its own?",
+   "rows_excluded": {
+    "count": 1,
+    "reason": "recorded pressure below 0.3 atm, a data defect in the PSI table"
+   },
+   "rows_used": {
+    "by_fuel": {
+     "Heptane": 117,
+     "Methanol": 156
+    },
+    "negative": 88,
+    "positive": 185,
+    "total": 273
+   },
+   "target": "Probability that a FLEX test ends in radiative extinction, the flame dying on its own as the droplet shrinks, instead of droplet break-up (disruption) or burning to completion.",
+   "validation": {
+    "auc": 0.847,
+    "auc_baseline": 0.5,
+    "auc_ci95": [
+     0.778,
+     0.902
+    ],
+    "baseline": "Training-fold share of extinctions, the same guess for every row",
+    "bootstrap_resamples": 500,
+    "brier_baseline": 0.2231,
+    "brier_gain": 0.0791,
+    "brier_gain_ci95": [
+     0.0431,
+     0.114
+    ],
+    "brier_model": 0.1441,
+    "brier_skill": 0.354,
+    "brier_skill_ci95": [
+     0.212,
+     0.48
+    ],
+    "calibration": [
+     {
+      "from": 0.0,
+      "observed": 0.083,
+      "predicted": 0.07,
+      "rows": 24,
+      "to": 0.2
+     },
+     {
+      "from": 0.2,
+      "observed": 0.333,
+      "predicted": 0.271,
+      "rows": 24,
+      "to": 0.4
+     },
+     {
+      "from": 0.4,
+      "observed": 0.5,
+      "predicted": 0.499,
+      "rows": 42,
+      "to": 0.6
+     },
+     {
+      "from": 0.6,
+      "observed": 0.701,
+      "predicted": 0.723,
+      "rows": 67,
+      "to": 0.8
+     },
+     {
+      "from": 0.8,
+      "observed": 0.922,
+      "predicted": 0.921,
+      "rows": 116,
+      "to": 1.0
+     }
+    ],
+    "folds": 10,
+    "groups": 80,
+    "scheme": "GroupKFold by test date: 10 folds, 80 test dates, whole days held out. Intervals from 500 cluster bootstrap resamples over dates.",
+    "seed": 20261114
+   }
+  }
+ ],
+ "schema": 1,
+ "source": "public/data/conditions.json, investigation FLEX (PSI-69)"
+}

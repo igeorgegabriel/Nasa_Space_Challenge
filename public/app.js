@@ -2691,6 +2691,7 @@ function renderData(params) {
     el("h2", { text: "Where a model built on this data can be trusted" }),
     el("p", { class: "data-cap", text: "Each dot is a NASA test. Boxes are habitat air. A model is only trustworthy inside the dots." }),
     map.body);
+  const modelBlock = modelPanel();
   const readyBlock = el("section", { class: "data-block", id: "readiness" },
     el("h2", { text: "Model readiness" }),
     readinessPanel(true));
@@ -2738,6 +2739,7 @@ function renderData(params) {
     pageHead("Data and models", "What the data can support, and how to use it."),
     el("div", { class: "dcards" }, cards),
     mapBlock,
+    modelBlock,
     readyBlock,
     el("div", { class: "drawer-list" }, list)
   );
@@ -3558,7 +3560,7 @@ function route() {
 }
 
 function init() {
-  const names = ["investigations", "conditions", "environments", "insights", "earth", "rank_reference", "model_readiness", "test_next", "verification", "outside_psi"];
+  const names = ["investigations", "conditions", "environments", "insights", "earth", "rank_reference", "model_readiness", "test_next", "verification", "outside_psi", "models"];
   Promise.all(names.map(loadJson)).then(function (loaded) {
     state.data = {
       investigations: loaded[0].investigations,
@@ -3570,7 +3572,8 @@ function init() {
       model_readiness: loaded[6],
       test_next: loaded[7],
       verification: loaded[8],
-      outside_psi: loaded[9]
+      outside_psi: loaded[9],
+      models: loaded[10]
     };
     state.weights = Object.assign({}, state.data.rank_reference.weights);
     parityCheck();
@@ -3685,6 +3688,231 @@ function invMedia(inv) {
   }
   const label = inv.name.length <= 16 ? inv.name : inv.psi_id;
   return el("div", { class: "inv-media block fc-" + fuelClassOf(inv) }, el("span", { class: "inv-acr", text: label }));
+}
+
+const MODEL_COLORS = { Heptane: "#c2562a", Methanol: "#2f5f94" };
+const MODEL_FUELS = ["Heptane", "Methanol"];
+
+function modelTenths(value) {
+  return Math.round(value * 10);
+}
+
+function modelVerdict(model, hab) {
+  const name = envShort(hab);
+  const fuels = MODEL_FUELS.filter(function (f) { return hab.fuels[f]; });
+  const outside = fuels.filter(function (f) { return hab.fuels[f].status === "outside"; });
+  const predicted = fuels.filter(function (f) { return hab.fuels[f].status !== "outside"; });
+  const dom = model.domain.fuels;
+  const lowest = Math.min.apply(null, fuels.map(function (f) { return dom[f].pressure_atm[0]; }));
+  if (outside.length === fuels.length) {
+    const pressureOut = outside.some(function (f) { return hab.fuels[f].margin.pressure_atm > 0; });
+    const why = pressureOut
+      ? "FLEX never ran below " + fmt(lowest, 2) + " atm; " + name + " air is " + fmt(hab.pressure_atm.mid, 2) + " atm."
+      : name + " air lies outside the O2 range FLEX covered.";
+    return { tone: "none", head: name + ": no prediction.", text: why };
+  }
+  const bits = predicted.map(function (f) {
+    const p = hab.fuels[f].prediction;
+    return "a " + f.toLowerCase() + " droplet flame goes out on its own in about " + modelTenths(p.estimate) + " of 10 tests (CI " + modelTenths(p.lo) + " to " + modelTenths(p.hi) + ")";
+  });
+  let text = bits.join("; ");
+  const edge = predicted.some(function (f) { return hab.fuels[f].status === "edge"; });
+  if (edge) {
+    text += ". This air sits at the lower edge of the tested pressure range";
+  }
+  if (outside.length) {
+    text += ". No prediction for " + outside.map(function (f) { return f.toLowerCase(); }).join(" and ") + ": outside the tested range";
+  }
+  return { tone: edge ? "part" : "ok", head: name + ":", text: text + "." };
+}
+
+function modelChart(model, selId, narrow) {
+  const W = narrow ? 340 : 680;
+  const H = narrow ? 300 : 330;
+  const m = { l: 40, r: 12, t: 12, b: 70 };
+  const x0 = 0.10;
+  const x1 = 0.36;
+  const px = function (o2) { return m.l + (o2 - x0) / (x1 - x0) * (W - m.l - m.r); };
+  const py = function (p) { return m.t + (1 - p) * (H - m.t - m.b); };
+  const fs = narrow ? 11 : 12.5;
+  const svg = svgEl("svg", { class: "mdl-svg", viewBox: "0 0 " + W + " " + H, role: "img",
+    "aria-label": "Chance that a droplet flame goes out on its own against oxygen, with the tested oxygen range and habitat air", focusable: "false" });
+  const curves = model.curve.fuels;
+  const lo = Math.min.apply(null, MODEL_FUELS.map(function (f) { return curves[f].tested_o2_at_curve_pressure[0]; }));
+  const hi = Math.max.apply(null, MODEL_FUELS.map(function (f) { return curves[f].tested_o2_at_curve_pressure[1]; }));
+  function text(attrs, content) {
+    const t = svgEl("text", attrs);
+    t.textContent = content;
+    svg.appendChild(t);
+    return t;
+  }
+  svg.appendChild(svgEl("rect", { x: px(lo), y: m.t, width: px(hi) - px(lo), height: H - m.t - m.b, class: "mdl-tested" }));
+  text({ x: px(lo) + 6, y: H - m.b - 8, class: "mdl-note", "font-size": fs - 1 }, "tested at 1 atm");
+  [0, 0.25, 0.5, 0.75, 1].forEach(function (v) {
+    svg.appendChild(svgEl("line", { x1: m.l, x2: W - m.r, y1: py(v), y2: py(v), class: "mdl-grid" }));
+    text({ x: m.l - 6, y: py(v) + 4, "text-anchor": "end", class: "mdl-tick", "font-size": fs - 1 }, Math.round(v * 100) + "%");
+  });
+  [0.10, 0.15, 0.20, 0.25, 0.30, 0.35].forEach(function (v) {
+    text({ x: px(v), y: H - m.b + 16, "text-anchor": "middle", class: "mdl-tick", "font-size": fs - 1 }, String(Math.round(v * 100)));
+  });
+  text({ x: m.l + (W - m.l - m.r) / 2, y: H - 6, "text-anchor": "middle", class: "mdl-axis", "font-size": fs }, "Oxygen in the air, percent");
+  MODEL_FUELS.forEach(function (f) {
+    const c = curves[f];
+    const up = c.o2.map(function (o, i) { return px(o).toFixed(1) + "," + py(c.hi[i]).toFixed(1); });
+    const down = c.o2.map(function (o, i) { return px(o).toFixed(1) + "," + py(c.lo[i]).toFixed(1); }).reverse();
+    svg.appendChild(svgEl("polygon", { points: up.concat(down).join(" "), fill: MODEL_COLORS[f], "fill-opacity": "0.16" }));
+    svg.appendChild(svgEl("polyline", { points: c.o2.map(function (o, i) { return px(o).toFixed(1) + "," + py(c.p[i]).toFixed(1); }).join(" "), fill: "none", stroke: MODEL_COLORS[f], "stroke-width": "2.4", "stroke-linejoin": "round" }));
+  });
+  const groups = [];
+  model.habitats.forEach(function (h) {
+    const key = h.o2.mid + "|" + h.status;
+    let g = groups.find(function (q) { return q.key === key; });
+    if (!g) {
+      g = { key: key, o2: h.o2.mid, status: h.status, items: [] };
+      groups.push(g);
+    }
+    g.items.push(h);
+  });
+  groups.sort(function (a, b) { return a.o2 - b.o2; });
+  let prevX = -1000;
+  let prevRow = 0;
+  const sel = model.habitats.find(function (h) { return h.id === selId; });
+  groups.forEach(function (g) {
+    const active = g.items.some(function (h) { return h.id === selId; });
+    const gx = px(g.o2);
+    if (active) {
+      svg.appendChild(svgEl("line", { x1: gx, x2: gx, y1: m.t, y2: H - m.b + 22, class: "mdl-sel" }));
+    }
+    g.items.forEach(function (h) {
+      MODEL_FUELS.forEach(function (f, k) {
+        const e = h.fuels[f];
+        if (e.status === "outside") {
+          return;
+        }
+        const dx = k === 0 ? -3.5 : 3.5;
+        svg.appendChild(svgEl("line", { x1: gx + dx, x2: gx + dx, y1: py(e.prediction.lo), y2: py(e.prediction.hi), stroke: MODEL_COLORS[f], "stroke-width": active ? "2.2" : "1.4", opacity: active ? "1" : "0.55" }));
+        svg.appendChild(svgEl("circle", { cx: gx + dx, cy: py(e.prediction.estimate), r: active ? 5.5 : 4, fill: MODEL_COLORS[f], stroke: "#fffdfa", "stroke-width": "1.5", opacity: active ? "1" : "0.7" }));
+      });
+    });
+    if (g.status === "outside") {
+      svg.appendChild(svgEl("circle", { cx: gx, cy: py(0), r: active ? 6 : 4.5, class: "mdl-hollow" + (active ? " on" : "") }));
+    }
+    const label = g.items.map(function (h) { return envShort(h); }).join(", ");
+    const near = gx > W - 70 ? "end" : "middle";
+    const row = gx - prevX < 78 && prevRow === 0 ? 1 : 0;
+    prevX = gx;
+    prevRow = row;
+    if (!narrow || active) {
+      const short = narrow ? label : label.replace("Pressurized rover", "Rover").replace("Moon base, Mars base", "Moon, Mars");
+      text({ x: near === "end" ? gx + 8 : gx, y: H - m.b + 36 + row * 14, "text-anchor": near, class: "mdl-label" + (active ? " on" : ""), "font-size": fs - 0.5 }, short);
+    }
+    svg.appendChild(svgEl("line", { x1: gx, x2: gx, y1: H - m.b, y2: H - m.b + 4, class: "mdl-tickmark" }));
+  });
+  if (sel && sel.status === "outside") {
+    const gx = px(sel.o2.mid);
+    const tx = Math.min(gx + 8, W - m.r);
+    const t = svgEl("text", { x: tx, y: py(0.62), "text-anchor": "end", class: "mdl-refuse", "font-size": fs });
+    const a = svgEl("tspan", { x: tx });
+    a.textContent = "outside tested range:";
+    const b = svgEl("tspan", { x: tx, dy: "1.2em" });
+    b.textContent = "no prediction";
+    t.appendChild(a);
+    t.appendChild(b);
+    svg.appendChild(t);
+  }
+  return svg;
+}
+
+function modelPanel() {
+  const bundle = state.data.models;
+  const model = bundle.models[0];
+  const v = model.validation;
+  const habs = model.habitats;
+  let selId = habs.some(function (h) { return h.id === state.envId; }) ? state.envId : habs[0].id;
+  let narrowNow = window.innerWidth < 640;
+  const chips = el("div", { class: "pills mdl-chips", role: "group", "aria-label": "Habitat" });
+  const chart = el("div", { class: "mdl-chart" });
+  const verdict = el("p", { class: "mdl-verdict", "aria-live": "polite" });
+  function paint() {
+    const hab = habs.find(function (h) { return h.id === selId; });
+    const out = modelVerdict(model, hab);
+    clear(chart);
+    chart.appendChild(modelChart(model, selId, narrowNow));
+    clear(verdict);
+    verdict.className = "mdl-verdict " + out.tone;
+    appendKids(verdict, [el("strong", { text: out.head + " " }), out.text]);
+    Array.prototype.forEach.call(chips.children, function (b) {
+      const on = b.getAttribute("data-env") === selId;
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+  habs.forEach(function (h) {
+    chips.appendChild(el("button", { type: "button", class: "pill", "data-env": h.id, text: envShort(h), onclick: function () {
+      selId = h.id;
+      paint();
+    } }));
+  });
+  window.addEventListener("resize", function () {
+    const now = window.innerWidth < 640;
+    if (now !== narrowNow && document.body.contains(chart)) {
+      narrowNow = now;
+      paint();
+    }
+  });
+  paint();
+  const legend = el("p", { class: "mdl-legend" },
+    MODEL_FUELS.map(function (f) { return el("span", { class: "mdl-key" }, el("i", { style: "background:" + MODEL_COLORS[f] }), f.toLowerCase() + " droplet"); }),
+    el("span", { class: "mdl-key" }, el("i", { class: "band" }), "95% range"),
+    el("span", { class: "mdl-key" }, el("i", { class: "hollow" }), "no prediction"));
+  const card = el("p", { class: "mdl-card", text: "Tested on whole held-out test days: AUC " + v.auc.toFixed(2) + " against " + v.auc_baseline.toFixed(2) + " for guessing; Brier skill +" + fmt(v.brier_skill, 2) +
+    " (95% CI +" + fmt(v.brier_skill_ci95[0], 2) + " to +" + fmt(v.brier_skill_ci95[1], 2) + "). " + model.rows_used.total + " droplet tests." });
+  const lim = bundle.limiting_oxygen;
+  const limRows = MODEL_FUELS.map(function (f) {
+    const b = lim.fuels[f];
+    const pub = b.published;
+    const cite = pub.url ? el("a", { href: pub.url, text: pub.source }) : pub.source;
+    return [f, fmt(b.lowest_o2_with_flame_any_diluent * 100, 0) + "%", b.lowest_o2_completion === null ? "none" : fmt(b.lowest_o2_completion * 100, 0) + "%",
+      el("span", null, pub.value_text + ", ", cite, pub.verified_in_repo ? "" : "*")];
+  });
+  const dil = bundle.diluents;
+  const dilRows = dil.table.map(function (t) {
+    return [t.fuel, t.diluent, String(t.rows), fmt(t.o2_min * 100, 0) + " to " + fmt(t.o2_max * 100, 0) + "%", fmt(t.extinction_share * 100, 0) + "%",
+      t.band_rows ? fmt(t.band_extinction_share * 100, 0) + "% of " + t.band_rows : "none"];
+  });
+  const calRows = v.calibration.map(function (c) {
+    return [fmt(c.from * 100, 0) + " to " + fmt(c.to * 100, 0) + "%", String(c.rows), fmt(c.predicted * 100, 0) + "%", fmt(c.observed * 100, 0) + "%"];
+  });
+  const domRows = MODEL_FUELS.map(function (f) {
+    const d = model.domain.fuels[f];
+    return [f, String(d.rows), fmt(d.o2[0] * 100, 0) + " to " + fmt(d.o2[1] * 100, 0) + "%", fmt(d.pressure_atm[0], 2) + " to " + fmt(d.pressure_atm[1], 2), String(d.n2_only_rows), fmt(d.n2_only_pressure_atm[0], 2) + " to " + fmt(d.n2_only_pressure_atm[1], 2)];
+  });
+  const details = expander("How it was built and where it stops", el("div", null,
+    el("h3", { text: "What it predicts" }),
+    el("p", { text: model.target }),
+    el("p", { class: "small muted", text: model.label_note }),
+    el("h3", { text: "Data and method" }),
+    el("p", { text: model.rows_used.total + " FLEX tests (" + model.rows_used.by_fuel.Heptane + " heptane, " + model.rows_used.by_fuel.Methanol + " methanol); " + model.rows_used.positive + " ended in radiative extinction, " + model.rows_used.negative + " did not. " +
+      model.rows_excluded.count + " row left out: " + model.rows_excluded.reason + ". " + model.method }),
+    el("p", { text: "Checked with " + v.scheme + " Guess to beat: " + v.baseline.toLowerCase() + ". Brier score " + fmt(v.brier_model, 3) + " against " + fmt(v.brier_baseline, 3) + "; the gain is " + fmt(v.brier_gain, 3) + " (95% CI " + fmt(v.brier_gain_ci95[0], 3) + " to " + fmt(v.brier_gain_ci95[1], 3) + ")." }),
+    plainTable(["Predicted", "Tests", "Mean predicted", "Actually went out"], calRows),
+    el("h3", { text: "When it refuses" }),
+    el("p", { text: model.domain.rule }),
+    plainTable(["Fuel", "Tests", "O2 tested", "Pressure tested (atm)", "N2-only tests", "N2-only pressure (atm)"], domRows),
+    el("p", { class: "small muted", text: "The region uses every diluent mix. Tests in plain N2 stop near 1 atm, so air slightly above that is inside the region but above the N2-only tests." }),
+    el("h3", { text: "Limits" }),
+    el("ul", null, model.limits.map(function (t) { return el("li", { text: t }); })),
+    el("h3", { text: "Limiting oxygen, reproduced from the rows" }),
+    el("p", { text: lim.what_the_rows_show }),
+    plainTable(["Fuel", "Lowest O2 with a flame in the rows", "Lowest O2 where the fuel burned out", "Published limit"], limRows),
+    el("p", { class: "small muted", text: "* Quoted from our research notes, not checked against the source text in this project." }),
+    el("h3", { text: "Diluent comparison from the rows" }),
+    plainTable(["Fuel", "Diluent", "Tests", "O2 range", "Went out on its own", "At 15 to 25% O2"], dilRows),
+    el("p", { class: "small muted", text: dil.note })), false, "model-details");
+  return el("section", { class: "data-block", id: "model" },
+    el("h2", { text: "A model that knows its limits" }),
+    el("p", { class: "data-cap", text: "Droplet flames only. It gives an answer where NASA tested, and says no where it did not." }),
+    legend, chart, chips, verdict, card, details);
 }
 
 function mapPanel() {
