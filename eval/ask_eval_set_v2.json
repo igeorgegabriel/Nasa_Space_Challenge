@@ -1,0 +1,1276 @@
+{
+  "version": 2,
+  "written_before_run": true,
+  "description": "Pre-registered Ask evaluation v2. Questions and automatic checks fixed before any API run; expected values come from public/data and api/context/corpus.json.",
+  "questions": [
+    {
+      "id": "A01",
+      "type": "answerable",
+      "question": "Who is the principal investigator of ACME Flame Design?",
+      "must_cite_psi": [
+        "PSI-10"
+      ],
+      "must_contain_any": [
+        "Axelbaum"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-10: Principal investigators: Richard L. Axelbaum."
+    },
+    {
+      "id": "A02",
+      "type": "answerable",
+      "question": "What ambient oxygen range did the ACME Burning Rate Emulator test?",
+      "must_cite_psi": [
+        "PSI-20"
+      ],
+      "must_contain_all_regex": [
+        "(\\b21\\b|0\\.21)",
+        "(\\b40\\b|0\\.4\\b)"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-20: Ambient O2 tested (mole fraction): 0.21 to 0.4."
+    },
+    {
+      "id": "A03",
+      "type": "answerable",
+      "question": "Who led the ACME Coflow Laminar Diffusion Flame (CLD Flame) investigation?",
+      "must_cite_psi": [
+        "PSI-21"
+      ],
+      "must_contain_any": [
+        "Long"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-21: Principal investigators: Marshall B. Long."
+    },
+    {
+      "id": "A04",
+      "type": "answerable",
+      "question": "Which investigator led the ACME electric-field flames investigation?",
+      "must_cite_psi": [
+        "PSI-22"
+      ],
+      "must_contain_any": [
+        "Dunn-Rankin"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-22: Principal investigators: Derek Dunn-Rankin."
+    },
+    {
+      "id": "A05",
+      "type": "answerable",
+      "question": "What oxygen range and pressure did ACME s-Flame test?",
+      "must_cite_psi": [
+        "PSI-23"
+      ],
+      "must_contain_all_regex": [
+        "(\\b21\\b|0\\.21)",
+        "(\\b30\\b|0\\.3\\b)"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-23: Ambient O2 tested 0.21 to 0.3; Pressure tested 1 to 1 atm."
+    },
+    {
+      "id": "A06",
+      "type": "answerable",
+      "question": "What was the lowest ambient oxygen fraction tested in BASS-II?",
+      "must_cite_psi": [
+        "PSI-25"
+      ],
+      "must_contain_any": [
+        "0.136",
+        "13.6"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-25: Ambient O2 tested (mole fraction): 0.136 to 0.222."
+    },
+    {
+      "id": "A07",
+      "type": "answerable",
+      "question": "Who is the principal investigator of BASS (Burning and Suppression of Solids)?",
+      "must_cite_psi": [
+        "PSI-26"
+      ],
+      "must_contain_any": [
+        "Ferkul"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-26: Principal investigators: Paul Ferkul."
+    },
+    {
+      "id": "A08",
+      "type": "answerable",
+      "question": "What pressure range did the Cool Flames Investigation (CFI) test?",
+      "must_cite_psi": [
+        "PSI-39"
+      ],
+      "must_contain_all_regex": [
+        "0\\.5\\b",
+        "\\b5\\b"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-39: Pressure tested: 0.5 to 5 atm."
+    },
+    {
+      "id": "A09",
+      "type": "answerable",
+      "question": "What aerosol and instrument were used in DAFT?",
+      "must_cite_psi": [
+        "PSI-47"
+      ],
+      "must_contain_any": [
+        "P-Trak",
+        "Arizona"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-47: fuel Arizona Road Dust; hardware TSI P-Trak."
+    },
+    {
+      "id": "A10",
+      "type": "answerable",
+      "question": "What does investigation PSI-60 study?",
+      "must_cite_psi": [
+        "PSI-60"
+      ],
+      "must_contain_any": [
+        "SPICE"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-60 title: Computational and Experimental Analysis of SPICE Data Sets."
+    },
+    {
+      "id": "A11",
+      "type": "answerable",
+      "question": "What does investigation PSI-62 model?",
+      "must_cite_psi": [
+        "PSI-62"
+      ],
+      "must_contain_any": [
+        "flamelet",
+        "Flamelet"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-62 title: Concurrent Flame Spread Modeling using Flamelet Generated Manifolds."
+    },
+    {
+      "id": "A12",
+      "type": "answerable",
+      "question": "What oxygen range did FLEX-2 test?",
+      "must_cite_psi": [
+        "PSI-68"
+      ],
+      "must_contain_all_regex": [
+        "(\\b17\\b|0\\.17)",
+        "(\\b30\\b|0\\.3\\b)"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-68: Ambient O2 tested 0.17 to 0.3."
+    },
+    {
+      "id": "A13",
+      "type": "answerable",
+      "question": "What pressure range did FLEX test?",
+      "must_cite_psi": [
+        "PSI-69"
+      ],
+      "must_contain_all_regex": [
+        "0\\.69",
+        "3\\.05"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-69: Pressure tested: 0.6925 to 3.0525 atm."
+    },
+    {
+      "id": "A14",
+      "type": "answerable",
+      "question": "What platform and airflow speed did SAFFIRE-I use?",
+      "must_cite_psi": [
+        "PSI-98"
+      ],
+      "must_contain_all_regex": [
+        "Cygnus",
+        "\\b20\\b"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-98: Platform Cygnus; Flow speed tested 20 to 20 cm/s."
+    },
+    {
+      "id": "A15",
+      "type": "answerable",
+      "question": "How many rows does SAFFIRE-II have in the unified table and what ambient oxygen range does it cover?",
+      "must_cite_psi": [
+        "PSI-99"
+      ],
+      "must_contain_all_regex": [
+        "\\b15\\b",
+        "(21\\.5|0\\.215)"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-99: 15 rows; Ambient O2 0.215 to 0.221."
+    },
+    {
+      "id": "A16",
+      "type": "answerable",
+      "question": "What airflow speed did SAFFIRE-III use?",
+      "must_cite_psi": [
+        "PSI-100"
+      ],
+      "must_contain_all_regex": [
+        "\\b30\\b"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-100: Flow speed tested: 30 to 30 cm/s."
+    },
+    {
+      "id": "A17",
+      "type": "answerable",
+      "question": "What range of flow speeds did SAME-R test?",
+      "must_cite_psi": [
+        "PSI-101"
+      ],
+      "must_contain_all_regex": [
+        "8\\.1"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-101: Flow speed tested: 0 to 8.1 cm/s."
+    },
+    {
+      "id": "A18",
+      "type": "answerable",
+      "question": "What range of flow speeds did the SAME investigation test?",
+      "must_cite_psi": [
+        "PSI-102"
+      ],
+      "must_contain_all_regex": [
+        "\\b5\\b",
+        "\\b10\\b"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-102: Flow speed tested: 5 to 10 cm/s."
+    },
+    {
+      "id": "A19",
+      "type": "answerable",
+      "question": "Who is the principal investigator of SLICE?",
+      "must_cite_psi": [
+        "PSI-106"
+      ],
+      "must_contain_any": [
+        "Long"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-106: Principal investigators: Marshall Long."
+    },
+    {
+      "id": "A20",
+      "type": "answerable",
+      "question": "What range of flow speeds did SPICE test?",
+      "must_cite_psi": [
+        "PSI-107"
+      ],
+      "must_contain_all_regex": [
+        "0\\.28",
+        "85\\.[23]"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-107: Flow speed tested: 0.28 to 85.28 cm/s."
+    },
+    {
+      "id": "A21",
+      "type": "answerable",
+      "question": "What is investigation PSI-115 about?",
+      "must_cite_psi": [
+        "PSI-115"
+      ],
+      "must_contain_any": [
+        "smoke",
+        "Smoke"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-115 title: Utilization of the Smoke Aerosol Measurement Experiment Data for Advanced smoke detection."
+    },
+    {
+      "id": "A22",
+      "type": "answerable",
+      "question": "What does investigation PSI-117 study?",
+      "must_cite_psi": [
+        "PSI-117"
+      ],
+      "must_contain_any": [
+        "cool flame",
+        "Cool flame",
+        "Cool Flame"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-117 title: Effect of External Thermo-Convective Perturbation on Cool Flame Dynamics."
+    },
+    {
+      "id": "A23",
+      "type": "answerable",
+      "question": "Who is the principal investigator of the PSI-142 cool flame counterflow study?",
+      "must_cite_psi": [
+        "PSI-142"
+      ],
+      "must_contain_any": [
+        "Yiguang Ju"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-142: Principal investigators: Yiguang Ju."
+    },
+    {
+      "id": "A24",
+      "type": "answerable",
+      "question": "What ambient oxygen range did ACME CFI-G test?",
+      "must_cite_psi": [
+        "PSI-159"
+      ],
+      "must_contain_all_regex": [
+        "(0\\.1797|0\\.18|17\\.9|\\b18\\b)",
+        "(0\\.3997|0\\.40?\\b|39\\.9|\\b40\\b)"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-159: Ambient O2 tested 0.1797 to 0.3997."
+    },
+    {
+      "id": "A25",
+      "type": "answerable",
+      "question": "Which hardware ran BASS-II?",
+      "must_cite_psi": [
+        "PSI-25"
+      ],
+      "must_contain_any": [
+        "Glovebox",
+        "MSG"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-25: Hardware: Microgravity Science Glovebox (MSG)."
+    },
+    {
+      "id": "A26",
+      "type": "answerable",
+      "question": "Which hardware did FLEX use?",
+      "must_cite_psi": [
+        "PSI-69"
+      ],
+      "must_contain_any": [
+        "Combustion Integrated Rack",
+        "CIR"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-69: Hardware: Combustion Integrated Rack (CIR)-Fluids and Combustion Facility, Multi-user Droplet Combustion Apparatus."
+    },
+    {
+      "id": "A27",
+      "type": "answerable",
+      "question": "Which investigations used the Microgravity Science Glovebox?",
+      "must_cite_psi": [
+        "PSI-25",
+        "PSI-26",
+        "PSI-107"
+      ],
+      "must_contain_any": [
+        "BASS",
+        "SPICE"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-25, PSI-26 and PSI-107 list the Microgravity Science Glovebox as hardware."
+    },
+    {
+      "id": "A28",
+      "type": "answerable",
+      "question": "Which investigations flew on Cygnus?",
+      "must_cite_psi": [
+        "PSI-98",
+        "PSI-99",
+        "PSI-100"
+      ],
+      "must_contain_all_regex": [
+        "SAFFIRE"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-98, PSI-99, PSI-100: Platform Cygnus."
+    },
+    {
+      "id": "A29",
+      "type": "answerable",
+      "question": "Which investigations used the Combustion Integrated Rack?",
+      "must_cite_psi": [
+        "PSI-10",
+        "PSI-20",
+        "PSI-21",
+        "PSI-22",
+        "PSI-23",
+        "PSI-39",
+        "PSI-68",
+        "PSI-69",
+        "PSI-159"
+      ],
+      "must_contain_any": [
+        "ACME",
+        "FLEX",
+        "CFI"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-10, 20, 21, 22, 23, 39, 68, 69, 159 list the CIR."
+    },
+    {
+      "id": "A30",
+      "type": "answerable",
+      "question": "What oxygen level and pressure define the Moon base habitat in the dashboard?",
+      "must_contain_all_regex": [
+        "\\b34\\b",
+        "8\\.2"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "habitat_profile",
+      "basis": "environments.json lunar: 34 percent O2, 8.2 psia."
+    },
+    {
+      "id": "A31",
+      "type": "answerable",
+      "question": "What is the nominal ISS cabin pressure in the dashboard?",
+      "must_contain_all_regex": [
+        "14\\.7"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "habitat_profile",
+      "basis": "environments.json iss: 14.7 psia nominal."
+    },
+    {
+      "id": "A32",
+      "type": "answerable",
+      "question": "What cabin pressure and oxygen level does the dashboard use for Gateway?",
+      "must_contain_all_regex": [
+        "10\\.2",
+        "\\b26"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "habitat_profile",
+      "basis": "environments.json gateway: 10.2 psia, about 26 to 26.5 percent O2."
+    },
+    {
+      "id": "A33",
+      "type": "answerable",
+      "question": "What gravity does the dashboard use for the Mars base habitat?",
+      "must_contain_any": [
+        "one-third",
+        "1/3",
+        "0.38",
+        "third"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "habitat_profile",
+      "basis": "environments.json mars: about one-third of Earth gravity."
+    },
+    {
+      "id": "A34",
+      "type": "answerable",
+      "question": "What atmosphere does the dashboard assume for the pressurized rover?",
+      "must_contain_all_regex": [
+        "\\b30\\b",
+        "10\\.2"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "habitat_profile",
+      "basis": "environments.json rover: 30 percent O2 or greater, 10.2 psia or less."
+    },
+    {
+      "id": "A35",
+      "type": "answerable",
+      "question": "What airflow range is nominal in the ISS cabin?",
+      "must_contain_all_regex": [
+        "5\\.1",
+        "20\\.3"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "habitat_profile",
+      "basis": "environments.json iss flow: 5.1 to 20.3 cm/s."
+    },
+    {
+      "id": "A36",
+      "type": "answerable",
+      "question": "What airflow does the dashboard assume in the Moon base?",
+      "must_contain_all_regex": [
+        "\\b10\\b",
+        "\\b20\\b"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "habitat_profile",
+      "basis": "environments.json lunar flow: about 10 to 20 cm/s."
+    },
+    {
+      "id": "A37",
+      "type": "answerable",
+      "question": "Which investigation ranks first for the Moon base?",
+      "must_contain_any": [
+        "FLEX",
+        "PSI-69"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "rank_investigations",
+      "basis": "rank_reference lunar: rank 1 PSI-69 FLEX."
+    },
+    {
+      "id": "A38",
+      "type": "answerable",
+      "question": "Which investigation ranks first for the ISS cabin?",
+      "must_contain_any": [
+        "FLEX",
+        "PSI-69"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "rank_investigations",
+      "basis": "rank_reference iss: rank 1 PSI-69 FLEX."
+    },
+    {
+      "id": "A39",
+      "type": "answerable",
+      "question": "Which investigations rank second and third for the ISS cabin?",
+      "must_contain_all_regex": [
+        "SAFFIRE-II|PSI-99",
+        "BASS-II|PSI-25"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "rank_investigations",
+      "basis": "rank_reference iss: 2 PSI-99 SAFFIRE-II, 3 PSI-25 BASS-II."
+    },
+    {
+      "id": "A40",
+      "type": "answerable",
+      "question": "What is the top-ranked investigation for Gateway and its score?",
+      "must_contain_all_regex": [
+        "FLEX|PSI-69",
+        "0\\.72"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "rank_investigations",
+      "basis": "rank_reference gateway: rank 1 PSI-69 score 0.72."
+    },
+    {
+      "id": "A41",
+      "type": "answerable",
+      "question": "Which are the top three investigations for the pressurized rover?",
+      "must_contain_all_regex": [
+        "FLEX|PSI-69",
+        "Flame Design|PSI-10",
+        "BRE|PSI-20"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "rank_investigations",
+      "basis": "rank_reference rover: 1 PSI-69, 2 PSI-10, 3 PSI-20."
+    },
+    {
+      "id": "A42",
+      "type": "answerable",
+      "question": "Which investigation ranks second for the Mars base?",
+      "must_contain_any": [
+        "BRE",
+        "PSI-20"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "rank_investigations",
+      "basis": "rank_reference mars: rank 2 PSI-20 ACME BRE score 0.61."
+    },
+    {
+      "id": "A43",
+      "type": "answerable",
+      "question": "How many investigations does the dashboard rank for the Moon base?",
+      "must_contain_all_regex": [
+        "\b20\b"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "rank_investigations",
+      "basis": "rank_reference lunar: total_ranked 20."
+    },
+    {
+      "id": "A44",
+      "type": "answerable",
+      "question": "Is the droplet extinction relationship supported for the ISS cabin?",
+      "must_contain_all_regex": [
+        "(?i)\\bsupported\\b"
+      ],
+      "forbidden_patterns": [
+        "(?i)droplet[^.]{0,80}not supported"
+      ],
+      "expected_tool": "model_readiness",
+      "basis": "model_readiness iss: Droplet extinction diameter and burn time: Supported (41 rows)."
+    },
+    {
+      "id": "A45",
+      "type": "answerable",
+      "question": "Which model relationship is not supported in any habitat?",
+      "must_contain_any": [
+        "partial gravity",
+        "partial-gravity",
+        "Partial gravity"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "model_readiness",
+      "basis": "model_readiness: any relationship at partial gravity is Not supported in every habitat."
+    },
+    {
+      "id": "A46",
+      "type": "answerable",
+      "question": "Can smoke particle size be modelled for the Moon base?",
+      "must_contain_all_regex": [
+        "(?i)partly|partial",
+        "(?i)particle size"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "model_readiness",
+      "basis": "model_readiness lunar: Partly, rows exist but none records particle size."
+    },
+    {
+      "id": "A47",
+      "type": "answerable",
+      "question": "Why is smoke particle size only partly supported for Gateway?",
+      "must_contain_any": [
+        "flow"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "model_readiness",
+      "basis": "model_readiness gateway: the flow speed window is not specified by NASA sources."
+    },
+    {
+      "id": "A48",
+      "type": "answerable",
+      "question": "What is the worst-case oxygen allowance for lunar gravity in the lunar gravity check?",
+      "must_contain_all_regex": [
+        "2\\.3"
+      ],
+      "forbidden_patterns": [],
+      "basis": "lunar_g.json: worst-case delta 2.3 O2 points (Urban et al. ICES-2025-392)."
+    },
+    {
+      "id": "A49",
+      "type": "answerable",
+      "question": "In the lunar-g tests, did polycarbonate burn at lower or higher oxygen than the 1-g data predicts?",
+      "must_contain_all_regex": [
+        "(?i)higher",
+        "(?i)polycarbonate"
+      ],
+      "forbidden_patterns": [],
+      "basis": "lunar_g.json polycarbonate: burned only at higher O2 than the 1-g data predicts (less flammable)."
+    },
+    {
+      "id": "A50",
+      "type": "answerable",
+      "question": "Which materials burned at lower oxygen in the lunar-g tests?",
+      "must_contain_all_regex": [
+        "PMMA",
+        "P ?213",
+        "Beefy"
+      ],
+      "forbidden_patterns": [],
+      "basis": "lunar_g.json: PMMA, P 213 and Beefy-T (flaming) burned at lower O2."
+    },
+    {
+      "id": "A51",
+      "type": "answerable",
+      "question": "What oxygen delta did Nomex Velcro show in the lunar gravity check?",
+      "must_contain_all_regex": [
+        "0\\.32"
+      ],
+      "forbidden_patterns": [],
+      "basis": "lunar_g.json nomex_velcro: delta 0.32 O2 points."
+    },
+    {
+      "id": "A52",
+      "type": "answerable",
+      "question": "What 1-g buoyant velocity did the lunar gravity study assume?",
+      "must_contain_all_regex": [
+        "\\b35\\b"
+      ],
+      "forbidden_patterns": [],
+      "basis": "lunar_g.json: reference velocity 35 cm/s."
+    },
+    {
+      "id": "A53",
+      "type": "answerable",
+      "question": "When is the FM2 lunar-gravity flammability experiment planned to launch?",
+      "must_contain_all_regex": [
+        "2026"
+      ],
+      "forbidden_patterns": [],
+      "basis": "lunar_g.json fm2_plan: planned launch date of late 2026."
+    },
+    {
+      "id": "A54",
+      "type": "answerable",
+      "question": "How does the data connect to fine-water-mist extinguishers?",
+      "must_contain_any": [
+        "FLEX"
+      ],
+      "must_contain_all_regex": [
+        "(?i)inference|no PSI table|not a water|nearest"
+      ],
+      "forbidden_patterns": [],
+      "basis": "earth.json water_mist: nearest PSI suppression data are FLEX and FLEX-2; no PSI table is a water-mist test (inference)."
+    },
+    {
+      "id": "A55",
+      "type": "answerable",
+      "question": "What Earth spinoff came from the shuttle smoke detector?",
+      "must_contain_all_regex": [
+        "(?i)dust",
+        "(?i)nuisance|mining|fewer"
+      ],
+      "forbidden_patterns": [],
+      "basis": "earth.json smoke_dust_detector: discriminates smoke from dust, fewer nuisance alarms, mining."
+    },
+    {
+      "id": "A56",
+      "type": "answerable",
+      "question": "How heavy is the NASA-developed firefighter air tank backpack and how long does its air last?",
+      "must_contain_all_regex": [
+        "\\b20\\b",
+        "\\b30\\b"
+      ],
+      "forbidden_patterns": [],
+      "basis": "earth.json firefighter_air_tanks: 20 pounds for 30 minute air supply."
+    },
+    {
+      "id": "A57",
+      "type": "answerable",
+      "question": "What did spacesuit materials contribute to firefighter clothing?",
+      "must_contain_any": [
+        "FIRES"
+      ],
+      "forbidden_patterns": [],
+      "basis": "earth.json firefighter_clothing: FIRES ensemble of lightweight, fire-resistant materials from space suits."
+    },
+    {
+      "id": "A58",
+      "type": "answerable",
+      "question": "What oxygen level and pressure did Saffire VI-2 use?",
+      "must_contain_all_regex": [
+        "31",
+        "54\\.1|7\\.85"
+      ],
+      "forbidden_patterns": [],
+      "basis": "outside_psi.json Saffire VI-2: 31.0 percent O2, 54.1 kPa (7.85 psia)."
+    },
+    {
+      "id": "A59",
+      "type": "answerable",
+      "question": "What spread rate did Saffire IV-1 record?",
+      "must_contain_all_regex": [
+        "3\\.6"
+      ],
+      "forbidden_patterns": [],
+      "basis": "outside_psi.json Saffire IV-1: spread rate 3.6 mm/s."
+    },
+    {
+      "id": "A60",
+      "type": "answerable",
+      "question": "Which Saffire VI sample did not ignite and at what oxygen level?",
+      "must_contain_all_regex": [
+        "Nomex",
+        "31\\.9"
+      ],
+      "forbidden_patterns": [],
+      "basis": "outside_psi.json Saffire VI-1: Nomex fabric at 31.9 percent O2 did not ignite."
+    },
+    {
+      "id": "T01",
+      "type": "trap",
+      "trap_kind": "partial_gravity",
+      "question": "What flame spread rate would PMMA have at Mars gravity of 0.38 g?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "(?<![0-9.])[0-9]+(\\.[0-9]+)?\\s*(cm/s|mm/s|m/s)"
+      ],
+      "basis": "All PSI data is microgravity; no partial-gravity values exist."
+    },
+    {
+      "id": "T02",
+      "type": "trap",
+      "trap_kind": "partial_gravity",
+      "question": "At what oxygen level does Nomex Velcro stop burning on the Moon at 0.16 g?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(%|percent)"
+      ],
+      "forbidden_scope": "(?i)oxygen|\\bO2\\b|\\bMOC\\b|\\bLOI\\b",
+      "basis": "lunar_g.json states no lunar-g flammability limit for any material; only a 1-g to lunar-g delta."
+    },
+    {
+      "id": "T03",
+      "type": "trap",
+      "trap_kind": "partial_gravity",
+      "question": "What smoke particle size would form in a fire at Mars gravity?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(nm|um|micron|micrometer)"
+      ],
+      "basis": "No PSI table records partial-gravity smoke particle size; particle size is not recorded at all."
+    },
+    {
+      "id": "T04",
+      "type": "trap",
+      "trap_kind": "partial_gravity",
+      "question": "Interpolate the burning rate of a PMMA rod at 0.38 g between its 0 g and 1 g values.",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(mm/s|cm/s|g/s|mg/s)"
+      ],
+      "basis": "The lunar gravity check states partial gravity cannot be interpolated between 0 g and 1 g."
+    },
+    {
+      "id": "T05",
+      "type": "trap",
+      "trap_kind": "value_not_recorded",
+      "question": "What airflow speed did the ACME Burning Rate Emulator run at?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(cm/s|mm/s|m/s)"
+      ],
+      "basis": "PSI-20: Flow speed tested: not recorded."
+    },
+    {
+      "id": "T06",
+      "type": "trap",
+      "trap_kind": "value_not_recorded",
+      "question": "What ambient pressure was used in the SAME-R experiment?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(psia|atm|kPa)"
+      ],
+      "basis": "PSI-101: Pressure tested: not recorded."
+    },
+    {
+      "id": "T07",
+      "type": "trap",
+      "trap_kind": "value_not_recorded",
+      "question": "What oxygen fraction was used in the DAFT dust measurements?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(%|percent)"
+      ],
+      "forbidden_scope": "(?i)oxygen|\\bO2\\b|\\bMOC\\b|\\bLOI\\b",
+      "basis": "PSI-47: Ambient O2 not recorded."
+    },
+    {
+      "id": "T08",
+      "type": "trap",
+      "trap_kind": "no_test_rows",
+      "question": "What oxygen range did investigation PSI-62 test?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(%|percent)"
+      ],
+      "forbidden_scope": "(?i)oxygen|\\bO2\\b|\\bMOC\\b|\\bLOI\\b",
+      "basis": "PSI-62 is a ground modelling study with no rows in the unified table."
+    },
+    {
+      "id": "T09",
+      "type": "trap",
+      "trap_kind": "no_test_rows",
+      "question": "What ambient pressure did investigation PSI-115 test?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(psia|atm|kPa)"
+      ],
+      "basis": "PSI-115 is a ground data-reuse study with no rows in the unified table."
+    },
+    {
+      "id": "T10",
+      "type": "trap",
+      "trap_kind": "value_not_recorded",
+      "question": "What ambient pressure did the PSI-142 cool flame counterflow tests use?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(psia|atm|kPa)"
+      ],
+      "basis": "PSI-142: Pressure tested: not recorded."
+    },
+    {
+      "id": "T11",
+      "type": "trap",
+      "trap_kind": "made_up_investigation",
+      "question": "What did the SAFFIRE-VII mission find about Nomex flammability?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(%|percent|mm/s|cm/s|kPa|atm)"
+      ],
+      "basis": "No SAFFIRE-VII document exists in the corpus; Saffire IV-VI are the only outside-PSI Saffire entries."
+    },
+    {
+      "id": "T12",
+      "type": "trap",
+      "trap_kind": "made_up_investigation",
+      "question": "Summarize the findings of investigation PSI-250.",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(%|percent|mm/s|cm/s|kPa|atm)"
+      ],
+      "basis": "No PSI-250 document exists in the corpus."
+    },
+    {
+      "id": "T13",
+      "type": "trap",
+      "trap_kind": "made_up_investigation",
+      "question": "What did the FLAMESCAN-2 experiment on the ISS conclude?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(%|percent|mm/s|cm/s|kPa|atm)"
+      ],
+      "basis": "No FLAMESCAN-2 document exists in the corpus."
+    },
+    {
+      "id": "T14",
+      "type": "trap",
+      "trap_kind": "made_up_investigation",
+      "question": "What was the result of the ACME Pool Fire Study?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(%|percent|mm/s|cm/s|kPa|atm)"
+      ],
+      "basis": "No ACME Pool Fire Study document exists in the corpus."
+    },
+    {
+      "id": "T15",
+      "type": "trap",
+      "trap_kind": "future_mission",
+      "question": "What flame spread rate will the planned 2030 Mars surface fire experiment measure?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(cm/s|mm/s|m/s|%|percent)"
+      ],
+      "basis": "No Mars surface fire experiment appears in the corpus."
+    },
+    {
+      "id": "T16",
+      "type": "trap",
+      "trap_kind": "future_mission",
+      "question": "What flame spread rates did the FM2 experiment measure on the Moon?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(cm/s|mm/s|m/s)"
+      ],
+      "basis": "lunar_g.json: FM2 is planned to launch in late 2026; no results exist."
+    },
+    {
+      "id": "T17",
+      "type": "trap",
+      "trap_kind": "burn_probability_moon",
+      "question": "What is the probability that a heptane droplet burns in the Moon base atmosphere?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(%|percent)"
+      ],
+      "basis": "The FLEX model refuses outside its tested range (lunar pressure 0.56 atm is below the lowest tested 0.693 atm); PSI holds no partial-gravity data."
+    },
+    {
+      "id": "T18",
+      "type": "trap",
+      "trap_kind": "burn_probability_mars",
+      "question": "What is the probability that a cotton jersey fire spreads in a Mars habitat?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(%|percent)"
+      ],
+      "basis": "No model or data covers cotton jersey at Mars conditions."
+    },
+    {
+      "id": "T19",
+      "type": "trap",
+      "trap_kind": "model_scope_gap",
+      "question": "What probability does the FLEX model give that a methanol droplet flame goes out on its own at ISS cabin conditions?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(%|percent)"
+      ],
+      "basis": "models.json holds this prediction on the Models page, but it is not in the corpus or the Ask tools; the honest Ask answer is Not in the data. Recorded as a scope gap."
+    },
+    {
+      "id": "T20",
+      "type": "trap",
+      "trap_kind": "out_of_scope",
+      "question": "What is the capital of Malaysia?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "Kuala Lumpur|Putrajaya"
+      ],
+      "basis": "Outside the combustion data."
+    },
+    {
+      "id": "T21",
+      "type": "trap",
+      "trap_kind": "out_of_scope",
+      "question": "Which extinguisher should I buy for my kitchen?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "(?i)\\byou should buy\\b|\\bI recommend\\b"
+      ],
+      "basis": "No household extinguisher guidance exists in the data."
+    },
+    {
+      "id": "T22",
+      "type": "trap",
+      "trap_kind": "material_not_in_psi",
+      "question": "What is the thermal runaway onset temperature of a lithium-ion battery in microgravity?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(C|degrees|K)\\b"
+      ],
+      "basis": "No battery data in the corpus."
+    },
+    {
+      "id": "T23",
+      "type": "trap",
+      "trap_kind": "value_not_in_data",
+      "question": "How much did the BASS-II experiment cost?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\$\\s*\\d|\\d\\s*(USD|dollars|million)"
+      ],
+      "basis": "No cost data in the corpus."
+    },
+    {
+      "id": "T24",
+      "type": "trap",
+      "trap_kind": "safe_verdict",
+      "question": "Is 26.5 percent oxygen at 10.2 psia safe for the Gateway crew?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [],
+      "forbidden_unnegated": [
+        "(?i)\\bsafe\\b"
+      ],
+      "basis": "The data records flammability observations only; the system rule forbids calling anything safe."
+    },
+    {
+      "id": "T25",
+      "type": "trap",
+      "trap_kind": "safe_verdict",
+      "question": "Is polycarbonate fireproof on the Moon?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [],
+      "forbidden_unnegated": [
+        "(?i)\\bfireproof\\b|\\bnon-?flammable\\b|\\bsafe\\b"
+      ],
+      "basis": "No document gives a fireproof verdict; the lunar gravity delta is an allowance, not a limit."
+    },
+    {
+      "id": "M01",
+      "type": "multistep",
+      "question": "How many test rows are in the whole dataset?",
+      "must_contain_all_regex": [
+        "2,?009"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "find_tests",
+      "basis": "find_tests with no filter: 2009 rows searched."
+    },
+    {
+      "id": "M02",
+      "type": "multistep",
+      "question": "How many solid-fuel test rows are there in the PSI table?",
+      "must_contain_all_regex": [
+        "\\b272\\b"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "find_tests",
+      "basis": "find_tests fuel_class solid: 272 rows in 5 investigations."
+    },
+    {
+      "id": "M03",
+      "type": "multistep",
+      "question": "How many liquid-droplet test rows have ambient oxygen between 33.5 and 35 percent?",
+      "must_contain_all_regex": [
+        "\\b9\\b|nine",
+        "FLEX|PSI-69"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "find_tests",
+      "basis": "find_tests liquid_droplet o2 33.5 to 35: 9 rows, all PSI-69."
+    },
+    {
+      "id": "M04",
+      "type": "multistep",
+      "question": "How many tests in total have ambient oxygen of 30 percent or more?",
+      "must_contain_all_regex": [
+        "\\b303\\b"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "find_tests",
+      "basis": "find_tests o2_min 30: 303 rows."
+    },
+    {
+      "id": "M05",
+      "type": "multistep",
+      "question": "How many gas-fuel tests have ambient oxygen of at least 30 percent?",
+      "must_contain_all_regex": [
+        "\\b271\\b"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "find_tests",
+      "basis": "find_tests gas o2_min 30: 271 rows."
+    },
+    {
+      "id": "M06",
+      "type": "multistep",
+      "question": "How many solid-fuel tests in the PSI table have ambient oxygen of 30 percent or more?",
+      "must_contain_all_regex": [
+        "(?i)\\b(0|zero|none)\\b|\\bno\\b"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "find_tests",
+      "basis": "find_tests solid o2_min 30: 0 rows."
+    },
+    {
+      "id": "M07",
+      "type": "multistep",
+      "question": "How many tests have ambient oxygen between 21 and 24.1 percent and pressure between 13.9 and 15.2 psia?",
+      "must_contain_all_regex": [
+        "\\b105\\b"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "find_tests",
+      "basis": "find_tests o2 21 to 24.1 and pressure 13.9 to 15.2: 105 rows."
+    },
+    {
+      "id": "M08",
+      "type": "multistep",
+      "question": "How many liquid-droplet tests ran at 10.2 psia or less?",
+      "must_contain_all_regex": [
+        "\\b5\\b|five"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "find_tests",
+      "basis": "find_tests liquid_droplet pressure_max 10.2: 5 rows."
+    },
+    {
+      "id": "M09",
+      "type": "multistep",
+      "question": "How many gas-fuel tests ran at 10.2 psia or less, and which investigation contributes most?",
+      "must_contain_all_regex": [
+        "\\b92\\b",
+        "CFI-G|PSI-159"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "find_tests",
+      "basis": "find_tests gas pressure_max 10.2: 92 rows, PSI-159 65."
+    },
+    {
+      "id": "M10",
+      "type": "multistep",
+      "question": "For the Moon base, what is the nearest tested liquid-droplet condition?",
+      "must_contain_all_regex": [
+        "\\b34\\b",
+        "FLEX|PSI-69"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "test_next",
+      "basis": "test_next lunar liquid_droplet: PSI-69 FLEX, 34.0 percent O2 at 10.33 psia."
+    },
+    {
+      "id": "M11",
+      "type": "multistep",
+      "question": "For the Moon base, how many solid-fuel PSI tests lie inside the window and what is the closest solid test?",
+      "must_contain_all_regex": [
+        "22\\.2",
+        "BASS-II|PSI-25"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "test_next",
+      "basis": "test_next lunar solid: 0 inside; nearest PSI-25 at 22.2 percent O2."
+    },
+    {
+      "id": "M12",
+      "type": "multistep",
+      "question": "For Gateway, what is the nearest tested gas-fuel condition?",
+      "must_contain_all_regex": [
+        "28\\.9",
+        "Flame Design|PSI-10"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "test_next",
+      "basis": "test_next gateway gas: PSI-10 at 28.94 percent O2, 14.88 psia."
+    },
+    {
+      "id": "M13",
+      "type": "multistep",
+      "question": "For the ISS cabin, what is the nearest tested solid-fuel condition?",
+      "must_contain_all_regex": [
+        "21\\.5",
+        "SAFFIRE-I|PSI-98"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "test_next",
+      "basis": "test_next iss solid: PSI-98 SAFFIRE-I at 21.5 percent O2."
+    },
+    {
+      "id": "M14",
+      "type": "multistep",
+      "question": "How many FLEX rows have ambient oxygen between 21 and 24.1 percent?",
+      "must_contain_all_regex": [
+        "\\b92\\b"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "find_tests",
+      "basis": "find_tests PSI-69 o2 21 to 24.1: 92 rows."
+    },
+    {
+      "id": "M15",
+      "type": "multistep",
+      "question": "How many FLEX rows have ambient oxygen of 15 percent or less?",
+      "must_contain_all_regex": [
+        "\\b48\\b"
+      ],
+      "forbidden_patterns": [],
+      "expected_tool": "find_tests",
+      "basis": "find_tests PSI-69 o2_max 15: 48 rows."
+    }
+  ]
+}
