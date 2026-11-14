@@ -60,6 +60,8 @@
      "rows_counted": 0,
      "rows_total": 369,
      "rows_with_response": 269,
+     "short": "None of 269 rows with a response lies inside the window.",
+     "skipped_axes": [],
      "status": "Partly"
     },
     {
@@ -112,6 +114,8 @@
      "rows_counted": 0,
      "rows_total": 678,
      "rows_with_response": 303,
+     "short": "None of 303 rows with a response lies inside the window.",
+     "skipped_axes": [],
      "status": "Partly"
     },
     {
@@ -178,10 +182,12 @@
      "rows_counted": 0,
      "rows_total": 272,
      "rows_with_response": 11,
+     "short": "None of 11 rows with a response lies inside the window.",
+     "skipped_axes": [],
      "status": "Partly"
     },
     {
-     "gap": "No particle size is recorded in the table for these rows. To close it: The measured particle-size results of each SAME and SAME-R test, joined to the flow speed and aging times already in the table.",
+     "gap": "The flow speed window is not specified by NASA sources for this environment, so it is not used to match rows. No particle size is recorded in the table for these rows. To close it: The measured particle-size results of each SAME and SAME-R test, joined to the flow speed and aging times already in the table.",
      "id": "smoke_particle_size",
      "investigations": [
       {
@@ -201,8 +207,6 @@
      ],
      "link": {
       "env": "gateway",
-      "fmax": 20.0,
-      "fmin": 10.0,
       "inv": "PSI-102,PSI-101"
      },
      "ranges": {
@@ -214,10 +218,14 @@
       "o2": null,
       "pressure": null
      },
-     "reason": "117 rows in 2 investigations; 0 carry a recorded particle size; 0 of those count inside the window (flow speed 10 to 20 cm/s). Rule: at least 10.",
+     "reason": "117 rows in 2 investigations; 0 carry a recorded particle size; 0 of those count inside the window (). Rule: at least 10.",
      "rows_counted": 0,
      "rows_total": 117,
      "rows_with_response": 0,
+     "short": "The flow speed window is not specified by NASA sources, so rows cannot be matched.",
+     "skipped_axes": [
+      "flow"
+     ],
      "status": "Partly"
     },
     {
@@ -236,14 +244,16 @@
      "rows_counted": 0,
      "rows_total": 0,
      "rows_with_response": 0,
+     "short": "PSI holds no partial-gravity data.",
+     "skipped_axes": [],
      "status": "Not supported"
     }
    ],
    "name": "Gateway-class station",
    "window": {
     "flow_cm_s": {
-     "max": 20.0,
-     "min": 10.0
+     "max": null,
+     "min": null
     },
     "o2": {
      "max": 0.265,
@@ -315,6 +325,8 @@
      "rows_counted": 41,
      "rows_total": 369,
      "rows_with_response": 269,
+     "short": "41 rows with a recorded response lie inside the window.",
+     "skipped_axes": [],
      "status": "Supported"
     },
     {
@@ -367,6 +379,8 @@
      "rows_counted": 28,
      "rows_total": 678,
      "rows_with_response": 303,
+     "short": "28 rows with a recorded response lie inside the window.",
+     "skipped_axes": [],
      "status": "Supported"
     },
     {
@@ -433,6 +447,8 @@
      "rows_counted": 8,
      "rows_total": 272,
      "rows_with_response": 11,
+     "short": "Only 8 of the 10 needed rows lie inside the window.",
+     "skipped_axes": [],
      "status": "Partly"
     },
     {
@@ -473,6 +489,8 @@
      "rows_counted": 0,
      "rows_total": 117,
      "rows_with_response": 0,
+     "short": "Rows exist but none records particle size.",
+     "skipped_axes": [],
      "status": "Partly"
     },
     {
@@ -491,6 +509,8 @@
      "rows_counted": 0,
      "rows_total": 0,
      "rows_with_response": 0,
+     "short": "PSI holds no partial-gravity data.",
+     "skipped_axes": [],
      "status": "Not supported"
     }
    ],
@@ -570,6 +590,8 @@
      "rows_counted": 0,
      "rows_total": 369,
      "rows_with_response": 269,
+     "short": "None of 269 rows with a response lies inside the window.",
+     "skipped_axes": [],
      "status": "Partly"
     },
     {
@@ -622,6 +644,8 @@
      "rows_counted": 2,
      "rows_total": 678,
      "rows_with_response": 303,
+     "short": "Only 2 of the 10 needed rows lie inside the window.",
+     "skipped_axes": [],
      "status": "Partly"
     },
     {
@@ -688,6 +712,8 @@
      "rows_counted": 0,
      "rows_total": 272,
      "rows_with_response": 11,
+     "short": "None of 11 rows with a response lies inside the window.",
+     "skipped_axes": [],
      "status": "Partly"
     },
     {
@@ -728,6 +754,8 @@
      "rows_counted": 0,
      "rows_total": 117,
      "rows_with_response": 0,
+     "short": "Rows exist but none records particle size.",
+     "skipped_axes": [],
      "status": "Partly"
     },
     {
@@ -746,6 +774,8 @@
      "rows_counted": 0,
      "rows_total": 0,
      "rows_with_response": 0,
+     "short": "PSI holds no partial-gravity data.",
+     "skipped_axes": [],
      "status": "Not supported"
     }
    ],
@@ -825,6 +855,8 @@
      "rows_counted": 0,
      "rows_total": 369,
      "rows_with_response": 269,
+     "short": "None of 269 rows with a response lies inside the window.",
+     "skipped_axes": [],
      "status": "Partly"
     },
     {
@@ -877,6 +909,8 @@
      "rows_counted": 2,
      "rows_total": 678,
      "rows_with_response": 303,
+     "short": "Only 2 of the 10 needed rows lie inside the window.",
+     "skipped_axes": [],
      "status": "Partly"
     },
     {
@@ -943,10 +977,12 @@
      "rows_counted": 0,
      "rows_total": 272,
      "rows_with_response": 11,
+     "short": "None of 11 rows with a response lies inside the window.",
+     "skipped_axes": [],
      "status": "Partly"
     },
     {
-     "gap": "No particle size is recorded in the table for these rows. To close it: The measured particle-size results of each SAME and SAME-R test, joined to the flow speed and aging times already in the table.",
+     "gap": "The flow speed window is not specified by NASA sources for this environment, so it is not used to match rows. No particle size is recorded in the table for these rows. To close it: The measured particle-size results of each SAME and SAME-R test, joined to the flow speed and aging times already in the table.",
      "id": "smoke_particle_size",
      "investigations": [
       {
@@ -966,8 +1002,6 @@
      ],
      "link": {
       "env": "mars",
-      "fmax": 20.0,
-      "fmin": 10.0,
       "inv": "PSI-102,PSI-101"
      },
      "ranges": {
@@ -979,10 +1013,14 @@
       "o2": null,
       "pressure": null
      },
-     "reason": "117 rows in 2 investigations; 0 carry a recorded particle size; 0 of those count inside the window (flow speed 10 to 20 cm/s). Rule: at least 10.",
+     "reason": "117 rows in 2 investigations; 0 carry a recorded particle size; 0 of those count inside the window (). Rule: at least 10.",
      "rows_counted": 0,
      "rows_total": 117,
      "rows_with_response": 0,
+     "short": "The flow speed window is not specified by NASA sources, so rows cannot be matched.",
+     "skipped_axes": [
+      "flow"
+     ],
      "status": "Partly"
     },
     {
@@ -1001,14 +1039,16 @@
      "rows_counted": 0,
      "rows_total": 0,
      "rows_with_response": 0,
+     "short": "PSI holds no partial-gravity data.",
+     "skipped_axes": [],
      "status": "Not supported"
     }
    ],
    "name": "Mars surface habitat",
    "window": {
     "flow_cm_s": {
-     "max": 20.0,
-     "min": 10.0
+     "max": null,
+     "min": null
     },
     "o2": {
      "max": 0.35,
@@ -1080,6 +1120,8 @@
      "rows_counted": 0,
      "rows_total": 369,
      "rows_with_response": 269,
+     "short": "None of 269 rows with a response lies inside the window.",
+     "skipped_axes": [],
      "status": "Partly"
     },
     {
@@ -1132,6 +1174,8 @@
      "rows_counted": 4,
      "rows_total": 678,
      "rows_with_response": 303,
+     "short": "Only 4 of the 10 needed rows lie inside the window.",
+     "skipped_axes": [],
      "status": "Partly"
     },
     {
@@ -1198,10 +1242,12 @@
      "rows_counted": 0,
      "rows_total": 272,
      "rows_with_response": 11,
+     "short": "None of 11 rows with a response lies inside the window.",
+     "skipped_axes": [],
      "status": "Partly"
     },
     {
-     "gap": "No particle size is recorded in the table for these rows. To close it: The measured particle-size results of each SAME and SAME-R test, joined to the flow speed and aging times already in the table.",
+     "gap": "The flow speed window is not specified by NASA sources for this environment, so it is not used to match rows. No particle size is recorded in the table for these rows. To close it: The measured particle-size results of each SAME and SAME-R test, joined to the flow speed and aging times already in the table.",
      "id": "smoke_particle_size",
      "investigations": [
       {
@@ -1221,8 +1267,6 @@
      ],
      "link": {
       "env": "rover",
-      "fmax": 20.0,
-      "fmin": 10.0,
       "inv": "PSI-102,PSI-101"
      },
      "ranges": {
@@ -1234,10 +1278,14 @@
       "o2": null,
       "pressure": null
      },
-     "reason": "117 rows in 2 investigations; 0 carry a recorded particle size; 0 of those count inside the window (flow speed 10 to 20 cm/s). Rule: at least 10.",
+     "reason": "117 rows in 2 investigations; 0 carry a recorded particle size; 0 of those count inside the window (). Rule: at least 10.",
      "rows_counted": 0,
      "rows_total": 117,
      "rows_with_response": 0,
+     "short": "The flow speed window is not specified by NASA sources, so rows cannot be matched.",
+     "skipped_axes": [
+      "flow"
+     ],
      "status": "Partly"
     },
     {
@@ -1256,14 +1304,16 @@
      "rows_counted": 0,
      "rows_total": 0,
      "rows_with_response": 0,
+     "short": "PSI holds no partial-gravity data.",
+     "skipped_axes": [],
      "status": "Not supported"
     }
    ],
    "name": "Pressurized rover (lunar)",
    "window": {
     "flow_cm_s": {
-     "max": 20.0,
-     "min": 10.0
+     "max": null,
+     "min": null
     },
     "o2": {
      "max": 0.35,

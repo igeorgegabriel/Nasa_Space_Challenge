@@ -2,10 +2,10 @@
  "environments": [
   {
    "flow_cm_s": {
-    "assumption": false,
     "display": "5.1 to 20.3 cm/s nominal (10 to 40 ft/min)",
     "max": 20.3,
     "min": 5.1,
+    "not_specified": false,
     "note": "Opened full text of both. NanoRacks IDD is a payload interface document quoting ISS conditions (SSP 41000 itself not public, not opened); Raatschen is a conference paper on the Columbus module.",
     "point_value": false,
     "sources": [
@@ -26,10 +26,10 @@
     "window_min": 5.1
    },
    "gravity": {
-    "assumption": false,
     "bracket_note": "All PSI data is microgravity (0 g), the same gravity level as this environment.",
     "display": "0 g (free fall)",
     "g": 0.0,
+    "not_specified": false,
     "note": "Challenge-defined baseline.",
     "sources": [
      {
@@ -43,10 +43,10 @@
    "id": "iss",
    "name": "ISS / spacecraft cabin",
    "o2": {
-    "assumption": false,
     "display": "21 percent nominal, up to 24.1 percent maximum allowable",
     "max": 0.241,
     "min": 0.21,
+    "not_specified": false,
     "note": "Opened full text. ppO2 band 2.83-3.35 psia is 19.3-22.8 percent at 14.7 psia. Orion/MPCV cabin 21 to 26.5 percent at 10.2-14.7 psia per NESC Table 1. Orion HSIR 30 mole percent max is a search snippet only (ICES-2015-148, not opened).",
     "point_value": false,
     "sources": [
@@ -67,10 +67,10 @@
     "window_min": 0.21
    },
    "pressure_atm": {
-    "assumption": false,
     "display": "14.7 psia nominal (1.000 atm), design band 13.9-15.2 psia",
     "max": 1.034,
     "min": 0.946,
+    "not_specified": false,
     "note": "Opened full text. Pressure extremes 0-104.8 kPa (0-15.2 psia) also appear in the NanoRacks IDD ISS environment table.",
     "point_value": false,
     "sources": [
@@ -87,21 +87,21 @@
   },
   {
    "flow_cm_s": {
-    "assumption": true,
-    "display": "10 to 20 cm/s",
-    "max": 20.0,
-    "min": 10.0,
-    "note": "Not documented for this environment in the loaded notes. The lunar habitat HVAC figure is reused as a placeholder.",
+    "display": "not specified by NASA sources",
+    "max": null,
+    "min": null,
+    "not_specified": true,
+    "note": "Excluded from flow scoring for this environment. Searched: Searched NTRS and Gateway ICES papers (ICES-2025-402 McCray CFD paper opened): describes intramodule cabin fans and IMV fans but no cabin velocity value in extractable text; GP 10004 not public.",
     "point_value": false,
     "sources": [],
-    "window_max": 20.0,
-    "window_min": 10.0
+    "window_max": null,
+    "window_min": null
    },
    "gravity": {
-    "assumption": false,
     "bracket_note": "All PSI data is microgravity (0 g), the same gravity level as this environment.",
     "display": "Free fall (space station in lunar orbit)",
     "g": 0.0,
+    "not_specified": false,
     "note": "An orbiting station is in free fall, the same microgravity condition as the ISS and the PSI tests.",
     "sources": [
      {
@@ -115,10 +115,10 @@
    "id": "gateway",
    "name": "Gateway-class station",
    "o2": {
-    "assumption": false,
     "display": "about 26 to 26.5 percent O2 (nominal, crewed, 10.2 psia)",
     "max": 0.265,
     "min": 0.26,
+    "not_specified": false,
     "note": "Opened full text of three sources. Not the controlling spec: GP 10004 / GP 100047 (Gateway ECLSS subsystem spec) not public. Search snippets only (lower confidence): ICES-2025-389 says crewed HALO O2 raised to 22-28 percent and about 10 percent while uncrewed; ICES-2023 (NTRS 20230002103, opened) gives Transit Habitat/Gateway O2 20-27 percent across 14.7-10.2 psia. Max 30 percent from ICES-2022-45.",
     "point_value": false,
     "sources": [
@@ -145,10 +145,10 @@
     "window_min": 0.26
    },
    "pressure_atm": {
-    "assumption": false,
     "display": "10.2 psia nominal (0.694 atm); crewed range 70-101.3 kPa",
     "max": 0.694,
     "min": 0.694,
+    "not_specified": false,
     "note": "Opened full text. Search snippets only (lower confidence): HALO PCS design range 9.5-15.0 psia (ICES-2024-443); uncrewed hold 9.5-10.2 psia (ICES-2025-389); both Texas Tech repository PDFs returned HTTP 403 to automated download.",
     "point_value": true,
     "sources": [
@@ -177,10 +177,10 @@
   },
   {
    "flow_cm_s": {
-    "assumption": false,
     "display": "about 10 to 20 cm/s HVAC flow",
     "max": 20.0,
     "min": 10.0,
+    "not_specified": false,
     "note": "Opened full text; a single slide bullet for the lunar lander/habitat, no further derivation.",
     "point_value": false,
     "sources": [
@@ -195,10 +195,10 @@
     "window_min": 10.0
    },
    "gravity": {
-    "assumption": false,
     "bracket_note": "All PSI data is microgravity (0 g). Results are bracketed between 0 g and 1 g; this gravity level lies in the bracket and no partial-gravity value is computed or implied.",
     "display": "One-sixth of Earth gravity (about 0.16 g)",
     "g": 0.165,
+    "not_specified": false,
     "note": "NSSDC value is a search snippet only (page not reachable from the tool, ECONNREFUSED); the 0.16 g figure is from the opened Urban slide.",
     "sources": [
      {
@@ -218,10 +218,10 @@
    "id": "lunar",
    "name": "Lunar surface habitat",
    "o2": {
-    "assumption": false,
     "display": "34 percent O2 (control box 33.5-35 percent)",
     "max": 0.35,
     "min": 0.335,
+    "not_specified": false,
     "note": "Opened full text. Caveat: the Artemis Base Camp surface habitat concept is assumed nominal 10.2 psia / 26.5% O2 with capability of 8.2 psia / 34% O2 (NTRS 20220000245, opened). NESC: 34 +2 percent, analyses to 40 percent. Worst case: NESC says NASA has data for many materials at 30 percent O2 with limited data above; ICES-2022-45 cites certification at 30% O2 / 10.2 psia.",
     "point_value": false,
     "sources": [
@@ -254,10 +254,10 @@
     "window_min": 0.335
    },
    "pressure_atm": {
-    "assumption": false,
     "display": "8.2 psia (0.558 atm), control box 8.1-8.3 psia",
     "max": 0.565,
     "min": 0.551,
+    "not_specified": false,
     "note": "Opened full text. Nominal-vs-capability ambiguity: see o2 note.",
     "point_value": false,
     "sources": [
@@ -292,21 +292,21 @@
   },
   {
    "flow_cm_s": {
-    "assumption": true,
-    "display": "10 to 20 cm/s",
-    "max": 20.0,
-    "min": 10.0,
-    "note": "Not documented for this environment in the loaded notes. The lunar habitat HVAC figure is reused as a placeholder.",
+    "display": "not specified by NASA sources",
+    "max": null,
+    "min": null,
+    "not_specified": true,
+    "note": "Excluded from flow scoring for this environment.",
     "point_value": false,
     "sources": [],
-    "window_max": 20.0,
-    "window_min": 10.0
+    "window_max": null,
+    "window_min": null
    },
    "gravity": {
-    "assumption": false,
     "bracket_note": "All PSI data is microgravity (0 g). Results are bracketed between 0 g and 1 g; this gravity level lies in the bracket and no partial-gravity value is computed or implied.",
     "display": "One-sixth of Earth gravity (about 0.16 g)",
     "g": 0.165,
+    "not_specified": false,
     "note": "Same as lunar habitat.",
     "sources": [
      {
@@ -326,10 +326,10 @@
    "id": "rover",
    "name": "Pressurized rover (lunar)",
    "o2": {
-    "assumption": false,
     "display": "30 percent O2 or greater (shared Moon base and rover atmosphere)",
     "max": 0.35,
     "min": 0.3,
+    "not_specified": false,
     "note": "Lower bound from the challenge statement; upper bound from the lunar habitat control box (35 percent O2).",
     "point_value": false,
     "sources": [
@@ -350,10 +350,10 @@
     "window_min": 0.3
    },
    "pressure_atm": {
-    "assumption": false,
     "display": "10.2 psia or less (0.694 atm or less)",
     "max": 0.6941,
     "min": 0.551,
+    "not_specified": false,
     "note": "Upper bound from the challenge statement; lower bound from the lunar habitat control box (8.1 psia).",
     "point_value": false,
     "sources": [
@@ -376,21 +376,21 @@
   },
   {
    "flow_cm_s": {
-    "assumption": true,
-    "display": "10 to 20 cm/s",
-    "max": 20.0,
-    "min": 10.0,
-    "note": "Not documented for this environment in the loaded notes. The lunar habitat HVAC figure is reused as a placeholder.",
+    "display": "not specified by NASA sources",
+    "max": null,
+    "min": null,
+    "not_specified": true,
+    "note": "Excluded from flow scoring for this environment. Searched: Searched NTRS for Mars habitat ventilation/air velocity; none found. TP-2010-216134 quotes only a forced-ventilation requirement without a velocity.",
     "point_value": false,
     "sources": [],
-    "window_max": 20.0,
-    "window_min": 10.0
+    "window_max": null,
+    "window_min": null
    },
    "gravity": {
-    "assumption": false,
     "bracket_note": "All PSI data is microgravity (0 g). Results are bracketed between 0 g and 1 g; this gravity level lies in the bracket and no partial-gravity value is computed or implied.",
     "display": "About one-third of Earth gravity",
     "g": 0.38,
+    "not_specified": false,
     "note": "NASA states approximately one-third of Earth gravity; no partial-gravity value is computed from it.",
     "sources": [
      {
@@ -404,10 +404,10 @@
    "id": "mars",
    "name": "Mars surface habitat",
    "o2": {
-    "assumption": false,
     "display": "34 percent O2 (Exploration Atmosphere)",
     "max": 0.35,
     "min": 0.335,
+    "not_specified": false,
     "note": "Opened full text. No Mars-specific final O2 requirement found; 34 percent is the general Exploration Atmosphere. The M2M slide (NTRS 20230009095) states only 8.2 psia for Mars habitats.",
     "point_value": false,
     "sources": [
@@ -434,10 +434,10 @@
     "window_min": 0.335
    },
    "pressure_atm": {
-    "assumption": false,
     "display": "8.2 psia (0.558 atm)",
     "max": 0.565,
     "min": 0.551,
+    "not_specified": false,
     "note": "Opened full text. Band 8.1-8.3 psia is the TM-2013-217377 control box.",
     "point_value": false,
     "sources": [

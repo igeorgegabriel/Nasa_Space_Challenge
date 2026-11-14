@@ -1,6 +1,7 @@
 {
  "insights": [
   {
+   "headline": "Solid fuels were tested in PSI up to 22.2% O2; a Moon base runs at 33.5-35%.",
    "id": "max_o2_by_fuel_class",
    "limits": "Ambient O2 only (burner and oxidizer-stream O2 is a different quantity). Rows of quality exact or approximate; 66 summary_row, ramped and range rows are excluded because one number cannot represent them. Only 140 of 272 solid-fuel rows record an O2 value. Flights outside the PSI tables (for example Saffire IV to VI) are not counted.",
    "links": [
@@ -57,6 +58,7 @@
    "title": "Highest ambient O2 tested, by fuel class"
   },
   {
+   "headline": "Highest ambient O2 is 40%; highest burner-stream O2 is 85% and is not a cabin atmosphere.",
    "id": "stream_vs_ambient_o2",
    "limits": "Oxidizer-stream O2 is the O2 fraction in the gas flowing out of a burner into a different chamber gas, so it does not describe a cabin atmosphere. It is never mixed with ambient O2 in the ranking unless the user switches it on.",
    "links": [
@@ -87,6 +89,7 @@
    "title": "Ambient and oxidizer-stream O2 are different quantities"
   },
   {
+   "headline": "Rows inside both the O2 and pressure window: ISS / spacecraft cabin 105, Gateway-class station 0, Lunar surface habitat 0, Pressurized rover (lunar) 0, Mars surface habitat 0.",
    "id": "rows_per_environment_window",
    "limits": "A window is the O2 range and pressure range of the environment profile, which for some environments is an assumption (see Habitat Relevance). Counts use ambient O2 rows of quality exact or approximate. A row inside the window is a test at that condition in microgravity, not evidence about a partial-gravity fire.",
    "links": [
@@ -255,6 +258,7 @@
    "title": "Rows inside each environment window"
   },
   {
+   "headline": "Only 0 rows record O2, pressure and flow speed together.",
    "id": "coverage_gaps",
    "limits": "Zero rows means no test in the PSI tables at that combination, not that the combination is unsafe or safe. O2, pressure and flow are recorded in different investigations, so a joint window rarely has any rows.",
    "links": [
@@ -293,7 +297,7 @@
        "gas"
       ],
       "name": "Gateway-class station",
-      "rows_o2_and_flow_window": 0
+      "rows_o2_and_flow_window": null
      },
      "iss": {
       "fuel_classes_zero_o2_pressure_window": [
@@ -325,7 +329,7 @@
        "solid"
       ],
       "name": "Mars surface habitat",
-      "rows_o2_and_flow_window": 0
+      "rows_o2_and_flow_window": null
      },
      "rover": {
       "fuel_classes_zero_o2_pressure_window": [
@@ -337,7 +341,7 @@
        "solid"
       ],
       "name": "Pressurized rover (lunar)",
-      "rows_o2_and_flow_window": 0
+      "rows_o2_and_flow_window": null
      }
     },
     "rows_o2_pressure_flow_all_recorded": 0
@@ -346,6 +350,7 @@
    "title": "Coverage gaps per environment"
   },
   {
+   "headline": "563 rows in 3 investigations record both an O2 value and an outcome.",
    "id": "o2_with_outcome",
    "limits": "Outcome labels are those given in each PSI table (for example extinction, self-extinguished, flow-terminated) and are not harmonized into one quantity such as MOC, LOI or ULOI. Only rows with both fields can feed a flammability model.",
    "links": [

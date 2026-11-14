@@ -38,6 +38,9 @@ class SiteDataTest(unittest.TestCase):
         cls.insights = {i["id"]: i for i in read_json(os.path.join(SITE, "insights.json"))["insights"]}
         cls.reference = read_json(os.path.join(SITE, "rank_reference.json"))
         cls.corpus = read_json(CORPUS)["documents"]
+        cls.env_by_id = {e["id"]: e for e in cls.environments["environments"]}
+        cls.test_next = read_json(os.path.join(SITE, "test_next.json"))
+        cls.verification = read_json(os.path.join(SITE, "verification.json"))
 
     def test_site_files_exist_and_are_ascii(self):
         for name in ("investigations", "conditions", "environments", "insights", "earth", "rank_reference", "model_readiness"):
@@ -76,31 +79,41 @@ class SiteDataTest(unittest.TestCase):
         for inv in self.investigations:
             self.assertEqual(inv["row_count"], counts.get(inv["psi_id"], 0))
 
-    def test_environments_have_sources_or_assumption_flags(self):
+    def test_environments_have_sources_or_are_not_specified(self):
         envs = self.environments["environments"]
         self.assertEqual([e["id"] for e in envs], ["iss", "gateway", "lunar", "rover", "mars"])
         refs = self.environments["sources"]
         for env in envs:
             for key in ("o2", "pressure_atm", "flow_cm_s", "gravity"):
                 block = env[key]
-                self.assertTrue(block["assumption"] or block["sources"], (env["id"], key))
+                self.assertNotIn("assumption", block)
+                self.assertTrue(block["not_specified"] or block["sources"], (env["id"], key))
                 for source in block["sources"]:
                     self.assertIn(source["ref"], refs)
             for key in ("o2", "pressure_atm", "flow_cm_s"):
-                self.assertLessEqual(env[key]["min"], env[key]["max"])
-                self.assertLessEqual(env[key]["window_min"], env[key]["min"])
-                self.assertGreaterEqual(env[key]["window_max"], env[key]["max"])
+                block = env[key]
+                if block["not_specified"]:
+                    self.assertIsNone(block["min"])
+                    self.assertIsNone(block["max"])
+                    self.assertIsNone(block["window_min"])
+                    self.assertEqual(block["display"], "not specified by NASA sources")
+                    self.assertNotIn("laceholder", block["note"])
+                    continue
+                self.assertLessEqual(block["min"], block["max"])
+                self.assertLessEqual(block["window_min"], block["min"])
+                self.assertGreaterEqual(block["window_max"], block["max"])
             self.assertIn("bracket_note", env["gravity"])
 
     def test_builtin_environment_values_without_profile_file(self):
         envs = build_site_data.build_environments(profile_path=None)["environments"]
         self.assertEqual([e["id"] for e in envs], ["iss", "gateway", "lunar", "rover", "mars"])
         lunar = next(e for e in envs if e["id"] == "lunar")
-        self.assertFalse(lunar["o2"]["assumption"])
-        self.assertFalse(lunar["pressure_atm"]["assumption"])
+        self.assertFalse(lunar["o2"]["not_specified"])
+        self.assertFalse(lunar["pressure_atm"]["not_specified"])
         self.assertAlmostEqual(lunar["pressure_atm"]["min"], 0.558, places=3)
         mars = next(e for e in envs if e["id"] == "mars")
-        self.assertTrue(mars["o2"]["assumption"])
+        self.assertTrue(mars["o2"]["not_specified"])
+        self.assertIsNone(mars["o2"]["min"])
 
     def test_profile_file_overrides_builtin_and_maps_ids(self):
         profile = {
@@ -110,7 +123,8 @@ class SiteDataTest(unittest.TestCase):
                     "id": "lunar_habitat",
                     "name": "Lunar habitat (profile)",
                     "o2": {"min": 0.3, "max": 0.32, "sources": [{"ref": "probe", "detail": "d"}], "assumption": False, "note": "n"},
-                    "pressure_atm": {"min": 0.6, "max": 0.6, "assumption": True},
+                    "pressure_atm": {"min": 0.6, "max": 0.6, "sources": [{"ref": "probe", "detail": "d"}]},
+                    "flow_cm_s": {"min": None, "max": None, "not_specified": True, "note": "Searched X. Placeholder borrowed from Y."},
                     "gravity": {"g": 0.16},
                 },
                 {"id": "unknown_env", "o2": {"min": 0.1, "max": 0.2}},
@@ -128,8 +142,12 @@ class SiteDataTest(unittest.TestCase):
         self.assertIn("probe", result["sources"])
         self.assertTrue(lunar["pressure_atm"]["point_value"])
         self.assertLess(lunar["pressure_atm"]["window_min"], 0.6)
-        self.assertEqual(lunar["flow_cm_s"]["min"], 10.0)
-        self.assertEqual(envs["mars"]["o2"]["min"], 0.28)
+        self.assertTrue(lunar["flow_cm_s"]["not_specified"])
+        self.assertIsNone(lunar["flow_cm_s"]["min"])
+        self.assertIsNone(lunar["flow_cm_s"]["window_min"])
+        self.assertNotIn("laceholder", lunar["flow_cm_s"]["note"])
+        self.assertTrue(envs["mars"]["o2"]["not_specified"])
+        self.assertIsNone(envs["mars"]["o2"]["min"])
         self.assertIsNone(build_site_data.load_profile_file(os.path.join(tempfile.gettempdir(), "no_such_profile.json")))
 
     def test_coverage_formula(self):
@@ -196,6 +214,10 @@ class SiteDataTest(unittest.TestCase):
                         value = item["components"][name]
                         if name == "fuel" and value is None:
                             continue
+                        if value is None and name in ("o2", "pressure", "flow"):
+                            key = {"o2": "o2", "pressure": "pressure_atm", "flow": "flow_cm_s"}[name]
+                            self.assertTrue(self.env_by_id[env_id][key]["not_specified"])
+                            continue
                         self.assertIsNotNone(value, (variant, env_id, item["psi_id"], name))
                         self.assertGreaterEqual(value, 0.0)
                         self.assertLessEqual(value, 1.0)
@@ -221,11 +243,131 @@ class SiteDataTest(unittest.TestCase):
         self.assertEqual(scoring.function_relevance([{"function": "detection"}, {"function": "fundamental"}]), (1.0, "core"))
         self.assertEqual(scoring.function_relevance([{"function": "fundamental"}]), (0.4, "fundamental"))
         self.assertEqual(scoring.function_relevance([]), (0.2, "unassigned"))
+        kw = "keyword match on PSI text"
+        self.assertEqual(scoring.function_relevance([{"function": "prevention", "source": kw, "score": 3}]), (1.0, "core"))
+        self.assertEqual(scoring.function_relevance([{"function": "prevention", "source": kw, "score": 2}]), (0.4, "weak"))
+        self.assertEqual(scoring.function_relevance([{"function": "prevention", "source": "challenge statement", "score": None}]), (1.0, "core"))
+        self.assertEqual(scoring.function_relevance([
+            {"function": "suppression", "source": kw, "score": 1}, {"function": "fundamental", "source": kw, "score": 9}]), (0.4, "weak"))
         self.assertEqual(scoring.fuel_realism("solid"), 1.0)
         self.assertEqual(scoring.fuel_realism("liquid_droplet"), 0.5)
         self.assertEqual(scoring.fuel_realism("gas"), 0.3)
         self.assertIsNone(scoring.fuel_realism("smoke_sample"))
         self.assertIsNone(scoring.fuel_realism("aerosol_dust"))
+
+    def test_not_specified_condition_is_excluded_and_weights_renormalize(self):
+        rover = self.env_by_id["rover"]
+        lunar = self.env_by_id["lunar"]
+        inv = next(i for i in self.investigations if i["psi_id"] == "PSI-99")
+        comps = scoring.components(inv, rover)
+        self.assertIsNone(comps["flow"])
+        self.assertIsNotNone(comps["o2"])
+        self.assertIsNotNone(scoring.components(inv, lunar)["flow"])
+        weights = scoring.DEFAULT_WEIGHTS
+        total = 0.0
+        used = 0.0
+        for name in scoring.COMPONENTS:
+            if comps[name] is None:
+                continue
+            total += weights[name] * comps[name]
+            used += weights[name]
+        self.assertAlmostEqual(scoring.weighted_score(comps, weights), total / used, places=8)
+        self.assertLess(used, 1.0)
+
+    def test_no_fallback_for_null_profile_values(self):
+        for env_id in ("gateway", "rover", "mars"):
+            block = self.env_by_id[env_id]["flow_cm_s"]
+            self.assertTrue(block["not_specified"])
+            self.assertIsNone(block["min"])
+
+    def test_test_next_counts_match_recount(self):
+        for env in self.environments["environments"]:
+            block = self.test_next["environments"][env["id"]]
+            o2lo, o2hi = window(env, "o2")
+            plo, phi = window(env, "pressure_atm")
+            flow = None if env["flow_cm_s"]["not_specified"] else window(env, "flow_cm_s")
+            zero = 0
+            for entry in block["classes"]:
+                inside = [
+                    r for r in self.conditions
+                    if r["fuel_class"] == entry["fuel_class"] and r["value_quality"] in COUNTABLE and r["o2_basis"] == "ambient"
+                    and r["o2_frac"] is not None and o2lo <= r["o2_frac"] <= o2hi
+                    and r["pressure_atm"] is not None and r["pressure_atm"] > 0 and plo <= r["pressure_atm"] <= phi
+                    and (flow is None or (r["flow_cm_s"] is not None and flow[0] <= r["flow_cm_s"] <= flow[1]))
+                ]
+                self.assertEqual(entry["inside"], len(inside), (env["id"], entry["fuel_class"]))
+                zero += 1 if not inside else 0
+                near = entry["nearest"]
+                if near:
+                    row = next(r for r in self.conditions if r["psi_id"] == near["psi_id"] and r["source_row"] == near["source_row"]
+                               and r["source_file"] == near["source_file"])
+                    self.assertEqual(row["o2_frac"], near["o2_frac"])
+            self.assertEqual(block["zero_count"], zero)
+            order = [e["fuel_class"] for e in block["classes"]]
+            zeros = [e["fuel_class"] for e in block["classes"] if e["inside"] == 0]
+            self.assertEqual(order[:len(zeros)], zeros)
+            self.assertEqual(zeros, [c for c in ("solid", "liquid_droplet", "gas") if c in zeros])
+        lunar = self.test_next["environments"]["lunar"]
+        solid = next(e for e in lunar["classes"] if e["fuel_class"] == "solid")
+        self.assertEqual(solid["inside"], 0)
+        self.assertEqual(solid["nearest"]["o2_frac"], 0.222)
+
+    def test_verification_json_present_when_sources_exist(self):
+        have_audit = os.path.exists(build_site_data.AUDIT_PATH)
+        have_quotes = os.path.exists(build_site_data.FINDINGS_VERIFICATION_PATH)
+        self.assertEqual(self.verification["present"], have_audit or have_quotes)
+        if have_audit:
+            audit = read_json(build_site_data.AUDIT_PATH)
+            self.assertEqual(self.verification["audit"]["checked"], audit["totals_excluding_union_line"]["checked"])
+            self.assertEqual(self.verification["audit"]["passed"], audit["totals_excluding_union_line"]["passed"])
+            self.assertEqual(len(self.verification["audit"]["checks"]), len(audit["checks"]))
+
+    def test_verification_absent_degrades(self):
+        saved = (build_site_data.AUDIT_PATH, build_site_data.FINDINGS_VERIFICATION_PATH, build_site_data.FINDINGS_PATH, build_site_data.IMAGES_PATH)
+        missing = os.path.join(tempfile.gettempdir(), "no_such_file.json")
+        build_site_data.AUDIT_PATH = build_site_data.FINDINGS_VERIFICATION_PATH = build_site_data.FINDINGS_PATH = build_site_data.IMAGES_PATH = missing
+        try:
+            result = build_site_data.build()
+        finally:
+            (build_site_data.AUDIT_PATH, build_site_data.FINDINGS_VERIFICATION_PATH,
+             build_site_data.FINDINGS_PATH, build_site_data.IMAGES_PATH) = saved
+        self.assertFalse(result["verification"]["present"])
+        for inv in result["investigations"]:
+            self.assertEqual(inv["images"], [])
+            self.assertEqual(inv["key_findings"], [])
+
+    def test_findings_loader_keeps_verified_quotes_only(self):
+        tmp = tempfile.mkdtemp()
+        kf = os.path.join(tmp, "key_findings.json")
+        vf = os.path.join(tmp, "verification.json")
+        with open(kf, "w", encoding="ascii") as handle:
+            json.dump({"findings": [
+                {"psi_id": "PSI-25", "quote": "Good quote.", "source": "NTRS 1", "url": "https://ntrs.nasa.gov/citations/1"},
+                {"psi_id": "PSI-25", "quote": "Bad quote.", "source": "NTRS 2"}]}, handle)
+        with open(vf, "w", encoding="ascii") as handle:
+            json.dump({"quotes": [
+                {"psi_id": "PSI-25", "quote": "Good quote.", "verified": True},
+                {"psi_id": "PSI-25", "quote": "Bad quote.", "verified": False}]}, handle)
+        saved = (build_site_data.FINDINGS_PATH, build_site_data.FINDINGS_VERIFICATION_PATH)
+        build_site_data.FINDINGS_PATH, build_site_data.FINDINGS_VERIFICATION_PATH = kf, vf
+        try:
+            summary, items = build_site_data.load_verification_items()
+            findings = build_site_data.load_findings(items)
+            verification = build_site_data.build_verification(summary, items)
+        finally:
+            build_site_data.FINDINGS_PATH, build_site_data.FINDINGS_VERIFICATION_PATH = saved
+        self.assertEqual([f["quote"] for f in findings["PSI-25"]], ["Good quote."])
+        self.assertEqual(verification["quotes"]["checked"], 2)
+        self.assertEqual(verification["quotes"]["verified"], 1)
+
+    def test_images_are_published_with_captions(self):
+        if not os.path.exists(build_site_data.IMAGES_PATH):
+            self.skipTest("no images")
+        inv = next(i for i in self.investigations if i["psi_id"] == "PSI-25")
+        self.assertTrue(inv["images"])
+        for img in inv["images"]:
+            self.assertTrue(os.path.exists(os.path.join(ROOT, "public", *img["file"].split("/"))))
+            self.assertTrue(img["caption"].startswith("NASA / PSI PSI-25: "))
 
     def test_weighted_score_skips_not_applicable_components(self):
         comps = {"o2": 1.0, "pressure": 0.0, "flow": 0.0, "fuel": None, "function": 1.0, "richness": 0.0}
@@ -378,8 +520,11 @@ class SiteDataTest(unittest.TestCase):
         self.assertEqual(funcs["suppression"]["source"], "keyword match on PSI text")
         self.assertEqual(inv["primary_function"], "prevention")
         funcs, inv = self.function_map("PSI-10")
-        self.assertEqual(inv["primary_function"], "fundamental")
         self.assertTrue(all(f["source"] == "keyword match on PSI text" for f in funcs.values()))
+        for entry in inv["functions"]:
+            self.assertEqual(entry["counts"], entry["score"] >= 3)
+        funcs, inv = self.function_map("PSI-22")
+        self.assertEqual(inv["primary_function"], "fundamental")
 
     def test_derive_functions_merges_same_function(self):
         record = {"fire_safety_function_candidates": [
@@ -394,7 +539,7 @@ class SiteDataTest(unittest.TestCase):
         self.assertEqual(build_site_data.primary_function(entries, record), "prevention")
 
     def test_replacement_characters_become_hyphens(self):
-        cleaned = build_site_data.ascii_deep({"a": "NASA�STD�6001", "b": ["x�y"]})
+        cleaned = build_site_data.ascii_deep({"a": "NASA\ufffdSTD\ufffd6001", "b": ["x\ufffdy"]})
         self.assertEqual(cleaned["a"], "NASA-STD-6001")
         self.assertEqual(cleaned["b"], ["x-y"])
 
@@ -402,7 +547,7 @@ class SiteDataTest(unittest.TestCase):
         def walk(value):
             if isinstance(value, str):
                 value.encode("ascii")
-                self.assertNotIn("�", value)
+                self.assertNotIn("\ufffd", value)
             elif isinstance(value, list):
                 for item in value:
                     walk(item)
@@ -432,6 +577,8 @@ class SiteDataTest(unittest.TestCase):
                 continue
             ok = True
             for axis in rel["axes"]:
+                if env[{"o2": "o2", "pressure": "pressure_atm", "flow": "flow_cm_s"}[axis]]["not_specified"]:
+                    continue
                 key = {"o2": "o2_frac", "pressure": "pressure_atm", "flow": "flow_cm_s"}[axis]
                 wkey = {"o2": "o2", "pressure": "pressure_atm", "flow": "flow_cm_s"}[axis]
                 lo, hi = window(env, wkey)

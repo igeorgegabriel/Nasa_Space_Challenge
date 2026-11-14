@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import shutil
 import sys
 from collections import Counter, OrderedDict
 
@@ -21,6 +22,13 @@ PROFILE_ID_MAP = {
     "mars_habitat": "mars",
 }
 SITE_DATA_DIR = os.path.join(ROOT, "public", "data")
+SITE_IMG_DIR = os.path.join(ROOT, "public", "img")
+FINDINGS_PATH = os.path.join(ROOT, "data", "findings", "key_findings.json")
+FINDINGS_VERIFICATION_PATH = os.path.join(ROOT, "data", "findings", "verification.json")
+IMAGES_PATH = os.path.join(ROOT, "data", "images", "images.json")
+AUDIT_PATH = os.path.join(ROOT, "data", "audit", "audit.json")
+NOT_SPECIFIED_TEXT = "not specified by NASA sources"
+PSIA_PER_ATM = 14.6959
 CORPUS_PATH = os.path.join(ROOT, "api", "context", "corpus.json")
 
 PSI_PAGE = "https://psi.nasa.gov/physci/repo/data/investigations/"
@@ -267,6 +275,42 @@ def load_profile_file(path):
     return {"environments": data.get("environments") or [], "sources": data.get("sources") or {}}
 
 
+def strip_placeholder_sentences(note):
+    parts = re.split(r"(?<=[.])\s+", str(note or ""))
+    kept = [p for p in parts if "placeholder" not in p.lower() and "borrowed" not in p.lower()]
+    return " ".join(kept).strip()
+
+
+def not_specified_block(block):
+    return {
+        "min": None,
+        "max": None,
+        "display": NOT_SPECIFIED_TEXT,
+        "sources": list((block or {}).get("sources") or []),
+        "not_specified": True,
+        "note": strip_placeholder_sentences((block or {}).get("note")),
+    }
+
+
+def finalize_environment(env):
+    for key, unit in QUANTITY_UNITS:
+        block = env[key]
+        if block.get("not_specified") or block.get("assumption") or block.get("min") is None or block.get("max") is None:
+            env[key] = not_specified_block(block)
+        else:
+            block.pop("assumption", None)
+            block["not_specified"] = False
+    gravity = env["gravity"]
+    if gravity.get("assumption") or gravity.get("g") is None:
+        env["gravity"] = {
+            "g": None, "display": NOT_SPECIFIED_TEXT, "sources": list(gravity.get("sources") or []),
+            "not_specified": True, "note": strip_placeholder_sentences(gravity.get("note")),
+        }
+    else:
+        gravity.pop("assumption", None)
+        gravity["not_specified"] = False
+
+
 def apply_profiles(envs, sources, profile):
     by_id = {env["id"]: env for env in envs}
     for entry in profile["environments"]:
@@ -278,7 +322,9 @@ def apply_profiles(envs, sources, profile):
             env["name"] = entry["name"]
         for key, unit in QUANTITY_UNITS:
             block = entry.get(key)
-            if isinstance(block, dict) and block.get("min") is not None and block.get("max") is not None:
+            if isinstance(block, dict) and (block.get("not_specified") or block.get("min") is None or block.get("max") is None):
+                env[key] = not_specified_block(block)
+            elif isinstance(block, dict):
                 env[key] = normalize_quantity(block, unit)
         if isinstance(entry.get("gravity"), dict) and entry["gravity"].get("g") is not None:
             env["gravity"] = normalize_gravity(entry["gravity"])
@@ -303,19 +349,28 @@ def build_environments(profile_path=PROFILE_PATH):
     if profile:
         sources = apply_profiles(envs, SOURCES, profile)
     for env in envs:
+        finalize_environment(env)
         for key, tol in POINT_TOLERANCE.items():
             block = env[key]
+            if block["not_specified"]:
+                block["window_min"] = None
+                block["window_max"] = None
+                block["point_value"] = False
+                continue
             point = block["min"] == block["max"]
             block["window_min"] = round(block["min"] - tol, 6) if point else block["min"]
             block["window_max"] = round(block["max"] + tol, 6) if point else block["max"]
             block["point_value"] = point
         gravity = env["gravity"]
-        gravity["bracket_note"] = (
-            "All PSI data is microgravity (0 g). Results are bracketed between 0 g and 1 g; "
-            "this gravity level lies in the bracket and no partial-gravity value is computed or implied."
-            if gravity["g"] > 0 else
-            "All PSI data is microgravity (0 g), the same gravity level as this environment."
-        )
+        if gravity["g"] is None:
+            gravity["bracket_note"] = ""
+        elif gravity["g"] > 0:
+            gravity["bracket_note"] = (
+                "All PSI data is microgravity (0 g). Results are bracketed between 0 g and 1 g; "
+                "this gravity level lies in the bracket and no partial-gravity value is computed or implied."
+            )
+        else:
+            gravity["bracket_note"] = "All PSI data is microgravity (0 g), the same gravity level as this environment."
     return {"environments": envs, "sources": sources}
 
 
@@ -326,7 +381,7 @@ def load_json(path):
 
 def ascii_deep(value):
     if isinstance(value, str):
-        return to_ascii(value.replace("�", "-"))
+        return to_ascii(value.replace("\ufffd", "-"))
     if isinstance(value, list):
         return [ascii_deep(item) for item in value]
     if isinstance(value, dict):
@@ -482,7 +537,7 @@ def derive_functions(psi_id, record):
     entries = []
     taken = set()
     for name, quote in CHALLENGE_FUNCTIONS.get(psi_id, []):
-        entries.append({"function": name, "source": SOURCE_CHALLENGE, "basis": quote, "score": None})
+        entries.append({"function": name, "source": SOURCE_CHALLENGE, "basis": quote, "score": None, "counts": True})
         taken.add(name)
     candidates = [c for c in (record.get("fire_safety_function_candidates") or []) if isinstance(c, dict)]
     candidates.sort(key=lambda c: (-(c.get("score") or 0), str(c.get("function"))))
@@ -496,6 +551,7 @@ def derive_functions(psi_id, record):
             "source": SOURCE_KEYWORD,
             "basis": evidence_basis(candidate),
             "score": candidate.get("score"),
+            "counts": candidate.get("score") is not None and candidate.get("score") >= scoring.KEYWORD_MIN_SCORE,
         })
     return entries
 
@@ -504,8 +560,40 @@ def primary_function(entries, record):
     for entry in entries:
         if entry["source"] == SOURCE_CHALLENGE:
             return entry["function"]
-    found = normalize_functions(record.get("fire_safety_function"))
-    return found[0] if found else "unassigned"
+    for entry in entries:
+        if entry["counts"] and entry["function"] in scoring.CORE_FUNCTIONS:
+            return entry["function"]
+    return "fundamental" if entries else "unassigned"
+
+
+LEAD_IN_RE = re.compile(
+    r"^(the )?(primary |main |major |two main |overall )?(goals?|objectives?|aims?)[^.:]{0,80}?\b(is|are|was|were)( to:?|:)\s*", re.I)
+ITEM_NUMBER_RE = re.compile(r"^(objectives?\s*:\s*)?(\(?[0-9A-Ca-c][.)]+\)?\s*)?", re.I)
+SENTENCE_END_RE = re.compile(r"(?<=[a-z0-9\)])\.(\s|$)|;|\s\(?2[.)]")
+SUMMARY_LIMIT = 150
+
+
+def one_line_summary(record):
+    text = " ".join(str(record.get("objectives") or record.get("description") or "").split())
+    text = LEAD_IN_RE.sub("", text)
+    text = ITEM_NUMBER_RE.sub("", text).strip()
+    match = SENTENCE_END_RE.search(text)
+    if match:
+        text = text[:match.start()]
+    text = re.sub(r"\s+(and|or)$", "", text.strip(" :-,"))
+    if len(text) > SUMMARY_LIMIT:
+        text = text[:SUMMARY_LIMIT].rsplit(" ", 1)[0].rstrip(",;:- ") + "..."
+    if not text:
+        return ""
+    return text[0].upper() + text[1:]
+
+
+def display_name(record, base, psi_id):
+    name = record.get("acronym") or record.get("short_name") or base.get("investigation") or psi_id
+    title = record.get("title") or base.get("title") or ""
+    if name == psi_id and title:
+        name = title if len(title) <= 60 else title[:60].rsplit(" ", 1)[0] + "..."
+    return name
 
 
 def numeric_psi_key(psi_id):
@@ -596,7 +684,7 @@ def top_values(rows, field, limit):
     return [{"value": value, "count": count} for value, count in ordered[:limit]]
 
 
-def build_investigations(rows, unified, meta):
+def build_investigations(rows, unified, meta, images=None, findings=None):
     by_psi = {}
     for row in rows:
         by_psi.setdefault(row["psi_id"], []).append(row)
@@ -614,6 +702,8 @@ def build_investigations(rows, unified, meta):
         outcome_rows = sum(1 for r in inv_rows if r.get("outcome") is not None)
         entry = {
             "psi_id": psi_id,
+            "name": display_name(record, base, psi_id),
+            "summary": one_line_summary(record),
             "acronym": record.get("acronym") or record.get("short_name") or base.get("investigation") or psi_id,
             "title": record.get("title") or base.get("title") or "",
             "table_name": base.get("investigation") or "",
@@ -650,6 +740,8 @@ def build_investigations(rows, unified, meta):
             "fuels_observed": top_values(inv_rows, "fuel", 8),
             "diluents_observed": top_values(inv_rows, "diluent", 6),
             "value_quality": top_values(inv_rows, "value_quality", 6),
+            "images": (images or {}).get(psi_id, []),
+            "key_findings": (findings or {}).get(psi_id, []),
         }
         out.append(entry)
     return out
@@ -676,6 +768,10 @@ def fmt_o2(value):
 
 def win(env, key):
     return env[key]["window_min"], env[key]["window_max"]
+
+
+def specified(env, key):
+    return not env[key].get("not_specified") and env[key]["window_min"] is not None
 
 
 def window_filter_params(env, with_pressure):
@@ -780,6 +876,8 @@ def build_insights(rows, environments):
 
     window_counts = OrderedDict()
     for env in environments["environments"]:
+        if not (specified(env, "o2") and specified(env, "pressure_atm")):
+            continue
         o2lo, o2hi = win(env, "o2")
         plo, phi = win(env, "pressure_atm")
         o2_rows = [r for r in ambient if in_window(r["o2_frac"], o2lo, o2hi)]
@@ -800,6 +898,8 @@ def build_insights(rows, environments):
         }
     sentences = []
     for env in environments["environments"]:
+        if env["id"] not in window_counts:
+            continue
         wc = window_counts[env["id"]]
         sentences.append("%s: %d rows with ambient O2 inside the window, %d also inside the pressure window"
                          % (wc["name"], wc["o2_window_rows"], wc["o2_and_pressure_window_rows"]))
@@ -810,7 +910,7 @@ def build_insights(rows, environments):
         "numbers": {"windows": window_counts},
         "links": [
             {"label": "%s: O2 window" % env["name"], "params": window_filter_params(env, False)}
-            for env in environments["environments"] if env["id"] in ("lunar", "iss")
+            for env in environments["environments"] if env["id"] in ("lunar", "iss") and specified(env, "o2")
         ] + [
             {"label": "Lunar surface habitat: O2 and pressure window",
              "params": window_filter_params(lunar, True)},
@@ -824,22 +924,28 @@ def build_insights(rows, environments):
 
     gaps = OrderedDict()
     for env in environments["environments"]:
+        if env["id"] not in window_counts:
+            continue
         wc = window_counts[env["id"]]
         zero_o2 = [fc for fc in MAIN_FUEL_CLASSES if wc["by_fuel_class"][fc]["o2_window"] == 0]
         zero_both = [fc for fc in MAIN_FUEL_CLASSES if wc["by_fuel_class"][fc]["o2_and_pressure_window"] == 0]
-        flo, fhi = win(env, "flow_cm_s")
-        o2lo, o2hi = win(env, "o2")
-        flow_rows = [r for r in ambient if in_window(r["o2_frac"], o2lo, o2hi) and in_window(r.get("flow_cm_s"), flo, fhi)]
+        flow_rows = None
+        if specified(env, "flow_cm_s"):
+            flo, fhi = win(env, "flow_cm_s")
+            o2lo, o2hi = win(env, "o2")
+            flow_rows = len([r for r in ambient if in_window(r["o2_frac"], o2lo, o2hi) and in_window(r.get("flow_cm_s"), flo, fhi)])
         gaps[env["id"]] = {
             "name": env["name"],
             "fuel_classes_zero_o2_window": zero_o2,
             "fuel_classes_zero_o2_pressure_window": zero_both,
-            "rows_o2_and_flow_window": len(flow_rows),
+            "rows_o2_and_flow_window": flow_rows,
         }
     all_three = [r for r in ok_rows if r.get("o2_frac") is not None and r.get("pressure_atm") is not None
                  and r["pressure_atm"] > 0 and r.get("flow_cm_s") is not None]
     gap_sentences = []
     for env in environments["environments"]:
+        if env["id"] not in gaps:
+            continue
         g = gaps[env["id"]]
         zero = g["fuel_classes_zero_o2_pressure_window"]
         if len(zero) == len(MAIN_FUEL_CLASSES):
@@ -883,7 +989,35 @@ def build_insights(rows, environments):
             "and are not harmonized into one quantity such as MOC, LOI or ULOI. Only rows with both fields can feed a flammability model."
         ),
     })
+    add_headlines(insights, environments)
     return {"insights": insights}
+
+
+def pct_text(value):
+    return fmt_num(round(value * 100, 3))
+
+
+def add_headlines(insights, environments):
+    lunar = next(e for e in environments["environments"] if e["id"] == "lunar")
+    by_id = {i["id"]: i for i in insights}
+    n = by_id["max_o2_by_fuel_class"]["numbers"]
+    by_id["max_o2_by_fuel_class"]["headline"] = (
+        "Solid fuels were tested in PSI up to %s%% O2; a Moon base runs at %s-%s%%."
+        % (pct_text(n["max_by_fuel_class"]["solid"]["max_o2"]), pct_text(lunar["o2"]["min"]), pct_text(lunar["o2"]["max"])))
+    n = by_id["stream_vs_ambient_o2"]["numbers"]
+    by_id["stream_vs_ambient_o2"]["headline"] = (
+        "Highest ambient O2 is %s%%; highest burner-stream O2 is %s%% and is not a cabin atmosphere."
+        % (pct_text(n["max_ambient_o2"]), pct_text(n["max_stream_o2"])))
+    n = by_id["rows_per_environment_window"]["numbers"]["windows"]
+    by_id["rows_per_environment_window"]["headline"] = (
+        "Rows inside both the O2 and pressure window: " + ", ".join(
+            "%s %d" % (w["name"], w["o2_and_pressure_window_rows"]) for w in n.values()) + ".")
+    n = by_id["coverage_gaps"]["numbers"]
+    by_id["coverage_gaps"]["headline"] = (
+        "Only %d rows record O2, pressure and flow speed together." % n["rows_o2_pressure_flow_all_recorded"])
+    n = by_id["o2_with_outcome"]["numbers"]
+    by_id["o2_with_outcome"]["headline"] = (
+        "%d rows in %d investigations record both an O2 value and an outcome." % (n["rows"], n["investigations"]))
 
 
 EARTH = [
@@ -1155,14 +1289,21 @@ def diluent_names(rows):
     return sorted(names)
 
 
-def readiness_gap(rel, env, rows, response_rows, counted, status):
+def skipped_text(skipped):
+    names = " and ".join(AXIS_LABELS[a] for a in skipped)
+    return "The %s window is not specified by NASA sources for this environment, so it is not used to match rows." % names
+
+
+def readiness_gap(rel, env, rows, response_rows, counted, status, skipped=()):
     if status == STATUS_NOT:
         return rel["needs"]
     if status == STATUS_SUPPORTED:
-        if env["gravity"]["g"] > 0:
+        if (env["gravity"]["g"] or 0) > 0:
             return "No gap inside this window for the rows counted. All rows are 0 g, so this says nothing about a fire at the environment's own gravity."
         return "No gap inside this window for the rows counted. All rows are 0 g, the same gravity level as this environment."
     parts = []
+    if skipped:
+        parts.append(skipped_text(skipped))
     if not response_rows:
         parts.append("No %s is recorded in the table for these rows." % rel["response_label"])
     else:
@@ -1183,13 +1324,32 @@ def readiness_gap(rel, env, rows, response_rows, counted, status):
             elif len(axis_rows) < MIN_SUPPORTED_ROWS:
                 parts.append("Only %d %s with a response lie inside the %s window." % (
                     len(axis_rows), "row" if len(axis_rows) == 1 else "rows", AXIS_LABELS[axis]))
-        if not parts:
+        if not parts or (skipped and len(parts) == 1):
             parts.append("Only %d rows with a response lie inside the full window (%d needed)." % (len(counted), MIN_SUPPORTED_ROWS))
     parts.append("To close it: " + rel["needs"])
     return " ".join(parts)
 
 
+def short_reason(rel, status, rows, response_rows, counted, skipped):
+    if rel["id"] == "partial_gravity":
+        return "PSI holds no partial-gravity data."
+    if status == STATUS_NOT:
+        return "No rows."
+    if status == STATUS_SUPPORTED:
+        return "%d rows with a recorded response lie inside the window." % len(counted)
+    if skipped and not rel["axes"]:
+        return "The %s window is not specified by NASA sources, so rows cannot be matched." % " and ".join(AXIS_LABELS[a] for a in skipped)
+    if not response_rows:
+        return "Rows exist but none records %s." % rel["response_label"]
+    if not counted:
+        return "None of %d rows with a response lies inside the window." % len(response_rows)
+    return "Only %d of the %d needed rows lie inside the window." % (len(counted), MIN_SUPPORTED_ROWS)
+
+
 def readiness_item(rel, env, rows_all, e_field_rows):
+    skipped = [a for a in rel["axes"] if not specified(env, AXIS_KEYS[a])]
+    rel = dict(rel)
+    rel["axes"] = [a for a in rel["axes"] if a not in skipped]
     ids = rel["psi_ids"]
     rows = [r for r in rows_all if r["psi_id"] in ids]
     response_rows = [r for r in rows if has_response(r, rel["response_keys"])]
@@ -1245,7 +1405,9 @@ def readiness_item(rel, env, rows_all, e_field_rows):
         "investigations": per_inv,
         "ranges": {axis: value_range(rows, axis) for axis in ("o2", "pressure", "flow")},
         "reason": reason,
-        "gap": readiness_gap(rel, env, rows, response_rows, counted, status),
+        "gap": readiness_gap(rel, env, rows, response_rows, counted, status, skipped),
+        "short": short_reason(rel, status, rows, response_rows, counted, skipped),
+        "skipped_axes": skipped,
         "link": link,
     }
     if rel["id"] == "droplet_extinction":
@@ -1295,6 +1457,297 @@ def build_rank_reference(investigations, environments):
     return reference
 
 
+CLASS_PRIORITY = ["solid", "liquid_droplet", "gas"]
+
+
+def gap_of(value, lo, hi):
+    if value is None:
+        return None
+    if value < lo:
+        return round(lo - value, 6)
+    if value > hi:
+        return round(value - hi, 6)
+    return 0.0
+
+
+def nearest_condition(eligible, env):
+    o2lo, o2hi = win(env, "o2")
+    plo, phi = win(env, "pressure_atm")
+    flow_window = win(env, "flow_cm_s") if specified(env, "flow_cm_s") else None
+    best = None
+    best_key = None
+    for row in eligible:
+        o2_gap = gap_of(row["o2_frac"], o2lo, o2hi)
+        pressure = row.get("pressure_atm")
+        p_gap = gap_of(pressure, plo, phi) if pressure is not None and pressure > 0 else None
+        f_gap = gap_of(row.get("flow_cm_s"), flow_window[0], flow_window[1]) if flow_window else 0.0
+        key = (
+            o2_gap,
+            p_gap if p_gap is not None else float("inf"),
+            f_gap if f_gap is not None else float("inf"),
+            numeric_psi_key(row["psi_id"]),
+            row["source_row"],
+        )
+        if best_key is None or key < best_key:
+            best_key = key
+            best = (row, o2_gap, p_gap)
+    if best is None:
+        return None
+    row, o2_gap, p_gap = best
+    return {
+        "psi_id": row["psi_id"],
+        "source_file": row["source_file"],
+        "source_row": row["source_row"],
+        "o2_frac": row["o2_frac"],
+        "pressure_atm": row.get("pressure_atm") if row.get("pressure_atm") and row["pressure_atm"] > 0 else None,
+        "flow_cm_s": row.get("flow_cm_s"),
+        "o2_gap": o2_gap,
+        "pressure_gap_atm": p_gap,
+    }
+
+
+def build_test_next(rows, environments):
+    ambient = [r for r in countable(rows) if r.get("o2_basis") == "ambient" and r.get("o2_frac") is not None]
+    out = OrderedDict()
+    for env in environments["environments"]:
+        if not (specified(env, "o2") and specified(env, "pressure_atm")):
+            continue
+        o2lo, o2hi = win(env, "o2")
+        plo, phi = win(env, "pressure_atm")
+        flow_window = win(env, "flow_cm_s") if specified(env, "flow_cm_s") else None
+        entries = []
+        for fc in CLASS_PRIORITY:
+            eligible = [r for r in ambient if r.get("fuel_class") == fc]
+            o2_rows = [r for r in eligible if in_window(r["o2_frac"], o2lo, o2hi)]
+            inside = [
+                r for r in o2_rows
+                if r.get("pressure_atm") is not None and r["pressure_atm"] > 0 and in_window(r["pressure_atm"], plo, phi)
+                and (flow_window is None or in_window(r.get("flow_cm_s"), flow_window[0], flow_window[1]))
+            ]
+            no_pressure = [r for r in o2_rows if r.get("pressure_atm") is None or r["pressure_atm"] <= 0]
+            entries.append({
+                "fuel_class": fc,
+                "inside": len(inside),
+                "o2_window_rows": len(o2_rows),
+                "o2_window_no_pressure_rows": len(no_pressure),
+                "classified_rows": len(eligible),
+                "nearest": nearest_condition(eligible, env),
+            })
+        entries.sort(key=lambda e: (e["inside"] > 0, CLASS_PRIORITY.index(e["fuel_class"])))
+        out[env["id"]] = {
+            "name": env["name"],
+            "windows": {
+                "o2": {"min": o2lo, "max": o2hi},
+                "pressure_atm": {"min": plo, "max": phi},
+                "flow_cm_s": {"min": flow_window[0], "max": flow_window[1]} if flow_window else None,
+            },
+            "classes": entries,
+            "zero_count": sum(1 for e in entries if e["inside"] == 0),
+        }
+    return {"environments": out}
+
+
+def read_json_file(path):
+    if not os.path.exists(path):
+        return None
+    with open(path, "r", encoding="utf-8-sig") as handle:
+        return ascii_deep(json.load(handle))
+
+
+def load_images():
+    data = read_json_file(IMAGES_PATH)
+    out = {}
+    if not isinstance(data, list):
+        return out
+    for item in data:
+        psi_id = item.get("psi_id")
+        rel = item.get("file")
+        if not psi_id or not rel:
+            continue
+        source = os.path.join(ROOT, *rel.split("/"))
+        if not os.path.exists(source):
+            continue
+        name = os.path.basename(rel)
+        out.setdefault(psi_id, []).append({
+            "file": "img/%s/%s" % (psi_id, name),
+            "source_path": source,
+            "caption": "NASA / PSI %s: %s" % (psi_id, item.get("original_name") or name),
+            "width": item.get("width"),
+            "height": item.get("height"),
+        })
+    for psi_id in out:
+        out[psi_id].sort(key=lambda i: i["file"])
+    return out
+
+
+def publish_images(images):
+    if not images:
+        return
+    if os.path.isdir(SITE_IMG_DIR):
+        shutil.rmtree(SITE_IMG_DIR)
+    for psi_id, items in images.items():
+        for item in items:
+            dest = os.path.join(ROOT, "public", *item["file"].split("/"))
+            os.makedirs(os.path.dirname(dest), exist_ok=True)
+            shutil.copyfile(item["source_path"], dest)
+
+
+def public_images(images):
+    return {
+        psi_id: [{k: v for k, v in item.items() if k != "source_path"} for item in items]
+        for psi_id, items in images.items()
+    }
+
+
+def record_list(data, keys):
+    if isinstance(data, dict):
+        for key in keys:
+            if isinstance(data.get(key), (list, dict)):
+                data = data[key]
+                break
+    records = []
+    if isinstance(data, dict):
+        for key, value in data.items():
+            values = value if isinstance(value, list) else [value]
+            for item in values:
+                if isinstance(item, dict):
+                    item = dict(item)
+                    item.setdefault("psi_id", key)
+                    records.append(item)
+                elif isinstance(item, str):
+                    records.append({"psi_id": key, "quote": item})
+    elif isinstance(data, list):
+        records = [item for item in data if isinstance(item, dict)]
+    return records
+
+
+def first_value(item, keys):
+    for key in keys:
+        value = item.get(key)
+        if value not in (None, "", [], {}):
+            return value
+    return None
+
+
+def source_fields(item):
+    raw = first_value(item, ["source", "source_id", "ntrs_id", "ref", "document"])
+    label = ""
+    ident = ""
+    url = str(first_value(item, ["url", "source_url", "link"]) or "")
+    if isinstance(raw, dict):
+        ident = str(first_value(raw, ["id", "ntrs_id", "ref"]) or "")
+        label = str(first_value(raw, ["title", "label", "name"]) or "")
+        url = url or str(first_value(raw, ["url", "link"]) or "")
+    elif raw is not None:
+        ident = str(raw)
+    label = label or str(first_value(item, ["source_title", "title"]) or "")
+    return ident, label, url
+
+
+def quote_key(psi_id, quote):
+    return (str(psi_id), " ".join(str(quote).split()).lower())
+
+
+def is_verified(item):
+    for key in ("verified", "match", "found", "machine_checked", "ok", "passed"):
+        if isinstance(item.get(key), bool):
+            return item[key]
+    status = str(item.get("status") or item.get("result") or "").lower()
+    if status:
+        return status in ("verified", "ok", "pass", "passed", "match", "found")
+    return None
+
+
+def load_verification_items():
+    data = read_json_file(FINDINGS_VERIFICATION_PATH)
+    if data is None:
+        return None, []
+    summary = data if isinstance(data, dict) else {}
+    items = []
+    for item in record_list(data, ["quotes", "findings", "checks", "results", "items"]):
+        quote = first_value(item, ["quote", "text", "finding"])
+        verdict = is_verified(item)
+        if verdict is None:
+            continue
+        ident, label, url = source_fields(item)
+        items.append({
+            "psi_id": str(item.get("psi_id") or ""),
+            "quote": str(quote or ""),
+            "source": ident or label,
+            "url": url,
+            "verified": verdict,
+        })
+    return summary, items
+
+
+def load_findings(verification_items):
+    data = read_json_file(FINDINGS_PATH)
+    out = {}
+    if data is None:
+        return out
+    failed = {quote_key(i["psi_id"], i["quote"]) for i in verification_items if i["quote"] and not i["verified"]}
+    for item in record_list(data, ["findings", "key_findings", "items"]):
+        psi_id = item.get("psi_id")
+        quote = first_value(item, ["quote", "text", "finding"])
+        if not psi_id or not quote:
+            continue
+        if item.get("verified") is False or quote_key(psi_id, quote) in failed:
+            continue
+        ident, label, url = source_fields(item)
+        out.setdefault(str(psi_id), []).append({
+            "quote": " ".join(str(quote).split()),
+            "source": ident,
+            "source_label": label,
+            "url": url,
+        })
+    return out
+
+
+AUDIT_TITLES = {
+    "1_row_counts_per_source_file": "Row counts per source file",
+    "2a_random_sample_200_seed_20261114": "Random sample of 200 rows re-parsed from source",
+    "2b_all_rows_o2_frac_ge_0.30": "Every row with O2 at 0.30 or above re-parsed from source",
+    "2c_all_solid_fuel_rows": "Every solid-fuel row re-parsed from source",
+    "2_union_distinct_rows": "Distinct rows covered by checks 2a to 2c",
+    "3_headline_numbers": "Headline numbers recomputed from source",
+}
+
+
+def build_verification(verification_summary, verification_items):
+    audit = read_json_file(AUDIT_PATH)
+    result = {"present": False, "audit": None, "quotes": None}
+    if isinstance(audit, dict) and isinstance(audit.get("checks"), dict):
+        checks = []
+        for key, value in audit["checks"].items():
+            checks.append({
+                "id": key,
+                "title": AUDIT_TITLES.get(key) or key.replace("_", " "),
+                "description": value.get("description") or "",
+                "checked": value.get("checked", 0),
+                "passed": value.get("passed", 0),
+                "failed": value.get("failed", 0),
+            })
+        totals = audit.get("totals_excluding_union_line") or {}
+        result["audit"] = {
+            "seed": audit.get("seed"),
+            "checked": totals.get("checked", sum(c["checked"] for c in checks)),
+            "passed": totals.get("passed", sum(c["passed"] for c in checks)),
+            "failed": totals.get("failed", sum(c["failed"] for c in checks)),
+            "checks": checks,
+        }
+        result["present"] = True
+    if verification_items:
+        verified = sum(1 for i in verification_items if i["verified"])
+        result["quotes"] = {
+            "checked": len(verification_items),
+            "verified": verified,
+            "failed": len(verification_items) - verified,
+            "items": verification_items,
+        }
+        result["present"] = True
+    return result
+
+
 def dump(path, obj, indent=1):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     text = json.dumps(obj, sort_keys=True, ensure_ascii=True, indent=indent, separators=(",", ": ") if indent else (",", ":"))
@@ -1314,7 +1767,10 @@ def build():
     unified = load_json(os.path.join(UNIFIED_DIR, "investigations.json"))
     meta = load_meta()
     environments = build_environments()
-    investigations = build_investigations(rows, unified, meta)
+    images = load_images()
+    verification_summary, verification_items = load_verification_items()
+    findings = load_findings(verification_items)
+    investigations = build_investigations(rows, unified, meta, public_images(images), findings)
     insights = build_insights(rows, environments)
     reference = build_rank_reference(investigations, environments)
     default_rankings = {
@@ -1329,6 +1785,9 @@ def build():
         "earth": {"applications": EARTH},
         "model_readiness": build_model_readiness(rows, environments),
         "rank_reference": reference,
+        "test_next": build_test_next(rows, environments),
+        "verification": build_verification(verification_summary, verification_items),
+        "images": images,
         "corpus": corpus,
         "meta_present": bool(meta),
     }
@@ -1343,6 +1802,9 @@ def main():
     dump(os.path.join(SITE_DATA_DIR, "earth.json"), result["earth"])
     dump(os.path.join(SITE_DATA_DIR, "model_readiness.json"), result["model_readiness"])
     dump(os.path.join(SITE_DATA_DIR, "rank_reference.json"), result["rank_reference"])
+    dump(os.path.join(SITE_DATA_DIR, "test_next.json"), result["test_next"])
+    dump(os.path.join(SITE_DATA_DIR, "verification.json"), result["verification"])
+    publish_images(result["images"])
     dump(CORPUS_PATH, result["corpus"])
     print("investigations=%d rows=%d meta=%s documents=%d" % (
         len(result["investigations"]), len(result["conditions"]), result["meta_present"], len(result["corpus"]["documents"])))

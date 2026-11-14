@@ -1,0 +1,367 @@
+{
+ "audit": {
+  "checked": 1012,
+  "checks": [
+   {
+    "checked": 22,
+    "description": "source CSV data rows equal unified rows per source_file",
+    "failed": 0,
+    "id": "1_row_counts_per_source_file",
+    "passed": 22,
+    "title": "Row counts per source file"
+   },
+   {
+    "checked": 200,
+    "description": "re-parse cited source row; compare o2, pressure, fuel, outcome",
+    "failed": 0,
+    "id": "2a_random_sample_200_seed_20261114",
+    "passed": 200,
+    "title": "Random sample of 200 rows re-parsed from source"
+   },
+   {
+    "checked": 509,
+    "description": "re-parse cited source row; compare o2, pressure, fuel, outcome",
+    "failed": 0,
+    "id": "2b_all_rows_o2_frac_ge_0.30",
+    "passed": 509,
+    "title": "Every row with O2 at 0.30 or above re-parsed from source"
+   },
+   {
+    "checked": 272,
+    "description": "re-parse cited source row; compare o2, pressure, fuel, outcome",
+    "failed": 0,
+    "id": "2c_all_solid_fuel_rows",
+    "passed": 272,
+    "title": "Every solid-fuel row re-parsed from source"
+   },
+   {
+    "checked": 917,
+    "description": "",
+    "failed": 0,
+    "id": "2_union_distinct_rows",
+    "passed": 917,
+    "title": "Distinct rows covered by checks 2a to 2c"
+   },
+   {
+    "checked": 9,
+    "description": "recompute headline numbers from source and compare with summary.json",
+    "failed": 0,
+    "id": "3_headline_numbers",
+    "passed": 9,
+    "title": "Headline numbers recomputed from source"
+   }
+  ],
+  "failed": 0,
+  "passed": 1012,
+  "seed": 20261114
+ },
+ "present": true,
+ "quotes": {
+  "checked": 43,
+  "failed": 5,
+  "items": [
+   {
+    "psi_id": "PSI-10",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-10",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-10",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-20",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-20",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-20",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-21",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-21",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-22",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-22",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-23",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-23",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-25",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-25",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-25",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-26",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-26",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-39",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-47",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-60",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": false
+   },
+   {
+    "psi_id": "PSI-62",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-68",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-69",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-69",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-69",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-98",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-98",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-98",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-99",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-99",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-100",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-101",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-101",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-101",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-102",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-102",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-106",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-106",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-107",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": false
+   },
+   {
+    "psi_id": "PSI-115",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": false
+   },
+   {
+    "psi_id": "PSI-117",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": false
+   },
+   {
+    "psi_id": "PSI-142",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": false
+   },
+   {
+    "psi_id": "PSI-159",
+    "quote": "",
+    "source": "",
+    "url": "",
+    "verified": true
+   }
+  ],
+  "verified": 38
+ }
+}

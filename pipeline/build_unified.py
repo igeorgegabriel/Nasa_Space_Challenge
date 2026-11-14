@@ -44,6 +44,7 @@ def decode(raw_bytes):
 
 def to_ascii(text):
     text = text.replace("\u00b5", "u").replace("\u03bc", "u")
+    text = text.replace("\u00bc", "1/4").replace("\u00bd", "1/2").replace("\u00be", "3/4")
     text = text.replace("\u00b0", " deg")
     text = text.replace("\u2013", "-").replace("\u2014", "-")
     text = text.replace("\u2018", "'").replace("\u2019", "'")
