@@ -1,0 +1,13 @@
+{
+ "checked": {
+  "fields": 116,
+  "points": 24,
+  "quotes": 152,
+  "sources": 7
+ },
+ "errors": [],
+ "failed": 0,
+ "sources": [
+  "data/partial_g/partial_g.json"
+ ]
+}

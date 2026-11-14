@@ -14,3 +14,4 @@ data/investigations/raw_ntrs/
 .vercel
 .env*
 brief_out/
+data/partial_g/sources/*.pdf

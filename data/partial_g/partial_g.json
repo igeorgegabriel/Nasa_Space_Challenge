@@ -1,0 +1,1912 @@
+{
+ "meta": {
+  "title": "Measured partial-gravity (Lunar, Martian) material flammability points from NASA publications",
+  "verified_by": "pipeline/verify_partial_g.py",
+  "rules": [
+   "Every point carries verbatim quotes with page numbers inside the saved source text",
+   "Every numeric field must appear as a whole token inside its named quote",
+   "Plot-only values are never extracted",
+   "No interpolation or unit conversion beyond what the quote states"
+  ],
+  "page_numbering": "PDF page index (1-based) of the downloaded file, matching the =====PAGE markers in each text snapshot"
+ },
+ "sources": [
+  {
+   "id": "olson2013",
+   "ntrs_id": "20130010991",
+   "title": "Evaluating Material Flammability in Microgravity and Martian Gravity Compared to the NASA Standard Normal Gravity Test",
+   "authors": "S.L. Olson, P.V. Ferkul (NASA Glenn Research Center)",
+   "year": 2012,
+   "kind": "conference paper (AIAA, July 2012 per NTRS record)",
+   "url": "https://ntrs.nasa.gov/citations/20130010991",
+   "pdf_url": "https://ntrs.nasa.gov/api/citations/20130010991/downloads/20130010991.pdf",
+   "pdf_file": "data/partial_g/sources/olson_20130010991.pdf",
+   "pdf_sha256": "2b0cabdfe7942f56bad38967e9c870dd1c73f3cb52f614a1873a93f8cc51436e",
+   "text_file": "data/partial_g/sources/olson_20130010991.txt"
+  },
+  {
+   "id": "luci2025",
+   "ntrs_id": "20250010653",
+   "title": "Lunar Combustion Investigation: Flammability Results from a Rotating Sounding Rocket",
+   "authors": "P.V. Ferkul, M.C. Johnston, N. Kralik, Y.-T. Liao",
+   "year": 2025,
+   "kind": "conference presentation (ASGSR annual meeting, Dec 2025), slides, not peer reviewed",
+   "url": "https://ntrs.nasa.gov/citations/20250010653",
+   "pdf_url": "https://ntrs.nasa.gov/api/citations/20250010653/downloads/ASGSR%202025-LUCI-Ferkul-Presentation-v2-20250010653.pdf?attachment=true",
+   "pdf_file": "data/partial_g/sources/luci.pdf",
+   "pdf_sha256": "bb0aadd2f9543483467b86796e6aa19f4e13c3f8169eec96134015f95ed61d79",
+   "text_file": "data/partial_g/sources/luci_20250010653.txt"
+  },
+  {
+   "id": "schechter2025",
+   "ntrs_id": "20250010975",
+   "title": "Characterizing the Flammability of Nomex Fabric for the Preparation of FM2",
+   "authors": "J. Schechter, J. Zayac, P. Ferkul, D. Dietrich, Y.-T. Liao",
+   "year": 2025,
+   "kind": "conference poster (ASGSR 2025), preliminary work, not peer reviewed",
+   "url": "https://ntrs.nasa.gov/citations/20250010975",
+   "pdf_url": "https://ntrs.nasa.gov/api/citations/20250010975/downloads/ASGSR_FinalPoster%20JSchechter.pdf",
+   "pdf_file": "data/partial_g/sources/schechter_20250010975.pdf",
+   "pdf_sha256": "0481647076339686df059467f529fe2cd661b926655f04a0842ec0eb33d551b7",
+   "text_file": "data/partial_g/sources/schechter_20250010975.txt"
+  },
+  {
+   "id": "ferkul2026",
+   "ntrs_id": "20260001966",
+   "title": "Material Flammability at Lunar and Martian Gravity",
+   "authors": "P. Ferkul, N. Kralik, Y.-T. Liao, M. Johnston",
+   "year": 2026,
+   "kind": "conference presentation (LPSC, March 2026), slides, not peer reviewed",
+   "url": "https://ntrs.nasa.gov/citations/20260001966",
+   "pdf_url": "https://ntrs.nasa.gov/api/citations/20260001966/downloads/Ferkul-Lunar%20and%20Planetary%20Science%20Conf%202026%20v2.pdf",
+   "pdf_file": "data/partial_g/sources/ferkul_20260001966.pdf",
+   "pdf_sha256": "89c604a71fe33840a79aaad8fdb9942e11b32d88b20af6fa46f3bb48b1b63113",
+   "text_file": "data/partial_g/sources/ferkul_20260001966.txt"
+  },
+  {
+   "id": "zayac2024",
+   "ntrs_id": "20240008623",
+   "title": "Flammability of Materials on the Moon",
+   "authors": "J. Zayac, M. Johnston, G. Ruff, P. Ferkul",
+   "year": 2024,
+   "kind": "conference poster (Glenn Space Technology Symposium 2024), not peer reviewed",
+   "url": "https://ntrs.nasa.gov/citations/20240008623",
+   "pdf_url": "https://ntrs.nasa.gov/api/citations/20240008623/downloads/20240008623.pdf",
+   "pdf_file": "data/partial_g/sources/zayac_20240008623.pdf",
+   "pdf_sha256": "b96e5a0e72466792c3a135c232084ec9cc729f33b4906ac6b3fc32ff051bcbac",
+   "text_file": "data/partial_g/sources/zayac_20240008623.txt"
+  },
+  {
+   "id": "urban2025",
+   "ntrs_id": "20250002114",
+   "title": "Solid Fuel Ignition Testing for Lunar Applications, Theory and Experimental Results (ICES-2025-392)",
+   "authors": "D. Urban et al. (NASA Glenn Research Center, NASA White Sands Test Facility)",
+   "year": 2025,
+   "kind": "conference paper (ICES 2025)",
+   "url": "https://ntrs.nasa.gov/citations/20250002114",
+   "pdf_url": "https://ntrs.nasa.gov/api/citations/20250002114/downloads/ICES_2025-392-correctedcaptions.pdf",
+   "pdf_file": "data/partial_g/sources/urban2025.pdf",
+   "pdf_sha256": "a7beb30e4beb5f5b993253161df7d2b9a286a1525bf97ab0d6bf94250a390474",
+   "text_file": "data/partial_g/sources/urban_20250002114.txt"
+  },
+  {
+   "id": "sacksteder2003",
+   "ntrs_id": "20040053567",
+   "title": "Upward and Downward Flame Spreading and Extinction in Partial Gravity Environments",
+   "authors": "K.R. Sacksteder, P.V. Ferkul, I.I. Feier, A. Kumar, J.S. T'ien",
+   "year": 2003,
+   "kind": "workshop paper (7th Intl Workshop on Microgravity Combustion, NASA/CP-2003-212376/REV1), KC-135 aircraft tests",
+   "url": "https://ntrs.nasa.gov/citations/20040053567",
+   "pdf_url": "https://ntrs.nasa.gov/api/citations/20040053567/downloads/20040053567.pdf",
+   "pdf_file": "data/partial_g/sources/sacksteder_20040053567.pdf",
+   "pdf_sha256": "f4021961886188ec48f51c38af679dc026efabe3bedbe0a5308d901db5fe5c47",
+   "text_file": "data/partial_g/sources/sacksteder_20040053567.txt"
+  }
+ ],
+ "definitions": {
+  "olson2013": {
+   "moc_star": {
+    "text": "the MOC* for these tests was defined as the maximum oxygen concentration at which the flame was observed to self-extinguish during the drop time",
+    "page": 4
+   },
+   "ulois_star": {
+    "text": "The ULOI* criterion was minimum oxygen concentration where the flame survived the full drop time",
+    "page": 4
+   },
+   "limits_conservative": {
+    "text": "the limits found are conservative",
+    "page": 4
+   },
+   "criteria_differ": {
+    "text": "It should be noted that the low g extinction limit criteria are not the same as 1g due to time constraints in drop testing",
+    "page": 6
+   },
+   "martian_rpm": {
+    "text": "To achieve Martian gravity levels, the rotation rate required is 30.8 RPM",
+    "page": 3
+   },
+   "drop": {
+    "text": "(t=5.18 s)",
+    "page": 4
+   }
+  }
+ },
+ "points": [
+  {
+   "id": "olson2013_1g_mylar_g",
+   "source_id": "olson2013",
+   "kind": "limit_value",
+   "material": "Mylar G (5 mil film)",
+   "gravity_label": "normal gravity 1 g (WSTF White Sands, Test 1 protocol with hot wire igniter)",
+   "flame_direction": "upward / concurrent",
+   "sample": "sheet in a 5 cm x 15 cm opening",
+   "outcome": "ULOI* and MOC* limiting oxygen molar concentration at 1g, upward/concurrent flame spread",
+   "quotes": {
+    "ulois_row": {
+     "text": "1g ULOI 21.2 23.5 23.5",
+     "page": 6
+    },
+    "moc_row": {
+     "text": "1g MOC 20.0 23.0 22.1",
+     "page": 6
+    },
+    "pressure": {
+     "text": "Mylar G 10.2 psia",
+     "page": 6
+    },
+    "thickness": {
+     "text": "5 mil thick plastic film",
+     "page": 3
+    },
+    "direction": {
+     "text": "so that a concurrent- flow flame spread geometry is established",
+     "page": 3
+    },
+    "opening": {
+     "text": "5 cm x 15 cm opening",
+     "page": 3
+    }
+   },
+   "fields": [
+    {
+     "name": "ulois_percent_o2",
+     "raw": "21.2",
+     "quote": "ulois_row",
+     "unit": "percent O2",
+     "token_index": 0
+    },
+    {
+     "name": "moc_percent_o2",
+     "raw": "20.0",
+     "quote": "moc_row",
+     "unit": "percent O2",
+     "token_index": 0
+    },
+    {
+     "name": "total_pressure",
+     "raw": "10.2",
+     "quote": "pressure",
+     "unit": "psia"
+    },
+    {
+     "name": "thickness",
+     "raw": "5",
+     "quote": "thickness",
+     "unit": "mil"
+    },
+    {
+     "name": "gravity_g",
+     "raw": "1",
+     "quote": "ulois_row",
+     "unit": "g",
+     "as_stated": "1g"
+    }
+   ],
+   "notes": [
+    "Reduced-gravity ULOI* and MOC* use drop-time criteria (5.18 s), not the 1 g Test 1 definitions; the paper calls the limits conservative for weak flames."
+   ]
+  },
+  {
+   "id": "olson2013_1g_ultem_1000",
+   "source_id": "olson2013",
+   "kind": "limit_value",
+   "material": "Ultem 1000 (10 mil film)",
+   "gravity_label": "normal gravity 1 g (WSTF White Sands, Test 1 protocol with hot wire igniter)",
+   "flame_direction": "upward / concurrent",
+   "sample": "sheet in a 5 cm x 15 cm opening",
+   "outcome": "ULOI* and MOC* limiting oxygen molar concentration at 1g, upward/concurrent flame spread",
+   "quotes": {
+    "ulois_row": {
+     "text": "1g ULOI 21.2 23.5 23.5",
+     "page": 6
+    },
+    "moc_row": {
+     "text": "1g MOC 20.0 23.0 22.1",
+     "page": 6
+    },
+    "pressure": {
+     "text": "Ultem 1000 10.2 psia",
+     "page": 6
+    },
+    "thickness": {
+     "text": "10 mil thick film",
+     "page": 2
+    },
+    "direction": {
+     "text": "so that a concurrent- flow flame spread geometry is established",
+     "page": 3
+    },
+    "opening": {
+     "text": "5 cm x 15 cm opening",
+     "page": 3
+    }
+   },
+   "fields": [
+    {
+     "name": "ulois_percent_o2",
+     "raw": "23.5",
+     "quote": "ulois_row",
+     "unit": "percent O2",
+     "token_index": 1
+    },
+    {
+     "name": "moc_percent_o2",
+     "raw": "23.0",
+     "quote": "moc_row",
+     "unit": "percent O2",
+     "token_index": 1
+    },
+    {
+     "name": "total_pressure",
+     "raw": "10.2",
+     "quote": "pressure",
+     "unit": "psia"
+    },
+    {
+     "name": "thickness",
+     "raw": "10",
+     "quote": "thickness",
+     "unit": "mil"
+    },
+    {
+     "name": "gravity_g",
+     "raw": "1",
+     "quote": "ulois_row",
+     "unit": "g",
+     "as_stated": "1g"
+    }
+   ],
+   "notes": [
+    "Reduced-gravity ULOI* and MOC* use drop-time criteria (5.18 s), not the 1 g Test 1 definitions; the paper calls the limits conservative for weak flames."
+   ]
+  },
+  {
+   "id": "olson2013_1g_nomex_ht90_40",
+   "source_id": "olson2013",
+   "kind": "limit_value",
+   "material": "Nomex HT90-40 (12 mil fabric)",
+   "gravity_label": "normal gravity 1 g (WSTF White Sands, Test 1 protocol with hot wire igniter)",
+   "flame_direction": "upward / concurrent",
+   "sample": "sheet in a 5 cm x 15 cm opening",
+   "outcome": "ULOI* and MOC* limiting oxygen molar concentration at 1g, upward/concurrent flame spread",
+   "quotes": {
+    "ulois_row": {
+     "text": "1g ULOI 21.2 23.5 23.5",
+     "page": 6
+    },
+    "moc_row": {
+     "text": "1g MOC 20.0 23.0 22.1",
+     "page": 6
+    },
+    "pressure": {
+     "text": "Nomex HT90-40 14.7 psia",
+     "page": 6
+    },
+    "thickness": {
+     "text": "12 mil thick fire",
+     "page": 3
+    },
+    "direction": {
+     "text": "so that a concurrent- flow flame spread geometry is established",
+     "page": 3
+    },
+    "opening": {
+     "text": "5 cm x 15 cm opening",
+     "page": 3
+    }
+   },
+   "fields": [
+    {
+     "name": "ulois_percent_o2",
+     "raw": "23.5",
+     "quote": "ulois_row",
+     "unit": "percent O2",
+     "token_index": 2
+    },
+    {
+     "name": "moc_percent_o2",
+     "raw": "22.1",
+     "quote": "moc_row",
+     "unit": "percent O2",
+     "token_index": 2
+    },
+    {
+     "name": "total_pressure",
+     "raw": "14.7",
+     "quote": "pressure",
+     "unit": "psia"
+    },
+    {
+     "name": "thickness",
+     "raw": "12",
+     "quote": "thickness",
+     "unit": "mil"
+    },
+    {
+     "name": "gravity_g",
+     "raw": "1",
+     "quote": "ulois_row",
+     "unit": "g",
+     "as_stated": "1g"
+    }
+   ],
+   "notes": [
+    "Reduced-gravity ULOI* and MOC* use drop-time criteria (5.18 s), not the 1 g Test 1 definitions; the paper calls the limits conservative for weak flames."
+   ]
+  },
+  {
+   "id": "olson2013_martian_mylar_g",
+   "source_id": "olson2013",
+   "kind": "limit_value",
+   "material": "Mylar G (5 mil film)",
+   "gravity_label": "Martian gravity, 0.38 g Earth (Glenn centrifuge drop rig, 5.18 s)",
+   "flame_direction": "upward / concurrent",
+   "sample": "sheet in a 5 cm x 15 cm opening",
+   "outcome": "ULOI* and MOC* limiting oxygen molar concentration at martian, upward/concurrent flame spread",
+   "quotes": {
+    "ulois_row": {
+     "text": "Martian ULOI* 18.0 22.0 19.9",
+     "page": 6
+    },
+    "moc_row": {
+     "text": "Martian MOC* 17.0 21.1 19.0",
+     "page": 6
+    },
+    "pressure": {
+     "text": "Mylar G 10.2 psia",
+     "page": 6
+    },
+    "thickness": {
+     "text": "5 mil thick plastic film",
+     "page": 3
+    },
+    "direction": {
+     "text": "so that a concurrent- flow flame spread geometry is established",
+     "page": 3
+    },
+    "opening": {
+     "text": "5 cm x 15 cm opening",
+     "page": 3
+    },
+    "gravity": {
+     "text": "Martian gravity (0.38 g Earth",
+     "page": 1
+    },
+    "margin_row": {
+     "text": "Martian O2 % -3.1 -1.7 -3.35",
+     "page": 6
+    },
+    "text_survive": {
+     "text": "Martian-g ULOI* condition (18% O2 at 10.2 psi)",
+     "page": 4
+    },
+    "text_out": {
+     "text": "When the oxygen is decreased in another test to 17%, the flame goes out.",
+     "page": 4
+    }
+   },
+   "fields": [
+    {
+     "name": "ulois_percent_o2",
+     "raw": "18.0",
+     "quote": "ulois_row",
+     "unit": "percent O2",
+     "token_index": 0
+    },
+    {
+     "name": "moc_percent_o2",
+     "raw": "17.0",
+     "quote": "moc_row",
+     "unit": "percent O2",
+     "token_index": 0
+    },
+    {
+     "name": "total_pressure",
+     "raw": "10.2",
+     "quote": "pressure",
+     "unit": "psia"
+    },
+    {
+     "name": "thickness",
+     "raw": "5",
+     "quote": "thickness",
+     "unit": "mil"
+    },
+    {
+     "name": "gravity_g",
+     "raw": "0.38",
+     "quote": "gravity",
+     "unit": "g"
+    },
+    {
+     "name": "o2_margin_vs_1g",
+     "raw": "-3.1",
+     "quote": "margin_row",
+     "unit": "percent O2 (paper's delta O2 %)",
+     "token_index": 0
+    },
+    {
+     "name": "text_ulois_o2",
+     "raw": "18",
+     "quote": "text_survive",
+     "unit": "percent O2"
+    },
+    {
+     "name": "text_extinguished_o2",
+     "raw": "17",
+     "quote": "text_out",
+     "unit": "percent O2"
+    }
+   ],
+   "notes": [
+    "Reduced-gravity ULOI* and MOC* use drop-time criteria (5.18 s), not the 1 g Test 1 definitions; the paper calls the limits conservative for weak flames."
+   ]
+  },
+  {
+   "id": "olson2013_martian_ultem_1000",
+   "source_id": "olson2013",
+   "kind": "limit_value",
+   "material": "Ultem 1000 (10 mil film)",
+   "gravity_label": "Martian gravity, 0.38 g Earth (Glenn centrifuge drop rig, 5.18 s)",
+   "flame_direction": "upward / concurrent",
+   "sample": "sheet in a 5 cm x 15 cm opening",
+   "outcome": "ULOI* and MOC* limiting oxygen molar concentration at martian, upward/concurrent flame spread",
+   "quotes": {
+    "ulois_row": {
+     "text": "Martian ULOI* 18.0 22.0 19.9",
+     "page": 6
+    },
+    "moc_row": {
+     "text": "Martian MOC* 17.0 21.1 19.0",
+     "page": 6
+    },
+    "pressure": {
+     "text": "Ultem 1000 10.2 psia",
+     "page": 6
+    },
+    "thickness": {
+     "text": "10 mil thick film",
+     "page": 2
+    },
+    "direction": {
+     "text": "so that a concurrent- flow flame spread geometry is established",
+     "page": 3
+    },
+    "opening": {
+     "text": "5 cm x 15 cm opening",
+     "page": 3
+    },
+    "gravity": {
+     "text": "Martian gravity (0.38 g Earth",
+     "page": 1
+    },
+    "margin_row": {
+     "text": "Martian O2 % -3.1 -1.7 -3.35",
+     "page": 6
+    }
+   },
+   "fields": [
+    {
+     "name": "ulois_percent_o2",
+     "raw": "22.0",
+     "quote": "ulois_row",
+     "unit": "percent O2",
+     "token_index": 1
+    },
+    {
+     "name": "moc_percent_o2",
+     "raw": "21.1",
+     "quote": "moc_row",
+     "unit": "percent O2",
+     "token_index": 1
+    },
+    {
+     "name": "total_pressure",
+     "raw": "10.2",
+     "quote": "pressure",
+     "unit": "psia"
+    },
+    {
+     "name": "thickness",
+     "raw": "10",
+     "quote": "thickness",
+     "unit": "mil"
+    },
+    {
+     "name": "gravity_g",
+     "raw": "0.38",
+     "quote": "gravity",
+     "unit": "g"
+    },
+    {
+     "name": "o2_margin_vs_1g",
+     "raw": "-1.7",
+     "quote": "margin_row",
+     "unit": "percent O2 (paper's delta O2 %)",
+     "token_index": 1
+    }
+   ],
+   "notes": [
+    "Reduced-gravity ULOI* and MOC* use drop-time criteria (5.18 s), not the 1 g Test 1 definitions; the paper calls the limits conservative for weak flames."
+   ]
+  },
+  {
+   "id": "olson2013_martian_nomex_ht90_40",
+   "source_id": "olson2013",
+   "kind": "limit_value",
+   "material": "Nomex HT90-40 (12 mil fabric)",
+   "gravity_label": "Martian gravity, 0.38 g Earth (Glenn centrifuge drop rig, 5.18 s)",
+   "flame_direction": "upward / concurrent",
+   "sample": "sheet in a 5 cm x 15 cm opening",
+   "outcome": "ULOI* and MOC* limiting oxygen molar concentration at martian, upward/concurrent flame spread",
+   "quotes": {
+    "ulois_row": {
+     "text": "Martian ULOI* 18.0 22.0 19.9",
+     "page": 6
+    },
+    "moc_row": {
+     "text": "Martian MOC* 17.0 21.1 19.0",
+     "page": 6
+    },
+    "pressure": {
+     "text": "Nomex HT90-40 14.7 psia",
+     "page": 6
+    },
+    "thickness": {
+     "text": "12 mil thick fire",
+     "page": 3
+    },
+    "direction": {
+     "text": "so that a concurrent- flow flame spread geometry is established",
+     "page": 3
+    },
+    "opening": {
+     "text": "5 cm x 15 cm opening",
+     "page": 3
+    },
+    "gravity": {
+     "text": "Martian gravity (0.38 g Earth",
+     "page": 1
+    },
+    "margin_row": {
+     "text": "Martian O2 % -3.1 -1.7 -3.35",
+     "page": 6
+    }
+   },
+   "fields": [
+    {
+     "name": "ulois_percent_o2",
+     "raw": "19.9",
+     "quote": "ulois_row",
+     "unit": "percent O2",
+     "token_index": 2
+    },
+    {
+     "name": "moc_percent_o2",
+     "raw": "19.0",
+     "quote": "moc_row",
+     "unit": "percent O2",
+     "token_index": 2
+    },
+    {
+     "name": "total_pressure",
+     "raw": "14.7",
+     "quote": "pressure",
+     "unit": "psia"
+    },
+    {
+     "name": "thickness",
+     "raw": "12",
+     "quote": "thickness",
+     "unit": "mil"
+    },
+    {
+     "name": "gravity_g",
+     "raw": "0.38",
+     "quote": "gravity",
+     "unit": "g"
+    },
+    {
+     "name": "o2_margin_vs_1g",
+     "raw": "-3.35",
+     "quote": "margin_row",
+     "unit": "percent O2 (paper's delta O2 %)",
+     "token_index": 2
+    }
+   ],
+   "notes": [
+    "Reduced-gravity ULOI* and MOC* use drop-time criteria (5.18 s), not the 1 g Test 1 definitions; the paper calls the limits conservative for weak flames."
+   ]
+  },
+  {
+   "id": "olson2013_lunar_mylar_g",
+   "source_id": "olson2013",
+   "kind": "limit_value",
+   "material": "Mylar G (5 mil film)",
+   "gravity_label": "Lunar gravity (Glenn centrifuge drop rig; g number not stated in this paper; rows taken from Ferkul and Olson 2011 as reproduced in Table I)",
+   "flame_direction": "upward / concurrent",
+   "sample": "sheet in a 5 cm x 15 cm opening",
+   "outcome": "ULOI* and MOC* limiting oxygen molar concentration at lunar, upward/concurrent flame spread",
+   "quotes": {
+    "ulois_row": {
+     "text": "Lunar ULOI* 15.6 21.0 21.0",
+     "page": 6
+    },
+    "moc_row": {
+     "text": "Lunar MOC* 14.1 19.9 19.9",
+     "page": 6
+    },
+    "pressure": {
+     "text": "Mylar G 10.2 psia",
+     "page": 6
+    },
+    "thickness": {
+     "text": "5 mil thick plastic film",
+     "page": 3
+    },
+    "direction": {
+     "text": "so that a concurrent- flow flame spread geometry is established",
+     "page": 3
+    },
+    "opening": {
+     "text": "5 cm x 15 cm opening",
+     "page": 3
+    },
+    "margin_row": {
+     "text": "Lunar O2 % -5.75 -2.8 -2.35",
+     "page": 6
+    }
+   },
+   "fields": [
+    {
+     "name": "ulois_percent_o2",
+     "raw": "15.6",
+     "quote": "ulois_row",
+     "unit": "percent O2",
+     "token_index": 0
+    },
+    {
+     "name": "moc_percent_o2",
+     "raw": "14.1",
+     "quote": "moc_row",
+     "unit": "percent O2",
+     "token_index": 0
+    },
+    {
+     "name": "total_pressure",
+     "raw": "10.2",
+     "quote": "pressure",
+     "unit": "psia"
+    },
+    {
+     "name": "thickness",
+     "raw": "5",
+     "quote": "thickness",
+     "unit": "mil"
+    },
+    {
+     "name": "o2_margin_vs_1g",
+     "raw": "-5.75",
+     "quote": "margin_row",
+     "unit": "percent O2 (paper's delta O2 %)",
+     "token_index": 0
+    }
+   ],
+   "notes": [
+    "Reduced-gravity ULOI* and MOC* use drop-time criteria (5.18 s), not the 1 g Test 1 definitions; the paper calls the limits conservative for weak flames."
+   ]
+  },
+  {
+   "id": "olson2013_lunar_ultem_1000",
+   "source_id": "olson2013",
+   "kind": "limit_value",
+   "material": "Ultem 1000 (10 mil film)",
+   "gravity_label": "Lunar gravity (Glenn centrifuge drop rig; g number not stated in this paper; rows taken from Ferkul and Olson 2011 as reproduced in Table I)",
+   "flame_direction": "upward / concurrent",
+   "sample": "sheet in a 5 cm x 15 cm opening",
+   "outcome": "ULOI* and MOC* limiting oxygen molar concentration at lunar, upward/concurrent flame spread",
+   "quotes": {
+    "ulois_row": {
+     "text": "Lunar ULOI* 15.6 21.0 21.0",
+     "page": 6
+    },
+    "moc_row": {
+     "text": "Lunar MOC* 14.1 19.9 19.9",
+     "page": 6
+    },
+    "pressure": {
+     "text": "Ultem 1000 10.2 psia",
+     "page": 6
+    },
+    "thickness": {
+     "text": "10 mil thick film",
+     "page": 2
+    },
+    "direction": {
+     "text": "so that a concurrent- flow flame spread geometry is established",
+     "page": 3
+    },
+    "opening": {
+     "text": "5 cm x 15 cm opening",
+     "page": 3
+    },
+    "margin_row": {
+     "text": "Lunar O2 % -5.75 -2.8 -2.35",
+     "page": 6
+    }
+   },
+   "fields": [
+    {
+     "name": "ulois_percent_o2",
+     "raw": "21.0",
+     "quote": "ulois_row",
+     "unit": "percent O2",
+     "token_index": 1
+    },
+    {
+     "name": "moc_percent_o2",
+     "raw": "19.9",
+     "quote": "moc_row",
+     "unit": "percent O2",
+     "token_index": 1
+    },
+    {
+     "name": "total_pressure",
+     "raw": "10.2",
+     "quote": "pressure",
+     "unit": "psia"
+    },
+    {
+     "name": "thickness",
+     "raw": "10",
+     "quote": "thickness",
+     "unit": "mil"
+    },
+    {
+     "name": "o2_margin_vs_1g",
+     "raw": "-2.8",
+     "quote": "margin_row",
+     "unit": "percent O2 (paper's delta O2 %)",
+     "token_index": 1
+    }
+   ],
+   "notes": [
+    "Reduced-gravity ULOI* and MOC* use drop-time criteria (5.18 s), not the 1 g Test 1 definitions; the paper calls the limits conservative for weak flames."
+   ]
+  },
+  {
+   "id": "olson2013_lunar_nomex_ht90_40",
+   "source_id": "olson2013",
+   "kind": "limit_value",
+   "material": "Nomex HT90-40 (12 mil fabric)",
+   "gravity_label": "Lunar gravity (Glenn centrifuge drop rig; g number not stated in this paper; rows taken from Ferkul and Olson 2011 as reproduced in Table I)",
+   "flame_direction": "upward / concurrent",
+   "sample": "sheet in a 5 cm x 15 cm opening",
+   "outcome": "ULOI* and MOC* limiting oxygen molar concentration at lunar, upward/concurrent flame spread",
+   "quotes": {
+    "ulois_row": {
+     "text": "Lunar ULOI* 15.6 21.0 21.0",
+     "page": 6
+    },
+    "moc_row": {
+     "text": "Lunar MOC* 14.1 19.9 19.9",
+     "page": 6
+    },
+    "pressure": {
+     "text": "Nomex HT90-40 14.7 psia",
+     "page": 6
+    },
+    "thickness": {
+     "text": "12 mil thick fire",
+     "page": 3
+    },
+    "direction": {
+     "text": "so that a concurrent- flow flame spread geometry is established",
+     "page": 3
+    },
+    "opening": {
+     "text": "5 cm x 15 cm opening",
+     "page": 3
+    },
+    "margin_row": {
+     "text": "Lunar O2 % -5.75 -2.8 -2.35",
+     "page": 6
+    }
+   },
+   "fields": [
+    {
+     "name": "ulois_percent_o2",
+     "raw": "21.0",
+     "quote": "ulois_row",
+     "unit": "percent O2",
+     "token_index": 2
+    },
+    {
+     "name": "moc_percent_o2",
+     "raw": "19.9",
+     "quote": "moc_row",
+     "unit": "percent O2",
+     "token_index": 2
+    },
+    {
+     "name": "total_pressure",
+     "raw": "14.7",
+     "quote": "pressure",
+     "unit": "psia"
+    },
+    {
+     "name": "thickness",
+     "raw": "12",
+     "quote": "thickness",
+     "unit": "mil"
+    },
+    {
+     "name": "o2_margin_vs_1g",
+     "raw": "-2.35",
+     "quote": "margin_row",
+     "unit": "percent O2 (paper's delta O2 %)",
+     "token_index": 2
+    }
+   ],
+   "notes": [
+    "Reduced-gravity ULOI* and MOC* use drop-time criteria (5.18 s), not the 1 g Test 1 definitions; the paper calls the limits conservative for weak flames."
+   ]
+  },
+  {
+   "id": "olson2013_0g_mylar_g",
+   "source_id": "olson2013",
+   "kind": "limit_value",
+   "material": "Mylar G (5 mil film)",
+   "gravity_label": "microgravity 0 g with 30 cm/s concurrent forced flow (Glenn drop tower)",
+   "flame_direction": "upward / concurrent",
+   "sample": "sheet in a 5 cm x 15 cm opening",
+   "outcome": "ULOI* and MOC* limiting oxygen molar concentration at 0g, upward/concurrent flame spread",
+   "quotes": {
+    "ulois_row": {
+     "text": "0g* ULOI* 17.0 24.0 23.0",
+     "page": 6
+    },
+    "moc_row": {
+     "text": "0g* MOC* 16.0 23.0 22.0",
+     "page": 6
+    },
+    "pressure": {
+     "text": "Mylar G 10.2 psia",
+     "page": 6
+    },
+    "thickness": {
+     "text": "5 mil thick plastic film",
+     "page": 3
+    },
+    "direction": {
+     "text": "so that a concurrent- flow flame spread geometry is established",
+     "page": 3
+    },
+    "opening": {
+     "text": "5 cm x 15 cm opening",
+     "page": 3
+    },
+    "flow": {
+     "text": "0g (with a concurrent flow of 30 cm/s",
+     "page": 4
+    },
+    "margin_row": {
+     "text": "0g O2 % -4.1 0.25 -0.3",
+     "page": 6
+    }
+   },
+   "fields": [
+    {
+     "name": "ulois_percent_o2",
+     "raw": "17.0",
+     "quote": "ulois_row",
+     "unit": "percent O2",
+     "token_index": 0
+    },
+    {
+     "name": "moc_percent_o2",
+     "raw": "16.0",
+     "quote": "moc_row",
+     "unit": "percent O2",
+     "token_index": 0
+    },
+    {
+     "name": "total_pressure",
+     "raw": "10.2",
+     "quote": "pressure",
+     "unit": "psia"
+    },
+    {
+     "name": "thickness",
+     "raw": "5",
+     "quote": "thickness",
+     "unit": "mil"
+    },
+    {
+     "name": "forced_flow",
+     "raw": "30",
+     "quote": "flow",
+     "unit": "cm/s"
+    },
+    {
+     "name": "o2_margin_vs_1g",
+     "raw": "-4.1",
+     "quote": "margin_row",
+     "unit": "percent O2 (paper's delta O2 %)",
+     "token_index": 0
+    }
+   ],
+   "notes": [
+    "Reduced-gravity ULOI* and MOC* use drop-time criteria (5.18 s), not the 1 g Test 1 definitions; the paper calls the limits conservative for weak flames."
+   ]
+  },
+  {
+   "id": "olson2013_0g_ultem_1000",
+   "source_id": "olson2013",
+   "kind": "limit_value",
+   "material": "Ultem 1000 (10 mil film)",
+   "gravity_label": "microgravity 0 g with 30 cm/s concurrent forced flow (Glenn drop tower)",
+   "flame_direction": "upward / concurrent",
+   "sample": "sheet in a 5 cm x 15 cm opening",
+   "outcome": "ULOI* and MOC* limiting oxygen molar concentration at 0g, upward/concurrent flame spread",
+   "quotes": {
+    "ulois_row": {
+     "text": "0g* ULOI* 17.0 24.0 23.0",
+     "page": 6
+    },
+    "moc_row": {
+     "text": "0g* MOC* 16.0 23.0 22.0",
+     "page": 6
+    },
+    "pressure": {
+     "text": "Ultem 1000 10.2 psia",
+     "page": 6
+    },
+    "thickness": {
+     "text": "10 mil thick film",
+     "page": 2
+    },
+    "direction": {
+     "text": "so that a concurrent- flow flame spread geometry is established",
+     "page": 3
+    },
+    "opening": {
+     "text": "5 cm x 15 cm opening",
+     "page": 3
+    },
+    "flow": {
+     "text": "0g (with a concurrent flow of 30 cm/s",
+     "page": 4
+    },
+    "margin_row": {
+     "text": "0g O2 % -4.1 0.25 -0.3",
+     "page": 6
+    }
+   },
+   "fields": [
+    {
+     "name": "ulois_percent_o2",
+     "raw": "24.0",
+     "quote": "ulois_row",
+     "unit": "percent O2",
+     "token_index": 1
+    },
+    {
+     "name": "moc_percent_o2",
+     "raw": "23.0",
+     "quote": "moc_row",
+     "unit": "percent O2",
+     "token_index": 1
+    },
+    {
+     "name": "total_pressure",
+     "raw": "10.2",
+     "quote": "pressure",
+     "unit": "psia"
+    },
+    {
+     "name": "thickness",
+     "raw": "10",
+     "quote": "thickness",
+     "unit": "mil"
+    },
+    {
+     "name": "forced_flow",
+     "raw": "30",
+     "quote": "flow",
+     "unit": "cm/s"
+    },
+    {
+     "name": "o2_margin_vs_1g",
+     "raw": "0.25",
+     "quote": "margin_row",
+     "unit": "percent O2 (paper's delta O2 %)",
+     "token_index": 1
+    }
+   ],
+   "notes": [
+    "Reduced-gravity ULOI* and MOC* use drop-time criteria (5.18 s), not the 1 g Test 1 definitions; the paper calls the limits conservative for weak flames."
+   ]
+  },
+  {
+   "id": "olson2013_0g_nomex_ht90_40",
+   "source_id": "olson2013",
+   "kind": "limit_value",
+   "material": "Nomex HT90-40 (12 mil fabric)",
+   "gravity_label": "microgravity 0 g with 30 cm/s concurrent forced flow (Glenn drop tower)",
+   "flame_direction": "upward / concurrent",
+   "sample": "sheet in a 5 cm x 15 cm opening",
+   "outcome": "ULOI* and MOC* limiting oxygen molar concentration at 0g, upward/concurrent flame spread",
+   "quotes": {
+    "ulois_row": {
+     "text": "0g* ULOI* 17.0 24.0 23.0",
+     "page": 6
+    },
+    "moc_row": {
+     "text": "0g* MOC* 16.0 23.0 22.0",
+     "page": 6
+    },
+    "pressure": {
+     "text": "Nomex HT90-40 14.7 psia",
+     "page": 6
+    },
+    "thickness": {
+     "text": "12 mil thick fire",
+     "page": 3
+    },
+    "direction": {
+     "text": "so that a concurrent- flow flame spread geometry is established",
+     "page": 3
+    },
+    "opening": {
+     "text": "5 cm x 15 cm opening",
+     "page": 3
+    },
+    "flow": {
+     "text": "0g (with a concurrent flow of 30 cm/s",
+     "page": 4
+    },
+    "margin_row": {
+     "text": "0g O2 % -4.1 0.25 -0.3",
+     "page": 6
+    }
+   },
+   "fields": [
+    {
+     "name": "ulois_percent_o2",
+     "raw": "23.0",
+     "quote": "ulois_row",
+     "unit": "percent O2",
+     "token_index": 2
+    },
+    {
+     "name": "moc_percent_o2",
+     "raw": "22.0",
+     "quote": "moc_row",
+     "unit": "percent O2",
+     "token_index": 2
+    },
+    {
+     "name": "total_pressure",
+     "raw": "14.7",
+     "quote": "pressure",
+     "unit": "psia"
+    },
+    {
+     "name": "thickness",
+     "raw": "12",
+     "quote": "thickness",
+     "unit": "mil"
+    },
+    {
+     "name": "forced_flow",
+     "raw": "30",
+     "quote": "flow",
+     "unit": "cm/s"
+    },
+    {
+     "name": "o2_margin_vs_1g",
+     "raw": "-0.3",
+     "quote": "margin_row",
+     "unit": "percent O2 (paper's delta O2 %)",
+     "token_index": 2
+    }
+   ],
+   "notes": [
+    "Reduced-gravity ULOI* and MOC* use drop-time criteria (5.18 s), not the 1 g Test 1 definitions; the paper calls the limits conservative for weak flames."
+   ]
+  },
+  {
+   "id": "luci_pmma_lunar",
+   "source_id": "luci2025",
+   "kind": "o2_observed",
+   "material": "PMMA (acrylic) rod, 4 mm diameter",
+   "gravity_label": "simulated Lunar gravity by vehicle rotation (g number not stated in text; 11 RPM at 1.22 m radius is stated)",
+   "flame_direction": "upward",
+   "sample": "4 mm diameter rod, burned together with a SIBAL fabric sheet",
+   "outcome": "Chamber O2 fell from 20% to 14.3% during the burn; flame base spread ~6 cm until extinction; steady spread not achieved. The O2 is a chamber depletion trace, not a controlled-O2 limit test.",
+   "quotes": {
+    "air": {
+     "text": "Two samples are burned simultaneously in air at normal pressure",
+     "page": 12
+    },
+    "rot": {
+     "text": "A steady vehicle rotation of 11 RPM is established, with an effective radius of rotation of 1.22 m at the experiment location",
+     "page": 12
+    },
+    "dia": {
+     "text": "4-mm diameter",
+     "page": 12
+    },
+    "o2": {
+     "text": "O2% decreases from 20% to 14.3%.",
+     "page": 22
+    },
+    "rise": {
+     "text": "O2% rises back to 15.8% likely due to the decrease in gravity (and thus buoyant flow) which occurred at 125s.",
+     "page": 22
+    },
+    "tip": {
+     "text": "Flame spread rate = 1.5 mm/s.",
+     "page": 21
+    },
+    "base": {
+     "text": "Total base spread of ~6cm until extinction.",
+     "page": 20
+    },
+    "cmp": {
+     "text": ".15 .40 .38",
+     "page": 36
+    },
+    "upward": {
+     "text": "4-mm-diameter PMMA rod burning upward in air in Lunar-g",
+     "page": 16
+    }
+   },
+   "fields": [
+    {
+     "name": "o2_start",
+     "raw": "20",
+     "quote": "o2",
+     "unit": "percent O2"
+    },
+    {
+     "name": "o2_end",
+     "raw": "14.3",
+     "quote": "o2",
+     "unit": "percent O2"
+    },
+    {
+     "name": "o2_after_rise",
+     "raw": "15.8",
+     "quote": "rise",
+     "unit": "percent O2"
+    },
+    {
+     "name": "flame_tip_spread_rate",
+     "raw": "1.5",
+     "quote": "tip",
+     "unit": "mm/s"
+    },
+    {
+     "name": "flame_base_total_spread",
+     "raw": "6",
+     "quote": "base",
+     "unit": "cm",
+     "as_stated": "~6cm"
+    },
+    {
+     "name": "rotation_rate",
+     "raw": "11",
+     "quote": "rot",
+     "unit": "RPM"
+    },
+    {
+     "name": "rotation_radius",
+     "raw": "1.22",
+     "quote": "rot",
+     "unit": "m"
+    },
+    {
+     "name": "rod_diameter",
+     "raw": "4",
+     "quote": "dia",
+     "unit": "mm"
+    },
+    {
+     "name": "flame_tip_spread_partial_g",
+     "raw": ".15",
+     "quote": "cmp",
+     "unit": "cm/s",
+     "token_index": 0
+    },
+    {
+     "name": "flame_tip_spread_1g",
+     "raw": ".40",
+     "quote": "cmp",
+     "unit": "cm/s",
+     "token_index": 1
+    }
+   ],
+   "notes": [
+    "Total pressure stated only as 'normal pressure' (no number)."
+   ]
+  },
+  {
+   "id": "luci_pmma_1g",
+   "source_id": "luci2025",
+   "kind": "o2_observed",
+   "material": "PMMA (acrylic) rod, 4 mm diameter",
+   "gravity_label": "normal gravity 1 g (LUCI ground reference burn)",
+   "flame_direction": "upward",
+   "sample": "4 mm diameter rod",
+   "outcome": "Chamber O2 decreased roughly linearly from 21% to 14.5% during the 1 g reference burn.",
+   "quotes": {
+    "o2": {
+     "text": "O2% rises quickly in the beginning, then decreases ~linearly from 21% to 14.5%.",
+     "page": 31
+    },
+    "tip": {
+     "text": "Flame tip grows at a rate of ~ 3.95 mm/s at the beginning of the burn.",
+     "page": 29
+    },
+    "air": {
+     "text": "Two samples are burned simultaneously in air at normal pressure",
+     "page": 12
+    }
+   },
+   "fields": [
+    {
+     "name": "o2_start",
+     "raw": "21",
+     "quote": "o2",
+     "unit": "percent O2"
+    },
+    {
+     "name": "o2_end",
+     "raw": "14.5",
+     "quote": "o2",
+     "unit": "percent O2"
+    },
+    {
+     "name": "flame_tip_growth_rate",
+     "raw": "3.95",
+     "quote": "tip",
+     "unit": "mm/s"
+    }
+   ],
+   "notes": [
+    "Chamber depletion trace, not a controlled-O2 limit test."
+   ]
+  },
+  {
+   "id": "luci_sibal_lunar",
+   "source_id": "luci2025",
+   "kind": "spread_rate",
+   "material": "SIBAL cotton-fiberglass fabric sheet",
+   "gravity_label": "simulated Lunar gravity by vehicle rotation",
+   "flame_direction": "downward",
+   "sample": "fabric sheet",
+   "outcome": "Steady downward spread in air in simulated Lunar gravity; flame base 0.92 mm/s, flame tip 1.1 mm/s; chamber O2 drifted from ~20% to ~18%.",
+   "quotes": {
+    "base": {
+     "text": "Flame base spread rate = .92 mm/s.",
+     "page": 19
+    },
+    "tip": {
+     "text": "Flame tip spread rate = 1.1 mm/s",
+     "page": 19
+    },
+    "o2": {
+     "text": "O2 concentration decreases from ~20% to ~18%.",
+     "page": 42
+    },
+    "cmp": {
+     "text": "Flame Base .9 1.5 .6 Flame Tip 1.1 2.8 .39",
+     "page": 33
+    },
+    "air": {
+     "text": "Two samples are burned simultaneously in air at normal pressure",
+     "page": 12
+    },
+    "down": {
+     "text": "SIBAL fabric (cotton-fiberglass blend) burning downward in Lunar-g",
+     "page": 16
+    }
+   },
+   "fields": [
+    {
+     "name": "flame_base_spread_rate",
+     "raw": ".92",
+     "quote": "base",
+     "unit": "mm/s"
+    },
+    {
+     "name": "flame_tip_spread_rate",
+     "raw": "1.1",
+     "quote": "tip",
+     "unit": "mm/s"
+    },
+    {
+     "name": "o2_start",
+     "raw": "20",
+     "quote": "o2",
+     "unit": "percent O2",
+     "as_stated": "~20%"
+    },
+    {
+     "name": "o2_end",
+     "raw": "18",
+     "quote": "o2",
+     "unit": "percent O2",
+     "as_stated": "~18%"
+    },
+    {
+     "name": "flame_base_spread_1g",
+     "raw": "1.5",
+     "quote": "cmp",
+     "unit": "mm/s",
+     "token_index": 1
+    },
+    {
+     "name": "flame_tip_spread_1g",
+     "raw": "2.8",
+     "quote": "cmp",
+     "unit": "mm/s",
+     "token_index": 4
+    }
+   ],
+   "notes": [
+    "Total pressure stated only as 'normal pressure'.",
+    "The 1 g column is from the slide's fit table."
+   ]
+  },
+  {
+   "id": "schechter_nomex_1g",
+   "source_id": "schechter2025",
+   "kind": "limit_value",
+   "material": "Nomex HT90-40 fabric",
+   "gravity_label": "normal gravity 1 g",
+   "flame_direction": "not stated per datum",
+   "sample": "Nomex HT90-40 fabric",
+   "outcome": "Limiting oxygen concentration (LOC) approx 23% O2 at 8.2 psi",
+   "quotes": {
+    "pressure": {
+     "text": "(pressure is constant at 8.2 psi)",
+     "page": 1
+    },
+    "loc_hdr": {
+     "text": "Limiting oxygen concentrations (LOC):",
+     "page": 1
+    },
+    "buoy": {
+     "text": "* Assuming a buoyant velocity of 25 cm/s",
+     "page": 1
+    },
+    "mat": {
+     "text": "Investigate flammability of Nomex HT90-40",
+     "page": 1
+    },
+    "loc": {
+     "text": "1G ~23% Oxygen",
+     "page": 1
+    }
+   },
+   "fields": [
+    {
+     "name": "loc_percent_o2",
+     "raw": "23",
+     "quote": "loc",
+     "unit": "percent O2",
+     "as_stated": "~23%"
+    },
+    {
+     "name": "total_pressure",
+     "raw": "8.2",
+     "quote": "pressure",
+     "unit": "psi"
+    }
+   ],
+   "notes": [
+    "Poster does not tie each LOC to a flow speed or sample geometry; the footnote 'Assuming a buoyant velocity of 25 cm/s' sits beside the LOC list but its exact scope is not stated.",
+    "Pressure 8.2 psi is stated for the study ('pressure is constant at 8.2 psi')."
+   ]
+  },
+  {
+   "id": "schechter_nomex_lunar",
+   "source_id": "schechter2025",
+   "kind": "limit_value",
+   "material": "Nomex HT90-40 fabric",
+   "gravity_label": "Lunar gravity simulated by centrifuge (stated as ~1.62 m/s2)",
+   "flame_direction": "not stated per datum",
+   "sample": "Nomex HT90-40 fabric",
+   "outcome": "Limiting oxygen concentration (LOC) approx 29% O2 at 8.2 psi",
+   "quotes": {
+    "pressure": {
+     "text": "(pressure is constant at 8.2 psi)",
+     "page": 1
+    },
+    "loc_hdr": {
+     "text": "Limiting oxygen concentrations (LOC):",
+     "page": 1
+    },
+    "buoy": {
+     "text": "* Assuming a buoyant velocity of 25 cm/s",
+     "page": 1
+    },
+    "mat": {
+     "text": "Investigate flammability of Nomex HT90-40",
+     "page": 1
+    },
+    "loc": {
+     "text": "Lunar-G ~29% Oxygen",
+     "page": 1
+    },
+    "g": {
+     "text": "Simulates Lunar gravity (~1.62 m/s2)",
+     "page": 1
+    }
+   },
+   "fields": [
+    {
+     "name": "loc_percent_o2",
+     "raw": "29",
+     "quote": "loc",
+     "unit": "percent O2",
+     "as_stated": "~29%"
+    },
+    {
+     "name": "total_pressure",
+     "raw": "8.2",
+     "quote": "pressure",
+     "unit": "psi"
+    },
+    {
+     "name": "gravity_accel",
+     "raw": "1.62",
+     "quote": "g",
+     "unit": "m/s2",
+     "as_stated": "~1.62"
+    }
+   ],
+   "notes": [
+    "Poster does not tie each LOC to a flow speed or sample geometry; the footnote 'Assuming a buoyant velocity of 25 cm/s' sits beside the LOC list but its exact scope is not stated.",
+    "Pressure 8.2 psi is stated for the study ('pressure is constant at 8.2 psi')."
+   ]
+  },
+  {
+   "id": "schechter_nomex_0g",
+   "source_id": "schechter2025",
+   "kind": "limit_value",
+   "material": "Nomex HT90-40 fabric",
+   "gravity_label": "microgravity 0 g",
+   "flame_direction": "not stated per datum",
+   "sample": "Nomex HT90-40 fabric",
+   "outcome": "Limiting oxygen concentration (LOC) approx 38% O2 at 8.2 psi",
+   "quotes": {
+    "pressure": {
+     "text": "(pressure is constant at 8.2 psi)",
+     "page": 1
+    },
+    "loc_hdr": {
+     "text": "Limiting oxygen concentrations (LOC):",
+     "page": 1
+    },
+    "buoy": {
+     "text": "* Assuming a buoyant velocity of 25 cm/s",
+     "page": 1
+    },
+    "mat": {
+     "text": "Investigate flammability of Nomex HT90-40",
+     "page": 1
+    },
+    "loc": {
+     "text": "0G ~38% Oxygen",
+     "page": 1
+    }
+   },
+   "fields": [
+    {
+     "name": "loc_percent_o2",
+     "raw": "38",
+     "quote": "loc",
+     "unit": "percent O2",
+     "as_stated": "~38%"
+    },
+    {
+     "name": "total_pressure",
+     "raw": "8.2",
+     "quote": "pressure",
+     "unit": "psi"
+    }
+   ],
+   "notes": [
+    "Poster does not tie each LOC to a flow speed or sample geometry; the footnote 'Assuming a buoyant velocity of 25 cm/s' sits beside the LOC list but its exact scope is not stated.",
+    "Pressure 8.2 psi is stated for the study ('pressure is constant at 8.2 psi')."
+   ]
+  },
+  {
+   "id": "ferkul2026_sibal_lunar_aircraft",
+   "source_id": "ferkul2026",
+   "kind": "spread_rate",
+   "material": "SIBAL cotton-fiberglass fabric, 5 cm wide",
+   "gravity_label": "Lunar g, parabolic flight aircraft",
+   "flame_direction": "downward",
+   "sample": "5 cm wide",
+   "outcome": "Steady downward spread for the entire 20 s test time at Lunar g in 21% O2; flame base 0.086 cm/s.",
+   "quotes": {
+    "g": {
+     "text": "0.165gEarth",
+     "page": 21
+    },
+    "cond": {
+     "text": "SIBAL, 5 cm wide, Lunar g, 21% O2",
+     "page": 21
+    },
+    "steady": {
+     "text": "Lunar gravity: Steady, downward spread occurs for the entire 20-sec test time.",
+     "page": 21
+    },
+    "rate": {
+     "text": "SIBAL Lunar-g downward burning aircraft test Flame base spread rate in air: 0.086 cm/s",
+     "page": 22
+    }
+   },
+   "fields": [
+    {
+     "name": "gravity_g",
+     "raw": "0.165",
+     "quote": "g",
+     "unit": "g",
+     "as_stated": "0.165gEarth"
+    },
+    {
+     "name": "o2_percent",
+     "raw": "21",
+     "quote": "cond",
+     "unit": "percent O2"
+    },
+    {
+     "name": "sample_width",
+     "raw": "5",
+     "quote": "cond",
+     "unit": "cm"
+    },
+    {
+     "name": "flame_base_spread_rate",
+     "raw": "0.086",
+     "quote": "rate",
+     "unit": "cm/s"
+    },
+    {
+     "name": "test_time",
+     "raw": "20",
+     "quote": "steady",
+     "unit": "s"
+    }
+   ],
+   "notes": [
+    "The aircraft slide states 21% O2 only; total pressure is not stated for it."
+   ]
+  },
+  {
+   "id": "ferkul2026_sibal_lunar_centrifuge",
+   "source_id": "ferkul2026",
+   "kind": "spread_rate",
+   "material": "SIBAL cotton-fiberglass fabric",
+   "gravity_label": "Lunar g, GRC centrifuge drop rig (5.2 s)",
+   "flame_direction": "downward",
+   "sample": "2 cm wide on the playback slide; width of the 0.11 cm/s test not stated explicitly",
+   "outcome": "Downward burning in air in Lunar g; flame base spread 0.11 cm/s.",
+   "quotes": {
+    "g": {
+     "text": "Lunar-g = 0.165 gE",
+     "page": 13
+    },
+    "rate": {
+     "text": "SIBAL Lunar-g downward burning drop test with centrifuge Flame base spread rate in air: 0.11 cm/s",
+     "page": 22
+    },
+    "atm": {
+     "text": "Conditions: Air, 1 atm",
+     "page": 13
+    },
+    "w": {
+     "text": "2-cm-wide SIBAL fabric burning in Lunar-g",
+     "page": 13
+    }
+   },
+   "fields": [
+    {
+     "name": "gravity_g",
+     "raw": "0.165",
+     "quote": "g",
+     "unit": "g"
+    },
+    {
+     "name": "flame_base_spread_rate",
+     "raw": "0.11",
+     "quote": "rate",
+     "unit": "cm/s"
+    },
+    {
+     "name": "total_pressure",
+     "raw": "1",
+     "quote": "atm",
+     "unit": "atm"
+    },
+    {
+     "name": "sample_width_playback",
+     "raw": "2",
+     "quote": "w",
+     "unit": "cm"
+    }
+   ],
+   "notes": [
+    "Air at 1 atm is the stated condition on the playback slide."
+   ]
+  },
+  {
+   "id": "zayac2024_sibal_lunar_air",
+   "source_id": "zayac2024",
+   "kind": "qualitative",
+   "material": "SIBAL cotton-fiberglass fabric",
+   "gravity_label": "Lunar gravity (centrifuge and parabolic flight)",
+   "flame_direction": "downward",
+   "sample": "fabric",
+   "outcome": "Burns downward in air in lunar gravity; in 1 g it extinguishes immediately after ignition.",
+   "quotes": {
+    "sibal": {
+     "text": "SIBAL fabric has been found to only burn downward in air in lunar gravity (via Lunar gravity centrifuge and parabolic flight) where on Earth's gravity it extinguishes immediately after ignition.",
+     "page": 1
+    }
+   },
+   "fields": [],
+   "notes": [
+    "No numeric O2 or pressure value for this statement; 'air' only."
+   ]
+  },
+  {
+   "id": "urban2025_pmma_p213_beefyt_lunar",
+   "source_id": "urban2025",
+   "kind": "qualitative",
+   "material": "PMMA 0.8 mm, P-213 tape, cotton T-shirt (Beefy-T flaming)",
+   "gravity_label": "Lunar gravity, GRC centrifuge (1/6 g radial acceleration)",
+   "flame_direction": "upward / concurrent",
+   "sample": "0.8 mm PMMA sheet and others per Figs 7-9",
+   "outcome": "Lunar-g buoyant extinction limit lower than the extrapolated 1 g forced-flow WSTF limit. Numeric O2 values are plot only, not extracted here.",
+   "quotes": {
+    "p": {
+     "text": "the planned NASA lunar habitat pressure of 56.5 kPa (8.2 psia)",
+     "page": 6
+    },
+    "rpm": {
+     "text": "the chamber was rotated at 20.4 RPM",
+     "page": 7
+    },
+    "g6": {
+     "text": "spinning to produce a 1/6 g radial acceleration",
+     "page": 7
+    },
+    "lt": {
+     "text": "the lunar-g buoyant limit was found to be less than the extrapolated value (for any assumed buoyant velocity) from the WSTF testing",
+     "page": 9
+    },
+    "figs": {
+     "text": "In figures 7, 8 and 9",
+     "page": 9
+    },
+    "t": {
+     "text": "the testing to be based on a 5 second extinction limit",
+     "page": 6
+    }
+   },
+   "fields": [
+    {
+     "name": "total_pressure",
+     "raw": "8.2",
+     "quote": "p",
+     "unit": "psia"
+    },
+    {
+     "name": "total_pressure_kpa",
+     "raw": "56.5",
+     "quote": "p",
+     "unit": "kPa"
+    },
+    {
+     "name": "rotation_rate",
+     "raw": "20.4",
+     "quote": "rpm",
+     "unit": "RPM"
+    },
+    {
+     "name": "gravity_fraction",
+     "raw": "1/6",
+     "quote": "g6",
+     "unit": "g",
+     "as_stated": "1/6"
+    }
+   ],
+   "notes": [
+    "O2 limits for these materials appear in Figs 7-12 only; see data/lunar_g/ for the Table 2 compensation factors."
+   ]
+  },
+  {
+   "id": "urban2025_polycarbonate_nomexvelcro_lunar",
+   "source_id": "urban2025",
+   "kind": "qualitative",
+   "material": "Polycarbonate and Nomex Velcro",
+   "gravity_label": "Lunar gravity, GRC centrifuge (1/6 g radial acceleration)",
+   "flame_direction": "upward / concurrent",
+   "sample": "per Figs 11-12",
+   "outcome": "Lunar-g buoyant extinction at substantially HIGHER O2 than the WSTF data (less flammable at lunar g than predicted from 1 g forced flow). Numeric O2 values are plot only, not extracted here.",
+   "quotes": {
+    "hi": {
+     "text": "the lunar-g buoyant extinction is at substantially higher oxygen concentrations that the WSTF data",
+     "page": 11
+    },
+    "p": {
+     "text": "the planned NASA lunar habitat pressure of 56.5 kPa (8.2 psia)",
+     "page": 6
+    }
+   },
+   "fields": [
+    {
+     "name": "total_pressure",
+     "raw": "8.2",
+     "quote": "p",
+     "unit": "psia"
+    }
+   ],
+   "notes": []
+  },
+  {
+   "id": "sacksteder2003_kimwipes_kc135",
+   "source_id": "sacksteder2003",
+   "kind": "qualitative",
+   "material": "Kimwipes thin cellulosic tissue",
+   "gravity_label": "KC-135 parabolic aircraft partial gravity 0.1, 0.16 and 0.38 g",
+   "flame_direction": "upward and downward",
+   "sample": "2 cm wide (Fig 1) and 1 cm wide (inset)",
+   "outcome": "Upward spread rate varied linearly with gravity; downward spread rate non-monotonic with a peak near 0.38 g. Flammability boundaries and spread rates are plot only, not extracted here.",
+   "quotes": {
+    "cond": {
+     "text": "Test pressures between 0.2-0.4 atmospheres were established using primary standard, precision mixtures of 21% O2",
+     "page": 2
+    },
+    "g": {
+     "text": "partial-gravity environments of 0.1, 0.16, and 0.38 g/gEarth",
+     "page": 2
+    },
+    "fuel": {
+     "text": "Fuel samples were a thin cellulosic tissue, trade name",
+     "page": 2
+    },
+    "peak": {
+     "text": "The downward spread rate is non- monotonic and peaks near the Martian gravity levels of 0.38 g/gEarth",
+     "page": 2
+    },
+    "lin": {
+     "text": "The upward burning spread rate varied linearly with gravity level for all pressure environments and sample widths tested",
+     "page": 2
+    },
+    "fig1": {
+     "text": "burned in 27.6 kPa (4.0 psia) air at various gravity levels",
+     "page": 2
+    }
+   },
+   "fields": [
+    {
+     "name": "gravity_g_a",
+     "raw": "0.1",
+     "quote": "g",
+     "unit": "g"
+    },
+    {
+     "name": "gravity_g_b",
+     "raw": "0.16",
+     "quote": "g",
+     "unit": "g"
+    },
+    {
+     "name": "gravity_g_c",
+     "raw": "0.38",
+     "quote": "g",
+     "unit": "g"
+    },
+    {
+     "name": "o2_percent",
+     "raw": "21",
+     "quote": "cond",
+     "unit": "percent O2"
+    },
+    {
+     "name": "total_pressure_min",
+     "raw": "0.2",
+     "quote": "cond",
+     "unit": "atm"
+    },
+    {
+     "name": "total_pressure_max",
+     "raw": "0.4",
+     "quote": "cond",
+     "unit": "atm"
+    },
+    {
+     "name": "example_pressure_kpa",
+     "raw": "27.6",
+     "quote": "fig1",
+     "unit": "kPa"
+    },
+    {
+     "name": "example_pressure_psia",
+     "raw": "4.0",
+     "quote": "fig1",
+     "unit": "psia"
+    }
+   ],
+   "notes": [
+    "Thin tissue in reduced-pressure air, not a spacecraft-material limit test."
+   ]
+  }
+ ],
+ "rejected_or_plot_only": [
+  {
+   "source": "NTRS 20250002114 (ICES-2025-392) Figs 7-12",
+   "why": "Lunar-g and WSTF O2 limits are plotted, not tabulated or stated in text (plot only, not extracted); only Table 2 deltas exist, already in data/lunar_g/."
+  },
+  {
+   "source": "NTRS 20040053567 / 20010074003 / 20010059376 (Sacksteder, Feier, T'ien; KC-135)",
+   "why": "Flammability boundaries and spread rates versus g are plotted (Figs 1, 2, 6, 7); only conditions and qualitative trends are stated in text."
+  },
+  {
+   "source": "NTRS 20210021181 (Urban 2021) and 20210020446 (Ruff 2021)",
+   "why": "State that partial-g flames propagated at the normal-g MOC and that lunar-g MOC can be lower than 0 g or Martian g for Nomex, Mylar, Ultem, but give no numbers; the numbers are in Olson 2012 Table I (NTRS 20130010991)."
+  },
+  {
+   "source": "NTRS 19990062669 (TM-1999-209198) and 19980209743 (TM-1998-207417)",
+   "why": "Describe the Sacksteder/T'ien KC-135 downward-spread maximum near Martian g and the U-shaped boundary; O2 boundary values are in a plot, text is qualitative."
+  },
+  {
+   "source": "NTRS 20260001966 slide 'expected Lunar LOC of 24-26%'",
+   "why": "An expectation for planning FM2 hardware, not a measurement; the FM2 chamber plans (37/33/29/25% O2 at 8.2 psia) are test plans, not data."
+  },
+  {
+   "source": "NTRS 20240008623 (Zayac) FM2 apparatus text and '30% oxygen in 1g' remark",
+   "why": "Apparatus description and a 1 g initial test remark; no partial-g outcome value."
+  },
+  {
+   "source": "Olson et al., Fire Safety Journal 150 (2024) 104267 (PMMA rods in centrifuge)",
+   "why": "Not on NTRS and not opened here (publisher paywall); the 13.8% O2 lunar value seen in a NASA Task Book summary was not verified word for word against a downloaded NASA publication."
+  },
+  {
+   "source": "Ferkul and Olson 2011 J. Thermophys. Heat Transfer 25(3) 457-461 and AIAA 2010-6260 (lunar centrifuge)",
+   "why": "Not found on NTRS; the lunar rows of Olson 2012 Table I are reproduced from it ('includes earlier data from ref. 8') and are used with that attribution."
+  },
+  {
+   "source": "Sacksteder and T'ien, Proc. Combust. Inst. 25 (1994) (NTRS 19930040901, 19990054085)",
+   "why": "No downloadable full text on NTRS."
+  }
+ ]
+}

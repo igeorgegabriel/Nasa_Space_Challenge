@@ -1,0 +1,152 @@
+Schechter et al., Characterizing the Flammability of Nomex Fabric for the Preparation of FM2 (plain-text snapshot of all PDF pages, pdftotext -raw, ASCII-folded)
+Source: https://ntrs.nasa.gov/citations/20250010975
+NTRS id: 20250010975
+
+=====PAGE 1
+Centrifuge:
+ Spins to generate centripetal force
+ Simulates Lunar gravity (~1.62 m/s2)
+ Drop tower:
+ Tested at 28% oxygen
+ Ground testing:
+ Oxygen: 25%, 28%, and 38%
+Characterizing the Flammability of Nomex Fabric for the Preparation of FM2
+Jocelyn Schechter1, Jennifer Zayac2, Paul Ferkul4, Daniel Dietrich3, Ya-Ting Liao1
+1Case Western Reserve University
+2Ohio Northern University
+3National Aeronautics and Space Administration
+4Universities Space Research Association
+Lf
+= Xtip
+-Xbase
+Software: Python
+ Used OpenCV for video processing
+o BGR (Blue, Green, Red)  HSV (Hue, Saturation, Value)
+Approach:
+ Tracks flame base (Xbase
+) and tip (Xtip
+) positions.
+ Deduce flame length (Lf
+= Xtip
+- Xbase
+)
+ Plot positions and apply fit line to deduce flame spread
+rates (Vbase
+, Vtip
+).
+Tracking Method
+0G
+38% O2
+30 cm/s
+1G
+38% O2
+~7 cm/s
+Results
+Space flight safety
+ Increased oxygen level
+ Reduced cabin pressure
+ Change in gravity (buoyancy)
+ Materials that are not flammable on Earth can become
+flammable when these conditions change.
+FM2 (Flammability of Materials on the Moon)
+ Planned fire experiments on the moon.
+ Currently scheduled in the next few years.
+ Will determine limiting oxygen concentration (LOC) for a
+flight-relevant material (Synergy Pro).
+Research Objectives
+To complement the FM2 data and understand how fire
+behaves for spaceflight relevant materials in different
+environmental conditions.
+Introduction Testing Method
+ Limiting oxygen concentrations (LOC):
+o 1G  ~23% Oxygen
+o Lunar-G  ~29% Oxygen
+o 0G  ~38% Oxygen
+ Data from tracking is collected and plotted to compare the effects of different
+conditions for 1G flow tunnel tests.
+o Independentvariables  Flow Rate and Oxygen %
+o Dependentvariables  flame length, base spread rate, and tip spread rate.
+Flame Length
+|
+Xbase
+|
+Xtip
+|
+X = 0
+Lf
+= Xtip
+- Xbase
+Centrifuge
+Flow Tunnel
+Flow Tunnel:
+ Drop tower:
+ Oxygen: 24% to 38% oxygen
+ Flow speed: 15 cm/s and 30 cm/s
+ Ground testing:
+ Oxygen: 22% to 38%
+ Flow speed: 5 cm/s to 30 cm/s
+(increments of 5 cm/s)
+Oxygen %
+Flow Velocity
+(or Gravity Level)
+Flammable
+Region
+Blow-off
+Extinction
+Radiative
+Extinction
+Conclusion
+ Gravity has significant effects on the material's flammability.
+o Nomex HT90-40  behaves differently than other materials when burned.
+ Oxygen concentration is observed to increase flame length and tip spread rate.
+o Inconclusive for base spread rate (need more testing).
+ Flow rate has negligible effect on flame length and flame spread over the tested range.
+ Likely due to the buoyant force outweighing the imposed flow
+* Assuming a buoyant velocity of 25 cm/s
+Acknowledgements
+  Support from Zero-G Facility Staff.
+  NASA's Office of STEM Engagement.
+  Ohio Space Grant Consortium.
+  CWRU School of Engineering.
+  NASA Glenn Research Center (Grant
+#80NSSC22M0011).
+Centrifuge:
+ Spins to generate centrifugal force
+ Simulates Lunar gravity (~1.62 m/s2)
+ Drop tower:
+ Oxygen: 28%
+ Ground testing:
+ Oxygen: 25%, 28%, and 38%
+g
+U
+Pressurized
+Bottles
+Testing
+Chamber
+Specific Aims
+ Investigate flammability of
+Nomex HT90-40  in different
+environments.
+ Understand the effects of oxygen
+and concurrent flow rate
+(pressure is constant at 8.2 psi).
+ Determine LOC.
+Example:
+Oxygen: 23%
+Flow rate: 10 cm/s
+Ignition time: 5 seconds
+ Vbase
+= 3.41 mm/s
+ Vtip
+= 3.55 mm/s
+ Lf
+= 23.14 mm
+5.2 Second Drop Tower
+g
+
+Zero Gravity Research Facility
+ A 5.2 s drop tower.
+ In the drop tower, the unit is in free fall,
+simulating microgravity
+1G Flow Tunnel Flame Tracking:
+U
