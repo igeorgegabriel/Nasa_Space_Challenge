@@ -10,3 +10,6 @@ Thumbs.db
 data/raw/
 data/investigations/raw/
 data/investigations/raw_ntrs/
+
+.vercel
+.env*
