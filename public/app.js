@@ -876,7 +876,7 @@ const HERO_VIDEO = {
   webm: "video/iss_flame_loop.webm",
   mp4: "video/iss_flame_loop.mp4",
   poster: "video/iss_flame_poster.jpg",
-  caption: "Real flame on the ISS: NASA BASS-II flight footage (PSI-25)"
+  caption: "Real flame on the ISS: acrylic rod, NASA BASS-II flight test, Feb 2014 (PSI-25)"
 };
 
 const HERO_FALLBACK = { src: "img/PSI-25/bass_ii_flame_testing.jpg", alt: "A flame burning in microgravity, photographed during NASA's BASS-II experiment" };

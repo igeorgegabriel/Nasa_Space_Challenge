@@ -314,7 +314,7 @@ table.preview th, table.preview td { white-space: nowrap; }
   animation: drift 26s ease-in-out infinite alternate;
 }
 
-.hero-video { transform: scaleX(-1) scale(1.06); transform-origin: 50% 50%; object-position: 35% 50%; animation: none; background: var(--navy); }
+.hero-video { inset: auto; top: 50%; right: 3%; left: auto; bottom: auto; width: min(54vw, 820px); height: auto; aspect-ratio: 16 / 9; object-fit: cover; object-position: 50% 50%; transform: translateY(-50%); animation: none; background: transparent; mix-blend-mode: screen; -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%); mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%); }
 
 .hero-alt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
@@ -1012,7 +1012,7 @@ body.ask-open #ask-panel { display: flex; animation: slidein 0.28s ease; }
   .hero::after { background: linear-gradient(180deg, rgba(11, 16, 32, 0.15) 0%, rgba(11, 16, 32, 0.85) 100%); }
   .hero-copy { padding-bottom: 5.5rem; }
   .oxr { height: 80px; }
-  .hero-video { height: 58%; bottom: auto; object-position: 16% 50%; }
+  .hero-video { top: 4.5rem; right: 0; left: 0; width: 100%; transform: none; }
   .credit { top: 0.8rem; bottom: auto; right: 1rem; max-width: 75vw; font-size: 0.7rem; }
   .bar-row { --nfs: 3.5rem; }
   .count { margin-left: 0; width: 100%; }
