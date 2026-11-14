@@ -58,15 +58,20 @@ MAX_TOOL_ROUNDS = 4
 TOOL_TIME_BUDGET_SECONDS = 40
 MAX_FOLLOWUP_CHARS = 120
 
-def load_data_tools():
-    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_data_tools.py")
-    spec = importlib.util.spec_from_file_location("ask_data_tools", path)
+def load_sibling(file_name, module_name):
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), file_name)
+    spec = importlib.util.spec_from_file_location(module_name, path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
 
 
+def load_data_tools():
+    return load_sibling("_data_tools.py", "ask_data_tools")
+
+
 DATA_TOOLS = load_data_tools()
+NUMBER_CHECK = load_sibling("_number_check.py", "ask_number_check")
 
 FOLLOWUPS_RE = re.compile(r"(?im)^[ \t>*_#-]*FOLLOWUPS[ \t]*[*_]*[ \t]*:?[ \t]*[*_]*(.*)$")
 CITE_TAIL_RE = re.compile(r"(\s*\[\d+\])+\s*$")
@@ -97,15 +102,21 @@ def cached_answer(question, history=None, cache=None):
     entry = entries.get(normalize_question(question))
     if not entry or not entry.get("answer"):
         return None
+    steps = [s for s in entry.get("steps") or [] if isinstance(s, dict)][:8]
     return {
         "answer": entry["answer"],
         "citations": entry.get("citations", []),
         "model": entry.get("model", MODEL),
         "cached": True,
-        "steps": [s for s in entry.get("steps") or [] if isinstance(s, dict)][:8],
+        "number_check": entry.get("number_check") or cached_number_check(entry, steps),
+        "steps": steps,
         "actions": [a for a in entry.get("actions") or [] if isinstance(a, dict) and str(a.get("href", "")).startswith("#/")][:2],
         "followups": [f for f in entry.get("followups") or [] if isinstance(f, str)][:2],
     }
+
+
+def cached_number_check(entry, steps):
+    return NUMBER_CHECK.check_cached(entry.get("question", ""), entry["answer"], entry.get("citations", []), steps, DATA_TOOLS)
 
 
 def split_followups(answer):
@@ -502,6 +513,7 @@ def answer_question(question, client=None, corpus=None, context_sentence=None, h
         "answer": answer,
         "citations": citations,
         "model": field(response, "model", model),
+        "number_check": NUMBER_CHECK.check_live(answer, citations, log, DATA_TOOLS),
         "steps": steps,
         "actions": actions,
         "followups": followups,

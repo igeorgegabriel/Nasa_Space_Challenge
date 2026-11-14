@@ -955,6 +955,10 @@ body.ask-open #ask-panel { display: flex; animation: slidein 0.28s ease; }
 .ask-step-label { display: block; }
 
 .ask-step-detail { display: block; color: var(--muted); font-size: 0.78rem; }
+.ask-numcheck { display: flex; align-items: baseline; gap: 0.45rem; margin: 0.55rem 0 0; max-width: none; color: var(--muted); font-size: 0.78rem; }
+.ask-numcheck .tick { flex: 0 0 auto; fill: none; stroke: var(--fire-soft); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; align-self: center; }
+.ask-numcheck.warn { color: #e0b46a; }
+.ask-steps-list li.ask-step-warn .ask-step-label { color: #e0b46a; }
 
 .ask-cites { margin-top: 0.3rem; }
 

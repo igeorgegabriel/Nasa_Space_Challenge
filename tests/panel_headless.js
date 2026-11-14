@@ -56,6 +56,7 @@ function getJson(url, method) {
 const CACHE = {
   "which solid materials were tested and at what oxygen": {
     answer: "Cached: PSI solid tests top out at 22.2 percent ambient O2 [1].",
+    number_check: { total: 2, matched: 1, unmatched: ["41%"] },
     citations: [{ n: 1, psi_id: "PSI-25", title: "PSI-25 BASS-II", cited_text: "Rows in the BASS-II table record ambient O2 up to 0.222." }],
     model: "cache"
   },
@@ -83,6 +84,7 @@ const MOCK_ANSWER = {
   ],
   actions: [{ label: "Open the lunar ranking", href: "#/rank?habitat=lunar" }],
   followups: ["What did BASS find?", "Which rows exceed 0.21?"],
+  number_check: { total: 3, matched: 3, unmatched: [] },
   model: "mock"
 };
 
@@ -237,6 +239,8 @@ async function main() {
   assert.deepStrictEqual(JSON.parse(await js("JSON.stringify(Array.from(document.querySelectorAll('#ask-suggest .ask-row-text')).map(b => b.textContent))")), ["What did BASS find?", "Which rows exceed 0.21?"]);
   assert.strictEqual(await js("document.querySelectorAll('.ask-steps li').length"), 2);
   assert.strictEqual(await js("document.querySelector('.ask-steps summary').textContent"), "How I checked (2)");
+  assert.strictEqual(await js("document.querySelector('.ask-numcheck').textContent"), "Numbers checked: 3 of 3 match the NASA data");
+  assert.strictEqual(await js("document.querySelectorAll('.ask-numcheck.warn').length"), 0);
   assert.strictEqual(await js("document.querySelector('.ask-sources summary').textContent"), "Sources (2)");
   assert.strictEqual(await js("document.querySelector('.ask-sources').open"), false);
   assert.strictEqual(await js("document.querySelector('.ask-action').getAttribute('href')"), "#/rank?habitat=lunar");
@@ -327,6 +331,9 @@ async function main() {
   await waitFor("document.querySelectorAll('.ask-turn .ask-a').length === 1", "cached answer");
   assert.strictEqual(mock.asks.length, asksBefore, "cached chip must not call the API");
   assert.ok((await js("document.querySelector('.ask-a').textContent")).indexOf("Cached: PSI solid tests") === 0, "cached text");
+  assert.strictEqual(await js("document.querySelector('.ask-numcheck.warn').textContent"), "1 of 2 numbers match; 1 not found in the sources: 41%");
+  assert.strictEqual(await js("document.querySelector('.ask-steps summary').textContent"), "How I checked (1)");
+  assert.strictEqual(await js("document.querySelector('.ask-step-warn .ask-step-detail').textContent"), "41%");
   await js("Array.from(document.querySelectorAll('#ask-panel button')).find(b => b.getAttribute('aria-label') === 'New conversation').click()");
   await sleep(200);
 

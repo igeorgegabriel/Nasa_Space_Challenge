@@ -112,7 +112,7 @@ assert.strictEqual(body.history[0].answer.length, 1500);
 const noCtx = JSON.parse(run(sb, "JSON.stringify(askRequestBody('now', { page: 'home' }, false, []))"));
 assert.deepStrictEqual(noCtx, { question: "now" });
 
-run(sb, "askPanel.open = true; askPanel.useContext = false; askPanel.thread = [{ question: 'kept', answer: 'text [1]', citations: [{ n: 1, psi_id: 'PSI-25' }], steps: [{ tool: 't', label: 'Checked rows', detail: '24 of 24' }, { label: 5 }], actions: [{ label: 'Open rank', href: '#/rank?habitat=lunar' }, { label: 'Bad', href: 'http://x' }], followups: ['Next one?', 7, 'And this?', 'Third?'], error: null }, { question: 'wait', pending: true }]; saveAskState();");
+run(sb, "askPanel.open = true; askPanel.useContext = false; askPanel.thread = [{ question: 'kept', answer: 'text [1]', citations: [{ n: 1, psi_id: 'PSI-25' }], steps: [{ tool: 't', label: 'Checked rows', detail: '24 of 24' }, { label: 5 }], actions: [{ label: 'Open rank', href: '#/rank?habitat=lunar' }, { label: 'Bad', href: 'http://x' }], followups: ['Next one?', 7, 'And this?', 'Third?'], numberCheck: { total: 6, matched: 5, unmatched: ['41%', 7] }, error: null }, { question: 'wait', pending: true }]; saveAskState();");
 const saved = JSON.parse(storage.raw["ask_panel_v1"]);
 assert.strictEqual(saved.open, true);
 assert.strictEqual(saved.useContext, false);
@@ -120,6 +120,7 @@ assert.strictEqual(saved.thread.length, 1);
 assert.deepStrictEqual(saved.thread[0].steps, [{ tool: "t", label: "Checked rows", detail: "24 of 24" }]);
 assert.deepStrictEqual(saved.thread[0].actions, [{ label: "Open rank", href: "#/rank?habitat=lunar" }]);
 assert.deepStrictEqual(saved.thread[0].followups, ["Next one?", "And this?"]);
+assert.deepStrictEqual(saved.thread[0].numberCheck, { total: 6, matched: 5, unmatched: ["41%"] });
 
 const sb2 = makeSandbox(storage);
 run(sb2, "loadAskState()");
@@ -130,6 +131,9 @@ assert.strictEqual(run(sb2, "askPanel.thread[0].question"), "kept");
 assert.strictEqual(run(sb2, "askPanel.thread[0].steps[0].label"), "Checked rows");
 assert.strictEqual(run(sb2, "askPanel.thread[0].actions[0].href"), "#/rank?habitat=lunar");
 assert.strictEqual(run(sb2, "askPanel.thread[0].followups.length"), 2);
+assert.strictEqual(run(sb2, "askPanel.thread[0].numberCheck.unmatched[0]"), "41%");
+assert.strictEqual(run(sb2, "cleanNumberCheck({ total: 2, matched: 3, unmatched: [] })"), null);
+assert.strictEqual(run(sb2, "cleanNumberCheck('x')"), null);
 
 const legacy = makeStorage();
 legacy.setItem("ask_panel_v1", JSON.stringify({ open: false, useContext: true, thread: [{ question: "old", answer: "a", citations: [], steps: "x", actions: { a: 1 }, followups: null, error: null }] }));
@@ -138,6 +142,7 @@ run(sbLegacy, "loadAskState()");
 assert.strictEqual(run(sbLegacy, "askPanel.thread[0].steps.length"), 0);
 assert.strictEqual(run(sbLegacy, "askPanel.thread[0].actions.length"), 0);
 assert.strictEqual(run(sbLegacy, "askPanel.thread[0].followups.length"), 0);
+assert.strictEqual(run(sbLegacy, "askPanel.thread[0].numberCheck"), null);
 
 const bad = makeStorage();
 bad.setItem("ask_panel_v1", "{not json");
