@@ -193,13 +193,69 @@ def client_ip(headers, fallback):
     return first or fallback or "unknown"
 
 
+MAX_CITE_BLOCK_CHARS = 420
+SENTENCE_SPLIT_RE = re.compile(r"(?<=[.!?])\s+(?=[A-Z0-9\[(\"])")
+CLAUSE_SPLIT_RE = re.compile(r"(?<=[;|])\s+")
+
+
+def pack_pieces(pieces, limit):
+    blocks = []
+    current = ""
+    for piece in pieces:
+        if current and len(current) + 1 + len(piece) > limit:
+            blocks.append(current)
+            current = piece
+        else:
+            current = (current + " " + piece) if current else piece
+    if current:
+        blocks.append(current)
+    return blocks
+
+
+def hard_wrap(text, limit):
+    words = text.split(" ")
+    blocks = []
+    current = ""
+    for word in words:
+        if current and len(current) + 1 + len(word) > limit:
+            blocks.append(current)
+            current = word
+        else:
+            current = (current + " " + word) if current else word
+    if current:
+        blocks.append(current)
+    return blocks
+
+
+def split_line(line, limit=MAX_CITE_BLOCK_CHARS):
+    if len(line) <= limit:
+        return [line]
+    pieces = []
+    for sentence in SENTENCE_SPLIT_RE.split(line):
+        if len(sentence) <= limit:
+            pieces.append(sentence)
+            continue
+        for clause in CLAUSE_SPLIT_RE.split(sentence):
+            pieces.extend(hard_wrap(clause, limit) if len(clause) > limit else [clause])
+    return pack_pieces(pieces, limit)
+
+
+def cite_blocks(body):
+    blocks = []
+    for line in body.split("\n"):
+        line = line.strip()
+        if line:
+            blocks.extend(split_line(line))
+    return blocks
+
+
 def build_content(question, corpus=None, context_sentence=None):
     documents = corpus if corpus is not None else CORPUS
     blocks = []
     for doc in documents:
         blocks.append({
             "type": "document",
-            "source": {"type": "text", "media_type": "text/plain", "data": doc["body"]},
+            "source": {"type": "content", "content": [{"type": "text", "text": text} for text in cite_blocks(doc["body"])]},
             "title": doc["title"],
             "citations": {"enabled": True},
         })

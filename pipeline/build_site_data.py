@@ -1087,6 +1087,10 @@ def add_headlines(insights, environments):
                range_text(n["psia_range_above_psi_max"][0], n["psia_range_above_psi_max"][1], 2), pct_text(n["psi_solid_max_o2"])))
 
 
+EARTH_SPINOFF_LABEL = "NASA spinoff technology, not a PSI combustion test."
+EARTH_QUOTES_PATH = os.path.join(ROOT, "data", "earth", "earth_quotes.json")
+
+
 EARTH = [
     {
         "id": "water_mist",
@@ -1118,6 +1122,7 @@ EARTH = [
         "statement": "A 1970s adaptation of spacesuit technology improved firefighter air tanks and breathing gear.",
         "psi_ids": [],
         "inference_psi_ids": [],
+        "label": EARTH_SPINOFF_LABEL,
         "inference": "No PSI combustion investigation is linked: this is spacesuit hardware history, not combustion data.",
         "sources": [{"label": "NASA Spinoff: Fireman's Air Tanks", "url": "https://spinoff.nasa.gov/node/9582"}],
     },
@@ -1128,10 +1133,56 @@ EARTH = [
         "statement": "A 1980s application of NASA spacesuit technology improved firefighter clothing.",
         "psi_ids": [],
         "inference_psi_ids": [],
+        "label": EARTH_SPINOFF_LABEL,
         "inference": "No PSI combustion investigation is linked: this is spacesuit materials history. Fabric flammability tests in the PSI tables (Saffire, BASS) address spacecraft materials, not firefighter clothing.",
         "sources": [{"label": "NASA Spinoff: New Technology for the Fire Attire", "url": "https://spinoff.nasa.gov/node/9918"}],
     },
 ]
+
+
+def build_earth():
+    quotes = {}
+    if os.path.isfile(EARTH_QUOTES_PATH):
+        with open(EARTH_QUOTES_PATH, "r", encoding="ascii") as handle:
+            quotes = {q["id"]: q for q in json.load(handle)["quotes"]}
+    applications = []
+    for entry in EARTH:
+        item = dict(entry)
+        q = quotes.get(entry["id"])
+        if q:
+            item["quote"] = {
+                "text": q["quote"],
+                "source_title": q["source_title"],
+                "source_publisher": q["source_publisher"],
+                "url": q["source_url"],
+                "status": "verbatim, machine-checked against a saved copy of the page",
+            }
+        applications.append(item)
+    return applications
+
+
+def earth_corpus_document(applications):
+    lines = ["Earth applications of space fire-safety technology, as listed in the Flame in Freefall challenge statement and NASA Spinoff pages."]
+    lines.append("Firefighter gear is covered here: NASA Spinoff documents firefighter air tanks and breathing gear (1976) and firefighter protective clothing (Project FIRES, 1982).")
+    for app in applications:
+        lines.append("Earth application: %s. Status: %s." % (app["application"], app["status"]))
+        lines.append("Statement: %s" % app["statement"])
+        if app.get("label"):
+            lines.append("Label: %s" % app["label"])
+        if app.get("quote"):
+            q = app["quote"]
+            lines.append("Verbatim from %s (%s, %s): \"%s\"" % (q["source_title"], q["source_publisher"], q["url"], q["text"]))
+        if app.get("psi_ids"):
+            lines.append("Linked PSI investigations: %s." % ", ".join(app["psi_ids"]))
+        if app.get("inference_psi_ids"):
+            lines.append("Nearest PSI investigations (inference): %s." % ", ".join(app["inference_psi_ids"]))
+        lines.append("Link to PSI: %s" % app["inference"])
+        lines.append("Sources: %s." % "; ".join("%s (%s)" % (src["label"], src["url"]) for src in app["sources"]))
+    return {"psi_id": EARTH_CORPUS_ID, "title": EARTH_CORPUS_TITLE, "body": "\n".join(lines)}
+
+
+EARTH_CORPUS_ID = "EARTH-APPLICATIONS"
+EARTH_CORPUS_TITLE = "Earth applications - water mist, smoke detection, firefighter gear"
 
 
 def source_text(block):
@@ -1159,7 +1210,7 @@ def fmt_num(value):
     return ("%.4f" % value).rstrip("0").rstrip(".")
 
 
-def build_corpus(investigations, rankings, outside=None, psi_max=None, environments=None, test_next=None):
+def build_corpus(investigations, rankings, outside=None, psi_max=None, environments=None, test_next=None, earth=None):
     docs = []
     for inv in investigations:
         lines = []
@@ -1205,11 +1256,6 @@ def build_corpus(investigations, rankings, outside=None, psi_max=None, environme
                 if item["psi_id"] == inv["psi_id"]:
                     lines.append("Habitat relevance, default weights, environment %s: rank %d of %d, score %.3f."
                                  % (env_id, item["rank"], len(ranking), item["score"]))
-        pubs = ["%s (%s)" % (p["title"], p["year"] or "year n/a") for p in inv["publications"][:12]]
-        pubs += ["%s [NTRS %s]" % (p["title"], p["id"]) for p in inv["ntrs_publications"]]
-        pubs = [p for p in pubs if p.strip()]
-        if pubs:
-            lines.append("Publications: " + "; ".join(pubs))
         for finding in inv.get("key_findings") or []:
             lines.append("Key result, verbatim from %s (%s): \"%s\"" % (finding.get("source", ""), finding.get("source_label", ""), finding.get("quote", "")))
         if inv["earth_benefits"]:
@@ -1230,6 +1276,8 @@ def build_corpus(investigations, rankings, outside=None, psi_max=None, environme
         docs.append(outside_psi.corpus_document(outside, psi_max))
     if environments and test_next:
         docs.append(dashboard_results_document(environments, test_next, rankings))
+    if earth:
+        docs.append(earth_corpus_document(earth))
     return {"documents": docs}
 
 
@@ -1984,13 +2032,14 @@ def build():
         env_id: data["ranking"] for env_id, data in reference["variants"]["default"].items()
     }
     test_next = build_test_next(rows, environments, outside)
-    corpus = build_corpus(investigations, default_rankings, outside, outside["summary"]["psi_solid_max_o2"], environments, test_next)
+    earth = build_earth()
+    corpus = build_corpus(investigations, default_rankings, outside, outside["summary"]["psi_solid_max_o2"], environments, test_next, earth)
     return {
         "investigations": investigations,
         "conditions": slim_conditions(rows),
         "environments": environments,
         "insights": insights,
-        "earth": {"applications": EARTH},
+        "earth": {"applications": earth},
         "model_readiness": build_model_readiness(rows, environments),
         "rank_reference": reference,
         "test_next": test_next,

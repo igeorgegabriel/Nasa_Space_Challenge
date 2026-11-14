@@ -26,112 +26,106 @@
   "question": "Is there any partial-gravity data?"
  },
  "what did bass ii find": {
-  "answer": "BASS-II found that steady spreading occurred at 13.6% oxygen in microgravity, whereas the 1g blowoff for the 1/4\" rod is at 16% oxygen. [1]\n\n- The material therefore has a negative Oxygen Margin of Safety of 2.4% O2, and the normal gravity flammability limits should be de-rated by at least that much. [2]\n- Combustion products from a BASS-II-scale fire would dilute quickly, giving about 1.5 ppm CO in the U.S. Lab, below the 10 ppm long-term SMAC. [3]\n- Not covered: the documents give no spread-rate or flame-size numbers for BASS-II.",
+  "question": "What did BASS-II find?",
+  "answer": "BASS-II found that solid fuels can keep burning at lower oxygen than normal-gravity limits suggest.\n\n- The 1g blowoff for the 1/4\" rod is at 16% oxygen, whereas steady spreading was obtained at 13.6% oxygen in BASS-II. [1] That gives a negative Oxygen Margin of Safety of 2.4% O2, so normal gravity flammability limits should be de-rated by at least that much. [2]\n- Flames ignited at a higher O2 survived to final O2 concentrations as low as 13.6 percent. [3] This is quoted in a separate investigation, PSI-62, which cites the BASS-II summary report.\n- Combustion products from a BASS-II-scale fire would be quickly diluted. Even in the U.S. Lab, CO would only reach 1.5 ppm. [4]\n\nAll BASS-II data are microgravity only.",
   "citations": [
    {
-    "cited_text": "Publications: Microgravity flammability boundary for PMMA rods in axial stagnation flow: Experimental results and energy balance analyses (year n/a); Temperature and CO2 fields of a downward spreading flame over thin cellulose: A comparison of experimental and computational results (year n/a); Opposed-flow flame spread: A comparison of microgravity and normal gravity experiments to establish the thermal regime (year n/a); The critical flow velocity for radiative extinction in opposed-flow flame spread in a microgravity environment: A comparison of experimental, computational, and theoretical results (year n/a); Experimental validation of a correlation capturing the boundary layer effect on spread rate in the kinetic regime of opposed-flow flame spread (year n/a); Results from on-board CSA-CP and CDM Sensor Readings during the Burning and Suppression of Solids - II (BASS-II) Experiment in the Microgravity Science Glovebox (MSG) (year n/a); Modeling and Analysis of Intermediate Thickness PMMA Sheets Burning in Microgravity Opposed Flow (year n/a); Concurrent flame growth, spread and extinction over composite fabric samples in low speed purely forced flow in microgravity (year n/a); Radiative, thermal, and kinetic regimes of opposed-flow flame spread: A comparison between experiment and theory (year n/a); Concurrent flame growth, spread, and quenching over composite fabric samples in low speed purely forced flow in microgravity (year n/a); A Study of the Effectiveness of a Narrow Channel Apparatus in Simulating Microgravity Flame Spread over Thin Fuels (year n/a); BASS-II Summary Report (year n/a); Correlation of Normal Gravity Mixed Convection Blowoff Limits with Microgravity Forced Flow Blowoff Limits [NTRS 20160012691]; Combustion of Solids in Microgravity: Results from the BASS-II Experiment [NTRS 20160000593]; Burning and Suppression of Solids-II  (BASS-II) Summary Report [NTRS 20210011385]; Results from On-Board CSA-CP and CDM Sensor Readings During the Burning and Suppression of Solids II (BASS-II) Experiment in the Microgravity Science Glovebox (MSG) [NTRS 20150019858]; Mixed Convection Blowoff Limits as a Function of Oxygen Concentration and Upward Forced Stretch Rate for Burning Pmma Rods of Various Sizes [NTRS 20170006615]\nKey result, verbatim from NTRS 20160000593 (Combustion of Solids in Microgravity: Results from the BASS-II Experiment): \"The 1g blowoff for the 1/4\" rod is at 16% oxygen, whereas we obtained steady spreading at 13.6% oxygen in BASS-II.\"\n",
     "n": 1,
     "psi_id": "PSI-25",
-    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II"
+    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II",
+    "cited_text": "Key result, verbatim from NTRS 20160000593 (Combustion of Solids in Microgravity: Results from the BASS-II Experiment): \"The 1g blowoff for the 1/4\" rod is at 16% oxygen, whereas we obtained steady spreading at 13.6% oxygen in BASS-II.\""
    },
    {
-    "cited_text": "Key result, verbatim from NTRS 20160000593 (Combustion of Solids in Microgravity: Results from the BASS-II Experiment): \"Thus the material has a negative Oxygen Margin of Safety of 2.4% O2, and the normal gravity flammability limits should be de-rated by at least that much.\"\n",
     "n": 2,
     "psi_id": "PSI-25",
-    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II"
+    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II",
+    "cited_text": "Key result, verbatim from NTRS 20160000593 (Combustion of Solids in Microgravity: Results from the BASS-II Experiment): \"Thus the material has a negative Oxygen Margin of Safety of 2.4% O2, and the normal gravity flammability limits should be de-rated by at least that much.\""
    },
    {
-    "cited_text": "Key result, verbatim from NTRS 20210011385 (Burning and Suppression of Solids-II  (BASS-II) Summary Report): \"the combustion products from a fire of the scale of a BASS-II test would quickly be diluted, so that even within just the U.S. Lab (106-m3 pressurized volume), the CO levels in the lab would only be 1.5 ppm, well below spacecraft maximum allowable concentration (SMAC) values for even long-term exposure (10 ppm), let alone the 1 hour SMAC of 55 ppm (Ref. ",
     "n": 3,
+    "psi_id": "PSI-62",
+    "title": "PSI-62 PSI-62 - Concurrent Flame Spread Modeling using Flamelet Generated Manifolds in Microgravity with Comparison to BASS Experiments using Two-Color Tomography",
+    "cited_text": "Key result, verbatim from NTRS 20210011385 (Burning and Suppression of Solids-II  (BASS-II) Summary Report): \"Despite this limiting O2 concentration for ignition, flames ignited at a higher O2 survived to final O2 concentrations as low as 13.6 percent O2, indicating that the high heat loss to the initially cold rod will quench a postignition flame while a developed solid phase temperature profile allows a sustained"
+   },
+   {
+    "n": 4,
     "psi_id": "PSI-25",
-    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II"
+    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II",
+    "cited_text": "Key result, verbatim from NTRS 20210011385 (Burning and Suppression of Solids-II  (BASS-II) Summary Report): \"the combustion products from a fire of the scale of a BASS-II test would quickly be diluted, so that even within just the U.S.Lab (106-m3 pressurized volume), the CO levels in the lab would only be 1.5 ppm, well below spacecraft maximum allowable concentration (SMAC) values for even long-term exposure (10 ppm), let alone the 1 hour SMAC of 55 ppm (Ref. 12).\""
    }
   ],
-  "generated_at": "2026-11-14T13:45:57",
   "model": "claude-sonnet-5-5",
-  "question": "What did BASS-II find?"
+  "generated_at": "2026-11-14T19:39:59"
  },
  "what did flex learn about extinguishing flames": {
-  "answer": "FLEX (PSI-69) mapped droplet-flame extinction limits in microgravity, and it found methanol's LOI near 12\u201313% O2.\n\n- NTRS 20130014061 reports that the limiting oxygen index for methanol in these diluent gases is around 12% to 13% oxygen by volume. [1] At one atmosphere, ignition and some burning were observed at 13% O2 with the rest nitrogen. [2] Observed LOI values appear slightly lower than initially expected. [3]\n- CO2 and helium dilution were studied as suppressants. [4] Recorded outcomes were extinction (186), disruption (61) and completion (27). [5]\n- Not covered: the documents give no suppressant-specific LOI values or an SF6 result.",
+  "question": "What did FLEX learn about extinguishing flames?",
+  "answer": "FLEX (PSI-69) mapped how dilution and ambient conditions govern extinction of burning droplets in microgravity. It did not test a water-based or other agent beyond diluent gases.\n\n- Suppression was studied by diluting the chamber atmosphere with carbon dioxide and helium, both of which suppress fire. [1]\n- For methanol in these diluent gases, the limiting oxygen index (LOI) is around 12% to 13% oxygen by volume. [2] At one atmosphere, ignition and some burning were seen at 13% oxygen with the rest nitrogen. [3]\n- Observed LOI values appear slightly lower than initially expected. [4] Recorded outcomes were extinction (186), disruption (61) and completion (27). [5]\n\nNot covered: partial-gravity results. All PSI data is microgravity.",
   "citations": [
    {
-    "cited_text": "Publications: Methanol Droplet Combustion in Oxygen-Inert Environments in Microgravity (year n/a); Methanol Droplet Extinction in Oxygen/Carbon-dioxide/Nitrogen Mixtures in Microgravity: Results from the International Space Station Experiments (year n/a); A Numerical Study On The Extinction Characteristics Of Droplet Combustion Under Microgravity Conditions (year n/a); Tethered methanol droplet combustion in carbon-dioxide enriched environment under microgravity conditions (year n/a); FLEX: A Decisive Step Forward in NASA's Combustion Research Program (year n/a); Dynamics of Water Absorption and Evaporation During Methanol Droplet Combustion in Microgravity (year n/a); Activation energy asymptotics for methanol droplet extinction in microgravity (year n/a); Experimental Study of Initial Diameter Effects on Convection-free Droplet Combustion in the Standard Atmosphere for n-Heptane, n-Octane, and n-Decane: International Space Station and Ground-based Experiments (year n/a); Isolated n-heptane droplet combustion in microgravity: \"Cool Flames\" - Two-stage combustion (year n/a); Theory of the propagation dynamics of spiral edges of diffusion flames in von Karman swirling flows (year n/a); Analysis of the melt phase of a rotating polymer disc supporting a diffusion flame (year n/a); Partial-Burning Regime for Quasi-Steady Droplet Combustion Supported by Cool Flames (year n/a); Detailed Results from the Flame Extinguishment Experiment (FLEX) March 2009 to December 2011 [NTRS 20150023456]; Multi-User Droplet Combustion Apparatus - Flame Extinguishment Experiment [NTRS 20090014812]; Space Experiment Concepts: Cup-Burner Flame Extinguishment [NTRS 20040142357]; Isolated Single Droplet Combustion: FLEX Experiments onboard the International Space Station [NTRS 20210022617]; FLEX: A Decisive Step Forward in NASA's Combustion Research Program [NTRS 20120015928]\nKey result, verbatim from NTRS 20130014061 (Methanol Droplet Combustion in Oxygen-Inert Environments in Microgravity): \"The experiments also show that the limiting oxygen index for methanol in these diluent gases is around 12% to 13% oxygen by volume.\"\n",
     "n": 1,
     "psi_id": "PSI-69",
-    "title": "PSI-69 FLEX - Flame Extinguishment Experiment"
+    "title": "PSI-69 FLEX - Flame Extinguishment Experiment",
+    "cited_text": "Supports suppression (challenge statement): Suppression was studied in the Flame Extinguishment Experiment (FLEX) through dilution of the chamber atmosphere with carbon dioxide and helium, both of which suppress fire."
    },
    {
-    "cited_text": "Key result, verbatim from NTRS 20120016855 (Methanol Droplet Extinction in Oxygen/Carbon-dioxide/Nitrogen Mixtures in Microgravity: Results from the International Space Station Experiments): \"At one atmosphere pressure, ignition and some burning were observed for an oxygen concentration of 13% with the rest being nitrogen.\"\n",
     "n": 2,
     "psi_id": "PSI-69",
-    "title": "PSI-69 FLEX - Flame Extinguishment Experiment"
+    "title": "PSI-69 FLEX - Flame Extinguishment Experiment",
+    "cited_text": "Key result, verbatim from NTRS 20130014061 (Methanol Droplet Combustion in Oxygen-Inert Environments in Microgravity): \"The experiments also show that the limiting oxygen index for methanol in these diluent gases is around 12% to 13% oxygen by volume.\""
    },
    {
-    "cited_text": "Key result, verbatim from NTRS 20150023456 (Detailed Results from the Flame Extinguishment Experiment (FLEX) March 2009 to December 2011): \"Observed LOI values for these fuels appear to be slightly lower than initially expected.\"\n",
     "n": 3,
     "psi_id": "PSI-69",
-    "title": "PSI-69 FLEX - Flame Extinguishment Experiment"
+    "title": "PSI-69 FLEX - Flame Extinguishment Experiment",
+    "cited_text": "Key result, verbatim from NTRS 20120016855 (Methanol Droplet Extinction in Oxygen/Carbon-dioxide/Nitrogen Mixtures in Microgravity: Results from the International Space Station Experiments): \"At one atmosphere pressure, ignition and some burning were observed for an oxygen concentration of 13% with the rest being nitrogen.\""
    },
    {
-    "cited_text": "Supports suppression (challenge statement): Suppression was studied in the Flame Extinguishment Experiment (FLEX) through dilution of the chamber atmosphere with carbon dioxide and helium, both of which suppress fire.\n",
     "n": 4,
     "psi_id": "PSI-69",
-    "title": "PSI-69 FLEX - Flame Extinguishment Experiment"
+    "title": "PSI-69 FLEX - Flame Extinguishment Experiment",
+    "cited_text": "Key result, verbatim from NTRS 20150023456 (Detailed Results from the Flame Extinguishment Experiment (FLEX) March 2009 to December 2011): \"Observed LOI values for these fuels appear to be slightly lower than initially expected.\""
    },
    {
-    "cited_text": "Outcomes recorded: extinction (186), disruption (61), completion (27).\n",
     "n": 5,
     "psi_id": "PSI-69",
-    "title": "PSI-69 FLEX - Flame Extinguishment Experiment"
+    "title": "PSI-69 FLEX - Flame Extinguishment Experiment",
+    "cited_text": "Outcomes recorded: extinction (186), disruption (61), completion (27)."
    }
   ],
-  "generated_at": "2026-11-14T13:45:17",
   "model": "claude-sonnet-5-5",
-  "question": "What did FLEX learn about extinguishing flames?"
+  "generated_at": "2026-11-14T19:40:04"
  },
  "what did flex learn about putting out flames": {
-  "answer": "FLEX (PSI-69) mapped flame extinction for liquid droplets in microgravity, but the documents give only limited quantitative findings.\n\n- It aimed to map flammability limits of liquid fuels, and measure how well CO2, He, and SF6 suppress flames. [1] Suppression was studied by diluting the chamber atmosphere with carbon dioxide and helium. [2]\n- For methanol, the limiting oxygen index (LOI) in these diluent gases was reported as around 12% to 13% oxygen by volume. [3] At one atmosphere, ignition and some burning occurred at 13% oxygen with nitrogen as the balance. [4] Observed LOI values appeared slightly lower than initially expected. [5]\n- Recorded outcomes were extinction (186), disruption (61), and completion (27). [6]\n\nNot covered: the documents give no LOI values for heptane and no quantitative suppressant-effectiveness results for CO2, He, or SF6.",
+  "question": "What did FLEX learn about putting out flames?",
+  "answer": "FLEX mapped how far oxygen must be cut, and how diluents such as CO2 and He help, to extinguish burning droplets in microgravity.\n\n- Suppression was studied by diluting the chamber atmosphere with carbon dioxide and helium, both of which suppress fire. [1]\n- The limiting oxygen index (LOI) for methanol in these diluent gases is around 12% to 13% oxygen by volume. [2] Observed LOI values appear slightly lower than initially expected. [3]\n- Recorded outcomes were extinction (186), disruption (61) and completion (27). [4] Extinction counts came from methanol and heptane droplets. These are not LOI values.\n\nNot covered: the documents give no numeric LOI for heptane, and none for SF6 as a suppressant.",
   "citations": [
    {
-    "cited_text": "Objectives: The FLEX (Flame Extinguishment Experiment) investigation aims to map the flammability limits of liquid fuels in microgravity environments, measure the effectiveness of various gaseous fire suppressants such as CO2, He, and SF6, and develop reliable predictive models for combustion limits under reduced gravity conditions. ",
     "n": 1,
     "psi_id": "PSI-69",
-    "title": "PSI-69 FLEX - Flame Extinguishment Experiment"
+    "title": "PSI-69 FLEX - Flame Extinguishment Experiment",
+    "cited_text": "Supports suppression (challenge statement): Suppression was studied in the Flame Extinguishment Experiment (FLEX) through dilution of the chamber atmosphere with carbon dioxide and helium, both of which suppress fire."
    },
    {
-    "cited_text": "Supports suppression (challenge statement): Suppression was studied in the Flame Extinguishment Experiment (FLEX) through dilution of the chamber atmosphere with carbon dioxide and helium, both of which suppress fire.\n",
     "n": 2,
     "psi_id": "PSI-69",
-    "title": "PSI-69 FLEX - Flame Extinguishment Experiment"
+    "title": "PSI-69 FLEX - Flame Extinguishment Experiment",
+    "cited_text": "Key result, verbatim from NTRS 20130014061 (Methanol Droplet Combustion in Oxygen-Inert Environments in Microgravity): \"The experiments also show that the limiting oxygen index for methanol in these diluent gases is around 12% to 13% oxygen by volume.\""
    },
    {
-    "cited_text": "Publications: Methanol Droplet Combustion in Oxygen-Inert Environments in Microgravity (year n/a); Methanol Droplet Extinction in Oxygen/Carbon-dioxide/Nitrogen Mixtures in Microgravity: Results from the International Space Station Experiments (year n/a); A Numerical Study On The Extinction Characteristics Of Droplet Combustion Under Microgravity Conditions (year n/a); Tethered methanol droplet combustion in carbon-dioxide enriched environment under microgravity conditions (year n/a); FLEX: A Decisive Step Forward in NASA's Combustion Research Program (year n/a); Dynamics of Water Absorption and Evaporation During Methanol Droplet Combustion in Microgravity (year n/a); Activation energy asymptotics for methanol droplet extinction in microgravity (year n/a); Experimental Study of Initial Diameter Effects on Convection-free Droplet Combustion in the Standard Atmosphere for n-Heptane, n-Octane, and n-Decane: International Space Station and Ground-based Experiments (year n/a); Isolated n-heptane droplet combustion in microgravity: \"Cool Flames\" - Two-stage combustion (year n/a); Theory of the propagation dynamics of spiral edges of diffusion flames in von Karman swirling flows (year n/a); Analysis of the melt phase of a rotating polymer disc supporting a diffusion flame (year n/a); Partial-Burning Regime for Quasi-Steady Droplet Combustion Supported by Cool Flames (year n/a); Detailed Results from the Flame Extinguishment Experiment (FLEX) March 2009 to December 2011 [NTRS 20150023456]; Multi-User Droplet Combustion Apparatus - Flame Extinguishment Experiment [NTRS 20090014812]; Space Experiment Concepts: Cup-Burner Flame Extinguishment [NTRS 20040142357]; Isolated Single Droplet Combustion: FLEX Experiments onboard the International Space Station [NTRS 20210022617]; FLEX: A Decisive Step Forward in NASA's Combustion Research Program [NTRS 20120015928]\nKey result, verbatim from NTRS 20130014061 (Methanol Droplet Combustion in Oxygen-Inert Environments in Microgravity): \"The experiments also show that the limiting oxygen index for methanol in these diluent gases is around 12% to 13% oxygen by volume.\"\n",
     "n": 3,
     "psi_id": "PSI-69",
-    "title": "PSI-69 FLEX - Flame Extinguishment Experiment"
+    "title": "PSI-69 FLEX - Flame Extinguishment Experiment",
+    "cited_text": "Key result, verbatim from NTRS 20150023456 (Detailed Results from the Flame Extinguishment Experiment (FLEX) March 2009 to December 2011): \"Observed LOI values for these fuels appear to be slightly lower than initially expected.\""
    },
    {
-    "cited_text": "Key result, verbatim from NTRS 20120016855 (Methanol Droplet Extinction in Oxygen/Carbon-dioxide/Nitrogen Mixtures in Microgravity: Results from the International Space Station Experiments): \"At one atmosphere pressure, ignition and some burning were observed for an oxygen concentration of 13% with the rest being nitrogen.\"\n",
     "n": 4,
     "psi_id": "PSI-69",
-    "title": "PSI-69 FLEX - Flame Extinguishment Experiment"
-   },
-   {
-    "cited_text": "Key result, verbatim from NTRS 20150023456 (Detailed Results from the Flame Extinguishment Experiment (FLEX) March 2009 to December 2011): \"Observed LOI values for these fuels appear to be slightly lower than initially expected.\"\n",
-    "n": 5,
-    "psi_id": "PSI-69",
-    "title": "PSI-69 FLEX - Flame Extinguishment Experiment"
-   },
-   {
-    "cited_text": "Outcomes recorded: extinction (186), disruption (61), completion (27).\n",
-    "n": 6,
-    "psi_id": "PSI-69",
-    "title": "PSI-69 FLEX - Flame Extinguishment Experiment"
+    "title": "PSI-69 FLEX - Flame Extinguishment Experiment",
+    "cited_text": "Outcomes recorded: extinction (186), disruption (61), completion (27)."
    }
   ],
-  "generated_at": "2026-11-14T13:46:02",
   "model": "claude-sonnet-5-5",
-  "question": "What did FLEX learn about putting out flames?"
+  "generated_at": "2026-11-14T19:40:09"
  },
  "what is the highest oxygen any solid material was tested at in psi": {
   "answer": "The highest ambient O2 for a PSI solid-fuel test was 22.2% (mole fraction 0.222), from BASS-II.\n\n- BASS-II (PSI-25) tested ambient O2 from 0.136 to 0.222. [1]\n- SAFFIRE-II topped out at 0.221 [2] and SAFFIRE-I at 0.217. [3]\n- The dashboard notes PSI solid-fuel tests stop at 22.2 percent ambient O2. [4] Higher-O2 Saffire IV\u2013VI tests exist, but they are not in the PSI repository. [5]",
@@ -306,48 +300,11 @@
   "question": "Which experiments matter most for a Moon base?"
  },
  "which fire modelling relationships do the psi data support": {
-  "answer": "Several modelling relationships are supported, mostly as qualitative trends rather than fitted correlations.\n\n- **Flame size and extinction (gas flames):** Flame size increases with reactant flow rate and decreases with ambient oxygen concentration. [1] Radiative extinction seems to occur at high flow rates and kinetic extinction at low flow rates. [2] Helium dilution shifts these limits (kinetic extinction is generally difficult to discern [3]).\n- **Flammability limits (LOI) for droplets:** FLEX determines the Limiting Oxygen Index (LOI) as a function of ambient pressure and how a suppressant influences it [4]. For methanol, the LOI is around 12% to 13% oxygen by volume. [5]\n- **Solids, microgravity versus 1 g:** BASS-II found steady spreading at 13.6% oxygen, versus 1g blowoff at 16% for the 1/4\" rod [6]. This suggests normal-gravity limits may be non-conservative for microgravity. Results can only be bracketed between 0 g and 1 g.\n\nNot covered: no partial-gravity relationships, and no single quantitative correlation is given across investigations.",
-  "citations": [
-   {
-    "cited_text": "Key result, verbatim from NTRS 20220007191 (Laminar Non-Premixed Flames of Gaseous Fuel Aboard the International Space Station): \"Flame size increases with reactant flow rate and decreases with ambient oxygen concentration.\"\n",
-    "n": 1,
-    "psi_id": "PSI-10",
-    "title": "PSI-10 ACME/Flame Design - Advanced Combustion via Microgravity Experiments / Flame Design"
-   },
-   {
-    "cited_text": "(year n/a); Chemiluminescent OH* and CH* flame structure and aerodynamic scaling of weakly buoyant, nearly spherical diffusion flames (year n/a); Oscillatory extinction of spherical diffusion flames: Micro-buoyancy experiment and computation (year n/a)\nKey result, verbatim from NTRS 20220007191 (Laminar Non-Premixed Flames of Gaseous Fuel Aboard the International Space Station): \"Radiative extinction seems to occur at high flow rates and kinetic extinction at low flow rates.\"\n",
-    "n": 2,
-    "psi_id": "PSI-23",
-    "title": "PSI-23 ACME s-Flame - Advanced Combustion via Microgravity Experiments-Structure and Response of Spherical Diffusion Flames"
-   },
-   {
-    "cited_text": "Key result, verbatim from NTRS 20220007191 (Laminar Non-Premixed Flames of Gaseous Fuel Aboard the International Space Station): \"With helium, rather than nitrogen, dilution of both the fuel and oxygen, the extinction limits are shifted and kinetic extinction is generally difficult to discern.\"\n",
-    "n": 3,
-    "psi_id": "PSI-23",
-    "title": "PSI-23 ACME s-Flame - Advanced Combustion via Microgravity Experiments-Structure and Response of Spherical Diffusion Flames"
-   },
-   {
-    "cited_text": "A primary objective of the experiments is to determine the Limiting Oxygen Index (LOI) as a function of ambient pressure and determine how the presence of a suppressant influences the LOI .\n",
-    "n": 4,
-    "psi_id": "PSI-69",
-    "title": "PSI-69 FLEX - Flame Extinguishment Experiment"
-   },
-   {
-    "cited_text": "Publications: Methanol Droplet Combustion in Oxygen-Inert Environments in Microgravity (year n/a); Methanol Droplet Extinction in Oxygen/Carbon-dioxide/Nitrogen Mixtures in Microgravity: Results from the International Space Station Experiments (year n/a); A Numerical Study On The Extinction Characteristics Of Droplet Combustion Under Microgravity Conditions (year n/a); Tethered methanol droplet combustion in carbon-dioxide enriched environment under microgravity conditions (year n/a); FLEX: A Decisive Step Forward in NASA's Combustion Research Program (year n/a); Dynamics of Water Absorption and Evaporation During Methanol Droplet Combustion in Microgravity (year n/a); Activation energy asymptotics for methanol droplet extinction in microgravity (year n/a); Experimental Study of Initial Diameter Effects on Convection-free Droplet Combustion in the Standard Atmosphere for n-Heptane, n-Octane, and n-Decane: International Space Station and Ground-based Experiments (year n/a); Isolated n-heptane droplet combustion in microgravity: \"Cool Flames\" - Two-stage combustion (year n/a); Theory of the propagation dynamics of spiral edges of diffusion flames in von Karman swirling flows (year n/a); Analysis of the melt phase of a rotating polymer disc supporting a diffusion flame (year n/a); Partial-Burning Regime for Quasi-Steady Droplet Combustion Supported by Cool Flames (year n/a); Detailed Results from the Flame Extinguishment Experiment (FLEX) March 2009 to December 2011 [NTRS 20150023456]; Multi-User Droplet Combustion Apparatus - Flame Extinguishment Experiment [NTRS 20090014812]; Space Experiment Concepts: Cup-Burner Flame Extinguishment [NTRS 20040142357]; Isolated Single Droplet Combustion: FLEX Experiments onboard the International Space Station [NTRS 20210022617]; FLEX: A Decisive Step Forward in NASA's Combustion Research Program [NTRS 20120015928]\nKey result, verbatim from NTRS 20130014061 (Methanol Droplet Combustion in Oxygen-Inert Environments in Microgravity): \"The experiments also show that the limiting oxygen index for methanol in these diluent gases is around 12% to 13% oxygen by volume.\"\n",
-    "n": 5,
-    "psi_id": "PSI-69",
-    "title": "PSI-69 FLEX - Flame Extinguishment Experiment"
-   },
-   {
-    "cited_text": "Publications: Microgravity flammability boundary for PMMA rods in axial stagnation flow: Experimental results and energy balance analyses (year n/a); Temperature and CO2 fields of a downward spreading flame over thin cellulose: A comparison of experimental and computational results (year n/a); Opposed-flow flame spread: A comparison of microgravity and normal gravity experiments to establish the thermal regime (year n/a); The critical flow velocity for radiative extinction in opposed-flow flame spread in a microgravity environment: A comparison of experimental, computational, and theoretical results (year n/a); Experimental validation of a correlation capturing the boundary layer effect on spread rate in the kinetic regime of opposed-flow flame spread (year n/a); Results from on-board CSA-CP and CDM Sensor Readings during the Burning and Suppression of Solids - II (BASS-II) Experiment in the Microgravity Science Glovebox (MSG) (year n/a); Modeling and Analysis of Intermediate Thickness PMMA Sheets Burning in Microgravity Opposed Flow (year n/a); Concurrent flame growth, spread and extinction over composite fabric samples in low speed purely forced flow in microgravity (year n/a); Radiative, thermal, and kinetic regimes of opposed-flow flame spread: A comparison between experiment and theory (year n/a); Concurrent flame growth, spread, and quenching over composite fabric samples in low speed purely forced flow in microgravity (year n/a); A Study of the Effectiveness of a Narrow Channel Apparatus in Simulating Microgravity Flame Spread over Thin Fuels (year n/a); BASS-II Summary Report (year n/a); Correlation of Normal Gravity Mixed Convection Blowoff Limits with Microgravity Forced Flow Blowoff Limits [NTRS 20160012691]; Combustion of Solids in Microgravity: Results from the BASS-II Experiment [NTRS 20160000593]; Burning and Suppression of Solids-II  (BASS-II) Summary Report [NTRS 20210011385]; Results from On-Board CSA-CP and CDM Sensor Readings During the Burning and Suppression of Solids II (BASS-II) Experiment in the Microgravity Science Glovebox (MSG) [NTRS 20150019858]; Mixed Convection Blowoff Limits as a Function of Oxygen Concentration and Upward Forced Stretch Rate for Burning Pmma Rods of Various Sizes [NTRS 20170006615]\nKey result, verbatim from NTRS 20160000593 (Combustion of Solids in Microgravity: Results from the BASS-II Experiment): \"The 1g blowoff for the 1/4\" rod is at 16% oxygen, whereas we obtained steady spreading at 13.6% oxygen in BASS-II.\"\n",
-    "n": 6,
-    "psi_id": "PSI-25",
-    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II"
-   }
-  ],
-  "generated_at": "2026-11-14T13:45:33",
+  "question": "Which fire-modelling relationships do the PSI data support?",
+  "answer": "Only the ISS cabin has fully supported relationships.\n\n- **ISS, supported:** Droplet extinction diameter and burn time against O2, diluent and pressure has 41 rows with a recorded response inside the window. Gas-flame ignition and self-extinction against O2 has 28 rows.\n- **ISS, partly supported:** Solid-material ignition and burn against O2 and flow has 8 of the 10 rows needed. Smoke particle size against flow and aging has rows, but none records particle size.\n- **Gateway, Moon base, rover and Mars base:** All four non-partial-gravity relationships are only partly supported. Gateway has 0 of 269 droplet rows, 0 of 303 gas rows and 0 of 11 solid rows inside its window. The Moon base, rover and Mars base also have 0 of 269 droplet rows and 0 of 11 solid rows inside their windows. Their gas rows inside the window are 2 of 10 for the Moon base and Mars base, and 4 of 10 for the rover.\n- **Partial gravity (lunar 0.16 g, Mars 0.38 g):** Not supported. All PSI data is microgravity, so results can only be bracketed between 0 g and 1 g.",
+  "citations": [],
   "model": "claude-sonnet-5-5",
-  "question": "Which fire-modelling relationships do the PSI data support?"
+  "generated_at": "2026-11-14T19:40:18"
  },
  "which investigations studied smoke detection": {
   "answer": "Four investigations are classed as smoke or particle detection studies, and several others support detection indirectly.\n\n- **Direct detection studies (primary function: detection):** SAME (PSI-102) [1] and SAME-R (PSI-101) [2] tested fire detection in microgravity [3]. DAFT/DAFT-2 (PSI-47) [4] was also classed as detection. It checked that a modified P-Trak particulate counter would be accurate in microgravity [5].\n- **Modeling studies (detection-related):** PSI-115 simulated smoke generation and is said to lead to better smoke detection devices [6]. PSI-60 (SPICE data analysis) lists safer fire detection among its space applications [7].\n- **Detection as a stated purpose:** BASS-II (PSI-25) results feed computational models for fire detection and suppression systems [8].",
@@ -450,60 +407,66 @@
   "question": "Which investigations studied smoke or fire detection?"
  },
  "which investigations used solid fuels": {
-  "answer": "Solid-fuel investigations in the PSI documents: BASS-II (PSI-25), BASS (PSI-26), SAFFIRE-I (PSI-98), SAFFIRE-II (PSI-99) and SAFFIRE-III (PSI-100).\n\n- PSI-25 (BASS-II) is classed as solid [1], with samples such as PMMA rods, SIBAL and Nomex [2].\n- PSI-26 (BASS) is classed as solid [3], using cotton/fiberglass fabric, Nomex and Ultem [4].\n- PSI-98 (SAFFIRE-I) is solid [5] (SIBAL fabric). PSI-99 (SAFFIRE-II) is solid [6] (silicone, SIBAL, PMMA). PSI-100 (SAFFIRE-III) is solid [7] (SIBAL).\n- Not covered: PSI-20 (BRE) is a gas burner emulating condensed fuels, and Saffire IV-VI are outside PSI [8].",
+  "question": "Which investigations used solid fuels?",
+  "answer": "Five investigations have solid fuels in the PSI table: BASS-II, BASS, SAFFIRE-I, SAFFIRE-II and SAFFIRE-III.\n\n- PSI-25 (BASS-II) is classed as solid [1] and has 129 rows [2]. PSI-26 (BASS) is also solid, with 122 rows [3] [4].\n- The three SAFFIRE investigations are solid-fuel tests on Cygnus: PSI-98 (SAFFIRE-I) [5], PSI-99 (SAFFIRE-II) [6] and PSI-100 (SAFFIRE-III) [7].\n- 137 rows are classified as solid [8]. The Saffire IV\u2013VI tests are not in the PSI repository [9].",
   "citations": [
    {
-    "cited_text": "Fuel class in the unified table: solid.\n",
     "n": 1,
     "psi_id": "PSI-25",
-    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II"
+    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II",
+    "cited_text": "Fuel class in the unified table: solid."
    },
    {
-    "cited_text": "Platform: ISS\nHardware: Microgravity Science Glovebox (MSG)\nFuels: 2 cm SIBAL (17 rows); 1/4\" clear rod (15 rows); 1/4\" black rod (12 rows); 1 cm SIBAL (8 rows); 3/8\" black rod (7 rows); 1 cm wide 200 micron thick PMMA (5 rows); 3/8\" clear rod (5 rows); 0.5\" black rod (4 rows); 1/2\" clear PMMA rod (4 rows); 2 cm 0.1 mm PMMA film (3 rows); 2 cm 100 micron thick PMMA (3 rows); Nomex natural (nomex III) (3 rows); 1 mm thick PMMA 2 cm wide (2 rows); 1/4 black rod (2 rows); 2 cm 0.2 mm PMMA film (2 rows); 3/8\"clear rod (2 rows); 4 cm spherical section (2 rows); 5 mm thick PMMA 2 cm wide (2 rows); 1 cm 0.2 mm PMMA film (1 rows); 1 cm SIBAL top side ign (1 rows); 1 cm wide PMMA 1 mm thick (1 rows); 1 cm wide PMMA 2 mm thick (1 rows); 1 cm wide PMMA 3 mm thick (1 rows); 1 cm wide PMMA 5 mm thick (1 rows); 1 mm thick PMMA 1 sided 2 cm (1 rows); 1/2\" clear rod (1 rows); 1/4 blac rod (1 rows); 1/4 clear rod (1 rows); 100 micron PMMA film 2 cm wide (1 rows); 100 micron film 2 cm wide (1 rows); 2 cm 0.4 mm thick film (1 rows); 2 cm 4 mm 1 sided PMMA slab (1 rows); 2 cm Sibal moved igniter (1 rows); 2 cm wide 5 mm thick 1 sided PMMA (1 rows); 2 cm wide PMMA 2 mm thick (1 rows); 2 cm wide PMMA 3 mm thick (1 rows); 2 mm thick PMMA 2 cm wide (1 rows); 200 micron 2 cm wide (1 rows); 200 micron PMMA film 2 cm wide (1 rows); 2mm thick PMMA 1 sided 2 cm wide (1 rows)\nSample geometry: 2 cm (18 rows); 1 cm (9 rows); 1 cm; 200 micron (5 rows); 1 mm; 2 cm (3 rows); 2 cm; 0.1 mm (3 rows); 2 cm; 100 micron (3 rows); 100 micron; 2 cm (2 rows); 2 cm; 0.2 mm (2 rows)\nTest conditions: To summarize, BASS-II's approach, microgravity combustion tests were performed aboard the International Space Station. ",
     "n": 2,
     "psi_id": "PSI-25",
-    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II"
+    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II",
+    "cited_text": "Rows in the unified conditions table: 129 (outcome recorded in 0)."
    },
    {
-    "cited_text": "Fuel class in the unified table: solid.\n",
     "n": 3,
     "psi_id": "PSI-26",
-    "title": "PSI-26 BASS - Burning and Suppression of Solids"
+    "title": "PSI-26 BASS - Burning and Suppression of Solids",
+    "cited_text": "Fuel class in the unified table: solid."
    },
    {
-    "cited_text": "Custom-made fabric samples consisting of 75% cotton and 25% fiberglass (by mass) measuring were used as a fuel source as well as Nomex fabric and Ultem. ",
     "n": 4,
     "psi_id": "PSI-26",
-    "title": "PSI-26 BASS - Burning and Suppression of Solids"
+    "title": "PSI-26 BASS - Burning and Suppression of Solids",
+    "cited_text": "Rows in the unified conditions table: 122 (outcome recorded in 0)."
    },
    {
-    "cited_text": "Fuel class in the unified table: solid.\n",
     "n": 5,
     "psi_id": "PSI-98",
-    "title": "PSI-98 SAFFIRE-I - Spacecraft Fire Safety Experiment-I"
+    "title": "PSI-98 SAFFIRE-I - Spacecraft Fire Safety Experiment-I",
+    "cited_text": "Fuel class in the unified table: solid."
    },
    {
-    "cited_text": "Fuel class in the unified table: solid.\n",
     "n": 6,
     "psi_id": "PSI-99",
-    "title": "PSI-99 SAFFIRE-II - Spacecraft Fire Experiment-II"
+    "title": "PSI-99 SAFFIRE-II - Spacecraft Fire Experiment-II",
+    "cited_text": "Fuel class in the unified table: solid."
    },
    {
-    "cited_text": "Fuel class in the unified table: solid.\n",
     "n": 7,
     "psi_id": "PSI-100",
-    "title": "PSI-100 SAFFIRE-III - Spacecraft Fire Experiment-III"
+    "title": "PSI-100 SAFFIRE-III - Spacecraft Fire Experiment-III",
+    "cited_text": "Fuel class in the unified table: solid."
    },
    {
-    "cited_text": "These tests are not in the PSI repository and are not part of the unified PSI conditions table.\n",
     "n": 8,
+    "psi_id": "DASHBOARD-RESULTS",
+    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
+    "cited_text": "Test next, iss, solid fuel: 0 PSI tests inside the window (137 rows classified); nearest PSI test: PSI-98, O2 0.215, pressure not recorded, O2 gap 0.000; nearest outside-PSI NASA test: Saffire IV-1 SIBAL cloth, O2 0.220, 0.987 atm, O2 gap 0.000, inside the window, NTRS 20210011521."
+   },
+   {
+    "n": 9,
     "psi_id": "NTRS-SAFFIRE-IV-VI",
-    "title": "Outside PSI - Saffire IV-VI (NTRS)"
+    "title": "Outside PSI - Saffire IV-VI (NTRS)",
+    "cited_text": "Saffire IV-VI solid flammability tests published by NASA on NTRS. These tests are not in the PSI repository and are not part of the unified PSI conditions table."
    }
   ],
-  "generated_at": "2026-11-14T13:45:27",
   "model": "claude-sonnet-5-5",
-  "question": "Which investigations used solid fuels?"
+  "generated_at": "2026-11-14T19:40:24"
  },
  "which solid materials were tested and at what oxygen": {
   "answer": "Solid materials appear across several PSI investigations, but O2 is recorded for only some of them.\n\n- **PSI-25 BASS-II:** ambient O2 of 0.136 to 0.222 [1]. Samples include SIBAL, clear and black rods, and PMMA [2].\n- **PSI-98 Saffire-I:** SIBAL fabric at 0.215 to 0.217 ambient O2 [3]. **PSI-99 Saffire-II:** silicone, SIBAL, PMMA, and PMMA & Nomex at 0.215 to 0.221 ambient O2 [4] [5].\n- **PSI-26 BASS and PSI-100 Saffire-III:** BASS ambient O2 is not recorded [6] and so is Saffire-III's [7]. Their materials were cotton/fiberglass fabric, Nomex and Ultem [8] (BASS) and SIBAL fabric [9] (Saffire-III).\n\nNot covered: PSI solid-fuel tests stop at 22.2 percent ambient O2 [10]. Higher-O2 Saffire IV-VI tests are outside PSI.",

@@ -46,7 +46,15 @@
    "id": "firefighter_air_tanks",
    "inference": "No PSI combustion investigation is linked: this is spacesuit hardware history, not combustion data.",
    "inference_psi_ids": [],
+   "label": "NASA spinoff technology, not a PSI combustion test.",
    "psi_ids": [],
+   "quote": {
+    "source_publisher": "NASA Spinoff, originally published 1976",
+    "source_title": "Fireman's Air Tanks",
+    "status": "verbatim, machine-checked against a saved copy of the page",
+    "text": "Together with NASA's Johnson Space Center, A-T-O Inc.'s Scott Aviation has developed light-weight firefighter's air tanks. New backpack system weighs only 20 pounds for 30 minute air supply, 13 pounds less than conventional firefighting tanks.",
+    "url": "https://spinoff.nasa.gov/node/9582"
+   },
    "sources": [
     {
      "label": "NASA Spinoff: Fireman's Air Tanks",
@@ -61,7 +69,15 @@
    "id": "firefighter_clothing",
    "inference": "No PSI combustion investigation is linked: this is spacesuit materials history. Fabric flammability tests in the PSI tables (Saffire, BASS) address spacecraft materials, not firefighter clothing.",
    "inference_psi_ids": [],
+   "label": "NASA spinoff technology, not a PSI combustion test.",
    "psi_ids": [],
+   "quote": {
+    "source_publisher": "NASA Spinoff, originally published 1982",
+    "source_title": "New Technology for the Fire Attire",
+    "status": "verbatim, machine-checked against a saved copy of the page",
+    "text": "A major focus of the effort involves application to the FIRES ensemble of lightweight, fire-resistant, heat-protective materials originally developed for use in astronauts' space suits or in spacecraft components which require thermal protection.",
+    "url": "https://spinoff.nasa.gov/node/9918"
+   },
    "sources": [
     {
      "label": "NASA Spinoff: New Technology for the Fire Attire",

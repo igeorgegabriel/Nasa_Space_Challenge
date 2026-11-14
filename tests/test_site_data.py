@@ -451,11 +451,11 @@ class SiteDataTest(unittest.TestCase):
             self.assertTrue(insight["links"] or insight.get("sources"))
 
     def test_corpus_has_one_document_per_investigation(self):
-        self.assertEqual(len(self.corpus), len(self.investigations) + 2)
+        self.assertEqual(len(self.corpus), len(self.investigations) + 3)
         ids = [d["psi_id"] for d in self.corpus]
-        self.assertEqual(ids, [inv["psi_id"] for inv in self.investigations] + [outside_psi.CORPUS_ID, "DASHBOARD-RESULTS"])
+        self.assertEqual(ids, [inv["psi_id"] for inv in self.investigations] + [outside_psi.CORPUS_ID, "DASHBOARD-RESULTS", build_site_data.EARTH_CORPUS_ID])
         self.assertEqual(len(set(ids)), len(ids))
-        for doc in self.corpus[:-2]:
+        for doc in self.corpus[:-3]:
             self.assertTrue(doc["title"].startswith(doc["psi_id"] + " "))
             self.assertIn(" - ", doc["title"])
             self.assertGreater(len(doc["body"]), 100)
@@ -516,7 +516,7 @@ class SiteDataTest(unittest.TestCase):
         self.assertFalse(result["meta_present"])
         unified = read_json(os.path.join(UNIFIED, "investigations.json"))
         self.assertEqual({i["psi_id"] for i in result["investigations"]}, set(unified))
-        self.assertEqual(len(result["corpus"]["documents"]), len(unified) + 2)
+        self.assertEqual(len(result["corpus"]["documents"]), len(unified) + 3)
         for inv in result["investigations"]:
             self.assertFalse(inv["meta_present"])
             for entry in inv["functions"]:
@@ -777,14 +777,33 @@ class SiteDataTest(unittest.TestCase):
         self.assertEqual(lunar["inside"], 0)
 
     def test_dashboard_results_document(self):
-        doc = self.corpus[-1]
+        doc = self.corpus[-2]
         self.assertEqual(doc["psi_id"], "DASHBOARD-RESULTS")
         self.assertEqual(doc["title"], build_site_data.DASHBOARD_RESULTS_TITLE)
         for token in ("Environment lunar", "Test next, lunar, solid", "Solid test pressure, PSI-25", "20210011385", "Default lunar habitat ranking"):
             self.assertIn(token, doc["body"])
 
+    def test_corpus_has_no_publication_lists(self):
+        for doc in self.corpus:
+            self.assertNotIn("\nPublications:", "\n" + doc["body"])
+
+    def test_earth_firefighter_entries_and_corpus_document(self):
+        apps = {a["id"]: a for a in read_json(os.path.join(SITE, "earth.json"))["applications"]}
+        quotes = {q["id"]: q for q in read_json(os.path.join(ROOT, "data", "earth", "earth_quotes.json"))["quotes"]}
+        verification = read_json(os.path.join(ROOT, "data", "earth", "verification.json"))
+        self.assertEqual(verification["failed"], 0)
+        self.assertEqual(verification["checked"], len(quotes))
+        doc = self.corpus[-1]
+        self.assertEqual(doc["psi_id"], build_site_data.EARTH_CORPUS_ID)
+        for key in ("firefighter_air_tanks", "firefighter_clothing"):
+            self.assertEqual(apps[key]["label"], "NASA spinoff technology, not a PSI combustion test.")
+            self.assertEqual(apps[key]["quote"]["text"], quotes[key]["quote"])
+            self.assertTrue(apps[key]["quote"]["url"].startswith("https://spinoff.nasa.gov/node/"))
+            self.assertIn(quotes[key]["quote"], doc["body"])
+        self.assertIn("firefighter", doc["body"].lower())
+
     def test_outside_corpus_document_and_citation_mapping(self):
-        doc = self.corpus[-2]
+        doc = self.corpus[-3]
         self.assertEqual(doc["psi_id"], outside_psi.CORPUS_ID)
         self.assertEqual(doc["title"], outside_psi.CORPUS_TITLE)
         self.assertIn("not in the PSI repository", doc["body"])

@@ -1,0 +1,20 @@
+{
+ "quotes": [
+  {
+   "id": "firefighter_air_tanks",
+   "source_title": "Fireman's Air Tanks",
+   "source_publisher": "NASA Spinoff, originally published 1976",
+   "source_url": "https://spinoff.nasa.gov/node/9582",
+   "source_text_file": "data/earth/sources/spinoff_9582.txt",
+   "quote": "Together with NASA's Johnson Space Center, A-T-O Inc.'s Scott Aviation has developed light-weight firefighter's air tanks. New backpack system weighs only 20 pounds for 30 minute air supply, 13 pounds less than conventional firefighting tanks."
+  },
+  {
+   "id": "firefighter_clothing",
+   "source_title": "New Technology for the Fire Attire",
+   "source_publisher": "NASA Spinoff, originally published 1982",
+   "source_url": "https://spinoff.nasa.gov/node/9918",
+   "source_text_file": "data/earth/sources/spinoff_9918.txt",
+   "quote": "A major focus of the effort involves application to the FIRES ensemble of lightweight, fire-resistant, heat-protective materials originally developed for use in astronauts' space suits or in spacecraft components which require thermal protection."
+  }
+ ]
+}

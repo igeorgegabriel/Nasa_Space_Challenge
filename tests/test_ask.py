@@ -138,12 +138,23 @@ class AskTest(unittest.TestCase):
         self.assertEqual(len(docs), len(self.ask.CORPUS))
         for block in docs:
             self.assertEqual(block["type"], "document")
-            self.assertEqual(block["source"]["media_type"], "text/plain")
+            self.assertEqual(block["source"]["type"], "content")
+            self.assertTrue(all(item["type"] == "text" and item["text"] for item in block["source"]["content"]))
             self.assertEqual(block["citations"], {"enabled": True})
         for block in docs[:-1]:
             self.assertNotIn("cache_control", block)
         self.assertEqual(docs[-1]["cache_control"], {"type": "ephemeral"})
         self.assertEqual(content[-1], {"type": "text", "text": "What is PSI-25?"})
+
+    def test_cite_blocks_are_short_and_lossless(self):
+        long_line = "Publications: " + "; ".join("Paper number %d about flames" % i for i in range(60))
+        body = "Short line one.\n" + long_line + "\nSecond. Third sentence here."
+        blocks = self.ask.cite_blocks(body)
+        self.assertTrue(all(0 < len(b) <= self.ask.MAX_CITE_BLOCK_CHARS for b in blocks))
+        self.assertEqual(" ".join(blocks).split(), body.split())
+        for doc in self.ask.CORPUS:
+            for block in self.ask.cite_blocks(doc["body"]):
+                self.assertLessEqual(len(block), self.ask.MAX_CITE_BLOCK_CHARS + 120)
 
     def test_request_shape_has_no_sampling_params(self):
         response = SimpleNamespace(content=[text_block("ok")], stop_reason="end_turn", model="claude-opus-5-5")
