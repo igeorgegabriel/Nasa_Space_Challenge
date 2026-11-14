@@ -889,8 +889,6 @@ let storyObserver = null;
 let heroObserver = null;
 let gapNode = null;
 let gapWidth = 0;
-let gapVh = 0;
-let gapScrollOff = null;
 let heroPlayed = false;
 let playRun = null;
 
@@ -900,18 +898,11 @@ function reduceMotion() {
 
 function stopStory() {
   playStop();
-  if (gapScrollOff) {
-    gapScrollOff();
-    gapScrollOff = null;
-  }
   if (storyObserver) {
     storyObserver.disconnect();
     storyObserver = null;
   }
-  gapNode = null;
-  gapModel = null;
-  gapCapsRef = null;
-  gapQ = 0;
+  gapStop();
   if (heroObserver) {
     heroObserver.disconnect();
     heroObserver = null;
@@ -1040,16 +1031,18 @@ function gapChartData() {
   };
 }
 
-const GAP_COL = { psi: "#e06d34", fl: "#5b95e8", gray: "#8f9bb8", surf: "#0e152b", t1: "#eef2fb", t2: "#c9d2e6", t3: "#8f9bb8", grid: "#1a2340", axis: "#34405f" };
-const GAP_ANIM = 0.35;
-const GAP_TRAVEL = 1300;
-const GAP_BINS = 48;
-const GAP_GRAY_DIM = 0.55;
-const GAP_SOLID_DIM = 0.7;
-let gapModel = null;
-let gapQ = 0;
-let gapCapsRef = null;
-let gapStaticMode = false;
+const GAP_COL = { psi: "#e06d34", fl: "#5b95e8", gray: "#8f9bb8", surf: "#0e152b" };
+const GAP_DUR = 900;
+const GAP_READ = 3000;
+const GAP_FADE = 0.3;
+const GAP_STAGES = [0.05, 0.5, 0.62];
+let gapPlan = null;
+let gapReady = false;
+let gapWanted = false;
+let gapPlayed = false;
+let gapCancel = null;
+let gapView = null;
+let gapDrawId = 0;
 
 function gapClamp(v) {
   return v < 0 ? 0 : v > 1 ? 1 : v;
@@ -1061,10 +1054,6 @@ function gapEaseOut(u) {
 
 function gapEaseIO(u) {
   return 0.5 - 0.5 * Math.cos(Math.PI * u);
-}
-
-function gapStage(q, k) {
-  return gapEaseIO(gapClamp((q - k) / GAP_ANIM));
 }
 
 function swarmPoints(values, xo, r) {
@@ -1137,525 +1126,243 @@ function gapTipLines(mk) {
   return lines;
 }
 
-function gapBindTips(node, svg, tip, live, m) {
-  let cur = null;
-  function visible() {
-    return m.marks.filter(function (k) { return k.kind === "f" ? m.vis.f : m.vis.p; });
-  }
-  function hide() {
-    cur = null;
-    tip.hidden = true;
-    m.hov.setAttribute("opacity", "0");
-  }
-  function show(mk, announce) {
-    cur = mk;
-    clear(tip);
-    const lines = gapTipLines(mk);
-    lines.forEach(function (l) {
-      tip.appendChild(el("div", { class: "gt-" + l[1], text: l[0] }));
-    });
-    tip.hidden = false;
-    m.hov.setAttribute("cx", mk.x);
-    m.hov.setAttribute("cy", mk.y);
-    m.hov.setAttribute("r", mk.r + 4);
-    m.hov.setAttribute("opacity", "1");
-    const w = node.clientWidth;
-    const tw = tip.offsetWidth;
-    const th = tip.offsetHeight;
-    let left = mk.x + 16;
-    if (left + tw > w - 4) {
-      left = mk.x - tw - 16;
-    }
-    left = Math.max(4, left);
-    let top = svg.parentNode.offsetTop + mk.y - th - 14;
-    if (top < svg.parentNode.offsetTop - 8) {
-      top = svg.parentNode.offsetTop + mk.y + 18;
-    }
-    tip.style.left = left.toFixed(1) + "px";
-    tip.style.top = top.toFixed(1) + "px";
-    if (announce) {
-      live.textContent = lines.map(function (l) { return l[0]; }).join(". ");
-    }
-  }
-  function pick(e) {
-    const b = svg.getBoundingClientRect();
-    const k = b.width / m.w;
-    const x = (e.clientX - b.left) / k;
-    const y = (e.clientY - b.top) / k;
-    const reach = e.pointerType === "touch" ? 26 : 20;
-    let best = null;
-    let bd = reach * reach;
-    const list = visible();
-    for (let i = 0; i < list.length; i += 1) {
-      const dx = list[i].x - x;
-      const dy = list[i].y - y;
-      const dd = dx * dx + dy * dy;
-      if (dd < bd) {
-        bd = dd;
-        best = list[i];
-      }
-    }
-    return best;
-  }
-  function onPoint(e) {
-    const hit = pick(e);
-    if (!hit) {
-      hide();
-    } else if (hit !== cur) {
-      show(hit, false);
-    }
-  }
-  svg.addEventListener("pointermove", onPoint);
-  svg.addEventListener("pointerdown", onPoint);
-  svg.addEventListener("pointerleave", function (e) {
-    if (e.pointerType !== "touch") {
-      hide();
-    }
-  });
-  svg.addEventListener("blur", hide);
-  svg.addEventListener("keydown", function (e) {
-    const list = visible();
-    if (!list.length) {
-      return;
-    }
-    let i = cur ? list.indexOf(cur) : -1;
-    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
-      i = i < 0 ? 0 : Math.min(list.length - 1, i + 1);
-    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
-      i = i < 0 ? 0 : Math.max(0, i - 1);
-    } else if (e.key === "Home") {
-      i = 0;
-    } else if (e.key === "End") {
-      i = list.length - 1;
-    } else if (e.key === "Escape") {
-      hide();
-      return;
-    } else {
-      return;
-    }
-    e.preventDefault();
-    show(list[i], true);
-  });
+function gapHover(mk) {
+  return gapTipLines(mk).map(function (l) {
+    const t = plotWrap(l[0], 46);
+    return l[1] === "v" ? "<b>" + t + "</b>" : l[1] === "m" ? "<span style=\"color:" + GAP_COL.gray + "\">" + t + "</span>" : t;
+  }).join("<br>");
 }
 
-function gapLegend() {
-  function item(stage, swatch, text) {
-    return el("span", { class: "lg", "data-s": String(stage) }, swatch, el("span", { text: text }));
-  }
-  return el("div", { class: "gap-legend" },
-    item(0, el("i", { class: "lg-dot" }), "PSI solid-fuel test"),
-    item(0, el("i", { class: "lg-dot gray" }), "Droplet or gas-flame test"),
-    item(2, el("i", { class: "lg-ring on" }), "Newest NASA flight, burned"),
-    item(2, el("i", { class: "lg-ring" }), "did not ignite"),
-    item(3, el("i", { class: "lg-band" }), "Moon base air"),
-    el("a", { class: "lg-link", href: "#/data?at=extractor", text: "See the rows" }));
-}
-
-function drawGapChart(node) {
+function gapBuild(w) {
   const d = gapChartData();
-  const w = Math.max(280, Math.floor(node.clientWidth || 320));
   const small = w < 640;
-  const vh = (window.innerHeight || 800) - tourRoom();
-  gapVh = vh;
-  const H = small ? Math.max(tour.open ? 200 : 300, Math.min(480, Math.round(vh * (tour.open ? 0.38 : 0.5)))) : Math.max(320, Math.min(600, Math.round(vh * (tour.open ? 0.5 : 0.55))));
-  const fs = small ? 12 : 13;
-  const pad = small ? 16 : 26;
+  const vh = window.innerHeight || 800;
+  const H = small ? Math.max(430, Math.min(520, Math.round(vh * 0.62))) : Math.max(420, Math.min(580, Math.round(vh * 0.6)));
+  const m = { l: 14, r: 14, t: small ? 78 : 58, b: small ? 134 : 104, pad: 0, autoexpand: false };
+  const plotW = Math.max(200, w - m.l - m.r);
+  const plotH = H - m.t - m.b;
   const lo = 12;
   const hi = 41;
-  const px = (w - 2 * pad) / (hi - lo);
-  function xo(v) { return pad + (v - lo) * px; }
-  const top = small ? 48 : 40;
-  const axisY = Math.round(H - (small ? 46 : 52));
-  const plotH = axisY - top;
-  const burned = d.flights.filter(function (t) { return t.outcome_short === "Burned"; });
-  const maxBurn = Math.max.apply(null, burned.map(function (t) { return t.o2_percent; }));
-  const ruleX = Math.round(xo(d.psiMax)) + 0.5;
-  const ruleTop = top - 6;
-  const bandL = Math.round(xo(d.moonLo)) + 0.5;
-  const bandR = Math.round(xo(d.moonHi)) + 0.5;
-  const moonX = xo(d.moon);
-  const laneY = top + 20;
+  const fs = small ? 11 : 12;
+  const xo = function (v) { return (v - lo) / (hi - lo) * plotW; };
+  const flights = d.flights.slice().sort(function (a, b) { return a.o2_percent - b.o2_percent; });
   const seen = {};
-  let flightRows = 1;
-  const flights = d.flights.slice().sort(function (a, b) { return a.o2_percent - b.o2_percent; }).map(function (t) {
+  let rows = 1;
+  const fpts = flights.map(function (t) {
     const key = t.o2_percent.toFixed(1);
     seen[key] = seen[key] || 0;
     const row = seen[key];
     seen[key] += 1;
-    flightRows = Math.max(flightRows, row + 1);
-    return { t: t, x: xo(t.o2_percent), y: laneY + row * 15 };
+    rows = Math.max(rows, row + 1);
+    return { t: t, x: t.o2_percent, y: plotH - 30 - row * 15 };
   });
-  const flightsBottom = laneY + (flightRows - 1) * 15 + 9;
-  const grayTop = flightsBottom + (small ? 30 : 28);
-  const grayH = Math.max(40, Math.round((axisY - grayTop) * 0.32));
-  const grayBot = grayTop + grayH;
-  const solidTop = grayBot + 12;
-  const solidH = axisY - solidTop;
+  const flightsBottom = plotH - 30 - (rows - 1) * 15 - 8;
+  const grayTop = flightsBottom - (small ? 38 : 34);
+  const grayH = Math.max(34, Math.round(plotH * 0.12));
+  const grayBot = grayTop - grayH;
   const gr = small ? 1.9 : 2.7;
+  const limit = Math.max(40, grayBot - 12);
   let r = small ? 3 : 4.4;
   let swarm = swarmPoints(d.solid, xo, r);
-  const swarmLimit = Math.max(30, solidH - (small ? 40 : 34));
-  while (r > (small ? 2 : 2.6) && Math.max.apply(null, swarm.map(function (p) { return p.up; })) + r > swarmLimit) {
+  while (r > (small ? 2 : 2.6) && Math.max.apply(null, swarm.map(function (p) { return p.up; })) + r > limit) {
     r -= 0.2;
     swarm = swarmPoints(d.solid, xo, r);
   }
-  const span = w - 2 * pad;
-  function binOf(x) {
-    return Math.max(0, Math.min(GAP_BINS - 1, Math.floor((x - pad) / span * GAP_BINS)));
-  }
-  const grayPts = d.others.map(function (row, i) {
-    const x = xo(row.o2_frac * 100);
-    const y = grayTop + gr + gapRand(i + 11) * (grayH - 2 * gr);
-    return { x: x, y: y, row: row };
+  const gray = d.others.map(function (row, i) {
+    return { x: row.o2_frac * 100, y: grayBot + gr + gapRand(i + 11) * (grayH - 2 * gr), row: row };
   });
-  const dimY = axisY - (small ? 34 : 28) + 0.5;
-  const step = small ? 4 : 2;
-  const grid = [];
-  const ticks = [];
-  for (let v = lo; v <= hi; v += step) {
-    const gx = Math.round(xo(v)) + 0.5;
-    grid.push("<line x1=\"" + gx + "\" y1=\"" + top + "\" x2=\"" + gx + "\" y2=\"" + axisY + "\" stroke=\"" + GAP_COL.grid + "\" stroke-width=\"1\"/>");
-    ticks.push("<text x=\"" + xo(v).toFixed(1) + "\" y=\"" + (axisY + 19) + "\" font-size=\"" + fs + "\" text-anchor=\"middle\" fill=\"" + GAP_COL.t3 + "\">" + v + "</text>");
-  }
-  function binned(points, draw) {
-    const bins = [];
-    for (let i = 0; i < GAP_BINS; i += 1) {
-      bins.push([]);
-    }
-    points.forEach(function (p) {
-      bins[binOf(p.x)].push(draw(p));
-    });
-    return bins.map(function (b) { return "<g class=\"gb\">" + b.join("") + "</g>"; }).join("");
-  }
-  let s = "";
-  s += "<g shape-rendering=\"crispEdges\">" + grid.join("") + "</g>";
-  s += "<rect class=\"gshade\" x=\"" + ruleX + "\" y=\"" + top + "\" width=\"" + (w - pad - ruleX) + "\" height=\"" + plotH + "\" fill=\"#ffffff\" fill-opacity=\"0.035\" opacity=\"0\"/>";
-  s += "<g class=\"gband\" opacity=\"0\" shape-rendering=\"crispEdges\"><rect x=\"" + bandL + "\" y=\"" + top + "\" width=\"" + (bandR - bandL) + "\" height=\"" + plotH + "\" fill=\"#ffffff\" fill-opacity=\"0.08\"/>";
-  s += "<line x1=\"" + bandL + "\" y1=\"" + top + "\" x2=\"" + bandL + "\" y2=\"" + axisY + "\" stroke=\"#ffffff\" stroke-opacity=\"0.45\" stroke-width=\"1\"/>";
-  s += "<line x1=\"" + bandR + "\" y1=\"" + top + "\" x2=\"" + bandR + "\" y2=\"" + axisY + "\" stroke=\"#ffffff\" stroke-opacity=\"0.45\" stroke-width=\"1\"/></g>";
-  s += "<line x1=\"" + pad + "\" y1=\"" + (axisY + 0.5) + "\" x2=\"" + (w - pad) + "\" y2=\"" + (axisY + 0.5) + "\" stroke=\"" + GAP_COL.axis + "\" stroke-width=\"1\" shape-rendering=\"crispEdges\"/>";
-  s += ticks.join("");
-  s += "<text x=\"" + (w / 2) + "\" y=\"" + (H - 8) + "\" font-size=\"" + (fs - 1) + "\" text-anchor=\"middle\" fill=\"" + GAP_COL.t3 + "\">Oxygen in the air (percent)</text>";
-  s += "<text class=\"gglab\" x=\"" + pad + "\" y=\"" + (grayTop - 6) + "\" font-size=\"" + (fs - 1) + "\" fill=\"" + GAP_COL.t3 + "\" opacity=\"0\">Droplet and gas flames</text>";
-  s += "<g class=\"ggray\">" + binned(grayPts, function (p) {
-    return "<circle cx=\"" + p.x.toFixed(1) + "\" cy=\"" + p.y.toFixed(1) + "\" r=\"" + gr + "\" fill=\"" + GAP_COL.gray + "\" fill-opacity=\"0.78\"/>";
-  }) + "</g>";
-  s += "<g class=\"gsol\">" + binned(swarm, function (p) {
-    return "<circle cx=\"" + p.x.toFixed(1) + "\" cy=\"" + (axisY - p.up).toFixed(1) + "\" r=\"" + r + "\" fill=\"" + GAP_COL.psi + "\" stroke=\"" + GAP_COL.surf + "\" stroke-width=\"1\"/>";
-  }) + "</g>";
-  s += "<line class=\"grule\" x1=\"" + ruleX + "\" y1=\"" + axisY + "\" x2=\"" + ruleX + "\" y2=\"" + axisY + "\" stroke=\"" + GAP_COL.t2 + "\" stroke-width=\"1\" shape-rendering=\"crispEdges\"/>";
-  const ruleText = "Highest PSI solid test: " + fmt(d.psiMax, 1) + "%";
-  if (small) {
-    s += "<text class=\"grlab\" font-size=\"" + fs + "\" text-anchor=\"middle\" fill=\"" + GAP_COL.t1 + "\" opacity=\"0\"><tspan x=\"" + ruleX + "\" y=\"" + (top - 24) + "\">Highest PSI solid</tspan><tspan x=\"" + ruleX + "\" y=\"" + (top - 10) + "\">test: " + fmt(d.psiMax, 1) + "%</tspan></text>";
-  } else {
-    s += "<text class=\"grlab\" x=\"" + ruleX + "\" y=\"" + (top - 14) + "\" font-size=\"" + fs + "\" font-weight=\"600\" text-anchor=\"middle\" fill=\"" + GAP_COL.t1 + "\" opacity=\"0\">" + ruleText + "</text>";
-  }
-  s += "<text class=\"glane\" font-size=\"" + (fs - 1) + "\" fill=\"" + GAP_COL.t3 + "\" opacity=\"0\">";
-  if (small) {
-    s += "<tspan x=\"" + pad + "\" y=\"" + (laneY - 2) + "\">Newest flights,</tspan><tspan x=\"" + pad + "\" y=\"" + (laneY + 11) + "\">not in PSI</tspan>";
-  } else {
-    s += "<tspan x=\"" + pad + "\" y=\"" + (laneY + 4) + "\">Newest flights, not in PSI</tspan>";
-  }
-  s += "</text>";
-  flights.forEach(function (f) {
-    const on = f.t.outcome_short === "Burned";
-    s += "<g class=\"gf\" transform=\"translate(" + f.x.toFixed(1) + " " + f.y + ") scale(0.6)\" opacity=\"0\"><circle r=\"" + (small ? 4.2 : 5) + "\" fill=\"" + (on ? GAP_COL.fl : "none") + "\" stroke=\"" + GAP_COL.fl + "\" stroke-width=\"2\"/></g>";
-  });
-  const moonText = "Moon base air: " + d.moon + "%";
-  const moonW = moonText.length * fs * 0.58;
-  const anchorEnd = moonX + moonW / 2 > w - 4;
-  s += "<text class=\"gmlab\" x=\"" + (anchorEnd ? w - 6 : moonX.toFixed(1)) + "\" y=\"" + (top - 14) + "\" font-size=\"" + fs + "\" font-weight=\"600\" text-anchor=\"" + (anchorEnd ? "end" : "middle") + "\" fill=\"" + GAP_COL.t1 + "\" opacity=\"0\">" + moonText + "</text>";
-  const gapA = ruleX;
-  const gapB = Math.round(moonX) + 0.5;
-  s += "<g class=\"gdim\" shape-rendering=\"crispEdges\"><line class=\"gdl\" x1=\"" + gapA + "\" y1=\"" + dimY + "\" x2=\"" + gapA + "\" y2=\"" + dimY + "\" stroke=\"" + GAP_COL.t1 + "\" stroke-width=\"1\"/>";
-  s += "<line class=\"gdta\" x1=\"" + gapA + "\" y1=\"" + (dimY - 5) + "\" x2=\"" + gapA + "\" y2=\"" + (dimY + 5) + "\" stroke=\"" + GAP_COL.t1 + "\" stroke-width=\"1\" opacity=\"0\"/>";
-  s += "<line class=\"gdtb\" x1=\"" + gapA + "\" y1=\"" + (dimY - 5) + "\" x2=\"" + gapA + "\" y2=\"" + (dimY + 5) + "\" stroke=\"" + GAP_COL.t1 + "\" stroke-width=\"1\" opacity=\"0\"/></g>";
-  const gapMid = (gapA + gapB) / 2;
-  if (small) {
-    s += "<text class=\"gdlab\" font-size=\"" + fs + "\" font-weight=\"600\" text-anchor=\"middle\" fill=\"" + GAP_COL.t1 + "\" opacity=\"0\"><tspan x=\"" + gapMid + "\" y=\"" + (dimY - 24) + "\">Untested by PSI:</tspan><tspan x=\"" + gapMid + "\" y=\"" + (dimY - 10) + "\">" + fmt(d.psiMax, 1) + "% to " + d.moon + "%</tspan></text>";
-  } else {
-    s += "<text class=\"gdlab\" x=\"" + gapMid + "\" y=\"" + (dimY - 10) + "\" font-size=\"" + fs + "\" font-weight=\"600\" text-anchor=\"middle\" fill=\"" + GAP_COL.t1 + "\" opacity=\"0\">Untested by PSI: " + fmt(d.psiMax, 1) + "% to " + d.moon + "%</text>";
-  }
-  s += "<circle class=\"ghov\" r=\"8\" fill=\"none\" stroke=\"" + GAP_COL.t1 + "\" stroke-width=\"1.5\" opacity=\"0\" pointer-events=\"none\"/>";
-  const label = "Oxygen axis from " + lo + " to " + hi + " percent: " + d.total + " NASA flame tests. " + d.solid.length + " PSI solid-fuel tests end at " + fmt(d.psiMax, 1) + " percent while droplet and gas flames go on to " + fmt(d.others[d.others.length - 1].o2_frac * 100, 0) + " percent. Newest NASA flights burned solids up to " + fmt(maxBurn, 1) + " percent, Moon base air is " + d.moon + " percent. Focus the chart and use arrow keys to read each test, or open the rows link.";
-  clear(node);
-  const legend = gapLegend();
-  node.appendChild(legend);
-  const holder = el("div", { class: "gap-plot" });
-  holder.innerHTML = "<svg viewBox=\"0 0 " + w + " " + H + "\" width=\"" + w + "\" height=\"" + H + "\" role=\"group\" tabindex=\"0\" aria-label=\"" + label + "\">" + s + "</svg>";
-  node.appendChild(holder);
-  const svg = holder.firstChild;
-  const tip = el("div", { class: "gap-tip", role: "tooltip", hidden: "" });
-  const live = el("div", { class: "gap-live", "aria-live": "polite" });
-  node.appendChild(tip);
-  node.appendChild(live);
-  const q = function (sel) { return svg.querySelector(sel); };
-  const flEls = svg.querySelectorAll(".gf");
-  const binEls = svg.querySelectorAll(".gb");
-  const bins = [];
-  for (let i = 0; i < binEls.length; i += 1) {
-    bins.push({ el: binEls[i], order: (i % GAP_BINS) / (GAP_BINS - 1), c: -1 });
-  }
-  const m = {
-    w: w,
-    axisY: axisY,
-    ruleTop: ruleTop,
-    dimA: gapA,
-    dimB: gapB,
-    bins: bins,
-    gray: q(".ggray"),
-    sol: q(".gsol"),
-    grayLab: q(".gglab"),
-    flights: flights.map(function (f, i) {
-      return { el: flEls[i], x: f.x, y: f.y, order: flights.length > 1 ? i / (flights.length - 1) : 0, c: -1 };
-    }),
-    shade: q(".gshade"),
-    band: q(".gband"),
-    rule: q(".grule"),
-    ruleLab: q(".grlab"),
-    lane: q(".glane"),
-    moonLab: q(".gmlab"),
-    dl: q(".gdl"),
-    dta: q(".gdta"),
-    dtb: q(".gdtb"),
-    dlab: q(".gdlab"),
-    hov: q(".ghov"),
-    leg: Array.prototype.map.call(legend.querySelectorAll(".lg"), function (n) { return { el: n, s: parseInt(n.getAttribute("data-s"), 10), c: -1 }; }),
-    vis: { p: false, f: false },
-    marks: [],
-    c0: -1, c1: -1, c2: -1, c3: -1
+  const burned = fpts.filter(function (f) { return f.t.outcome_short === "Burned"; });
+  const open = fpts.filter(function (f) { return f.t.outcome_short !== "Burned"; });
+  const flightSize = small ? 9 : 10;
+  const order = function (x) { return gapClamp((x - lo) / (hi - lo)); };
+  const flightPts = function (list) {
+    return list.map(function (f) { return { x: f.x, y: f.y, hover: gapHover({ kind: "f", row: f.t }) }; });
   };
-  swarm.forEach(function (p, i) {
-    m.marks.push({ kind: "p", x: p.x, y: axisY - p.up, r: r, row: d.rows[i] });
-  });
-  grayPts.forEach(function (p) {
-    m.marks.push({ kind: "g", x: p.x, y: p.y, r: gr, row: p.row });
-  });
-  m.flights.forEach(function (f, i) {
-    m.marks.push({ kind: "f", x: f.x, y: f.y, r: 7, row: flights[i].t });
-  });
-  m.marks.sort(function (a, b) { return a.x - b.x || a.y - b.y; });
-  gapBindTips(node, svg, tip, live, m);
-  gapModel = m;
-  gapWidth = node.clientWidth;
-  gapRender(gapQ, true);
+  const series = [
+    { name: "PSI solid-fuel tests", pts: swarm.map(function (p, i) { return { x: p.v, y: p.up, hover: gapHover({ kind: "p", row: d.rows[i] }) }; }),
+      full: 2 * r, from: 0, span: 0.7, style: { color: GAP_COL.psi, line: { color: GAP_COL.surf, width: 1 } } },
+    { name: "Droplet and gas-flame tests", pts: gray.map(function (p) { return { x: p.x, y: p.y, hover: gapHover({ kind: "g", row: p.row }) }; }),
+      full: 2 * gr, from: 0, span: 0.7, style: { color: GAP_COL.gray, opacity: 0.78 } },
+    { name: "Newest flights, burned", pts: flightPts(burned),
+      full: flightSize, from: 0.3, span: 0.6, style: { color: GAP_COL.fl, line: { color: GAP_COL.fl, width: 2 } } },
+    { name: "Newest flights, no ignition", pts: flightPts(open),
+      full: flightSize, from: 0.3, span: 0.6, style: { color: "rgba(91,149,232,0)", line: { color: GAP_COL.fl, width: 2 } } }
+  ].filter(function (s) { return s.pts.length > 0; });
+  series.forEach(function (s, i) { s.idx = i; });
+  const sizeAt = function (s, t) {
+    return s.pts.map(function (p) {
+      const e = gapEaseOut(gapClamp(((t - s.from) / s.span) * 1.8 - 0.8 * order(p.x)));
+      return Math.round(s.full * e * 100) / 100;
+    });
+  };
+  const fadeAt = function (t, g) {
+    return Math.round(gapClamp((t - GAP_STAGES[g]) / GAP_FADE) * 3) / 3;
+  };
+  const dimY = 24;
+  const line = function (x0, x1, y0, y1, color, ref) {
+    return { type: "line", xref: "x", yref: ref || "y", x0: x0, x1: x1, y0: y0, y1: y1, line: { color: color, width: 1 } };
+  };
+  const strong = PLOT_DARK.strong;
+  const shapeDefs = [
+    { g: 1, s: { type: "rect", xref: "x", yref: "paper", x0: d.psiMax, x1: hi, y0: 0, y1: 1, fillcolor: "rgba(255,255,255,0.035)", line: { width: 0 }, layer: "below" } },
+    { g: 1, s: Object.assign(line(d.psiMax, d.psiMax, 0, 1, PLOT_DARK.text, "paper"), { line: { color: PLOT_DARK.text, width: 1, dash: "dash" } }) },
+    { g: 2, s: { type: "rect", xref: "x", yref: "paper", x0: d.moonLo, x1: d.moonHi, y0: 0, y1: 1, fillcolor: "rgba(255,255,255,0.08)", line: { width: 0 }, layer: "below" } },
+    { g: 2, s: line(d.moonLo, d.moonLo, 0, 1, "rgba(255,255,255,0.45)", "paper") },
+    { g: 2, s: line(d.moonHi, d.moonHi, 0, 1, "rgba(255,255,255,0.45)", "paper") },
+    { g: 2, s: line(d.psiMax, d.moon, dimY, dimY, strong) },
+    { g: 2, s: line(d.psiMax, d.psiMax, dimY - 5, dimY + 5, strong) },
+    { g: 2, s: line(d.moon, d.moon, dimY - 5, dimY + 5, strong) }
+  ];
+  const note = function (g, a) {
+    return { g: g, a: Object.assign({ showarrow: false, xref: "x", yref: "y", xanchor: "center", yanchor: "bottom" }, a) };
+  };
+  const labelFont = { size: fs + 1, color: strong };
+  const pct = fmt(d.psiMax, 1) + "%";
+  const annDefs = [
+    note(0, { xref: "paper", x: 0, xanchor: "left", y: plotH, yanchor: "top", text: "Newest flights, not in PSI", font: { size: fs, color: PLOT_DARK.muted } }),
+    note(0, { xref: "paper", x: 0, xanchor: "left", y: grayTop + 4, text: "Droplet and gas flames", font: { size: fs, color: PLOT_DARK.muted } }),
+    note(1, { x: d.psiMax, yref: "paper", y: 1, yshift: 6, text: small ? "Highest PSI solid<br>test: " + pct : "<b>Highest PSI solid test: " + pct + "</b>", font: labelFont }),
+    note(2, { x: d.moon, yref: "paper", y: 1, yshift: 6, text: small ? "Moon base air:<br>" + d.moon + "%" : "<b>Moon base air: " + d.moon + "%</b>", font: labelFont }),
+    note(2, { x: (d.psiMax + d.moon) / 2, y: dimY + 8, text: small ? "Untested by PSI:<br>" + pct + " to " + d.moon + "%" : "<b>Untested by PSI: " + pct + " to " + d.moon + "%</b>", font: labelFont })
+  ];
+  const ticks = [];
+  for (let v = lo; v <= 40; v += small ? 4 : 2) {
+    ticks.push(v);
+  }
+  const label = "Oxygen axis from " + lo + " to " + hi + " percent: " + d.total + " NASA flame tests. " + d.solid.length + " PSI solid-fuel tests end at " + pct + " percent while droplet and gas flames go on to " + fmt(d.others[d.others.length - 1].o2_frac * 100, 0) +
+    " percent. Newest NASA flights burned solids up to " + fmt(Math.max.apply(null, burned.map(function (f) { return f.x; })), 1) + " percent, Moon base air is " + d.moon + " percent. Hover a dot to read the test.";
+  return {
+    H: H,
+    label: label,
+    series: series,
+    traces: function (t) {
+      return series.map(function (s) {
+        return {
+          type: "scatter",
+          mode: "markers",
+          name: s.name,
+          x: s.pts.map(function (p) { return p.x; }),
+          y: s.pts.map(function (p) { return p.y; }),
+          text: s.pts.map(function (p) { return p.hover; }),
+          hovertemplate: "%{text}<extra></extra>",
+          marker: Object.assign({ size: t >= 1 ? s.full : sizeAt(s, t) }, s.style)
+        };
+      });
+    },
+    layout: function (t) {
+      return Object.assign(plotBase(PLOT_DARK), {
+        height: H,
+        margin: m,
+        dragmode: small ? false : "zoom",
+        hoverdistance: 14,
+        xaxis: {
+          range: [lo, hi], tickvals: ticks, fixedrange: small, zeroline: false, showgrid: true, gridcolor: PLOT_DARK.grid, gridwidth: 1,
+          showline: true, linecolor: PLOT_DARK.axis, ticks: "", tickfont: { size: fs, color: PLOT_DARK.muted },
+          title: { text: "Oxygen in the air (percent)", font: { size: fs, color: PLOT_DARK.muted }, standoff: 8 }
+        },
+        yaxis: { range: [0, plotH], visible: false, fixedrange: true, showgrid: false, zeroline: false },
+        legend: { orientation: "h", x: 0, xref: "container", y: 0, yref: "container", yanchor: "bottom", font: { size: fs, color: PLOT_DARK.text }, bgcolor: "rgba(0,0,0,0)", itemsizing: "constant" },
+        showlegend: true,
+        shapes: shapeDefs.map(function (s) { return Object.assign({ opacity: fadeAt(t, s.g) }, s.s); }),
+        annotations: annDefs.map(function (a) { return Object.assign({ opacity: fadeAt(t, a.g) }, a.a); })
+      });
+    },
+    frame: function (t, prev) {
+      const upd = {};
+      [0, 1, 2].forEach(function (g) {
+        const op = fadeAt(t, g);
+        if (op === prev[g]) {
+          return;
+        }
+        prev[g] = op;
+        shapeDefs.forEach(function (s, i) { if (s.g === g) { upd["shapes[" + i + "].opacity"] = op; } });
+        annDefs.forEach(function (a, i) { if (a.g === g) { upd["annotations[" + i + "].opacity"] = op; } });
+      });
+      return { sizes: series.map(function (s) { return t >= 1 ? s.full : sizeAt(s, t); }), layout: upd };
+    }
+  };
 }
 
-function gapRender(q, force) {
-  const m = gapModel;
-  if (!m) {
-    return;
+function gapPlay(node, plan) {
+  gapPlayed = true;
+  const idx = plan.series.map(function (s) { return s.idx; });
+  const prev = [0, 0, 0];
+  gapCancel = plotRun(GAP_DUR, function (t) {
+    const f = plan.frame(t, prev);
+    return window.Plotly.restyle(node, { "marker.size": f.sizes }, idx).then(function () {
+      return Object.keys(f.layout).length ? window.Plotly.relayout(node, f.layout) : null;
+    });
+  }, function () { gapCancel = null; });
+}
+
+function drawGapChart(node) {
+  const id = gapDrawId + 1;
+  gapDrawId = id;
+  gapWidth = node.clientWidth;
+  const plan = gapBuild(Math.max(280, Math.floor(node.clientWidth || 320)));
+  node.style.height = plan.H + "px";
+  node.setAttribute("aria-label", plan.label);
+  if (gapCancel) {
+    gapCancel();
+    gapCancel = null;
   }
-  const a0 = gapStage(q, 0);
-  const a1 = gapStage(q, 1);
-  const a2 = gapStage(q, 2);
-  const a3 = gapStage(q, 3);
-  if (force || a0 !== m.c0) {
-    m.c0 = a0;
-    for (let i = 0; i < m.bins.length; i += 1) {
-      const b = m.bins[i];
-      const e = gapEaseOut(gapClamp(a0 * 1.8 - 0.8 * b.order));
-      const key = Math.round(e * 40);
-      if (key !== b.c) {
-        b.c = key;
-        b.el.setAttribute("opacity", (key / 40).toFixed(3));
-        b.el.setAttribute("transform", "translate(0 " + ((1 - key / 40) * 14).toFixed(2) + ")");
+  gapReady = false;
+  loadPlotly().then(function () {
+    if (id !== gapDrawId || gapNode !== node || !document.body.contains(node)) {
+      return null;
+    }
+    if (reduceMotion()) {
+      gapPlayed = true;
+    }
+    const t = gapPlayed ? 1 : 0;
+    return window.Plotly.react(node, plan.traces(t), plan.layout(t), plotConfig()).then(function () {
+      if (id !== gapDrawId) {
+        return;
       }
-    }
-    m.grayLab.setAttribute("opacity", gapClamp((a0 - 0.3) / 0.7).toFixed(3));
-    m.vis.p = a0 > 0.6;
-  }
-  if (force || a1 !== m.c1) {
-    m.c1 = a1;
-    const dr = gapEaseOut(gapClamp(a1 / 0.7));
-    m.rule.setAttribute("y2", (m.axisY - (m.axisY - m.ruleTop) * dr).toFixed(2));
-    m.ruleLab.setAttribute("opacity", gapClamp((a1 - 0.55) / 0.45).toFixed(3));
-    m.shade.setAttribute("opacity", dr.toFixed(3));
-    m.gray.setAttribute("opacity", (1 - (1 - GAP_GRAY_DIM) * a1).toFixed(3));
-  }
-  if (force || a2 !== m.c2) {
-    m.c2 = a2;
-    const n = m.flights.length;
-    for (let i = 0; i < n; i += 1) {
-      const f = m.flights[i];
-      const e = gapEaseOut(gapClamp(a2 * 1.7 - 0.7 * f.order));
-      const key = Math.round(e * 40);
-      if (key !== f.c) {
-        f.c = key;
-        f.el.setAttribute("opacity", e.toFixed(3));
-        f.el.setAttribute("transform", "translate(" + f.x.toFixed(1) + " " + f.y + ") scale(" + (0.6 + 0.4 * e).toFixed(3) + ")");
+      gapPlan = plan;
+      gapReady = true;
+      if (gapWanted && !gapPlayed) {
+        gapPlay(node, plan);
       }
+    });
+  }).catch(function () {
+    node.textContent = "Chart library not loaded.";
+  });
+}
+
+function gapWatch(node) {
+  gapView = plotWatch(node, 0.3, function () {
+    gapView = null;
+    gapWanted = true;
+    if (gapReady && !gapPlayed) {
+      gapPlay(node, gapPlan);
     }
-    m.lane.setAttribute("opacity", gapClamp((a2 - 0.3) / 0.7).toFixed(3));
-    m.vis.f = a2 > 0.6;
+  });
+}
+
+function gapStop() {
+  if (gapCancel) {
+    gapCancel();
+    gapCancel = null;
   }
-  if (force || a3 !== m.c3) {
-    m.c3 = a3;
-    m.sol.setAttribute("opacity", (1 - (1 - GAP_SOLID_DIM) * a3).toFixed(3));
-    m.band.setAttribute("opacity", a3.toFixed(3));
-    m.moonLab.setAttribute("opacity", gapClamp((a3 - 0.35) / 0.65).toFixed(3));
-    const dd = gapEaseOut(gapClamp(a3 / 0.85));
-    const xr = m.dimA + (m.dimB - m.dimA) * dd;
-    m.dl.setAttribute("x2", xr.toFixed(2));
-    m.dta.setAttribute("opacity", gapClamp(a3 * 5).toFixed(3));
-    m.dtb.setAttribute("x1", xr.toFixed(2));
-    m.dtb.setAttribute("x2", xr.toFixed(2));
-    m.dtb.setAttribute("opacity", gapClamp(a3 * 5).toFixed(3));
-    m.dlab.setAttribute("opacity", gapClamp((a3 - 0.6) / 0.4).toFixed(3));
+  if (gapView) {
+    gapView.disconnect();
+    gapView = null;
   }
-  const av = [a0, a1, a2, a3];
-  for (let i = 0; i < m.leg.length; i += 1) {
-    const v = av[m.leg[i].s];
-    if (force || v !== m.leg[i].c) {
-      m.leg[i].c = v;
-      m.leg[i].el.style.opacity = (0.25 + 0.75 * v).toFixed(3);
-    }
+  if (gapNode && window.Plotly) {
+    window.Plotly.purge(gapNode);
   }
-  if (gapCapsRef && !gapStaticMode) {
-    const caps = gapCapsRef;
-    for (let k = 0; k < caps.items.length; k += 1) {
-      const u = gapClamp((q - k) / GAP_ANIM);
-      const un = k < caps.items.length - 1 ? gapClamp((q - k - 1) / GAP_ANIM) : 0;
-      const inn = k === 0 ? gapEaseIO(gapClamp(u / 0.6)) : gapEaseIO(gapClamp((u - 0.5) / 0.5));
-      const o = inn * (1 - gapEaseIO(gapClamp(un / 0.45)));
-      const ok = Math.round(o * 100);
-      if (force || ok !== caps.c[k]) {
-        caps.c[k] = ok;
-        caps.items[k].style.opacity = o.toFixed(3);
-        caps.items[k].style.transform = "translateY(" + ((1 - o) * 10).toFixed(2) + "px)";
-      }
-      caps.dots[k].style.setProperty("--a", av[k].toFixed(3));
-    }
-  }
+  gapDrawId += 1;
+  gapNode = null;
+  gapPlan = null;
+  gapReady = false;
+  gapWanted = false;
+  gapPlayed = false;
 }
 
 function headerH() {
   const header = document.querySelector(".top");
   return header ? header.offsetHeight : 0;
-}
-
-function gapCaptionTexts() {
-  const d = gapChartData();
-  const top = Math.max.apply(null, d.flights.filter(function (t) { return t.outcome_short === "Burned"; }).map(function (t) { return t.o2_percent; }));
-  return [
-    [d.total + " NASA flame tests, ", "by oxygen"],
-    ["Solid materials stop at ", fmt(d.psiMax, 1) + "%"],
-    ["Newest flights burned solids at ", fmt(top, 1) + "%"],
-    ["Moon base air: ", d.moon + "%"]
-  ];
-}
-
-function gapCaptions() {
-  const texts = gapCaptionTexts();
-  const items = texts.map(function (t, i) {
-    return el("p", { class: "gap-cap" + (i === texts.length - 1 ? " last" : ""), "data-n": String(i + 1) },
-      el("span", { class: "gap-cap-k", text: t[0] }), t[1]);
-  });
-  const dots = el("span", { class: "gap-dots", "aria-hidden": "true" }, texts.map(function () { return el("i"); }));
-  return { node: el("div", { class: "gap-caps" }, items, dots), items: items, dots: dots.children, c: texts.map(function () { return -1; }) };
-}
-
-function tourRoom() {
-  if (!tour.open || !tour.node) {
-    return 0;
-  }
-  return Math.max(0, window.innerHeight - tour.node.getBoundingClientRect().top);
-}
-
-function gapGeometry(track) {
-  const vh = window.innerHeight;
-  const hdr = headerH();
-  const rect = track.getBoundingClientRect();
-  const scrollable = Math.max(1, rect.height - (vh - hdr - tourRoom()));
-  const seg = scrollable / 4;
-  const lead = seg * 0.28;
-  const absTop = rect.top + window.scrollY;
-  return {
-    s: hdr - rect.top,
-    seg: seg,
-    lead: lead,
-    top: rect.top,
-    bottom: rect.bottom,
-    vh: vh,
-    plateauY: function (k) { return absTop - hdr + (k + GAP_ANIM) * seg - lead; }
-  };
-}
-
-function gapWatch(section, track, chart, caps) {
-  gapCapsRef = caps;
-  gapStaticMode = false;
-  let p = 0;
-  let q = 0;
-  let raf = 0;
-  let last = 0;
-  let alive = true;
-  function tick(now) {
-    raf = 0;
-    if (!alive) {
-      return;
-    }
-    const dt = Math.min(64, Math.max(1, now - last));
-    last = now;
-    q += (p - q) * (1 - Math.exp(-dt / 90));
-    const settled = Math.abs(p - q) < 0.0005;
-    if (settled) {
-      q = p;
-    }
-    gapQ = q;
-    gapRender(q, false);
-    if (!settled) {
-      raf = requestAnimationFrame(tick);
-    }
-  }
-  function kick() {
-    if (!raf && alive) {
-      last = performance.now();
-      raf = requestAnimationFrame(tick);
-    }
-  }
-  function measure(jump) {
-    if (!alive || !document.body.contains(track)) {
-      return;
-    }
-    track.style.setProperty("--gap-top", headerH() + "px");
-    const g = gapGeometry(track);
-    p = Math.max(0, Math.min(4, (g.s + g.lead) / g.seg));
-    if (!section.classList.contains("in") && g.top < g.vh * 0.85) {
-      revealSection(section);
-    }
-    if (jump) {
-      q = p;
-      gapQ = q;
-      gapRender(q, true);
-    } else if (g.top < g.vh * 1.3 && g.bottom > -g.vh * 0.3) {
-      kick();
-    } else {
-      q = p;
-      gapQ = q;
-      gapRender(q, false);
-    }
-  }
-  function onScroll() { measure(false); }
-  function onResize() { measure(true); }
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onResize);
-  measure(true);
-  return function () {
-    alive = false;
-    cancelAnimationFrame(raf);
-    window.removeEventListener("scroll", onScroll);
-    window.removeEventListener("resize", onResize);
-  };
-}
-
-function gapStatic(section, chart, caps) {
-  section.classList.add("gap-static");
-  gapStaticMode = true;
-  gapCapsRef = caps;
-  gapQ = 4;
-  gapRender(4, true);
-  caps.items.forEach(function (c) { c.classList.add("on"); });
-  revealSection(section);
 }
 
 function playStop(natural) {
@@ -1701,21 +1408,21 @@ function playPoints() {
   [["#s-quote", ["#s-quote .big-quote p"]], ["#s-air", ["#s-air h2", "#s-air .story-line"]]].forEach(function (p) {
     const y = at(p[0]);
     if (y !== null) {
-      pts.push({ y: y, dwell: playDwell(playWords(p[1])), settle: 600, gap: false });
+      pts.push({ y: y, dwell: playDwell(playWords(p[1])), settle: 600 });
     }
   });
-  const track = document.querySelector("#s-gap .gap-track");
-  if (track) {
-    const g = gapGeometry(track);
-    for (let k = 0; k < 4; k += 1) {
-      const sel = ["#s-gap .gap-cap:nth-child(" + (k + 1) + ")"];
-      pts.push({ y: Math.max(0, g.plateauY(k)), dwell: playDwell(playWords(sel)), settle: 250, gap: true });
-    }
+  const gapY = at("#s-gap");
+  const gapChart = document.querySelector("#s-gap .gap");
+  const gapNote = document.querySelector("#s-gap .gap-note");
+  if (gapY !== null && gapChart && gapNote) {
+    const floor = tour.open && tour.node ? tour.node.getBoundingClientRect().top : window.innerHeight;
+    const seen = Math.max(gapY, Math.min(gapChart.getBoundingClientRect().top + window.scrollY - hdr, gapNote.getBoundingClientRect().bottom + window.scrollY - floor + 12));
+    pts.push({ y: seen, dwell: playDwell(playWords(["#s-gap h2", "#s-gap .story-sub", "#s-gap .gap-note"])) + GAP_READ, settle: GAP_DUR });
   }
   [["#s-grav", ["#s-grav h2", "#s-grav .story-line"]], ["#s-next", []]].forEach(function (p) {
     const y = at(p[0]);
     if (y !== null) {
-      pts.push({ y: y, dwell: p[1].length ? playDwell(playWords(p[1])) : 0, settle: p[1].length ? 600 : 0, gap: false });
+      pts.push({ y: y, dwell: p[1].length ? playDwell(playWords(p[1])) : 0, settle: p[1].length ? 600 : 0 });
     }
   });
   return pts;
@@ -1772,10 +1479,7 @@ function playStory(onEnd) {
       dwell();
       return;
     }
-    let dur = Math.max(700, Math.min(1600, 500 + 0.45 * dist));
-    if (p.gap && i > 0 && pts[i - 1].gap) {
-      dur = Math.max(dur, GAP_TRAVEL);
-    }
+    const dur = Math.max(700, Math.min(1600, 500 + 0.45 * dist));
     const t0 = performance.now();
     function step(now) {
       if (playRun !== run) {
@@ -1856,14 +1560,19 @@ function testNextSection(env) {
   return holder;
 }
 
+function gapCaption() {
+  const d = gapChartData();
+  return d.total + " tests by oxygen. PSI solids stop at " + fmt(d.psiMax, 1) + "%, Moon base air is " + d.moon + "%.";
+}
+
 function gapDetails(lunar) {
   const d = gapChartData();
   const insight = state.data.insights.insights.find(function (i) { return i.id === "max_o2_by_fuel_class"; });
   const solid = insight.numbers.max_by_fuel_class.solid;
   const tests = state.data.outside_psi.tests;
   return expander("Details", el("div", null,
-    el("p", { text: "Each dot is one row of the unified PSI table: a solid fuel with an ambient O2 value (" + d.solid.length + " rows). The dashed line marks the highest, " + solid.psi_id + ", " + solid.source_file + ", row " + solid.source_row + "." }),
-    el("p", { text: "Hollow diamonds are the " + tests.length + " NASA Saffire IV-VI solid tests that are not in PSI. The band is the Moon base O2 window, " + dashSpan(d.moonLo, d.moonHi, 1, "%") + "." }),
+    el("p", { text: "Each orange or gray dot is one row of the unified PSI table with an ambient O2 value: " + d.solid.length + " solid-fuel rows in orange, " + d.others.length + " droplet and gas-flame rows in gray. The dashed line marks the highest, " + solid.psi_id + ", " + solid.source_file + ", row " + solid.source_row + "." }),
+    el("p", { text: "Blue dots are the " + tests.length + " NASA Saffire IV-VI solid tests that are not in PSI; a ring means it did not ignite. The band is the Moon base O2 window, " + dashSpan(d.moonLo, d.moonHi, 1, "%") + "." }),
     plainTable(["Test", "Material", "O2", "Pressure", "Outcome", "Source"], tests.map(function (t) {
       return [t.label, t.material_short, t.o2_percent.toFixed(1) + "%", t.pressure_psia === null ? "not stated" : t.pressure_psia.toFixed(2) + " psia",
         t.outcome_short, ntrsLink(t.source_url, "NTRS " + t.source_id)];
@@ -2102,12 +1811,6 @@ function tourStart() {
   tour.nodes.next.focus();
 }
 
-function tourSyncChart() {
-  if (gapNode && document.body.contains(gapNode) && Math.round((window.innerHeight || 800) - tourRoom()) !== Math.round(gapVh)) {
-    drawGapChart(gapNode);
-  }
-}
-
 function tourStopPlay() {
   if (playRun) {
     playRun.onEnd = null;
@@ -2123,9 +1826,7 @@ function tourClose() {
   tourClearRing();
   document.body.classList.remove("tour-open");
   document.documentElement.style.removeProperty("--tour-h");
-  document.documentElement.style.removeProperty("--tour-room");
   window.dispatchEvent(new Event("resize"));
-  tourSyncChart();
   if (tour.node) {
     tour.node.remove();
     tour.node = null;
@@ -2158,9 +1859,7 @@ function tourShow() {
   tour.nodes.next.textContent = tour.step === TOUR_STEPS.length - 1 ? "Done" : "Next";
   tour.nodes.back.disabled = tour.step === 0;
   document.documentElement.style.setProperty("--tour-h", tour.node.offsetHeight + "px");
-  document.documentElement.style.setProperty("--tour-room", tourRoom() + "px");
   window.dispatchEvent(new Event("resize"));
-  tourSyncChart();
   tourClearRing();
   const here = location.hash === "" || location.hash === "#" || location.hash === "#/" ? "#/home" : location.hash;
   if (here === s.hash) {
@@ -2177,9 +1876,9 @@ function tourShow() {
 function tourStory() {
   window.scrollTo({ top: 0, behavior: "instant" });
   if (reduceMotion()) {
-    const end = document.querySelector("#s-gap .gap-end");
-    if (end) {
-      window.scrollTo({ top: Math.max(0, end.getBoundingClientRect().top + window.scrollY - headerH()), behavior: "instant" });
+    const gap = document.querySelector("#s-gap");
+    if (gap) {
+      window.scrollTo({ top: Math.max(0, gap.getBoundingClientRect().top + window.scrollY - headerH()), behavior: "instant" });
     }
     return;
   }
@@ -2345,6 +2044,7 @@ function heroStats() {
 }
 
 function renderHome() {
+  loadPlotly().catch(function () {});
   const data = state.data;
   const lunar = envById("lunar");
   const moon = envNumber(lunar);
@@ -2392,19 +2092,14 @@ function renderHome() {
       el("p", { class: "small", text: "Moon base oxygen is " + lunar.o2.display + ". Earth air is about 21 percent." }),
       envSourcesTable(lunar)))
   ]);
-  const chart = el("div", { class: "gap" });
-  const caps = gapCaptions();
-  const track = el("div", { class: "gap-track" },
-    el("div", { class: "gap-pin" },
-      el("div", { class: "story-in" },
-        rv(0, "h2", { text: "Has NASA tested that air?" }),
-        rv(1, "p", { class: "story-sub", text: "Every ambient-oxygen flame test in the PSI database" }),
-        chart,
-        caps.node)),
-    el("span", { class: "gap-end", "aria-hidden": "true" }));
-  const gap = el("section", { class: "story st-gap", id: "s-gap" },
-    track,
-    el("div", { class: "story-in gap-more" }, gapDetails(lunar)));
+  const chart = el("div", { class: "gap", role: "img" });
+  const gap = story("st-gap", "s-gap", [
+    rv(0, "h2", { text: "Has NASA tested that air?" }),
+    rv(1, "p", { class: "story-sub", text: "Every ambient-oxygen flame test in the PSI database" }),
+    chart,
+    el("p", { class: "gap-note" }, gapCaption(), " ", el("a", { href: "#/data?at=extractor", text: "See the rows" })),
+    el("div", { class: "gap-more" }, gapDetails(lunar))
+  ]);
   const lg = data.lunar_g;
   const grav = story("st-grav", "s-grav", [
     rv(0, "h2", { text: "Gravity changes it too" }),
@@ -2437,13 +2132,9 @@ function renderHome() {
   ]);
   const view = setView(hero, quote, air, gap, grav, next, explore);
   watchStory(sections);
-  drawGapChart(chart);
   gapNode = chart;
-  if (reduceMotion()) {
-    gapStatic(gap, chart, caps);
-  } else {
-    gapScrollOff = gapWatch(gap, track, chart, caps);
-  }
+  drawGapChart(chart);
+  gapWatch(chart);
   if (intro) {
     heroIntro(hero);
   }
@@ -3036,25 +2727,71 @@ function gravityQuote(q) {
     el("cite", null, el("a", { href: q.url, text: q.source_title + (q.page ? ", page " + q.page : "") })));
 }
 
+const GRAVITY_COLORS = { lower: "#b04a2a", higher: "#1f5fa8", none: "#8a8f96" };
+
 function gravityChart(lg) {
+  const th = PLOT_LIGHT;
+  const small = window.innerWidth < 640;
   const rows = lg.materials.slice().sort(function (a, b) { return b.delta_o2_points - a.delta_o2_points; });
-  const ticks = [0, 0.5, 1, 1.5, 2, 2.5];
-  const list = rows.map(function (m) {
-    const tag = GRAVITY_TAGS[m.direction];
-    const k = Math.min(1, m.delta_o2_points / GRAVITY_AXIS_MAX);
-    const svg = svgEl("svg", { class: "gv-svg", viewBox: "0 0 250 16", preserveAspectRatio: "none", "aria-hidden": "true" });
-    svg.appendChild(svgEl("rect", { x: 0, y: 0, width: 250, height: 16, class: "gv-track" }));
-    svg.appendChild(svgEl("rect", { x: 0, y: 0, width: fmt(k * 250, 2), height: 16, class: "gv-fill " + tag.cls }));
-    return el("li", { class: "gv-row" },
-      el("div", { class: "gv-name" }, el("strong", { text: m.name }), el("span", { class: "gv-tag " + tag.cls, text: tag.label })),
-      el("div", { class: "gv-bar" }, svg, el("span", { class: "gv-val", text: fmt(m.delta_o2_points, 2) })));
+  const series = Object.keys(GRAVITY_TAGS).map(function (key) {
+    return { key: key, list: rows.filter(function (m) { return m.direction === key; }) };
+  }).filter(function (s) { return s.list.length > 0; });
+  const idx = series.map(function (s, i) { return i; });
+  const bottom = small ? 150 : 108;
+  const plot = el("div", { class: "gv-plot", role: "img",
+    "aria-label": "Oxygen points to allow for each material: " + rows.map(function (m) { return m.name + " " + fmt(m.delta_o2_points, 2); }).join(", ") + "." });
+  plot.style.height = (rows.length * 46 + 14 + bottom) + "px";
+  function traces(e) {
+    return series.map(function (s) {
+      const tag = GRAVITY_TAGS[s.key];
+      return {
+        type: "bar",
+        orientation: "h",
+        name: tag.label,
+        y: s.list.map(function (m) { return m.name; }),
+        x: s.list.map(function (m) { return m.delta_o2_points * e; }),
+        text: s.list.map(function (m) { return fmt(m.delta_o2_points, 2); }),
+        textposition: "outside",
+        cliponaxis: false,
+        textfont: { size: 13, color: th.strong },
+        marker: { color: GRAVITY_COLORS[tag.cls] },
+        customdata: s.list.map(function (m) { return [m.best_fit_slope_s_per_cm, m.ci95_slope_s_per_cm, plotWrap(m.direction_text, 44)]; }),
+        hovertemplate: "<b>%{y}</b><br>Allowance %{text} O2 points<br>Best-fit slope %{customdata[0]} s/cm<br>95% slope %{customdata[1]} s/cm<br>%{customdata[2]}<extra></extra>"
+      };
+    });
+  }
+  const layout = Object.assign(plotBase(th), {
+    height: rows.length * 46 + 14 + bottom,
+    margin: { l: 8, r: 24, t: 14, b: bottom, pad: 0 },
+    barmode: "overlay",
+    bargap: 0.4,
+    dragmode: false,
+    xaxis: {
+      range: [0, GRAVITY_AXIS_MAX + 0.45], tickvals: [0, 0.5, 1, 1.5, 2, 2.5], fixedrange: true, zeroline: false, showgrid: true, gridcolor: th.grid,
+      showline: true, linecolor: th.axis, ticks: "", tickfont: { size: 12, color: th.muted },
+      title: { text: small ? "Oxygen points to allow" : "Oxygen points to allow (percentage points of O2)", font: { size: 12, color: th.muted }, standoff: 8 }
+    },
+    yaxis: {
+      type: "category", categoryorder: "array", categoryarray: rows.map(function (m) { return m.name; }), autorange: "reversed", fixedrange: true,
+      automargin: true, showgrid: false, zeroline: false, ticks: "", tickfont: { size: 13, color: th.strong }
+    },
+    showlegend: true,
+    legend: { orientation: "h", x: 0, xref: "container", y: 0, yref: "container", yanchor: "bottom", font: { size: 12, color: th.text }, bgcolor: "rgba(0,0,0,0)" }
   });
-  const axis = el("div", { class: "gv-axis", "aria-hidden": "true" }, ticks.map(function (t) {
-    return el("span", { style: "left:" + (t / GRAVITY_AXIS_MAX * 100) + "%", text: String(t) });
-  }));
+  plotWhenVisible(plot, function () {
+    const play = !reduceMotion();
+    window.Plotly.newPlot(plot, traces(play ? 0 : 1), layout, plotConfig()).then(function () {
+      if (!play) {
+        return;
+      }
+      plotRun(900, function (t) {
+        const e = gapEaseOut(t);
+        return window.Plotly.restyle(plot, { x: series.map(function (s) { return s.list.map(function (m) { return m.delta_o2_points * e; }); }) }, idx);
+      });
+    });
+  });
   return el("figure", { class: "gv-chart" },
-    el("ul", { class: "gv-rows" }, list),
-    el("div", { class: "gv-axis-row" }, el("span"), el("div", { class: "gv-axis-wrap" }, axis)),
+    plot,
     el("figcaption", { class: "small muted", text: "Conservative allowance from the paper, in oxygen points (percentage points of O2). Colour marks what the lunar-g tests showed, not the size of the bar." }));
 }
 
@@ -4619,6 +4356,112 @@ function loadPlotly() {
   return plotlyPromise;
 }
 
+const PLOT_FONT = "Inter, system-ui, -apple-system, \"Segoe UI\", Roboto, Arial, sans-serif";
+const PLOT_DARK = { text: "#c9d2e6", muted: "#8f9bb8", strong: "#eef2fb", grid: "#1a2340", axis: "#34405f", tipBg: "#18233f", tipBorder: "#34405f" };
+const PLOT_LIGHT = { text: "#141a2e", muted: "#5a6275", strong: "#141a2e", grid: "#e6dfd5", axis: "#b9b1a5", tipBg: "#fffdfa", tipBorder: "#ddd5ca" };
+
+function plotConfig() {
+  return { responsive: true, displaylogo: false, displayModeBar: false, scrollZoom: false, doubleClick: "reset" };
+}
+
+function plotBase(theme) {
+  return {
+    autosize: true,
+    paper_bgcolor: "rgba(0,0,0,0)",
+    plot_bgcolor: "rgba(0,0,0,0)",
+    font: { family: PLOT_FONT, color: theme.text, size: 12 },
+    hovermode: "closest",
+    hoverlabel: { bgcolor: theme.tipBg, bordercolor: theme.tipBorder, align: "left", font: { family: PLOT_FONT, color: theme.strong, size: 12 } }
+  };
+}
+
+function plotRgba(hex, alpha) {
+  const n = parseInt(hex.slice(1), 16);
+  return "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + alpha + ")";
+}
+
+function plotWrap(text, width) {
+  const lines = [];
+  let cur = "";
+  String(text).split(" ").forEach(function (word) {
+    if (cur && cur.length + 1 + word.length > width) {
+      lines.push(cur);
+      cur = word;
+    } else {
+      cur = cur ? cur + " " + word : word;
+    }
+  });
+  if (cur) {
+    lines.push(cur);
+  }
+  return lines.map(escapeHtml).join("<br>");
+}
+
+function plotRun(duration, frame, done) {
+  let alive = true;
+  let busy = false;
+  let raf = 0;
+  const t0 = performance.now();
+  function tick(now) {
+    raf = 0;
+    if (!alive) {
+      return;
+    }
+    if (busy) {
+      raf = requestAnimationFrame(tick);
+      return;
+    }
+    const t = Math.min(1, (now - t0) / duration);
+    busy = true;
+    Promise.resolve(frame(t)).then(function () {
+      busy = false;
+      if (!alive) {
+        return;
+      }
+      if (t < 1) {
+        raf = requestAnimationFrame(tick);
+      } else if (done) {
+        done();
+      }
+    }).catch(function () {
+      alive = false;
+    });
+  }
+  raf = requestAnimationFrame(tick);
+  return function () {
+    alive = false;
+    cancelAnimationFrame(raf);
+  };
+}
+
+function plotWatch(node, threshold, fn) {
+  if (!window.IntersectionObserver) {
+    fn();
+    return null;
+  }
+  const io = new IntersectionObserver(function (entries) {
+    if (entries.some(function (e) { return e.isIntersecting; })) {
+      io.disconnect();
+      fn();
+    }
+  }, { threshold: threshold });
+  io.observe(node);
+  return io;
+}
+
+function plotWhenVisible(node, draw) {
+  const seen = new Promise(function (resolve) {
+    plotWatch(node, 0.3, resolve);
+  });
+  Promise.all([loadPlotly(), seen]).then(function () {
+    if (document.body.contains(node)) {
+      draw();
+    }
+  }).catch(function () {
+    node.textContent = "Chart library not loaded.";
+  });
+}
+
 function shortReason(inv, item, env) {
   const fuel = {
     solid: "Solid fuel",
@@ -4691,102 +4534,183 @@ function modelVerdict(model, hab) {
   return { tone: edge ? "part" : "ok", head: name + ":", text: text + "." };
 }
 
-function modelChart(model, selId, narrow) {
-  const W = narrow ? 340 : 680;
-  const H = narrow ? 318 : 348;
-  const m = { l: 40, r: 12, t: 30, b: 70 };
-  const x0 = 0.10;
-  const x1 = 0.36;
-  const px = function (o2) { return m.l + (o2 - x0) / (x1 - x0) * (W - m.l - m.r); };
-  const py = function (p) { return m.t + (1 - p) * (H - m.t - m.b); };
+function modelChart(model, selId, narrow, animate) {
+  const th = PLOT_LIGHT;
+  const H = narrow ? 350 : 390;
+  const m = { l: 50, r: 14, t: 36, b: 96, pad: 0, autoexpand: false };
+  const plotW = (narrow ? 340 : 680) - m.l - m.r;
+  const x0 = 10;
+  const x1 = 36;
+  const px = function (o2) { return (o2 - x0) / (x1 - x0) * plotW; };
   const fs = narrow ? 11 : 12.5;
-  const svg = svgEl("svg", { class: "mdl-svg", viewBox: "0 0 " + W + " " + H, role: "img",
-    "aria-label": "Chance that a droplet flame goes out on its own against oxygen, with the tested oxygen range and habitat air", focusable: "false" });
+  const node = el("div", { class: "mdl-plot", role: "img", "aria-label": "Chance that a droplet flame goes out on its own against oxygen, with the tested oxygen range and habitat air" });
+  node.style.height = H + "px";
   const curves = model.curve.fuels;
-  const lo = Math.min.apply(null, MODEL_FUELS.map(function (f) { return curves[f].tested_o2_at_curve_pressure[0]; }));
-  const hi = Math.max.apply(null, MODEL_FUELS.map(function (f) { return curves[f].tested_o2_at_curve_pressure[1]; }));
-  function text(attrs, content) {
-    const t = svgEl("text", attrs);
-    t.textContent = content;
-    svg.appendChild(t);
-    return t;
-  }
-  svg.appendChild(svgEl("rect", { x: px(lo), y: m.t, width: px(hi) - px(lo), height: H - m.t - m.b, class: "mdl-tested" }));
-  text({ x: px(lo) + 6, y: H - m.b - 8, class: "mdl-note", "font-size": fs - 1 }, "tested at 1 atm");
-  text({ x: 4, y: 14, class: "mdl-axis", "font-size": fs }, "Chance the flame goes out on its own");
-  [0, 0.25, 0.5, 0.75, 1].forEach(function (v) {
-    svg.appendChild(svgEl("line", { x1: m.l, x2: W - m.r, y1: py(v), y2: py(v), class: "mdl-grid" }));
-    text({ x: m.l - 6, y: py(v) + 4, "text-anchor": "end", class: "mdl-tick", "font-size": fs - 1 }, Math.round(v * 100) + "%");
-  });
-  [0.10, 0.15, 0.20, 0.25, 0.30, 0.35].forEach(function (v) {
-    text({ x: px(v), y: H - m.b + 16, "text-anchor": "middle", class: "mdl-tick", "font-size": fs - 1 }, String(Math.round(v * 100)));
-  });
-  text({ x: m.l + (W - m.l - m.r) / 2, y: H - 6, "text-anchor": "middle", class: "mdl-axis", "font-size": fs }, "Oxygen in the air, percent");
+  const lo = Math.min.apply(null, MODEL_FUELS.map(function (f) { return curves[f].tested_o2_at_curve_pressure[0]; })) * 100;
+  const hi = Math.max.apply(null, MODEL_FUELS.map(function (f) { return curves[f].tested_o2_at_curve_pressure[1]; })) * 100;
+  const pct = function (v) { return Math.round(v * 100) + "%"; };
+  const scale = function (arr, e) { return arr.map(function (v) { return v * e; }); };
+  const defs = [];
+  const sel = model.habitats.find(function (h) { return h.id === selId; });
   MODEL_FUELS.forEach(function (f) {
     const c = curves[f];
-    const up = c.o2.map(function (o, i) { return px(o).toFixed(1) + "," + py(c.hi[i]).toFixed(1); });
-    const down = c.o2.map(function (o, i) { return px(o).toFixed(1) + "," + py(c.lo[i]).toFixed(1); }).reverse();
-    svg.appendChild(svgEl("polygon", { points: up.concat(down).join(" "), fill: MODEL_COLORS[f], "fill-opacity": "0.16" }));
-    svg.appendChild(svgEl("polyline", { points: c.o2.map(function (o, i) { return px(o).toFixed(1) + "," + py(c.p[i]).toFixed(1); }).join(" "), fill: "none", stroke: MODEL_COLORS[f], "stroke-width": "2.4", "stroke-linejoin": "round" }));
+    const xs = c.o2.map(function (o) { return o * 100; });
+    const poly = c.hi.concat(c.lo.slice().reverse());
+    defs.push({
+      kind: "line",
+      base: { type: "scatter", mode: "lines", x: xs.concat(xs.slice().reverse()), fill: "toself", fillcolor: plotRgba(MODEL_COLORS[f], 0.16), line: { width: 0 }, hoverinfo: "skip", showlegend: false },
+      ys: function (e) { return scale(poly, e); }
+    });
+    defs.push({
+      kind: "line",
+      base: {
+        type: "scatter", mode: "lines", name: f + " droplet", x: xs, showlegend: false, line: { color: MODEL_COLORS[f], width: 2.6, shape: "spline", smoothing: 0.6 },
+        customdata: c.lo.map(function (l, i) { return [l, c.hi[i]]; }),
+        hovertemplate: "<b>" + f + " droplet</b><br>%{x:.1f}% oxygen<br>Chance it goes out: %{y:.0%}<br>95% range %{customdata[0]:.0%} to %{customdata[1]:.0%}<extra></extra>"
+      },
+      ys: function (e) { return scale(c.p, e); }
+    });
   });
+  MODEL_FUELS.forEach(function (f, k) {
+    [true, false].forEach(function (active) {
+      const list = model.habitats.filter(function (h) {
+        return h.fuels[f].status !== "outside" && (h.o2.mid === sel.o2.mid && h.status === sel.status) === active;
+      });
+      if (!list.length) {
+        return;
+      }
+      const est = list.map(function (h) { return h.fuels[f].prediction.estimate; });
+      const up = list.map(function (h, i) { return h.fuels[f].prediction.hi - est[i]; });
+      const down = list.map(function (h, i) { return est[i] - h.fuels[f].prediction.lo; });
+      defs.push({
+        kind: "mark",
+        base: {
+          type: "scatter", mode: "markers", name: f + " droplet", showlegend: false,
+          x: list.map(function (h) { return h.o2.mid * 100 + (k === 0 ? -0.22 : 0.22); }),
+          marker: { color: MODEL_COLORS[f], size: active ? 11 : 8, opacity: active ? 1 : 0.7, line: { color: "#fffdfa", width: 1.5 } },
+          error_y: { type: "data", symmetric: false, color: MODEL_COLORS[f], thickness: active ? 2.2 : 1.4, width: 0 },
+          customdata: list.map(function (h, i) { return [envShort(h), h.o2.mid * 100, pct(h.fuels[f].prediction.lo), pct(h.fuels[f].prediction.hi)]; }),
+          text: est.map(function (v) { return pct(v); }),
+          hovertemplate: "<b>%{customdata[0]}</b><br>" + f + " droplet at %{customdata[1]:.1f}% oxygen<br>Chance it goes out: %{text}<br>95% range %{customdata[2]} to %{customdata[3]}<extra></extra>"
+        },
+        ys: function (e) { return scale(est, e); },
+        up: function (e) { return scale(up, e); },
+        down: function (e) { return scale(down, e); }
+      });
+    });
+  });
+  const refused = model.habitats.filter(function (h) { return h.status === "outside"; });
+  if (refused.length) {
+    defs.push({
+      kind: "fixed",
+      base: {
+        type: "scatter", mode: "markers", name: "No prediction", showlegend: false, cliponaxis: false,
+        x: refused.map(function (h) { return h.o2.mid * 100; }), y: refused.map(function () { return 0; }),
+        marker: { symbol: "circle-open", size: refused.map(function (h) { return h.id === selId ? 13 : 10; }), color: th.muted, line: { color: refused.map(function (h) { return h.id === selId ? th.strong : th.muted; }), width: 2 } },
+        text: refused.map(function (h) { return envShort(h); }),
+        hovertemplate: "<b>%{text}</b><br>%{x:.1f}% oxygen<br>Outside the tested range: no prediction<extra></extra>"
+      }
+    });
+  }
   const groups = [];
   model.habitats.forEach(function (h) {
     const key = h.o2.mid + "|" + h.status;
     let g = groups.find(function (q) { return q.key === key; });
     if (!g) {
-      g = { key: key, o2: h.o2.mid, status: h.status, items: [] };
+      g = { key: key, o2: h.o2.mid * 100, status: h.status, items: [] };
       groups.push(g);
     }
     g.items.push(h);
   });
   groups.sort(function (a, b) { return a.o2 - b.o2; });
+  const annotations = [
+    { xref: "paper", x: 0, xanchor: "left", xshift: 4 - m.l, yref: "paper", y: 1, yanchor: "bottom", yshift: 12, showarrow: false, text: "Chance the flame goes out on its own", font: { size: fs, color: th.strong } },
+    { xref: "paper", x: 0.5, xanchor: "center", yref: "paper", y: 0, yanchor: "top", yshift: -66, showarrow: false, text: "Oxygen in the air, percent", font: { size: fs, color: th.strong } },
+    { xref: "x", x: lo, xanchor: "left", xshift: 6, yref: "paper", y: 0, yanchor: "bottom", yshift: 6, showarrow: false, text: "tested at 1 atm", font: { size: fs - 1, color: th.muted } }
+  ];
+  const shapes = [{ type: "rect", xref: "x", yref: "paper", x0: lo, x1: hi, y0: 0, y1: 1, fillcolor: "rgba(20,26,46,0.04)", line: { width: 0 }, layer: "below" }];
   let prevX = -1000;
   let prevRow = 0;
-  const sel = model.habitats.find(function (h) { return h.id === selId; });
   groups.forEach(function (g) {
     const active = g.items.some(function (h) { return h.id === selId; });
     const gx = px(g.o2);
     if (active) {
-      svg.appendChild(svgEl("line", { x1: gx, x2: gx, y1: m.t, y2: H - m.b + 22, class: "mdl-sel" }));
+      shapes.push({ type: "line", xref: "x", yref: "paper", x0: g.o2, x1: g.o2, y0: 0, y1: 1, line: { color: th.muted, width: 1, dash: "dot" } });
     }
-    g.items.forEach(function (h) {
-      MODEL_FUELS.forEach(function (f, k) {
-        const e = h.fuels[f];
-        if (e.status === "outside") {
-          return;
-        }
-        const dx = k === 0 ? -3.5 : 3.5;
-        svg.appendChild(svgEl("line", { x1: gx + dx, x2: gx + dx, y1: py(e.prediction.lo), y2: py(e.prediction.hi), stroke: MODEL_COLORS[f], "stroke-width": active ? "2.2" : "1.4", opacity: active ? "1" : "0.55" }));
-        svg.appendChild(svgEl("circle", { cx: gx + dx, cy: py(e.prediction.estimate), r: active ? 5.5 : 4, fill: MODEL_COLORS[f], stroke: "#fffdfa", "stroke-width": "1.5", opacity: active ? "1" : "0.7" }));
-      });
-    });
-    if (g.status === "outside") {
-      svg.appendChild(svgEl("circle", { cx: gx, cy: py(0), r: active ? 6 : 4.5, class: "mdl-hollow" + (active ? " on" : "") }));
-    }
-    const label = g.items.map(function (h) { return envShort(h); }).join(", ");
-    const near = gx > W - 70 ? "end" : "middle";
     const row = gx - prevX < 78 && prevRow === 0 ? 1 : 0;
     prevX = gx;
     prevRow = row;
     if (!narrow || active) {
+      const label = g.items.map(function (h) { return envShort(h); }).join(", ");
       const short = narrow ? label : label.replace("Pressurized rover", "Rover").replace("Moon base, Mars base", "Moon, Mars");
-      text({ x: near === "end" ? gx + 8 : gx, y: H - m.b + 36 + row * 14, "text-anchor": near, class: "mdl-label" + (active ? " on" : ""), "font-size": fs - 0.5 }, short);
+      const edge = gx > plotW - 56;
+      annotations.push({
+        xref: "x", x: g.o2, xanchor: edge ? "right" : "center", xshift: edge ? 8 : 0, yref: "paper", y: 0, yanchor: "top", yshift: -24 - row * 15, showarrow: false,
+        text: active ? "<b>" + short + "</b>" : short, font: { size: fs - 0.5, color: active ? th.strong : th.muted }
+      });
     }
-    svg.appendChild(svgEl("line", { x1: gx, x2: gx, y1: H - m.b, y2: H - m.b + 4, class: "mdl-tickmark" }));
   });
   if (sel && sel.status === "outside") {
-    const gx = px(sel.o2.mid);
-    const tx = Math.min(gx + 8, W - m.r);
-    const t = svgEl("text", { x: tx, y: py(0.62), "text-anchor": "end", class: "mdl-refuse", "font-size": fs });
-    const a = svgEl("tspan", { x: tx });
-    a.textContent = "outside tested range:";
-    const b = svgEl("tspan", { x: tx, dy: "1.2em" });
-    b.textContent = "no prediction";
-    t.appendChild(a);
-    t.appendChild(b);
-    svg.appendChild(t);
+    annotations.push({
+      xref: "x", x: sel.o2.mid * 100, xanchor: "right", xshift: 8, yref: "y", y: 0.62, showarrow: false, align: "right",
+      text: "<b>outside tested range:<br>no prediction</b>", font: { size: fs, color: th.strong }
+    });
   }
-  return svg;
+  const ticks = [10, 15, 20, 25, 30, 35];
+  const layout = Object.assign(plotBase(th), {
+    height: H,
+    margin: m,
+    dragmode: false,
+    xaxis: { range: [x0, x1], tickvals: ticks, fixedrange: true, zeroline: false, showgrid: false, showline: true, linecolor: th.axis, ticks: "outside", ticklen: 4, tickcolor: th.axis, tickfont: { size: fs - 1, color: th.muted } },
+    yaxis: {
+      range: [0, 1], tickvals: [0, 0.25, 0.5, 0.75, 1], ticktext: ["0%", "25%", "50%", "75%", "100%"], fixedrange: true, zeroline: false, showgrid: true, gridcolor: th.grid,
+      ticks: "", tickfont: { size: fs - 1, color: th.muted }
+    },
+    shapes: shapes,
+    annotations: annotations,
+    showlegend: false
+  });
+  function traces(e) {
+    return defs.map(function (d) {
+      const t = Object.assign({}, d.base);
+      if (d.kind === "line") {
+        t.y = d.ys(e);
+      } else if (d.kind === "mark") {
+        t.y = d.ys(e);
+        t.error_y = Object.assign({}, d.base.error_y, { array: d.up(e), arrayminus: d.down(e) });
+      }
+      return t;
+    });
+  }
+  const lineIdx = [];
+  const markIdx = [];
+  defs.forEach(function (d, i) {
+    if (d.kind === "line") {
+      lineIdx.push(i);
+    } else if (d.kind === "mark") {
+      markIdx.push(i);
+    }
+  });
+  plotWhenVisible(node, function () {
+    const play = animate && !reduceMotion();
+    window.Plotly.newPlot(node, traces(play ? 0 : 1), layout, plotConfig()).then(function () {
+      if (!play) {
+        return;
+      }
+      plotRun(900, function (t) {
+        const e = gapEaseOut(t);
+        const pick = function (idx, fn) { return idx.map(function (i) { return fn(defs[i]); }); };
+        return window.Plotly.restyle(node, { y: pick(lineIdx, function (d) { return d.ys(e); }) }, lineIdx).then(function () {
+          return window.Plotly.restyle(node, {
+            y: pick(markIdx, function (d) { return d.ys(e); }),
+            "error_y.array": pick(markIdx, function (d) { return d.up(e); }),
+            "error_y.arrayminus": pick(markIdx, function (d) { return d.down(e); })
+          }, markIdx);
+        });
+      });
+    });
+  });
+  return node;
 }
 
 function modelPanel() {
@@ -4796,6 +4720,7 @@ function modelPanel() {
   const habs = model.habitats;
   let selId = habs.some(function (h) { return h.id === state.envId; }) ? state.envId : habs[0].id;
   let narrowNow = window.innerWidth < 640;
+  let modelPlayed = false;
   const chips = el("div", { class: "pills mdl-chips", role: "group", "aria-label": "Habitat" });
   const chart = el("div", { class: "mdl-chart" });
   const verdict = el("p", { class: "mdl-verdict", "aria-live": "polite" });
@@ -4803,7 +4728,8 @@ function modelPanel() {
     const hab = habs.find(function (h) { return h.id === selId; });
     const out = modelVerdict(model, hab);
     clear(chart);
-    chart.appendChild(modelChart(model, selId, narrowNow));
+    chart.appendChild(modelChart(model, selId, narrowNow, !modelPlayed));
+    modelPlayed = true;
     clear(verdict);
     verdict.className = "mdl-verdict " + out.tone;
     appendKids(verdict, [el("strong", { text: out.head + " " }), out.text]);
