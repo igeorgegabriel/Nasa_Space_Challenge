@@ -1126,7 +1126,7 @@ function drawGapChart(node) {
   s += "<path d=\"M" + (arrowX1 + ah) + " " + (arrowY - ah) + " L" + arrowX1 + " " + arrowY + " L" + (arrowX1 + ah) + " " + (arrowY + ah) + "\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"" + (small ? 1.6 : 2.4) + "\"/>";
   s += "<path d=\"M" + (arrowX2 - ah) + " " + (arrowY - ah) + " L" + arrowX2 + " " + arrowY + " L" + (arrowX2 - ah) + " " + (arrowY + ah) + "\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"" + (small ? 1.6 : 2.4) + "\"/>";
   s += "<text x=\"" + ((arrowX1 + arrowX2) / 2) + "\" y=\"" + (arrowY - (small ? 9 : 14)) + "\" font-size=\"" + (small ? TF + 1 : LF * 0.95) + "\" font-weight=\"700\" fill=\"#ffffff\" text-anchor=\"middle\">" + fmt(gapPts, 0) + " O2 points</text></g>";
-  node.innerHTML = "<svg viewBox=\"0 0 " + w + " " + H + "\" width=\"" + w + "\" height=\"" + H + "\" role=\"img\" aria-label=\"Oxygen axis: " + d.solid.length + " PSI solid-fuel tests end at " + fmt(d.psiMax, 1) + " percent, newest NASA flights reach " + fmt(Math.max.apply(null, d.flights.map(function (t) { return t.o2_percent; })), 0) + " percent, Moon base air is " + d.moon + " percent\">" + s + "</svg>";
+  node.innerHTML = "<svg viewBox=\"0 0 " + w + " " + H + "\" width=\"" + w + "\" height=\"" + H + "\" role=\"img\" aria-label=\"Oxygen axis: " + d.solid.length + " PSI solid-fuel tests end at " + fmt(d.psiMax, 1) + " percent, newest NASA flights burned solids at " + fmt(Math.max.apply(null, d.flights.filter(function (t) { return t.outcome_short === "Burned"; }).map(function (t) { return t.o2_percent; })), 1) + " percent, Moon base air is " + d.moon + " percent\">" + s + "</svg>";
   gapWidth = node.clientWidth;
 }
 
@@ -1137,11 +1137,11 @@ function headerH() {
 
 function gapCaptionTexts() {
   const d = gapChartData();
-  const top = Math.max.apply(null, d.flights.map(function (t) { return t.o2_percent; }));
+  const top = Math.max.apply(null, d.flights.filter(function (t) { return t.outcome_short === "Burned"; }).map(function (t) { return t.o2_percent; }));
   return [
-    [fmt(d.solid.length, 0), " solid NASA tests"],
+    ["Every solid ", "NASA test in PSI"],
     ["Solid tests stop at ", fmt(d.psiMax, 1) + "%"],
-    ["Newest flights: ", fmt(top, 1) + "%, outside PSI"],
+    ["Newest flights burned solids at ", fmt(top, 1) + "%"],
     ["Moon base air: ", d.moon + "%"]
   ];
 }
@@ -1910,7 +1910,7 @@ function renderHome() {
       rv(1, "figure", { class: "gm gm-home" }, gravityMap(true),
         el("figcaption", { class: "small", text: "Concept drawing, not data." })),
       el("div", { class: "grav-copy" },
-        rv(2, "p", { class: "story-line", text: "On the Moon, a 1-g test margin can shrink by up to " + fmt(lg.paper.worst_case_delta_o2_points, 1) + " oxygen points." }),
+        rv(2, "p", { class: "story-line", text: "On the Moon, a 1-g test margin may shrink by up to " + fmt(lg.paper.worst_case_delta_o2_points, 1) + " oxygen points." }),
         rv(3, "p", { class: "story-sub" }, el("a", { class: "btn ghost", href: "#/gravity", text: "See the lunar gravity check" }))))
   ]);
   const next = story("st-next", "s-next", [
