@@ -1,4 +1,5 @@
 import json
+import math
 import os
 import sys
 import unittest
@@ -83,6 +84,74 @@ class ModelsTest(unittest.TestCase):
         rows, _ = build_models.load_flex()
         total = sum(t["rows"] for t in self.result["diluents"]["table"])
         self.assertEqual(total, len(rows))
+
+    def predict_raw(self, coef, o2, p_atm, fuel):
+        z = coef[0] + coef[1] * o2 + coef[2] * math.log(p_atm) + coef[3] * (1.0 if fuel == "Heptane" else 0.0)
+        return 1.0 / (1.0 + math.exp(-z))
+
+    def percentile(self, values, q):
+        ordered = sorted(values)
+        pos = q / 100.0 * (len(ordered) - 1)
+        lo = int(math.floor(pos))
+        hi = min(lo + 1, len(ordered) - 1)
+        return ordered[lo] + (ordered[hi] - ordered[lo]) * (pos - lo)
+
+    def in_polygon(self, poly, x, y):
+        sign = 0
+        for i in range(len(poly)):
+            ax, ay = poly[i]
+            bx, by = poly[(i + 1) % len(poly)]
+            cross = (bx - ax) * (y - ay) - (by - ay) * (x - ax)
+            if abs(cross) < 1e-12:
+                continue
+            side = 1 if cross > 0 else -1
+            if sign == 0:
+                sign = side
+            elif side != sign:
+                return False
+        return True
+
+    def test_predictor_reproduces_habitat_predictions(self):
+        pred = self.model["predictor"]
+        self.assertEqual(len(pred["bootstrap_raw"]), 500)
+        for h in self.model["habitats"]:
+            for fuel, entry in h["fuels"].items():
+                if entry["prediction"] is None:
+                    continue
+                o2 = h["o2"]["mid"]
+                p = h["pressure_atm"]["mid"]
+                est = self.predict_raw(pred["raw"], o2, p, fuel)
+                self.assertAlmostEqual(est, entry["prediction"]["estimate"], delta=0.005)
+                boot = [self.predict_raw(c, o2, p, fuel) for c in pred["bootstrap_raw"]]
+                self.assertAlmostEqual(self.percentile(boot, 2.5), entry["prediction"]["lo"], delta=0.01)
+                self.assertAlmostEqual(self.percentile(boot, 97.5), entry["prediction"]["hi"], delta=0.01)
+
+    def test_standardised_form_matches_raw_form(self):
+        pred = self.model["predictor"]
+        s = pred["standardised"]
+        for o2, p, heptane in ((0.21, 1.0, 1.0), (0.3, 0.8, 0.0), (0.25, 0.5, 1.0)):
+            x = [o2, math.log(p), heptane]
+            z = s["intercept"] + sum(c * (v - m) / sc for c, v, m, sc in zip(s["coef"], x, s["mean"], s["scale"]))
+            raw = pred["raw"]
+            zr = raw[0] + sum(c * v for c, v in zip(raw[1:], x))
+            self.assertAlmostEqual(z, zr, places=4)
+
+    def test_hull_agrees_with_habitat_statuses(self):
+        pred = self.model["predictor"]
+        for h in self.model["habitats"]:
+            for fuel, entry in h["fuels"].items():
+                poly = pred["hull"][fuel]
+                inside = self.in_polygon(poly, h["o2"]["mid"], h["pressure_atm"]["mid"])
+                if entry["status"] == "inside":
+                    self.assertTrue(inside, (h["id"], fuel))
+                if entry["status"] == "outside":
+                    box = pred["box"][fuel]
+                    o2_ex = max(0.0, box["o2"][0] - h["o2"]["mid"], h["o2"]["mid"] - box["o2"][1])
+                    p_ex = max(0.0, box["pressure_atm"][0] - h["pressure_atm"]["mid"], h["pressure_atm"]["mid"] - box["pressure_atm"][1])
+                    tol = self.model["domain"]["edge_tolerance"]
+                    self.assertTrue((not inside) and (o2_ex > tol["o2"] or p_ex > tol["pressure_atm"]), (h["id"], fuel))
+                if entry["status"] == "edge":
+                    self.assertFalse(inside, (h["id"], fuel))
 
     def test_deterministic(self):
         again = build_models.build()

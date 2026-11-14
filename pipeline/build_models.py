@@ -5,7 +5,7 @@ import re
 import sys
 
 import numpy as np
-from scipy.spatial import Delaunay
+from scipy.spatial import ConvexHull, Delaunay
 from scipy.stats import rankdata
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -191,6 +191,45 @@ def excess(hull, o2, p):
         "p": max(0.0, p_lo - p, p - p_hi),
         "p_side": "below" if p < p_lo else ("above" if p > p_hi else None),
         "o2_side": "below" if o2 < o2_lo else ("above" if o2 > o2_hi else None),
+    }
+
+
+def sig(value, digits=5):
+    return float("{:.{}g}".format(float(value), digits))
+
+
+def raw_coefficients(fit):
+    scaled = fit["w"][1:] / fit["sd"]
+    intercept = fit["w"][0] - float(np.sum(fit["w"][1:] * fit["mu"] / fit["sd"]))
+    return [intercept] + [float(v) for v in scaled]
+
+
+def hull_polygon(hull):
+    pts = hull["pts"]
+    order = ConvexHull(pts).vertices
+    return [[round(float(pts[i][0]), 6), round(float(pts[i][1]), 6)] for i in order]
+
+
+def predictor_block(full, fits, hulls):
+    return {
+        "features": ["o2_frac", "ln_pressure_atm", "fuel_is_heptane"],
+        "standardised": {
+            "intercept": sig(full["w"][0], 8),
+            "coef": [sig(v, 8) for v in full["w"][1:]],
+            "mean": [sig(v, 8) for v in full["mu"]],
+            "scale": [sig(v, 8) for v in full["sd"]],
+        },
+        "raw": [sig(v, 8) for v in raw_coefficients(full)],
+        "bootstrap_raw": [[sig(v) for v in raw_coefficients(f)] for f in fits],
+        "bootstrap_note": "One raw-scale coefficient vector [intercept, o2_frac, ln_pressure_atm, fuel_is_heptane] per cluster-bootstrap refit over test dates. The 95 percent range is the 2.5th to 97.5th percentile of the predictions across these vectors.",
+        "hull": {fuel: hull_polygon(hulls[fuel]) for fuel in FUELS},
+        "box": {
+            fuel: {
+                "o2": [round(float(hulls[fuel]["pts"][:, 0].min()), 6), round(float(hulls[fuel]["pts"][:, 0].max()), 6)],
+                "pressure_atm": [round(float(hulls[fuel]["pts"][:, 1].min()), 6), round(float(hulls[fuel]["pts"][:, 1].max()), 6)],
+            }
+            for fuel in FUELS
+        },
     }
 
 
@@ -460,6 +499,7 @@ def build():
             "fuels": curves,
         },
         "habitats": habitats,
+        "predictor": predictor_block(full, fits, hulls),
     }
 
     return {

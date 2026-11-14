@@ -1580,8 +1580,6 @@ function gapDetails(lunar) {
     el("p", { class: "small muted", text: "Solid pressures and outcomes come from NASA reports, not the PSI table. Air-composition sources are under Moon base air." })));
 }
 
-const scenario = { env: "lunar", fuel: "solid" };
-
 const SVG_NS = "http://www.w3.org/2000/svg";
 
 function svgEl(tagName, attrs) {
@@ -1590,14 +1588,6 @@ function svgEl(tagName, attrs) {
     node.setAttribute(key, attrs[key]);
   });
   return node;
-}
-
-function scenarioQuestion(entry, hab) {
-  const fuel = (NEXT_LABELS[entry.fuel_class] || FUEL_LABELS[entry.fuel_class]).toLowerCase() + " fuel in " + hab + " air";
-  if (entry.inside > 0) {
-    return "Which NASA tests covered " + fuel + ", and which is the closest?";
-  }
-  return "Why has NASA not tested " + fuel + ", and what is the closest test?";
 }
 
 function scMark(kind) {
@@ -1656,18 +1646,6 @@ function scenarioRows(entry, block) {
   return rows;
 }
 
-function scenarioFlight(entry) {
-  const o = entry.outside_nearest;
-  if (entry.fuel_class !== "solid" || !o || !state.data.outside_psi.tests.length) {
-    return null;
-  }
-  const pressure = o.pressure_psia === null || o.pressure_psia === undefined ? "" : ", " + fmt(o.pressure_psia, 2) + " psia";
-  const did = /not/i.test(o.outcome_short) ? "did not ignite" : "burned";
-  return el("p", { class: "sc-outside" },
-    "Outside PSI: " + o.label + " " + did + " " + o.material_short + " at " + percent(o.o2_frac) + "% O2" + pressure + " - ",
-    ntrsLink(o.source_url, "NTRS " + o.source_id));
-}
-
 function scenarioVerdict(entry, rows) {
   const kinds = rows.map(function (r) { return r.className.replace("sc-row ", ""); });
   const names = ["Oxygen", "pressure", "airflow"];
@@ -1682,64 +1660,659 @@ function scenarioVerdict(entry, rows) {
   return { word: word, sub: sub, partly: partly };
 }
 
+const AIR_O2 = [15, 40];
+const AIR_P = [4, 16];
+const AIR_BOX = { o2: 0.5, p: 0.5 };
+const AIR_FUELS = ["solid", "liquid_droplet", "gas"];
+const AIR_NOUN = { solid: "solid-fuel", liquid_droplet: "droplet", gas: "gas-flame" };
+const AIR_GRAVITY = [["micro", "Microgravity"], ["moon", "Moon"], ["mars", "Mars"]];
+const AIR_FLEX = ["Heptane", "Methanol"];
+const AIR_X = [14, 41];
+const AIR_LANE_Y = 3.75;
+const AIR_DUR = 600;
+const AIR_TRACE = { rows: 0, lane: 1, flights: 2, hullA: 3, hullB: 4, box: 5, cross: 6, mark: 7 };
+const AIR_HULL_COL = { Heptane: "#ff9a62", Methanol: "#5b95e8" };
+
+const air = { o2: 34.25, p: 8.2, fuel: "solid", g: "moon", touched: false, raf: 0, ui: null, map: null };
+let airData = null;
+
+function airClamp(value, range) {
+  return Math.min(range[1], Math.max(range[0], value));
+}
+
+function airRound(value) {
+  return Math.round(value * 10) / 10;
+}
+
+function airClass(fc) {
+  if (!airData) {
+    airData = gapMapData();
+  }
+  return airData.classes[fc] || { points: [], lane: [] };
+}
+
+function airGravityOf(env) {
+  const g = env.gravity.g;
+  if (g === null || g === undefined || g < 0.05) {
+    return "micro";
+  }
+  return g < 0.27 ? "moon" : "mars";
+}
+
+function airPresets() {
+  return state.data.environments.environments.filter(function (e) {
+    return isSpecified(e, "o2") && isSpecified(e, "pressure_atm");
+  }).map(function (e) {
+    return {
+      id: e.id,
+      label: envShort(e),
+      o2: (e.o2.window_min + e.o2.window_max) / 2 * 100,
+      p: psia((e.pressure_atm.window_min + e.pressure_atm.window_max) / 2),
+      g: airGravityOf(e)
+    };
+  });
+}
+
+function airFromHash() {
+  const r = parseHash();
+  if (r.name !== "home" || r.params.o2 === undefined || r.params.p === undefined) {
+    return false;
+  }
+  const o2 = parseFloat(r.params.o2);
+  const p = parseFloat(r.params.p);
+  if (!isFinite(o2) || !isFinite(p)) {
+    return false;
+  }
+  air.o2 = airClamp(o2, AIR_O2);
+  air.p = airClamp(p, AIR_P);
+  air.fuel = AIR_FUELS.indexOf(r.params.fuel) >= 0 ? r.params.fuel : "solid";
+  air.g = AIR_GRAVITY.some(function (g) { return g[0] === r.params.g; }) ? r.params.g : "micro";
+  air.touched = true;
+  return true;
+}
+
+function airReset() {
+  const presets = airPresets();
+  const start = presets.find(function (p) { return p.id === "lunar"; }) || presets[0];
+  air.o2 = start.o2;
+  air.p = start.p;
+  air.g = start.g;
+  air.fuel = "solid";
+  air.touched = false;
+}
+
+function airHash() {
+  return "#/home?" + qs({ o2: airRound(air.o2).toFixed(1), p: airRound(air.p).toFixed(1), fuel: air.fuel, g: air.g });
+}
+
+function airPreset() {
+  return airPresets().find(function (pr) { return pr.g === air.g && Math.abs(pr.o2 - air.o2) < 0.05 && Math.abs(pr.p - air.p) < 0.05; }) || null;
+}
+
+function airBox() {
+  const pr = airPreset();
+  if (pr) {
+    const env = envById(pr.id);
+    return { preset: pr, o2: [env.o2.window_min * 100, env.o2.window_max * 100], p: [psia(env.pressure_atm.window_min), psia(env.pressure_atm.window_max)] };
+  }
+  return { preset: null, o2: [air.o2 - AIR_BOX.o2, air.o2 + AIR_BOX.o2], p: [Math.max(0.5, air.p - AIR_BOX.p), air.p + AIR_BOX.p] };
+}
+
+function airEvidence() {
+  const group = airClass(air.fuel);
+  const box = airBox();
+  let full = 0;
+  let lane = 0;
+  let best = null;
+  let bestD = Infinity;
+  group.points.forEach(function (pt) {
+    const x = pt.r.o2_frac * 100;
+    const y = psia(pt.atm);
+    if (x >= box.o2[0] - 1e-9 && x <= box.o2[1] + 1e-9 && y >= box.p[0] - 1e-9 && y <= box.p[1] + 1e-9) {
+      full += 1;
+    }
+    const d = Math.hypot((x - air.o2) / 5, Math.log(y / air.p) / Math.LN2);
+    if (d < bestD) {
+      bestD = d;
+      best = { pt: pt, o2: x, p: y };
+    }
+  });
+  group.lane.forEach(function (r) {
+    const x = r.o2_frac * 100;
+    if (x >= box.o2[0] - 1e-9 && x <= box.o2[1] + 1e-9) {
+      lane += 1;
+    }
+  });
+  return { full: full, lane: lane, nearest: best };
+}
+
+function airFlight() {
+  let best = null;
+  let bestD = Infinity;
+  const all = state.data.outside_psi.tests;
+  const known = all.filter(function (t) { return t.pressure_psia !== null && t.pressure_psia !== undefined; });
+  (known.length ? known : all).forEach(function (t) {
+    const dy = t.pressure_psia === null || t.pressure_psia === undefined ? 0 : Math.log(t.pressure_psia / air.p) / Math.LN2;
+    const d = Math.hypot((t.o2_percent - air.o2) / 5, dy);
+    if (d < bestD) {
+      bestD = d;
+      best = t;
+    }
+  });
+  return best;
+}
+
+function airInPolygon(poly, x, y) {
+  let sign = 0;
+  for (let i = 0; i < poly.length; i += 1) {
+    const a = poly[i];
+    const b = poly[(i + 1) % poly.length];
+    const cross = (b[0] - a[0]) * (y - a[1]) - (b[1] - a[1]) * (x - a[0]);
+    if (Math.abs(cross) < 1e-12) {
+      continue;
+    }
+    const side = cross > 0 ? 1 : -1;
+    if (sign === 0) {
+      sign = side;
+    } else if (side !== sign) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function airLogit(coef, o2, atm, heptane) {
+  const z = coef[0] + coef[1] * o2 + coef[2] * Math.log(atm) + coef[3] * heptane;
+  return 1 / (1 + Math.exp(-z));
+}
+
+function airQuantile(sorted, q) {
+  const pos = q * (sorted.length - 1);
+  const lo = Math.floor(pos);
+  const hi = Math.min(lo + 1, sorted.length - 1);
+  return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
+}
+
+function airRefusal(fuel, ex, box) {
+  const parts = [];
+  if (ex.p > 0) {
+    const below = air.p / PSIA_PER_ATM < box.pressure_atm[0];
+    parts.push(fmt(ex.p, 2) + " atm " + (below ? "below the lowest" : "above the highest") + " tested pressure (" + fmt(box.pressure_atm[below ? 0 : 1], 3) + " atm)");
+  }
+  if (ex.o2 > 0) {
+    const below = air.o2 / 100 < box.o2[0];
+    parts.push(fmt(ex.o2 * 100, 1) + " points of O2 " + (below ? "below the lowest" : "above the highest") + " tested (" + fmt(box.o2[below ? 0 : 1] * 100, 0) + " percent)");
+  }
+  if (!parts.length) {
+    parts.push("outside the region the " + fuel.toLowerCase() + " tests covered");
+  }
+  return parts.join("; ");
+}
+
+function airFlex() {
+  const model = state.data.models.models[0];
+  const pred = model.predictor;
+  const tol = model.domain.edge_tolerance;
+  const o2 = air.o2 / 100;
+  const atm = air.p / PSIA_PER_ATM;
+  return AIR_FLEX.map(function (fuel) {
+    const box = pred.box[fuel];
+    const ex = {
+      o2: Math.max(0, box.o2[0] - o2, o2 - box.o2[1]),
+      p: Math.max(0, box.pressure_atm[0] - atm, atm - box.pressure_atm[1])
+    };
+    const inside = airInPolygon(pred.hull[fuel], o2, atm);
+    const status = inside ? "inside" : (ex.o2 <= tol.o2 && ex.p <= tol.pressure_atm ? "edge" : "outside");
+    if (status === "outside") {
+      return { fuel: fuel, status: status, refusal: airRefusal(fuel, ex, box) };
+    }
+    const heptane = fuel === "Heptane" ? 1 : 0;
+    const boot = pred.bootstrap_raw.map(function (c) { return airLogit(c, o2, atm, heptane); }).sort(function (a, b) { return a - b; });
+    return { fuel: fuel, status: status, est: airLogit(pred.raw, o2, atm, heptane), lo: airQuantile(boot, 0.025), hi: airQuantile(boot, 0.975) };
+  });
+}
+
+function airRowHover(r, extra, atm) {
+  const where = atm === null ? "pressure not recorded" : fmt(psia(atm), 1) + " psia";
+  return plotEscape(r.psi_id + " | " + r.source_file + " | row " + r.source_row + (extra || "")) + "<br>O2 " + fmt(r.o2_frac * 100, 1) + " percent, " + where;
+}
+
+function airYMax() {
+  return air.fuel === "liquid_droplet" ? 50 : 18;
+}
+
+function airHere() {
+  const o2 = air.o2;
+  const p = air.p;
+  const b = airBox();
+  return {
+    box: { x: [b.o2[0], b.o2[1], b.o2[1], b.o2[0], b.o2[0]], y: [b.p[0], b.p[0], b.p[1], b.p[1], b.p[0]] },
+    cross: { x: [AIR_X[0], AIR_X[1], null, o2, o2], y: [p, p, null, 3.4, airYMax()] }
+  };
+}
+
+function airMapTraces(t) {
+  const fc = air.fuel;
+  const group = airClass(fc);
+  const solid = fc === "solid";
+  const rowSize = solid ? 9 : 5;
+  const rowColor = solid ? GAP_COL.psi : GAP_COL.gray;
+  const grow = function (full) { return Math.round(full * gapEaseOut(gapClamp(t)) * 100) / 100; };
+  const flights = solid ? state.data.outside_psi.tests.filter(function (f) { return f.plotted; }) : [];
+  const empty = function (name) {
+    return { type: "scatter", mode: "markers", name: name, x: [], y: [], showlegend: false, hoverinfo: "skip" };
+  };
+  const traces = [];
+  traces[AIR_TRACE.rows] = {
+    type: "scatter", mode: "markers", name: "PSI " + AIR_NOUN[fc] + " tests",
+    x: group.points.map(function (p) { return p.r.o2_frac * 100; }),
+    y: group.points.map(function (p) { return psia(p.atm); }),
+    text: group.points.map(function (p) { return airRowHover(p.r, p.sourced ? " | pressure from a NASA report" : "", p.atm); }),
+    hovertemplate: "%{text}<extra></extra>",
+    marker: { color: rowColor, size: grow(rowSize), opacity: solid ? 0.95 : 0.5, line: { color: GAP_COL.surf, width: solid ? 1 : 0 } }
+  };
+  traces[AIR_TRACE.lane] = group.lane.length ? {
+    type: "scatter", mode: "markers", name: "Pressure not recorded",
+    x: group.lane.map(function (r) { return r.o2_frac * 100; }),
+    y: group.lane.map(function (r, i) { return AIR_LANE_Y * (1 + 0.06 * (((i * 7) % 11) - 5) / 5); }),
+    text: group.lane.map(function (r) { return airRowHover(r, "", null); }),
+    hovertemplate: "%{text}<extra></extra>",
+    marker: { color: rowColor, size: grow(rowSize), opacity: 0.6, line: { color: GAP_COL.surf, width: 1 } }
+  } : empty("Pressure not recorded");
+  traces[AIR_TRACE.flights] = flights.length ? {
+    type: "scatter", mode: "markers", name: "Saffire flights, not in PSI",
+    x: flights.map(function (f) { return f.o2_percent; }),
+    y: flights.map(function (f) { return f.pressure_psia; }),
+    text: flights.map(function (f) {
+      return plotEscape(f.label + " | " + f.material_short) + "<br>O2 " + fmt(f.o2_percent, 1) + " percent, " + fmt(f.pressure_psia, 2) + " psia<br>" + plotEscape(f.outcome_short) + " | NTRS " + f.source_id;
+    }),
+    hovertemplate: "%{text}<extra></extra>",
+    marker: { symbol: "diamond-open", color: GAP_COL.fl, size: grow(11), line: { color: GAP_COL.fl, width: 2 } }
+  } : empty("Saffire flights, not in PSI");
+  const hulls = fc === "liquid_droplet" ? state.data.models.models[0].predictor.hull : null;
+  [["hullA", AIR_FLEX[0]], ["hullB", AIR_FLEX[1]]].forEach(function (pair) {
+    const fuel = pair[1];
+    if (!hulls) {
+      traces[AIR_TRACE[pair[0]]] = { type: "scatter", mode: "lines", name: fuel, x: [], y: [], showlegend: false, hoverinfo: "skip" };
+      return;
+    }
+    const poly = hulls[fuel].concat([hulls[fuel][0]]);
+    traces[AIR_TRACE[pair[0]]] = {
+      type: "scatter", mode: "lines", name: fuel + " tested region",
+      x: poly.map(function (v) { return v[0] * 100; }),
+      y: poly.map(function (v) { return psia(v[1]); }),
+      fill: "toself", fillcolor: plotRgba(AIR_HULL_COL[fuel], 0.07),
+      line: { color: AIR_HULL_COL[fuel], width: 1.6, dash: "dot" }, hoverinfo: "skip"
+    };
+  });
+  const here = airHere();
+  traces[AIR_TRACE.box] = { type: "scatter", mode: "lines", name: "Counting window", x: here.box.x, y: here.box.y, showlegend: false, hoverinfo: "skip", line: { color: "rgba(238,241,248,0.7)", width: 1.2, dash: "dash" } };
+  traces[AIR_TRACE.cross] = { type: "scatter", mode: "lines", name: "Crosshair", x: here.cross.x, y: here.cross.y, showlegend: false, hoverinfo: "skip", line: { color: "rgba(238,241,248,0.3)", width: 1 } };
+  traces[AIR_TRACE.mark] = {
+    type: "scatter", mode: "markers", name: "This air", x: [air.o2], y: [air.p], showlegend: false, hoverinfo: "skip",
+    marker: { symbol: "circle", color: "#ffffff", size: grow(15), line: { color: "#e8743b", width: 3 } }
+  };
+  return traces;
+}
+
+function airMapLayout() {
+  const small = window.innerWidth < 640;
+  const ticks = air.fuel === "liquid_droplet" ? [4, 7, 10, 15, 25, 45] : [4, 6, 8, 10, 12, 15];
+  const fs = small ? 11 : 12;
+  return Object.assign(plotBase(PLOT_DARK), {
+    height: small ? 340 : 430,
+    margin: { l: small ? 42 : 52, r: 12, t: small ? 84 : 64, b: small ? 46 : 52, pad: 0, autoexpand: false },
+    dragmode: false,
+    hoverdistance: 12,
+    xaxis: {
+      range: AIR_X, fixedrange: true, zeroline: false, showgrid: true, gridcolor: PLOT_DARK.grid, showline: true, linecolor: PLOT_DARK.axis, ticks: "",
+      tickvals: [15, 20, 25, 30, 35, 40], tickfont: { size: fs, color: PLOT_DARK.muted },
+      title: { text: "Oxygen (percent)", font: { size: fs, color: PLOT_DARK.muted }, standoff: 8 }
+    },
+    yaxis: {
+      type: "log", range: [Math.log10(3.4), Math.log10(airYMax())], fixedrange: true, zeroline: false, showgrid: true, gridcolor: PLOT_DARK.grid, showline: true, linecolor: PLOT_DARK.axis, ticks: "",
+      tickvals: ticks, ticktext: ticks.map(String), tickfont: { size: fs, color: PLOT_DARK.muted },
+      title: { text: "Pressure (psia)", font: { size: fs, color: PLOT_DARK.muted }, standoff: 6 }
+    },
+    legend: { orientation: "h", x: 0, y: 1.03, yanchor: "bottom", font: { size: fs, color: PLOT_DARK.text }, bgcolor: "rgba(0,0,0,0)", itemsizing: "constant" },
+    showlegend: true
+  });
+}
+
+function airMapClick(e) {
+  const m = air.map;
+  if (!m) {
+    return;
+  }
+  const drag = m.node.querySelector(".nsewdrag");
+  const full = m.node._fullLayout;
+  if (!drag || !full) {
+    return;
+  }
+  const box = drag.getBoundingClientRect();
+  if (e.clientX < box.left || e.clientX > box.right || e.clientY < box.top || e.clientY > box.bottom) {
+    return;
+  }
+  const o2 = full.xaxis.p2d(e.clientX - box.left);
+  const p = full.yaxis.p2d(e.clientY - box.top);
+  if (!isFinite(o2) || !isFinite(p)) {
+    return;
+  }
+  air.o2 = airRound(airClamp(o2, AIR_O2));
+  air.p = airRound(airClamp(p, AIR_P));
+  air.touched = true;
+  airSchedule();
+}
+
+function airMapDraw(animate) {
+  const m = air.map;
+  if (!m || !window.Plotly || !document.body.contains(m.node)) {
+    return Promise.resolve();
+  }
+  const t = animate && !reduceMotion() ? 0 : 1;
+  m.fuel = air.fuel;
+  return window.Plotly.react(m.node, airMapTraces(t), airMapLayout(), plotConfig()).then(function () {
+    m.ready = true;
+    if (!m.wired) {
+      m.wired = true;
+      m.node.addEventListener("click", airMapClick);
+    }
+    if (t === 0) {
+      m.pending = true;
+      m.watch = plotWatch(m.node, 0.3, function () {
+        m.watch = null;
+        airMapPlay();
+      });
+    }
+  });
+}
+
+function airMapPlay() {
+  const m = air.map;
+  if (!m || !m.pending) {
+    return;
+  }
+  m.pending = false;
+  const full = air.fuel === "solid" ? 9 : 5;
+  const idx = [AIR_TRACE.rows, AIR_TRACE.lane, AIR_TRACE.flights, AIR_TRACE.mark];
+  const sizes = [full, full, 11, 15];
+  m.cancel = plotRun(AIR_DUR, function (t) {
+    const k = gapEaseOut(gapClamp(t));
+    return window.Plotly.restyle(m.node, { "marker.size": sizes.map(function (s) { return Math.round(s * k * 100) / 100; }) }, idx);
+  }, function () { m.cancel = null; });
+}
+
+function airMapMove() {
+  const m = air.map;
+  if (!m || !m.ready) {
+    return;
+  }
+  if (m.busy) {
+    m.dirty = true;
+    return;
+  }
+  m.busy = true;
+  m.dirty = false;
+  const here = airHere();
+  window.Plotly.restyle(m.node, {
+    x: [here.box.x, here.cross.x, [air.o2]],
+    y: [here.box.y, here.cross.y, [air.p]]
+  }, [AIR_TRACE.box, AIR_TRACE.cross, AIR_TRACE.mark]).then(function () {
+    m.busy = false;
+    if (m.dirty) {
+      airMapMove();
+    }
+  });
+}
+
+function airStop() {
+  const m = air.map;
+  if (air.raf) {
+    cancelAnimationFrame(air.raf);
+    air.raf = 0;
+  }
+  if (m) {
+    if (m.cancel) {
+      m.cancel();
+    }
+    if (m.watch) {
+      m.watch.disconnect();
+    }
+    if (window.Plotly) {
+      window.Plotly.purge(m.node);
+    }
+  }
+  air.map = null;
+  air.ui = null;
+}
+
+function airSchedule() {
+  if (air.raf) {
+    return;
+  }
+  air.raf = requestAnimationFrame(function () {
+    air.raf = 0;
+    airRefresh();
+  });
+}
+
+function airQuestion() {
+  const noun = { solid: "solid fuel", liquid_droplet: "liquid droplet fuel", gas: "gas fuel" }[air.fuel];
+  const gravity = { micro: "in microgravity", moon: "at Moon gravity", mars: "at Mars gravity" }[air.g];
+  return "Has NASA tested " + noun + " in air with " + airRound(air.o2).toFixed(1) + "% oxygen at " + airRound(air.p).toFixed(1) + " psia, " + gravity + "? What is the closest test?";
+}
+
+function airVerdict() {
+  const ev = airEvidence();
+  const noun = AIR_NOUN[air.fuel];
+  const pr = airBox().preset;
+  const block = pr ? state.data.test_next.environments[pr.id] : null;
+  const entry = block ? block.classes.find(function (c) { return c.fuel_class === air.fuel; }) : null;
+  const hab = entry ? scenarioVerdict(entry, scenarioRows(entry, block)) : null;
+  let word = ev.full > 0 ? "Tested" : (ev.lane > 0 ? "Partly tested" : "Not tested");
+  const within = "within " + AIR_BOX.o2 + " O2 points and " + AIR_BOX.p + " psia";
+  let sub;
+  if (hab) {
+    word = hab.word;
+    sub = pr.label + " window: " + hab.sub.charAt(0).toLowerCase() + hab.sub.slice(1) + (/[.]$/.test(hab.sub) ? "" : ".");
+  } else if (ev.full > 0) {
+    sub = ev.full + " NASA " + noun + (ev.full === 1 ? " test " : " tests ") + within + ". Airflow is not set here.";
+  } else if (ev.lane > 0) {
+    sub = ev.lane + " NASA " + noun + (ev.lane === 1 ? " test" : " tests") + " at this oxygen, pressure not recorded.";
+  } else {
+    sub = "No NASA " + noun + " test " + within + ".";
+  }
+  const tone = word === "Tested" ? "ok" : (word === "Partly tested" ? "part" : "none");
+  const lane = !hab && ev.full > 0 && ev.lane > 0 ? el("p", { class: "air-note", text: ev.lane + " more at this oxygen, pressure not recorded." }) : null;
+  let near = null;
+  if (ev.nearest) {
+    const r = ev.nearest.pt.r;
+    const inv = invById(r.psi_id);
+    near = el("p", { class: "air-near" },
+      "Closest with a recorded pressure: ", inv ? invLabel(inv) : r.psi_id, " at " + fmt(ev.nearest.o2, 1) + "% O2, " + fmt(ev.nearest.p, 1) + " psia. ",
+      el("a", { href: "#/data?" + qs({ inv: r.psi_id, at: "extractor" }), text: r.source_file + ", row " + r.source_row }));
+  }
+  return el("div", { class: "air-verdict" },
+    el("p", { class: "air-word " + tone, text: word }),
+    el("p", { class: "air-sub", text: sub }),
+    lane,
+    near);
+}
+
+function airCardFlight() {
+  const t = airFlight();
+  if (air.fuel !== "solid" || !t) {
+    return null;
+  }
+  const pressure = t.pressure_psia === null || t.pressure_psia === undefined ? ", pressure not stated" : ", " + fmt(t.pressure_psia, 2) + " psia";
+  const did = /not/i.test(t.outcome_short) ? "did not ignite" : "burned";
+  return el("div", { class: "air-card" },
+    el("p", { class: "air-card-title", text: "Nearest flight outside PSI" }),
+    el("p", { class: "air-card-body" }, t.label + " " + did + " " + t.material_short + " at " + percent(t.o2_frac) + "% O2" + pressure + ". ", ntrsLink(t.source_url, "NTRS " + t.source_id)));
+}
+
+function airPercent(value) {
+  return Math.round(Math.round(value * 1000) / 10);
+}
+
+function airCardModel() {
+  const title = el("p", { class: "air-card-title", text: "Chance the flame goes out on its own" });
+  if (air.fuel !== "liquid_droplet") {
+    return el("div", { class: "air-card" }, title,
+      el("p", { class: "air-card-body", text: "The model covers droplet flames only." }));
+  }
+  const rows = airFlex().map(function (f) {
+    if (f.status === "outside") {
+      return el("div", { class: "air-flex out" },
+        el("p", { class: "air-flex-name", text: f.fuel + " droplet" }),
+        el("p", { class: "air-flex-text", text: "No prediction: " + f.refusal + "." }));
+    }
+    return el("div", { class: "air-flex" },
+      el("p", { class: "air-flex-name", text: f.fuel + " droplet" }),
+      el("p", { class: "air-flex-num", text: airPercent(f.est) + "%" }),
+      el("p", { class: "air-flex-text", text: "95% range " + airPercent(f.lo) + "-" + airPercent(f.hi) + "%" + (f.status === "edge" ? ". At the edge of the tested range." : "") }));
+  });
+  return el("div", { class: "air-card" }, title, el("div", { class: "air-flex-list" }, rows),
+    el("p", { class: "air-card-foot" }, el("a", { href: "#/data?at=model", text: "How the model was checked" })));
+}
+
+function airCardGravity() {
+  const lg = state.data.lunar_g;
+  const title = el("p", { class: "air-card-title", text: "Gravity" });
+  let body;
+  if (air.g === "micro") {
+    body = [el("p", { class: "air-card-body", text: "PSI tests are microgravity, so no adjustment." })];
+  } else if (air.g === "moon") {
+    const other = lg.materials.filter(function (m) { return m.direction === "less_flammable"; }).map(function (m) { return m.name; });
+    body = [
+      el("p", { class: "air-card-body", text: "On the Moon a 1-g test margin may shrink by up to " + fmt(lg.paper.worst_case_delta_o2_points, 1) + " O2 points." }),
+      other.length ? el("p", { class: "air-card-body", text: "At lunar gravity " + other.join(" and ") + " burned only at higher oxygen." }) : null
+    ];
+  } else {
+    body = [el("p", { class: "air-card-body", text: "No NASA partial-g flammability data for Mars gravity in these sources." })];
+  }
+  return el("div", { class: "air-card" }, title, body, el("p", { class: "air-card-foot" }, el("a", { href: "#/gravity", text: "See the lunar gravity check" })));
+}
+
+function airToggle(list, active) {
+  list.forEach(function (b) {
+    const on = active(b);
+    b.node.classList.toggle("active", on);
+    b.node.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+}
+
+function airRefresh() {
+  if (air.ui && document.body.contains(air.ui.root)) {
+    airPaint();
+  }
+}
+
+function airPaint() {
+  const ui = air.ui;
+  const o2 = airRound(air.o2);
+  const p = airRound(air.p);
+  ui.o2Value.firstChild.textContent = o2.toFixed(1);
+  ui.pValue.firstChild.textContent = p.toFixed(1);
+  if (Math.abs(parseFloat(ui.o2Input.value) - o2) > 0.049) {
+    ui.o2Input.value = o2;
+  }
+  if (Math.abs(parseFloat(ui.pInput.value) - p) > 0.049) {
+    ui.pInput.value = p;
+  }
+  airToggle(ui.presets, function (b) { return b.preset.g === air.g && Math.abs(b.preset.o2 - air.o2) < 0.05 && Math.abs(b.preset.p - air.p) < 0.05; });
+  airToggle(ui.fuels, function (b) { return b.id === air.fuel; });
+  airToggle(ui.gravity, function (b) { return b.id === air.g; });
+  clear(ui.verdict);
+  ui.verdict.appendChild(airVerdict());
+  clear(ui.cards);
+  appendKids(ui.cards, [airCardFlight(), airCardModel(), airCardGravity()]);
+  if (air.map && air.map.ready && air.map.fuel !== air.fuel) {
+    airMapDraw(false);
+  } else {
+    airMapMove();
+  }
+  if (air.touched) {
+    history.replaceState(null, "", airHash());
+  }
+}
+
+function airSlider(label, unit, range, key) {
+  const value = el("p", { class: "air-value" }, document.createTextNode(""), el("small", { text: unit }));
+  const input = el("input", { type: "range", class: "air-range", min: range[0], max: range[1], step: "0.1", "aria-label": label, value: airRound(air[key]) });
+  input.addEventListener("input", function () {
+    air[key] = parseFloat(input.value);
+    air.touched = true;
+    airSchedule();
+  });
+  const end = function (v) { return v + (unit === "%" ? "%" : " psia"); };
+  const field = el("div", { class: "air-field" },
+    el("p", { class: "air-label", text: label }),
+    value,
+    input,
+    el("p", { class: "air-ends" }, el("span", { text: end(range[0]) }), el("span", { text: end(range[1]) })));
+  return { field: field, value: value, input: input };
+}
+
 function scenarioCard() {
-  const habRow = el("div", { class: "pills sc-seg", role: "group", "aria-label": "Habitat" });
-  const fuelRow = el("div", { class: "pills sc-seg", role: "group", "aria-label": "Fuel type" });
-  const result = el("div", { class: "sc-result", "aria-live": "polite" });
-  function pill(key, label, on, pick) {
-    return el("button", { type: "button", class: "pill" + (on ? " active" : ""), "aria-pressed": on ? "true" : "false", "data-key": key, text: label, onclick: function () {
+  if (!airFromHash()) {
+    airReset();
+  }
+  const ui = { presets: [], fuels: [], gravity: [] };
+  function pill(list, key, label, pick, extra) {
+    const node = el("button", { type: "button", class: "pill", "aria-pressed": "false", "data-key": key, text: label, onclick: function () {
       pick();
-      draw(key);
+      air.touched = true;
+      airSchedule();
     } });
+    list.push(Object.assign({ node: node, key: key }, extra || {}));
+    return node;
   }
-  function draw(focusKey) {
-    const envs = state.data.environments.environments.filter(function (e) { return state.data.test_next.environments[e.id]; });
-    if (!envs.some(function (e) { return e.id === scenario.env; })) {
-      scenario.env = envs[0].id;
-    }
-    const block = state.data.test_next.environments[scenario.env];
-    if (!block.classes.some(function (c) { return c.fuel_class === scenario.fuel; })) {
-      scenario.fuel = block.classes[0].fuel_class;
-    }
-    const entry = block.classes.find(function (c) { return c.fuel_class === scenario.fuel; });
-    const hab = envShort(envById(scenario.env));
-    clear(habRow);
-    clear(fuelRow);
-    clear(result);
-    envs.forEach(function (env) {
-      habRow.appendChild(pill("env-" + env.id, envShort(env), env.id === scenario.env, function () { scenario.env = env.id; }));
-    });
-    block.classes.forEach(function (c) {
-      fuelRow.appendChild(pill("fuel-" + c.fuel_class, NEXT_LABELS[c.fuel_class] || FUEL_LABELS[c.fuel_class], c.fuel_class === scenario.fuel, function () { scenario.fuel = c.fuel_class; }));
-    });
-    const fuelName = NEXT_LABELS[entry.fuel_class] || FUEL_LABELS[entry.fuel_class];
-    const rows = scenarioRows(entry, block);
-    const verdict = scenarioVerdict(entry, rows);
-    const word = verdict.word;
-    const sub = verdict.sub;
-    appendKids(result, [
-      el("p", { class: "sc-for", text: hab + " air - " + fuelName + " fuel" }),
-      el("div", { class: "sc-verdict" },
-        el("p", { class: "sc-word", text: word }),
-        el("p", { class: "sc-sub", text: sub })),
-      el("ul", { class: "sc-rows" }, rows),
-      scenarioFlight(entry),
-      el("p", { class: "sc-actions" },
-        el("button", { type: "button", class: "btn", text: "Ask why", onclick: function () {
-          openAskPanel(false);
-          sendAsk(scenarioQuestion(entry, hab));
-        } }),
-        el("a", { class: "textlink", href: "#/rank?habitat=" + encodeURIComponent(scenario.env), text: "See the full ranking" }))
-    ]);
-    if (focusKey) {
-      const again = document.querySelector(".scenario [data-key=\"" + focusKey + "\"]");
-      if (again) {
-        again.focus();
-      }
-    }
-  }
-  draw(null);
-  return [habRow, fuelRow, result];
+  const presetRow = el("div", { class: "pills air-seg", role: "group", "aria-label": "Habitat air" }, airPresets().map(function (pr) {
+    return pill(ui.presets, "env-" + pr.id, pr.label, function () {
+      air.o2 = pr.o2;
+      air.p = pr.p;
+      air.g = pr.g;
+    }, { preset: pr });
+  }));
+  const fuelRow = el("div", { class: "pills air-seg", role: "group", "aria-label": "Fuel type" }, AIR_FUELS.map(function (fc) {
+    return pill(ui.fuels, "fuel-" + fc, NEXT_LABELS[fc], function () { air.fuel = fc; }, { id: fc });
+  }));
+  const gravityRow = el("div", { class: "pills air-seg", role: "group", "aria-label": "Gravity" }, AIR_GRAVITY.map(function (g) {
+    return pill(ui.gravity, "g-" + g[0], g[1], function () { air.g = g[0]; }, { id: g[0] });
+  }));
+  const o2 = airSlider("Oxygen", "%", AIR_O2, "o2");
+  const pr = airSlider("Pressure", "psia", AIR_P, "p");
+  ui.o2Value = o2.value;
+  ui.pValue = pr.value;
+  ui.o2Input = o2.input;
+  ui.pInput = pr.input;
+  ui.verdict = el("div", { class: "air-verdict-wrap", "aria-live": "polite" });
+  ui.cards = el("div", { class: "air-cards" });
+  const mapNode = el("div", { class: "air-map", role: "img", "aria-label": "Map of NASA flame tests by oxygen and pressure with a marker for the chosen air. Click the map to move the marker." });
+  const ask = el("button", { type: "button", class: "btn air-ask", text: "Ask about this air", onclick: function () {
+    openAskPanel(false);
+    askPanel.nodes.input.value = airQuestion();
+    resizeAskInput();
+    askPanel.nodes.input.focus();
+  } });
+  ui.root = el("div", { class: "air" },
+    el("div", { class: "air-main" },
+      el("div", { class: "air-left" }, presetRow, fuelRow, o2.field, pr.field, gravityRow),
+      el("div", { class: "air-out" }, ui.verdict, el("p", { class: "air-actions" }, ask)),
+      el("div", { class: "air-right" },
+        mapNode,
+        el("p", { class: "air-hint small muted", text: "Each dot is one NASA test row. Click the map to move the marker." }))),
+    ui.cards);
+  air.ui = ui;
+  air.map = { node: mapNode, busy: false, dirty: false, wired: false, pending: false, ready: false, watch: null, cancel: null, fuel: null };
+  airPaint();
+  loadPlotly().then(function () {
+    airMapDraw(true);
+  }).catch(function () {
+    mapNode.textContent = "Chart library not loaded.";
+  });
+  return ui.root;
 }
 
 const TOUR_QUESTION = "How many solid-fuel tests were run inside Moon base oxygen levels?";
@@ -1753,7 +2326,7 @@ const TOUR_STEPS = [
   },
   {
     hash: "#/home", scroll: "#s-next", ring: ".scenario",
-    text: function () { return "Pick a habitat and a fuel. See which conditions NASA has tested, and which it has not."; }
+    text: function () { return "Pick a habitat or drag the oxygen and pressure. See what NASA has tested, and what the model says."; }
   },
   {
     hash: "#/rank?habitat=lunar", scroll: null, ring: ".rank-cards",
@@ -1862,7 +2435,7 @@ function tourShow() {
   window.dispatchEvent(new Event("resize"));
   tourClearRing();
   const here = location.hash === "" || location.hash === "#" || location.hash === "#/" ? "#/home" : location.hash;
-  if (here === s.hash) {
+  if (here === s.hash || (s.hash === "#/home" && here.split("?")[0] === "#/home")) {
     if (s.hash.indexOf("#/rank") === 0) {
       route();
     }
@@ -2111,7 +2684,7 @@ function renderHome() {
         rv(3, "p", { class: "story-sub" }, el("a", { class: "btn ghost", href: "#/gravity", text: "See the lunar gravity check" }))))
   ]);
   const next = story("st-next", "s-next", [
-    rv(0, "h2", { text: "Check a scenario" }),
+    rv(0, "h2", { text: "Check any cabin air" }),
     rv(1, "div", { class: "scenario" }, scenarioCard())
   ]);
   const tile = function (href, title, index) {
@@ -2139,6 +2712,14 @@ function renderHome() {
     heroIntro(hero);
   }
   hero.insertBefore(heroMedia(hero), hero.firstChild);
+  if (parseHash().params.o2 !== undefined) {
+    setTimeout(function () {
+      const target = document.getElementById("s-next");
+      if (target) {
+        window.scrollTo({ top: Math.max(0, target.getBoundingClientRect().top + window.scrollY - headerH()), behavior: "instant" });
+      }
+    }, 0);
+  }
   return view;
 }
 
@@ -4221,6 +4802,7 @@ function route() {
     return;
   }
   stopStory();
+  airStop();
   if (r.name === "rank" && r.params.habitat && envById(r.params.habitat)) {
     state.envId = r.params.habitat;
   }
