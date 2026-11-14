@@ -6,10 +6,13 @@ Challenge: Flame in Freefall: SI-Powered Fire Safety Insights from Microgravity 
 
 Team: Kenyalang Blue Flame (Bintulu, Malaysia)
 
+## Team aim (in the team's own words)
+
+> a dashboard that answers the full objective, not a minimal one.the aim is just not to win but make impact to the NASA. remember i dont like very fancy features as 2 days hackaton is notsufficient to devliver addditional feature.what we aaim is spot on the solution,give value and unique from other competitiors
+
+- George Gabriel Ujai, 14 Nov 2026
+
 ## Status
 
 Hackathon started 14 Nov 2026. Problem research in progress.
 
-## Disclosure
-
-Before the event, a short private exploration of this challenge topic was done and then deleted on 28 Sep 2026, after reading the Participant FAQ rule that work may not begin before the hackathon. None of that code, data or findings is reused here. All work in this repository starts at the event.
