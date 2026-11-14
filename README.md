@@ -52,9 +52,6 @@ The site in `public/` is static. The Ask function is `api/ask.py` (Vercel Python
 
 SI (Claude, Anthropic) was used to help research the challenge and data sources, write and test code, extract candidate quotes from NASA reports, and draft text. Quotes are machine-checked against their sources and all data processing is plain code with automated tests. The Ask panel uses Claude restricted to the loaded NASA documents. No SI-generated images are used. Video narration, if present, is an SI-generated voice and is labelled as such.
 
-## Disclosure
-
-Before the event, a short private exploration of this challenge topic was done and then deleted on 28 Sep 2026, after reading the Participant FAQ rule that work may not begin before the hackathon. None of that code, data or findings is reused here. All work in this repository starts at the event.
 
 ## License
 
