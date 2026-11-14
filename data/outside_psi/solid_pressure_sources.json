@@ -1,0 +1,169 @@
+{
+  "description": "Ambient pressure of PSI solid-fuel tests with NASA statements",
+  "records": {
+    "PSI-26": {
+      "name": "BASS",
+      "platform": "ISS MSG",
+      "pressure_atm": 1.0,
+      "pressure_atm_range": null,
+      "pressure_kpa": 101.325,
+      "basis": "NASA/TM-20210011385 section 7.1 covers BASS and BASS-II SIBAL tests in the MSG: ambient pressure 1 atm. No BASS-specific pressure statement was found in the opened sources",
+      "primary": {
+        "source_id": "20210011385",
+        "source_url": "https://ntrs.nasa.gov/citations/20210011385",
+        "source_text_file": "data/findings/sources/PSI-25_20210011385.txt",
+        "page": 102,
+        "quote": "tests were conducted in ambient O2 molar fraction of 16 to 21 percent. Ambient pressure was 1 atm"
+      },
+      "supporting": [
+        {
+          "source_id": "20210011385",
+          "source_url": "https://ntrs.nasa.gov/citations/20210011385",
+          "source_text_file": "data/findings/sources/PSI-25_20210011385.txt",
+          "page": 19,
+          "quote": "pressure P = 1 atm"
+        }
+      ],
+      "searched": [
+        "data/findings/sources/PSI-26_20140011099.txt (abstract only, no pressure)",
+        "data/investigations/raw/PSI-26.json",
+        "NTRS 20210011385"
+      ]
+    },
+    "PSI-25": {
+      "name": "BASS-II",
+      "platform": "ISS MSG",
+      "pressure_atm": null,
+      "pressure_atm_range": [
+        0.979,
+        0.982
+      ],
+      "pressure_kpa_range": [
+        99.2,
+        99.5
+      ],
+      "basis": "Monitored total pressure in the reported BASS-II flight tests was 99.2 to 99.5 kPa; section 7.1 also states 1 atm",
+      "primary": {
+        "source_id": "20210011385",
+        "source_url": "https://ntrs.nasa.gov/citations/20210011385",
+        "source_text_file": "data/findings/sources/PSI-25_20210011385.txt",
+        "page": 46,
+        "quote": "total pressure is also monitored, which varied from 99.2 to 99.5 kPa in the tests reported"
+      },
+      "supporting": [
+        {
+          "source_id": "20210011385",
+          "source_url": "https://ntrs.nasa.gov/citations/20210011385",
+          "source_text_file": "data/findings/sources/PSI-25_20210011385.txt",
+          "page": 102,
+          "quote": "tests were conducted in ambient O2 molar fraction of 16 to 21 percent. Ambient pressure was 1 atm"
+        },
+        {
+          "source_id": "20210011385",
+          "source_url": "https://ntrs.nasa.gov/citations/20210011385",
+          "source_text_file": "data/findings/sources/PSI-25_20210011385.txt",
+          "page": 19,
+          "quote": "pressure P = 1 atm"
+        }
+      ],
+      "searched": [
+        "data/findings/sources/PSI-25_20210011385.txt",
+        "data/findings/sources/PSI-25_20160000593.txt (no pressure value)",
+        "data/investigations/raw/PSI-25.json"
+      ]
+    },
+    "PSI-98": {
+      "name": "Saffire-I",
+      "platform": "Cygnus",
+      "pressure_atm": 0.987,
+      "pressure_atm_range": null,
+      "pressure_kpa": 100.0,
+      "basis": "Table 2 of ICES-2021-266: first column I-1 pressure 100 kPa, O2 21 pct; values are listed in column order I-1, II-5, II-6, III-1, IV-1",
+      "primary": {
+        "source_id": "20210011521",
+        "source_url": "https://ntrs.nasa.gov/citations/20210011521",
+        "source_text_file": "data/outside_psi/sources/20210011521.txt",
+        "page": 8,
+        "quote": "21 21 21 21 22 100 100 100 100 100"
+      },
+      "supporting": [
+        {
+          "source_id": "20210011521",
+          "source_url": "https://ntrs.nasa.gov/citations/20210011521",
+          "source_text_file": "data/outside_psi/sources/20210011521.txt",
+          "page": 8,
+          "quote": "I-1 II-5 II-6 III-1 IV-1"
+        }
+      ],
+      "searched": [
+        "data/findings/sources/PSI-98_20180005168.txt (abstract only)",
+        "data/investigations/raw/PSI-98.json",
+        "NTRS 20170000230",
+        "NTRS 20170001636"
+      ]
+    },
+    "PSI-99": {
+      "name": "Saffire-II",
+      "platform": "Cygnus",
+      "pressure_atm": 0.987,
+      "pressure_atm_range": null,
+      "pressure_kpa": 100.0,
+      "basis": "Direct statement that Saffire II flew in Cygnus at 100 kPa; also Table 2 of ICES-2021-266 columns II-5 and II-6",
+      "primary": {
+        "source_id": "20200000557",
+        "source_url": "https://ntrs.nasa.gov/citations/20200000557",
+        "source_text_file": "data/outside_psi/sources/20200000557.txt",
+        "page": 1,
+        "quote": "Cygnus spacecraft at 100 kPa"
+      },
+      "supporting": [
+        {
+          "source_id": "20210011521",
+          "source_url": "https://ntrs.nasa.gov/citations/20210011521",
+          "source_text_file": "data/outside_psi/sources/20210011521.txt",
+          "page": 8,
+          "quote": "21 21 21 21 22 100 100 100 100 100"
+        },
+        {
+          "source_id": "20210011521",
+          "source_url": "https://ntrs.nasa.gov/citations/20210011521",
+          "source_text_file": "data/outside_psi/sources/20210011521.txt",
+          "page": 8,
+          "quote": "I-1 II-5 II-6 III-1 IV-1"
+        }
+      ],
+      "searched": [
+        "data/findings/sources/PSI-99_20180005168.txt (abstract only)",
+        "data/investigations/raw/PSI-99.json"
+      ]
+    },
+    "PSI-100": {
+      "name": "Saffire-III",
+      "platform": "Cygnus",
+      "pressure_atm": 0.987,
+      "pressure_atm_range": null,
+      "pressure_kpa": 100.0,
+      "basis": "Table 2 of ICES-2021-266: fourth column III-1 pressure 100 kPa, O2 21 pct",
+      "primary": {
+        "source_id": "20210011521",
+        "source_url": "https://ntrs.nasa.gov/citations/20210011521",
+        "source_text_file": "data/outside_psi/sources/20210011521.txt",
+        "page": 8,
+        "quote": "21 21 21 21 22 100 100 100 100 100"
+      },
+      "supporting": [
+        {
+          "source_id": "20210011521",
+          "source_url": "https://ntrs.nasa.gov/citations/20210011521",
+          "source_text_file": "data/outside_psi/sources/20210011521.txt",
+          "page": 8,
+          "quote": "I-1 II-5 II-6 III-1 IV-1"
+        }
+      ],
+      "searched": [
+        "data/findings/sources/PSI-100_20180005168.txt (abstract only)",
+        "data/investigations/raw/PSI-100.json"
+      ]
+    }
+  }
+}

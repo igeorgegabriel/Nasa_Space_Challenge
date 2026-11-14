@@ -1,0 +1,444 @@
+{
+  "description": "Saffire IV-VI large-scale solid flammability tests in Cygnus at elevated O2, extracted from NASA NTRS papers",
+  "tests": [
+    {
+      "flight": "Saffire IV",
+      "sample_id": "IV-1",
+      "material": "SIBAL cloth (75 pct cotton, 25 pct fiberglass), 50 cm long",
+      "o2_percent": 22.0,
+      "pressure_kpa": 100.0,
+      "pressure_psia": 14.5,
+      "flow_cm_s": 20,
+      "flow_direction": "concurrent",
+      "outcome": "Burned. Steady spread over the sample; spread rate 3.6 mm/s. Average heat release 3,150 W and 409 kJ total by fuel consumption calorimetry, burn duration 130 s",
+      "spread_rate_mm_s": 3.6,
+      "flame_length_growth_mm_s": null,
+      "source_id": "20210011521",
+      "source_url": "https://ntrs.nasa.gov/citations/20210011521",
+      "source_text_file": "data/outside_psi/sources/20210011521.txt",
+      "page": 3,
+      "quote": "IV-1 SIBAL Cloth IV-2 2-sided PMMA Length (cm) Air Flow Rate (cm/s) Flow Direction Ambient Pressure (kPa) Oxygen Concentration (mol %) Pressurized Volume (m3) Free volume (m3) 50 20 Concurrent 100.0 22.0 18 20 Concurrent 100.0 22.0",
+      "supporting": [
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Flight/Sample IV-2 V-3 VI-3 VI-4 IV-1 V-2 VI-2"
+        },
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Flame spread rate (mm/s) NA NA NA NA 3.6 3.4 4.05"
+        },
+        {
+          "source_id": "20240002981",
+          "source_url": "https://ntrs.nasa.gov/citations/20240002981",
+          "source_text_file": "data/outside_psi/sources/20240002981.txt",
+          "page": 6,
+          "quote": "IV-1 SIBAL 130 3,150 409"
+        },
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Pressure (mbar) 1000 745 544 550 980 741 541"
+        }
+      ],
+      "notes": "Table 1 of 20260001992 lists columns IV-2, V-3, VI-3, VI-4, IV-1, V-2, VI-2 and gives rounded O2 mol fraction and mbar values that differ slightly from the primary kPa and mol percent values used here"
+    },
+    {
+      "flight": "Saffire IV",
+      "sample_id": "IV-2",
+      "material": "Cast PMMA, 2-sided, 1 cm thick, 18 cm long",
+      "o2_percent": 22.0,
+      "pressure_kpa": 100.0,
+      "pressure_psia": 14.5,
+      "flow_cm_s": 20,
+      "flow_direction": "concurrent",
+      "outcome": "Burned. Flame stayed anchored at the leading edge and advanced only by surface regression; flame length growth 0.22 mm/s, max flame length 90.8 mm; delayed extinguishment and a deflagration on low flow",
+      "spread_rate_mm_s": null,
+      "flame_length_growth_mm_s": 0.22,
+      "source_id": "20210011521",
+      "source_url": "https://ntrs.nasa.gov/citations/20210011521",
+      "source_text_file": "data/outside_psi/sources/20210011521.txt",
+      "page": 3,
+      "quote": "IV-1 SIBAL Cloth IV-2 2-sided PMMA Length (cm) Air Flow Rate (cm/s) Flow Direction Ambient Pressure (kPa) Oxygen Concentration (mol %) Pressurized Volume (m3) Free volume (m3) 50 20 Concurrent 100.0 22.0 18 20 Concurrent 100.0 22.0",
+      "supporting": [
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Flight/Sample IV-2 V-3 VI-3 VI-4 IV-1 V-2 VI-2"
+        },
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Flame length growth rate (mm/s) 0.22 0.26 0.38 0.27 NA NA NA"
+        },
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Max flame length (mm) 90.8 118 89.9 93.3 NA NA NA"
+        },
+        {
+          "source_id": "20210011521",
+          "source_url": "https://ntrs.nasa.gov/citations/20210011521",
+          "source_text_file": "data/outside_psi/sources/20210011521.txt",
+          "page": 8,
+          "quote": "Both concurrent samples (IV-2 and V-3) did not spread appreciably and instead remained fixed at the leading edge of the sample"
+        },
+        {
+          "source_id": "20210011521",
+          "source_url": "https://ntrs.nasa.gov/citations/20210011521",
+          "source_text_file": "data/outside_psi/sources/20210011521.txt",
+          "page": 9,
+          "quote": "burning in air grew to 9.5 cm after 400 seconds"
+        }
+      ],
+      "notes": "Table 1 of 20260001992 lists columns IV-2, V-3, VI-3, VI-4, IV-1, V-2, VI-2 and gives rounded O2 mol fraction and mbar values that differ slightly from the primary kPa and mol percent values used here"
+    },
+    {
+      "flight": "Saffire V",
+      "sample_id": "V-2",
+      "material": "Cotton jersey, 50 cm long",
+      "o2_percent": 26.2,
+      "pressure_kpa": 70.7,
+      "pressure_psia": 10.25,
+      "flow_cm_s": 20,
+      "flow_direction": "concurrent",
+      "outcome": "Burned. Spread rate 3.4 mm/s; flame persisted about 150 s after the fan was restarted following a 70 s flow-off interval",
+      "spread_rate_mm_s": 3.4,
+      "flame_length_growth_mm_s": null,
+      "source_id": "20210011521",
+      "source_url": "https://ntrs.nasa.gov/citations/20210011521",
+      "source_text_file": "data/outside_psi/sources/20210011521.txt",
+      "page": 3,
+      "quote": "V-2 Cotton Jersey 50 20 Concurrent 70.7 26.2",
+      "supporting": [
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Flight/Sample IV-2 V-3 VI-3 VI-4 IV-1 V-2 VI-2"
+        },
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Flame spread rate (mm/s) NA NA NA NA 3.6 3.4 4.05"
+        },
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Pressure (mbar) 1000 745 544 550 980 741 541"
+        }
+      ],
+      "notes": "Table 1 of 20260001992 lists columns IV-2, V-3, VI-3, VI-4, IV-1, V-2, VI-2 and gives rounded O2 mol fraction and mbar values that differ slightly from the primary kPa and mol percent values used here. The Saffire V model paper 20240008602 states approximately 0.71 atm and 29 pct oxygen and 26.5 pct O2 for the campaign"
+    },
+    {
+      "flight": "Saffire V",
+      "sample_id": "V-3",
+      "material": "Cast PMMA, 1-sided, 0.5 cm thick, 18 cm long",
+      "o2_percent": 25.4,
+      "pressure_kpa": 71.3,
+      "pressure_psia": 10.34,
+      "flow_cm_s": 20,
+      "flow_direction": "concurrent",
+      "outcome": "Burned. Flame anchored at the leading edge; flame length growth 0.26 mm/s, max flame length 118 mm; extinguished immediately when flow stopped after 300 s at 5 cm/s",
+      "spread_rate_mm_s": null,
+      "flame_length_growth_mm_s": 0.26,
+      "source_id": "20210011521",
+      "source_url": "https://ntrs.nasa.gov/citations/20210011521",
+      "source_text_file": "data/outside_psi/sources/20210011521.txt",
+      "page": 3,
+      "quote": "V-3 1 sided PMMA 18 20 Concurrent 71.3 25.4",
+      "supporting": [
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Flight/Sample IV-2 V-3 VI-3 VI-4 IV-1 V-2 VI-2"
+        },
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Flame length growth rate (mm/s) 0.22 0.26 0.38 0.27 NA NA NA"
+        },
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Max flame length (mm) 90.8 118 89.9 93.3 NA NA NA"
+        },
+        {
+          "source_id": "20210011521",
+          "source_url": "https://ntrs.nasa.gov/citations/20210011521",
+          "source_text_file": "data/outside_psi/sources/20210011521.txt",
+          "page": 9,
+          "quote": "Saffire V-3, the one-sided PMMA sample flame (in 25.4% oxygen) grew to 11 cm after 450 seconds"
+        }
+      ],
+      "notes": "Table 1 of 20260001992 lists columns IV-2, V-3, VI-3, VI-4, IV-1, V-2, VI-2 and gives rounded O2 mol fraction and mbar values that differ slightly from the primary kPa and mol percent values used here"
+    },
+    {
+      "flight": "Saffire V",
+      "sample_id": "V-4",
+      "material": "Structured cast PMMA, 1 cm thick with 3 mm ribs, 20 cm long",
+      "o2_percent": 25.7,
+      "pressure_kpa": 72.6,
+      "pressure_psia": 10.53,
+      "flow_cm_s": 20,
+      "flow_direction": "opposed",
+      "outcome": "Burned. Opposed spread along ribs; deflagration at ignition; spread rate not tabulated in the extracted sources",
+      "spread_rate_mm_s": null,
+      "flame_length_growth_mm_s": null,
+      "source_id": "20210011521",
+      "source_url": "https://ntrs.nasa.gov/citations/20210011521",
+      "source_text_file": "data/outside_psi/sources/20210011521.txt",
+      "page": 3,
+      "quote": "V-4 Structured PMMA 20 20 Opposed 72.6 25.7",
+      "supporting": [],
+      "notes": "Rib spread rate is reported in ICES-2021-218 and was not extracted"
+    },
+    {
+      "flight": "Saffire VI",
+      "sample_id": "VI-1",
+      "material": "Nomex fabric",
+      "o2_percent": 31.9,
+      "pressure_kpa": null,
+      "pressure_psia": null,
+      "flow_cm_s": null,
+      "flow_direction": null,
+      "outcome": "Did not ignite",
+      "spread_rate_mm_s": null,
+      "flame_length_growth_mm_s": null,
+      "source_id": "20250002675",
+      "source_url": "https://ntrs.nasa.gov/citations/20250002675",
+      "source_text_file": "data/outside_psi/sources/20250002675.txt",
+      "page": 4,
+      "quote": "Nomex Burn: 31.9% O2. Did not Ignite",
+      "supporting": [],
+      "notes": "Pressure and flow for this event not stated in the extracted text"
+    },
+    {
+      "flight": "Saffire VI",
+      "sample_id": "VI-2",
+      "material": "SIBAL cloth (75 pct cotton, 25 pct fiberglass), 50 cm long",
+      "o2_percent": 31.0,
+      "pressure_kpa": 54.1,
+      "pressure_psia": 7.85,
+      "flow_cm_s": 20,
+      "flow_direction": "concurrent",
+      "outcome": "Burned. Spread rate 4.05 mm/s; peak heat release 3217 W and 580 kJ total by oxygen consumption, burn duration 112 s (a later paper gives peak HRR 3376 W)",
+      "spread_rate_mm_s": 4.05,
+      "flame_length_growth_mm_s": null,
+      "source_id": "20250002675",
+      "source_url": "https://ntrs.nasa.gov/citations/20250002675",
+      "source_text_file": "data/outside_psi/sources/20250002675.txt",
+      "page": 4,
+      "quote": "concurrent flow, 31.0% O2 at 54.1",
+      "supporting": [
+        {
+          "source_id": "20240002981",
+          "source_url": "https://ntrs.nasa.gov/citations/20240002981",
+          "source_text_file": "data/outside_psi/sources/20240002981.txt",
+          "page": 3,
+          "quote": "VI-2 SIBAL Cloth 50 20 Concurrent 54.1 VI-3 Two-Sided PMMA 18 20 Concurrent 54.6 VI-4 One-Sided PMMA 18 20 Concurrent 55.2 Oxygen Concentration (mol 22.0 26.2 31.0 30.3 28.8 %)"
+        },
+        {
+          "source_id": "20240002981",
+          "source_url": "https://ntrs.nasa.gov/citations/20240002981",
+          "source_text_file": "data/outside_psi/sources/20240002981.txt",
+          "page": 4,
+          "quote": "Oxidizer flow is from the left at 20 cm/s in all cases"
+        },
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Flight/Sample IV-2 V-3 VI-3 VI-4 IV-1 V-2 VI-2"
+        },
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Flame spread rate (mm/s) NA NA NA NA 3.6 3.4 4.05"
+        },
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Peak HRR (W) NA NA 3240 1487 NA NA 3376"
+        },
+        {
+          "source_id": "20240002981",
+          "source_url": "https://ntrs.nasa.gov/citations/20240002981",
+          "source_text_file": "data/outside_psi/sources/20240002981.txt",
+          "page": 6,
+          "quote": "VI-2 SIBAL 112 3217 580 3,650 409"
+        }
+      ],
+      "notes": "Table 1 of 20260001992 lists columns IV-2, V-3, VI-3, VI-4, IV-1, V-2, VI-2 and gives rounded O2 mol fraction and mbar values that differ slightly from the primary kPa and mol percent values used here"
+    },
+    {
+      "flight": "Saffire VI",
+      "sample_id": "VI-3",
+      "material": "Cast PMMA, 2-sided, 1 cm thick, 18 cm long",
+      "o2_percent": 30.3,
+      "pressure_kpa": 54.6,
+      "pressure_psia": 7.92,
+      "flow_cm_s": 20,
+      "flow_direction": "concurrent",
+      "outcome": "Burned. Flame anchored at the leading edge; flame length growth 0.38 mm/s, max flame length 89.9 mm; peak heat release 3080 W and 1280 kJ total over 780 s; CO2 partial pressure increase exceeded the 1-hour limit",
+      "spread_rate_mm_s": null,
+      "flame_length_growth_mm_s": 0.38,
+      "source_id": "20250002675",
+      "source_url": "https://ntrs.nasa.gov/citations/20250002675",
+      "source_text_file": "data/outside_psi/sources/20250002675.txt",
+      "page": 4,
+      "quote": "concurrent flow, 30.3% O2 at 54.6 kPa",
+      "supporting": [
+        {
+          "source_id": "20240002981",
+          "source_url": "https://ntrs.nasa.gov/citations/20240002981",
+          "source_text_file": "data/outside_psi/sources/20240002981.txt",
+          "page": 3,
+          "quote": "VI-2 SIBAL Cloth 50 20 Concurrent 54.1 VI-3 Two-Sided PMMA 18 20 Concurrent 54.6 VI-4 One-Sided PMMA 18 20 Concurrent 55.2 Oxygen Concentration (mol 22.0 26.2 31.0 30.3 28.8 %)"
+        },
+        {
+          "source_id": "20240002981",
+          "source_url": "https://ntrs.nasa.gov/citations/20240002981",
+          "source_text_file": "data/outside_psi/sources/20240002981.txt",
+          "page": 4,
+          "quote": "Oxidizer flow is from the left at 20 cm/s in all cases"
+        },
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Flight/Sample IV-2 V-3 VI-3 VI-4 IV-1 V-2 VI-2"
+        },
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Flame length growth rate (mm/s) 0.22 0.26 0.38 0.27 NA NA NA"
+        },
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Max flame length (mm) 90.8 118 89.9 93.3 NA NA NA"
+        },
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Peak HRR (W) NA NA 3240 1487 NA NA 3376"
+        },
+        {
+          "source_id": "20240002981",
+          "source_url": "https://ntrs.nasa.gov/citations/20240002981",
+          "source_text_file": "data/outside_psi/sources/20240002981.txt",
+          "page": 6,
+          "quote": "VI-3 2-sided 780 3080 1280 PMMA"
+        }
+      ],
+      "notes": "Table 1 of 20260001992 lists columns IV-2, V-3, VI-3, VI-4, IV-1, V-2, VI-2 and gives rounded O2 mol fraction and mbar values that differ slightly from the primary kPa and mol percent values used here"
+    },
+    {
+      "flight": "Saffire VI",
+      "sample_id": "VI-4",
+      "material": "Cast PMMA, 1-sided, 0.5 cm thick, 18 cm long",
+      "o2_percent": 28.8,
+      "pressure_kpa": 55.2,
+      "pressure_psia": 8.01,
+      "flow_cm_s": 20,
+      "flow_direction": "concurrent",
+      "outcome": "Burned. Flame anchored at the leading edge; flame length growth 0.27 mm/s, max flame length 93.3 mm; peak heat release 1507 W and 830 kJ total over 1200 s",
+      "spread_rate_mm_s": null,
+      "flame_length_growth_mm_s": 0.27,
+      "source_id": "20250002675",
+      "source_url": "https://ntrs.nasa.gov/citations/20250002675",
+      "source_text_file": "data/outside_psi/sources/20250002675.txt",
+      "page": 4,
+      "quote": "concurrent flow, 28.8% O2 at 55.2 kPa",
+      "supporting": [
+        {
+          "source_id": "20240002981",
+          "source_url": "https://ntrs.nasa.gov/citations/20240002981",
+          "source_text_file": "data/outside_psi/sources/20240002981.txt",
+          "page": 3,
+          "quote": "VI-2 SIBAL Cloth 50 20 Concurrent 54.1 VI-3 Two-Sided PMMA 18 20 Concurrent 54.6 VI-4 One-Sided PMMA 18 20 Concurrent 55.2 Oxygen Concentration (mol 22.0 26.2 31.0 30.3 28.8 %)"
+        },
+        {
+          "source_id": "20240002981",
+          "source_url": "https://ntrs.nasa.gov/citations/20240002981",
+          "source_text_file": "data/outside_psi/sources/20240002981.txt",
+          "page": 4,
+          "quote": "Oxidizer flow is from the left at 20 cm/s in all cases"
+        },
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Flight/Sample IV-2 V-3 VI-3 VI-4 IV-1 V-2 VI-2"
+        },
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Flame length growth rate (mm/s) 0.22 0.26 0.38 0.27 NA NA NA"
+        },
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Max flame length (mm) 90.8 118 89.9 93.3 NA NA NA"
+        },
+        {
+          "source_id": "20260001992",
+          "source_url": "https://ntrs.nasa.gov/citations/20260001992",
+          "source_text_file": "data/outside_psi/sources/20260001992.txt",
+          "page": 6,
+          "quote": "Peak HRR (W) NA NA 3240 1487 NA NA 3376"
+        },
+        {
+          "source_id": "20240002981",
+          "source_url": "https://ntrs.nasa.gov/citations/20240002981",
+          "source_text_file": "data/outside_psi/sources/20240002981.txt",
+          "page": 6,
+          "quote": "VI-4 1-sided 1200 1507 830 PMMA"
+        }
+      ],
+      "notes": "Table 1 of 20260001992 lists columns IV-2, V-3, VI-3, VI-4, IV-1, V-2, VI-2 and gives rounded O2 mol fraction and mbar values that differ slightly from the primary kPa and mol percent values used here"
+    }
+  ]
+}
