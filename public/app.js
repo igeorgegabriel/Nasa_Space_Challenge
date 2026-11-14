@@ -1563,7 +1563,6 @@ function testNextSection(env) {
 
 const PLAN_COL = { solid: "#e06d34", liquid_droplet: "#5b95e8", gas: "#9fb0d6" };
 const PLAN_ENV_COL = ["#f2c14e", "#7fd1b9", "#c792ea", "#82aaff", "#ff8a80"];
-const PLAN_SHORT = { iss: "ISS", gateway: "Gateway", lunar: "Moon base", mars: "Mars base", rover: "Rover" };
 const PLAN_X = [12, 42];
 const PLAN_Y = [3.4, 50];
 const PLAN_DUR = 700;
@@ -1586,7 +1585,7 @@ function planNearText(t) {
     return "No PSI test of this fuel class has an O2 value.";
   }
   const o2 = fmt(n.o2_frac * 100, 1) + "% O2";
-  const p = n.pressure_atm === null ? "pressure not recorded" : fmt(psia(n.pressure_atm), 1) + " psia";
+  const p = n.pressure_atm === null ? "pressure not recorded" : fmt(psia(n.pressure_atm), 1) + " psia" + (n.pressure_sourced ? " (from a NASA report)" : "");
   const away = n.pressure_gap_psia === null ? fmt(n.o2_gap_points, 1) + " O2 points away" : fmt(n.o2_gap_points, 1) + " O2 points and " + fmt(n.pressure_gap_psia, 1) + " psia away";
   return "Nearest PSI test: " + n.psi_id + " " + (n.investigation || "") + ", row " + n.source_row + ", " + o2 + ", " + p + " (" + away + ").";
 }
@@ -1606,16 +1605,28 @@ function planIsCountable(r, fc) {
   return r.fuel_class === fc && r.o2_basis === "ambient" && (r.value_quality === "exact" || r.value_quality === "approximate") && r.o2_frac !== null && r.o2_frac !== undefined;
 }
 
+function planAtm(r) {
+  if (r.pressure_atm && r.pressure_atm > 0) {
+    return r.pressure_atm;
+  }
+  const sourced = sourcedPressure(r);
+  return sourced ? sourced.pressure_atm : null;
+}
+
 function planRows(fc) {
   return state.data.conditions.filter(function (r) {
-    return planIsCountable(r, fc) && r.pressure_atm && r.pressure_atm > 0;
+    return planIsCountable(r, fc) && planAtm(r) !== null;
   });
 }
 
 function planLaneRows(fc) {
   return state.data.conditions.filter(function (r) {
-    return planIsCountable(r, fc) && !(r.pressure_atm && r.pressure_atm > 0);
+    return planIsCountable(r, fc) && planAtm(r) === null;
   });
+}
+
+function planSourcedCount(fc) {
+  return planRows(fc).filter(function (r) { return !(r.pressure_atm && r.pressure_atm > 0); }).length;
 }
 
 function planClassTotal(fc) {
@@ -1630,8 +1641,8 @@ function planTraces(fc, t) {
   const traces = [{
     type: "scatter", mode: "markers", name: "PSI tests (" + rows.length + ")",
     x: rows.map(function (r) { return r.o2_frac * 100; }),
-    y: rows.map(function (r) { return psia(r.pressure_atm); }),
-    text: rows.map(function (r) { return airRowHover(r, "", r.pressure_atm); }),
+    y: rows.map(function (r) { return psia(planAtm(r)); }),
+    text: rows.map(function (r) { return airRowHover(r, r.pressure_atm && r.pressure_atm > 0 ? "" : " | pressure from a NASA report", planAtm(r)); }),
     hovertemplate: "%{text}<extra></extra>",
     marker: { color: PLAN_COL[fc], size: grow(6), opacity: 0.35, line: { width: 0 } }
   }, {
@@ -1651,7 +1662,7 @@ function planTraces(fc, t) {
     const col = PLAN_ENV_COL[i % PLAN_ENV_COL.length];
     const flow = w.flow_cm_s ? ", flow " + dashSpan(w.flow_cm_s.min, w.flow_cm_s.max, 1, "cm/s") : ", flow not specified";
     traces.push({
-      type: "scatter", mode: "lines", name: PLAN_SHORT[id] || w.name,
+      type: "scatter", mode: "lines", name: w.name,
       x: [x0, x1, x1, x0, x0], y: [y0, y0, y1, y1, y0],
       fill: "toself", fillcolor: plotRgba(col, 0.1), hoveron: "fills+points",
       line: { color: col, width: 2 },
@@ -1700,12 +1711,12 @@ function planLegend(fc) {
   const chip = function (kind, color, label) {
     return el("span", { class: "plan-key" }, el("span", { class: "plan-sw " + kind, style: kind === "box" ? "border-color:" + color : "background:" + color + (kind === "ring" ? ";border-color:" + PLAN_COL[fc] : "") }), label);
   };
-  const items = [
-    chip("dot", PLAN_COL[fc], "PSI tests (" + planRows(fc).length + ")"),
-    chip("dot faint", PLAN_COL[fc], "No pressure recorded (" + planLaneRows(fc).length + ")")
-  ];
+  const items = [chip("dot", PLAN_COL[fc], "PSI tests (" + planRows(fc).length + ")")];
+  if (planLaneRows(fc).length) {
+    items.push(chip("dot faint", PLAN_COL[fc], "No pressure recorded (" + planLaneRows(fc).length + ")"));
+  }
   Object.keys(state.data.test_plan.windows).forEach(function (id, i) {
-    items.push(chip("box", PLAN_ENV_COL[i % PLAN_ENV_COL.length], PLAN_SHORT[id] || state.data.test_plan.windows[id].name));
+    items.push(chip("box", PLAN_ENV_COL[i % PLAN_ENV_COL.length], state.data.test_plan.windows[id].name));
   });
   items.push(chip("ring", "#ffffff", "Planned test"));
   clear(planUi.legend);
@@ -1720,7 +1731,13 @@ function planDraw() {
   const fc = planUi.fuel;
   const play = !planUi.played && !reduceMotion();
   planLegend(fc);
-  planUi.note.textContent = planClassTotal(fc) + " " + (NEXT_LABELS[fc] || fc).toLowerCase() + " PSI rows have an O2 value; " + planRows(fc).length + " also record a pressure. The rest sit in the bottom lane.";
+  const sourced = planSourcedCount(fc);
+  const recorded = planRows(fc).length - sourced;
+  const laneCount = planLaneRows(fc).length;
+  planUi.note.textContent = planClassTotal(fc) + " " + (NEXT_LABELS[fc] || fc).toLowerCase() + " PSI rows have an O2 value." +
+    (recorded ? " " + recorded + " record a pressure in PSI." : "") +
+    (sourced ? " " + sourced + " are plotted at the pressure NASA reports state." : "") +
+    (laneCount ? " " + laneCount + " sit in the bottom lane." : "");
   window.Plotly.react(node, planTraces(fc, play ? 0 : 1), planLayout(), plotConfig()).then(function () {
     planUi.played = true;
     if (!play) {
@@ -1749,7 +1766,7 @@ function planSelect(fc) {
 const PLAN_COLUMNS = [
   "rank", "fuel_class", "o2_min_percent", "o2_max_percent", "pressure_min_psia", "pressure_max_psia", "pressure_min_atm", "pressure_max_atm",
   "flow_min_cm_s", "flow_max_cm_s", "flow_note", "habitats_closed", "habitat_ids", "gravity_note",
-  "nearest_psi_id", "nearest_investigation", "nearest_source_file", "nearest_source_row", "nearest_o2_percent", "nearest_pressure_psia",
+  "nearest_psi_id", "nearest_investigation", "nearest_source_file", "nearest_source_row", "nearest_o2_percent", "nearest_pressure_psia", "nearest_pressure_from_report",
   "nearest_o2_gap_points", "nearest_pressure_gap_psia", "nearest_distance", "source_ids"
 ];
 
@@ -1761,7 +1778,7 @@ function planCsvRow(t) {
     t.rank, t.fuel_class, rnd(t.o2.min * 100, 2), rnd(t.o2.max * 100, 2), rnd(psia(t.pressure_atm.min), 2), rnd(psia(t.pressure_atm.max), 2), t.pressure_atm.min, t.pressure_atm.max,
     t.flow_cm_s ? t.flow_cm_s.min : "", t.flow_cm_s ? t.flow_cm_s.max : "", blank(t.flow_note), t.habitat_names.join("; "), t.habitats.join("; "), t.gravity.note,
     blank(n.psi_id), blank(n.investigation), blank(n.source_file), blank(n.source_row), n.o2_frac === undefined ? "" : rnd(n.o2_frac * 100, 2),
-    n.pressure_atm === null || n.pressure_atm === undefined ? "" : rnd(psia(n.pressure_atm), 2), blank(n.o2_gap_points),
+    n.pressure_atm === null || n.pressure_atm === undefined ? "" : rnd(psia(n.pressure_atm), 2), n.pressure_sourced ? "yes" : "no", blank(n.o2_gap_points),
     blank(n.pressure_gap_psia), blank(n.distance), t.source_refs.join("; ")
   ];
 }
@@ -1770,7 +1787,7 @@ function planCsvText() {
   const plan = state.data.test_plan;
   const lines = [
     "# Derived test matrix: " + plan.headline.text + ". Boxes are overlaps of NASA habitat windows (environments.json); the nearest test is a PSI row of the unified table.",
-    "# Distance is derived: sqrt(O2 gap in points squared + pressure gap in psia squared); the O2 gap alone where the fuel class records no pressure.",
+    "# Distance is derived: sqrt(O2 gap in points squared + pressure gap in psia squared). Solid rows without a PSI pressure use the pressure in the NASA report for that flight.",
     PLAN_COLUMNS.join(",")
   ];
   plan.tests.forEach(function (t) {
@@ -2433,6 +2450,18 @@ function airCardModel() {
     el("p", { class: "air-card-foot" }, el("a", { href: "#/data?at=model", text: "How the model was checked" })));
 }
 
+function gravityFacts() {
+  const lg = state.data.lunar_g;
+  const d = state.data.partial_g.summary.largest_drop;
+  return {
+    allow: fmt(lg.paper.worst_case_delta_o2_points, 1),
+    count: lg.materials.length,
+    drop: fmt(d.points, 1),
+    material: d.material.split(" (")[0],
+    psia: d.pressure_psia_raw
+  };
+}
+
 function airCardGravity() {
   const lg = state.data.lunar_g;
   const title = el("p", { class: "air-card-title", text: "Gravity" });
@@ -2442,7 +2471,7 @@ function airCardGravity() {
   } else if (air.g === "moon") {
     const other = lg.materials.filter(function (m) { return m.direction === "less_flammable"; }).map(function (m) { return m.name; });
     body = [
-      el("p", { class: "air-card-body", text: "On the Moon a 1-g test margin may shrink by up to " + fmt(lg.paper.worst_case_delta_o2_points, 1) + " O2 points." }),
+      el("p", { class: "air-card-body", text: "NASA Glenn allows up to " + gravityFacts().allow + " O2 points for " + gravityFacts().count + " materials; lunar drop tests measured up to " + gravityFacts().drop + " (" + gravityFacts().material + ")." }),
       other.length ? el("p", { class: "air-card-body", text: "At lunar gravity " + other.join(" and ") + " burned only at higher oxygen." }) : null
     ];
   } else {
@@ -2930,14 +2959,13 @@ function renderHome() {
     el("p", { class: "gap-note" }, gapCaption(), " ", el("a", { href: "#/data?at=extractor", text: "See the rows" })),
     el("div", { class: "gap-more" }, gapDetails(lunar))
   ]);
-  const lg = data.lunar_g;
   const grav = story("st-grav", "s-grav", [
     rv(0, "h2", { text: "Gravity changes it too" }),
     el("div", { class: "grav-wrap" },
       rv(1, "figure", { class: "gm gm-home" }, gravityMap(true),
         el("figcaption", { class: "small", text: "Concept drawing, not data." })),
       el("div", { class: "grav-copy" },
-        rv(2, "p", { class: "story-line", text: "On the Moon, a 1-g test margin may shrink by up to " + fmt(lg.paper.worst_case_delta_o2_points, 1) + " oxygen points." }),
+        rv(2, "p", { class: "story-line", text: "On the Moon, NASA Glenn's allowance for a 1-g test margin is up to " + gravityFacts().allow + " oxygen points, and drop tests measured up to " + gravityFacts().drop + "." }),
         rv(3, "p", { class: "story-sub" }, el("a", { class: "btn ghost", href: "#/gravity", text: "See the lunar gravity check" }))))
   ]);
   const next = story("st-next", "s-next", [
@@ -3633,6 +3661,145 @@ function gravityChart(lg) {
     el("figcaption", { class: "small muted", text: "Conservative allowance from the paper, in oxygen points (percentage points of O2). Colour marks what the lunar-g tests showed, not the size of the bar." }));
 }
 
+const GV_MEAS_COLORS = ["#b04a2a", "#1f5fa8", "#2f8f5b"];
+const GV_MEAS_PRELIM = "#4a4f5c";
+const GV_MEAS_Y = [12, 40];
+const GV_MEAS_DUR = 700;
+
+function gravityField(p, name) {
+  return p.fields.filter(function (f) { return f.name === name; })[0] || null;
+}
+
+function gravityMeasValue(f) {
+  return f.as_stated ? f.as_stated.replace("~", "about ") : f.raw + "%";
+}
+
+function gravityMeasHover(p, series) {
+  const f = gravityField(p, series.field);
+  const press = gravityField(p, "total_pressure");
+  const flow = gravityField(p, "forced_flow");
+  const lines = [
+    p.material,
+    (series.field === "ulois_percent_o2" ? "ULOI* " : "LOC ") + gravityMeasValue(f) + " O2",
+    "Pressure " + (press ? press.raw + " " + press.unit : "not stated"),
+    "Flow " + (flow ? flow.raw + " " + flow.unit + " forced" : "not stated for this point"),
+    "Test: " + p.gravity_label,
+    "Source: " + p.source.cite + ", NTRS " + p.source.ntrs_id + ", page " + p.quote.page
+  ];
+  if (series.preliminary) {
+    lines.push("Preliminary poster, not peer reviewed");
+  }
+  return lines.map(function (l, i) { return i === 0 ? "<b>" + plotEscape(l) + "</b>" : plotWrap(l, 50); }).join("<br>");
+}
+
+function gravityMeasSeries(pg) {
+  const byId = {};
+  pg.points.forEach(function (p) { byId[p.id] = p; });
+  const labels = {};
+  pg.levels.forEach(function (lv) { labels[lv.id] = lv.label; });
+  let color = 0;
+  return pg.chart.map(function (s) {
+    const ids = pg.levels.map(function (lv) { return s.points[lv.id]; }).filter(Boolean);
+    const pts = ids.map(function (id) { return byId[id]; });
+    const press = gravityField(pts[0], "total_pressure");
+    const mat = pts[0].material.split(" (")[0];
+    const col = s.preliminary ? GV_MEAS_PRELIM : GV_MEAS_COLORS[color++ % GV_MEAS_COLORS.length];
+    return {
+      series: s,
+      points: pts,
+      color: col,
+      name: mat + ", " + press.raw + " " + press.unit + (s.preliminary ? " (preliminary)" : ""),
+      x: pg.levels.map(function (lv) { return lv.label; }),
+      y: pg.levels.map(function (lv) { const p = byId[s.points[lv.id]]; return p ? gravityField(p, s.field).value : null; }),
+      hover: pg.levels.map(function (lv) { const p = byId[s.points[lv.id]]; return p ? gravityMeasHover(p, s) : ""; })
+    };
+  });
+}
+
+function gravityMeasured(pg) {
+  const th = PLOT_LIGHT;
+  const small = window.innerWidth < 640;
+  const list = gravityMeasSeries(pg);
+  const moon = envById("lunar");
+  const moonO2 = moon ? envNumber(moon) : pg.summary.moon_o2_percent;
+  const order = pg.levels.map(function (lv) { return lv.label; });
+  const base = GV_MEAS_Y[0];
+  const bottom = small ? 150 : 84;
+  const height = (small ? 330 : 360) + bottom;
+  const plot = el("div", { class: "gv-plot gv-meas", role: "img",
+    "aria-label": "Limiting oxygen by gravity level: " + list.map(function (s) { return s.name + " " + s.y.filter(function (v) { return v !== null; }).join(", "); }).join("; ") + ". Moon base air is " + moonO2 + " percent." });
+  plot.style.height = height + "px";
+  function traces(e) {
+    const out = list.map(function (s) {
+      const preliminary = s.series.preliminary;
+      return {
+        type: "scatter",
+        mode: "lines+markers",
+        name: s.name,
+        x: s.x,
+        y: s.y.map(function (v) { return v === null ? null : base + (v - base) * e; }),
+        line: { color: s.color, width: 2.5, dash: preliminary ? "dash" : "solid" },
+        marker: { color: preliminary ? "#fffdfa" : s.color, size: 9, line: { color: s.color, width: 2 } },
+        hovertext: s.hover,
+        hovertemplate: "%{hovertext}<extra></extra>"
+      };
+    });
+    out.push({
+      type: "scatter",
+      mode: "lines",
+      name: "Moon base air",
+      x: [order[0], order[order.length - 1]],
+      y: [moonO2, moonO2],
+      line: { color: "#c2410c", width: 1.5, dash: "dot" },
+      showlegend: false,
+      hovertemplate: "Moon base air: " + moonO2 + "% O2<extra></extra>"
+    });
+    return out;
+  }
+  const layout = Object.assign(plotBase(th), {
+    height: height,
+    margin: { l: small ? 40 : 52, r: 16, t: 14, b: bottom, pad: 0 },
+    dragmode: false,
+    hoverdistance: 16,
+    xaxis: {
+      type: "category", categoryorder: "array", categoryarray: order, fixedrange: true, zeroline: false, showgrid: true, gridcolor: th.grid,
+      showline: true, linecolor: th.axis, ticks: "", tickfont: { size: small ? 11 : 13, color: th.strong }, range: [-0.3, order.length - 0.7]
+    },
+    yaxis: {
+      range: GV_MEAS_Y, tickvals: [15, 20, 25, 30, 35, 40], fixedrange: true, zeroline: false, showgrid: true, gridcolor: th.grid,
+      showline: true, linecolor: th.axis, ticks: "", tickfont: { size: 12, color: th.muted },
+      title: { text: "Limiting O2 (percent)", font: { size: 12, color: th.muted }, standoff: 6 }
+    },
+    annotations: [{ x: order[0], y: moonO2, xref: "x", yref: "y", xanchor: "left", yanchor: "bottom", showarrow: false, text: "Moon base air " + moonO2 + "%", font: { size: 12, color: "#c2410c" } }],
+    showlegend: true,
+    legend: { orientation: "h", x: 0, xref: "container", y: 0, yref: "container", yanchor: "bottom", font: { size: 12, color: th.text }, bgcolor: "rgba(0,0,0,0)", itemsizing: "constant" }
+  });
+  const idx = list.map(function (s, i) { return i; });
+  plotWhenVisible(plot, function () {
+    const play = !reduceMotion();
+    window.Plotly.newPlot(plot, traces(play ? 0 : 1), layout, plotConfig()).then(function () {
+      if (!play) {
+        return;
+      }
+      plotRun(GV_MEAS_DUR, function (t) {
+        const e = gapEaseOut(gapClamp(t));
+        return window.Plotly.restyle(plot, { y: list.map(function (s) { return s.y.map(function (v) { return v === null ? null : base + (v - base) * e; }); }) }, idx);
+      });
+    });
+  });
+  const items = pg.qualitative.map(function (q) {
+    return el("li", null, q.text + " ", el("a", { href: q.url, text: q.cite }));
+  });
+  return el("section", { class: "gv-block gv-meas-block" },
+    el("h2", { text: "Measured at lunar and Martian gravity" }),
+    el("p", { class: "gv-meas-head", text: pg.summary.headline + " " + pg.summary.headline_detail }),
+    el("figure", { class: "gv-chart gv-meas-chart" },
+      plot,
+      el("figcaption", { class: "small muted", text: "Limiting oxygen at each gravity level: lower means a flame survives at less oxygen. Tests differ in pressure, flow and definitions, so they are not combined." })),
+    el("h3", { text: "Other measurements" }),
+    el("ul", { class: "gv-meas-list small" }, items));
+}
+
 function gravityMap(glide) {
   const reduced = reduceMotion();
   const svg = svgEl("svg", { class: "gm-svg", viewBox: "0 0 380 270", role: "img", "aria-label": "Concept drawing of a flammability map: oxygen needed against flow speed, with a quenching branch at low flow and a blowoff branch at high flow." });
@@ -3669,11 +3836,11 @@ function gravityMap(glide) {
 function gravityHabitat(lg) {
   const lunar = envById("lunar");
   const o2 = lunar ? envNumber(lunar) : null;
-  const worst = fmt(lg.paper.worst_case_delta_o2_points, 1);
+  const gf = gravityFacts();
   return el("section", { class: "gv-habitat" },
     el("p", { class: "gv-hab-big", text: o2 !== null ? "Moon base air: " + o2 + "% O2" : "Moon base air" }),
-    el("p", { class: "gv-hab-line", text: "For these materials, read a 1-g test margin as up to " + worst + " O2 points smaller." }),
-    el("p", { class: "small muted", text: "That is the paper's conservative allowance, not a measured lunar-g limit. Polycarbonate and Nomex Velcro went the other way in the lunar-g tests: they burned only at higher oxygen." }));
+    el("p", { class: "gv-hab-line", text: "NASA Glenn's 2025 allowance for " + gf.count + " materials is up to " + gf.allow + " O2 points." }),
+    el("p", { class: "small muted", text: "It is a conservative allowance, not a maximum and not a measured lunar-g limit. Drop tests measured " + gf.drop + " points for " + gf.material + " at " + gf.psia + " psia. Polycarbonate and Nomex Velcro went the other way in the lunar-g tests: they burned only at higher oxygen." }));
 }
 
 function gravityDetails(lg) {
@@ -3706,11 +3873,12 @@ function gravityDetails(lg) {
 function renderGravity() {
   const lg = state.data.lunar_g;
   return setView(
-    pageHead("Moon gravity can change the answer", "NASA's conservative allowance: read a 1-g test margin as up to " + fmt(lg.paper.worst_case_delta_o2_points, 1) + " O2 points smaller. Measured at lunar gravity, some materials burned at lower oxygen, others only at higher."),
+    pageHead("Moon gravity can change the answer", "NASA Glenn's 2025 allowance for " + gravityFacts().count + " materials is up to " + gravityFacts().allow + " O2 points; drop tests measured up to " + gravityFacts().drop + " for " + gravityFacts().material + ". At lunar gravity some materials burned at lower oxygen, others only at higher."),
     el("section", { class: "gv-block" },
       el("h2", { text: "How much to allow" }),
       gravityChart(lg)),
     gravityHabitat(lg),
+    gravityMeasured(state.data.partial_g),
     el("section", { class: "gv-block" },
       el("h2", { text: "Why it is not a straight line" }),
       el("p", { class: "data-cap", text: "Partial gravity cannot be read off between 0 g and 1 g. Flames can die at low flow or blow off at high flow." }),
@@ -4261,7 +4429,7 @@ function renderData(params) {
   };
   const extractor = extractorPanel(filterParams);
   const cards = [
-    dataCard(fmt(data.lunar_g.paper.worst_case_delta_o2_points, 1), "O2 points: the most a 1-g test margin may shrink in Moon gravity, per NASA's conservative allowance.", el("a", { class: "textlink", href: "#/gravity", text: "Lunar gravity check" })),
+    dataCard(fmt(data.lunar_g.paper.worst_case_delta_o2_points, 1), "O2 points: NASA Glenn's allowance for a 1-g margin on the Moon. Drop tests measured up to " + gravityFacts().drop + " for " + gravityFacts().material + ".", el("a", { class: "textlink", href: "#/gravity", text: "Lunar gravity check" })),
     dataCard(partly + " of " + lunarItems.length, "model relationships are at least partly supported for a Moon base.", link("readiness", "Details")),
     dataCard(data.conditions.length.toLocaleString("en-US"), "rows of test conditions, ready to download.",
       el("div", { class: "card-actions" },
@@ -5168,7 +5336,7 @@ function route() {
 }
 
 function init() {
-  const names = ["investigations", "conditions", "environments", "insights", "earth", "rank_reference", "model_readiness", "test_next", "verification", "outside_psi", "models", "lunar_g", "test_plan", "data_health"];
+  const names = ["investigations", "conditions", "environments", "insights", "earth", "rank_reference", "model_readiness", "test_next", "verification", "outside_psi", "models", "lunar_g", "test_plan", "data_health", "partial_g"];
   Promise.all(names.map(loadJson)).then(function (loaded) {
     state.data = {
       investigations: loaded[0].investigations,
@@ -5184,7 +5352,8 @@ function init() {
       models: loaded[10],
       lunar_g: loaded[11],
       test_plan: loaded[12],
-      data_health: loaded[13]
+      data_health: loaded[13],
+      partial_g: loaded[14]
     };
     state.weights = Object.assign({}, state.data.rank_reference.weights);
     parityCheck();

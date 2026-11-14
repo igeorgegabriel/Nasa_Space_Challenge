@@ -86,7 +86,7 @@
   "A gap is a habitat and fuel class with no PSI test inside the habitat window (the count in test_next.json is 0).",
   "Candidate tests are the habitat windows and every overlap of them; a planned test is a box that lies inside the windows it covers.",
   "Greedy cover per fuel class: pick the box that covers the most uncovered habitats; ties go to the box furthest from any existing PSI test.",
-  "Distance is derived: sqrt(O2 gap in percentage points squared + pressure gap in psia squared) from the box centre to the nearest PSI row of that fuel class with a recorded pressure; where the class has no recorded pressure at all (solid fuels) it is the O2 gap alone.",
+  "Distance is derived: sqrt(O2 gap in percentage points squared + pressure gap in psia squared) from the box centre to the nearest PSI row of that fuel class with a pressure; solid rows that record no pressure in PSI use the pressure stated in the NASA report for that flight (outside_psi.json), and a class with no pressure at all would use the O2 gap alone.",
   "Gravity is not part of the cover: a microgravity facility matches the free-fall habitats only."
  ],
  "tests": [
@@ -112,9 +112,9 @@
     ]
    },
    "habitat_names": [
-    "Lunar surface habitat",
-    "Mars surface habitat",
-    "Pressurized rover (lunar)"
+    "Moon base",
+    "Mars base",
+    "Pressurized rover"
    ],
    "habitats": [
     "lunar",
@@ -123,13 +123,15 @@
    ],
    "id": "T01",
    "nearest": {
-    "distance": 12.05,
+    "distance": 13.556,
     "flow_cm_s": null,
     "investigation": "BASS-II",
     "o2_frac": 0.222,
     "o2_gap_points": 12.05,
-    "pressure_atm": null,
-    "pressure_gap_psia": null,
+    "pressure_atm": 0.9805,
+    "pressure_gap_psia": 6.209,
+    "pressure_source_url": "https://ntrs.nasa.gov/citations/20210011385",
+    "pressure_sourced": true,
     "psi_id": "PSI-25",
     "source_file": "PSI-25_Experimental table_BASS-II.csv",
     "source_row": 1
@@ -181,9 +183,9 @@
     ]
    },
    "habitat_names": [
-    "Lunar surface habitat",
-    "Mars surface habitat",
-    "Pressurized rover (lunar)"
+    "Moon base",
+    "Mars base",
+    "Pressurized rover"
    ],
    "habitats": [
     "lunar",
@@ -199,6 +201,8 @@
     "o2_gap_points": 0.25,
     "pressure_atm": 0.703026,
     "pressure_gap_psia": 2.131,
+    "pressure_source_url": null,
+    "pressure_sourced": false,
     "psi_id": "PSI-69",
     "source_file": "PSI-69_Experimental table_FLEX.csv",
     "source_row": 37
@@ -250,9 +254,9 @@
     ]
    },
    "habitat_names": [
-    "Lunar surface habitat",
-    "Mars surface habitat",
-    "Pressurized rover (lunar)"
+    "Moon base",
+    "Mars base",
+    "Pressurized rover"
    ],
    "habitats": [
     "lunar",
@@ -268,6 +272,8 @@
     "o2_gap_points": 0.169,
     "pressure_atm": 0.500025,
     "pressure_gap_psia": 0.852,
+    "pressure_source_url": null,
+    "pressure_sourced": false,
     "psi_id": "PSI-159",
     "source_file": "PSI-159_Experimental table_CFI-G_Normal Flames.csv",
     "source_row": 128
@@ -312,20 +318,22 @@
     "partial": []
    },
    "habitat_names": [
-    "Gateway-class station"
+    "Gateway"
    ],
    "habitats": [
     "gateway"
    ],
    "id": "T04",
    "nearest": {
-    "distance": 4.05,
+    "distance": 5.842,
     "flow_cm_s": null,
     "investigation": "BASS-II",
     "o2_frac": 0.222,
     "o2_gap_points": 4.05,
-    "pressure_atm": null,
-    "pressure_gap_psia": null,
+    "pressure_atm": 0.9805,
+    "pressure_gap_psia": 4.21,
+    "pressure_source_url": "https://ntrs.nasa.gov/citations/20210011385",
+    "pressure_sourced": true,
     "psi_id": "PSI-25",
     "source_file": "PSI-25_Experimental table_BASS-II.csv",
     "source_row": 1
@@ -369,20 +377,22 @@
     "partial": []
    },
    "habitat_names": [
-    "ISS / spacecraft cabin"
+    "ISS cabin"
    ],
    "habitats": [
     "iss"
    ],
    "id": "T05",
    "nearest": {
-    "distance": 0.35,
+    "distance": 0.377,
     "flow_cm_s": null,
     "investigation": "BASS-II",
     "o2_frac": 0.222,
     "o2_gap_points": 0.35,
-    "pressure_atm": null,
-    "pressure_gap_psia": null,
+    "pressure_atm": 0.9805,
+    "pressure_gap_psia": 0.14,
+    "pressure_source_url": "https://ntrs.nasa.gov/citations/20210011385",
+    "pressure_sourced": true,
     "psi_id": "PSI-25",
     "source_file": "PSI-25_Experimental table_BASS-II.csv",
     "source_row": 1
@@ -426,7 +436,7 @@
     "partial": []
    },
    "habitat_names": [
-    "ISS / spacecraft cabin"
+    "ISS cabin"
    ],
    "habitats": [
     "iss"
@@ -440,6 +450,8 @@
     "o2_gap_points": 1.45,
     "pressure_atm": 1.005132,
     "pressure_gap_psia": 0.222,
+    "pressure_source_url": null,
+    "pressure_sourced": false,
     "psi_id": "PSI-69",
     "source_file": "PSI-69_Experimental table_FLEX.csv",
     "source_row": 131
@@ -480,7 +492,7 @@
     "partial": []
    },
    "habitat_names": [
-    "Gateway-class station"
+    "Gateway"
    ],
    "habitats": [
     "gateway"
@@ -494,6 +506,8 @@
     "o2_gap_points": 1.25,
     "pressure_atm": 0.705658,
     "pressure_gap_psia": 0.171,
+    "pressure_source_url": null,
+    "pressure_sourced": false,
     "psi_id": "PSI-69",
     "source_file": "PSI-69_Experimental table_FLEX.csv",
     "source_row": 92
@@ -534,7 +548,7 @@
     "partial": []
    },
    "habitat_names": [
-    "Gateway-class station"
+    "Gateway"
    ],
    "habitats": [
     "gateway"
@@ -548,6 +562,8 @@
     "o2_gap_points": 2.84,
     "pressure_atm": 1.000049,
     "pressure_gap_psia": 4.498,
+    "pressure_source_url": null,
+    "pressure_sourced": false,
     "psi_id": "PSI-159",
     "source_file": "PSI-159_Experimental table_CFI-G_Normal Flames.csv",
     "source_row": 25
@@ -591,7 +607,7 @@
     "partial": []
    },
    "habitat_names": [
-    "ISS / spacecraft cabin"
+    "ISS cabin"
    ],
    "habitats": [
     "iss"
@@ -605,6 +621,8 @@
     "o2_gap_points": 0.775,
     "pressure_atm": 1.000049,
     "pressure_gap_psia": 0.148,
+    "pressure_source_url": null,
+    "pressure_sourced": false,
     "psi_id": "PSI-159",
     "source_file": "PSI-159_Experimental table_CFI-G_Normal Flames.csv",
     "source_row": 27
@@ -636,7 +654,7 @@
   "gateway": {
    "flow_cm_s": null,
    "gravity": "Free fall (space station in lunar orbit)",
-   "name": "Gateway-class station",
+   "name": "Gateway",
    "o2": {
     "max": 0.265,
     "min": 0.26
@@ -652,7 +670,7 @@
     "min": 5.1
    },
    "gravity": "0 g (free fall)",
-   "name": "ISS / spacecraft cabin",
+   "name": "ISS cabin",
    "o2": {
     "max": 0.241,
     "min": 0.21
@@ -668,7 +686,7 @@
     "min": 10.0
    },
    "gravity": "One-sixth of Earth gravity (about 0.16 g)",
-   "name": "Lunar surface habitat",
+   "name": "Moon base",
    "o2": {
     "max": 0.35,
     "min": 0.335
@@ -681,7 +699,7 @@
   "mars": {
    "flow_cm_s": null,
    "gravity": "About one-third of Earth gravity",
-   "name": "Mars surface habitat",
+   "name": "Mars base",
    "o2": {
     "max": 0.35,
     "min": 0.335
@@ -694,7 +712,7 @@
   "rover": {
    "flow_cm_s": null,
    "gravity": "One-sixth of Earth gravity (about 0.16 g)",
-   "name": "Pressurized rover (lunar)",
+   "name": "Pressurized rover",
    "o2": {
     "max": 0.35,
     "min": 0.3

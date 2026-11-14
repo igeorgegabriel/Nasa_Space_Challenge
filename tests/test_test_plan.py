@@ -1,6 +1,7 @@
 import itertools
 import json
 import os
+import re
 import sys
 import unittest
 
@@ -121,6 +122,35 @@ class PlanFixtureTest(unittest.TestCase):
         self.assertIsNone(near["pressure_gap_psia"])
         self.assertAlmostEqual(near["distance"], 12.5, places=3)
 
+    def test_solid_row_without_pressure_uses_the_sourced_pressure(self):
+        rows = [
+            {"psi_id": "PSI-25", "source_file": "x.csv", "source_row": 1, "fuel_class": "solid", "o2_frac": 0.222, "pressure_atm": None},
+            {"psi_id": "PSI-7", "source_file": "y.csv", "source_row": 2, "fuel_class": "solid", "o2_frac": 0.22, "pressure_atm": None},
+        ]
+        sourced = {"PSI-25": {"pressure_atm": 0.9805, "source_url": "https://ntrs.nasa.gov/citations/20210011385"}}
+        plan = test_plan.build_test_plan(rows, self.envs, zero_next(["a"], ("solid",)), sourced)
+        near = plan["tests"][0]["nearest"]
+        self.assertEqual(near["psi_id"], "PSI-25")
+        self.assertEqual(near["pressure_atm"], 0.9805)
+        self.assertTrue(near["pressure_sourced"])
+        self.assertEqual(near["pressure_source_url"], "https://ntrs.nasa.gov/citations/20210011385")
+        self.assertAlmostEqual(near["pressure_gap_psia"], abs(0.9805 - 0.55) * 14.6959, places=3)
+        expected = (near["o2_gap_points"] ** 2 + near["pressure_gap_psia"] ** 2) ** 0.5
+        self.assertAlmostEqual(near["distance"], expected, places=2)
+
+    def test_recorded_pressure_is_never_replaced_by_a_sourced_one(self):
+        rows = [{"psi_id": "PSI-25", "source_file": "x.csv", "source_row": 1, "fuel_class": "solid", "o2_frac": 0.33, "pressure_atm": 0.5}]
+        sourced = {"PSI-25": {"pressure_atm": 0.9805, "source_url": "u"}}
+        near = test_plan.build_test_plan(rows, self.envs, zero_next(["a"], ("solid",)), sourced)["tests"][0]["nearest"]
+        self.assertEqual(near["pressure_atm"], 0.5)
+        self.assertFalse(near["pressure_sourced"])
+
+    def test_habitat_names_are_the_short_names(self):
+        envs = {"environments": [env("lunar", (0.30, 0.35), (0.5, 0.6), None, 0.16, "Lunar surface habitat")]}
+        plan = test_plan.build_test_plan([], envs, zero_next(["lunar"], ("solid",)))
+        self.assertEqual(plan["tests"][0]["habitat_names"], ["Moon base"])
+        self.assertEqual(plan["windows"]["lunar"]["name"], "Moon base")
+
     def test_gravity_note_names_the_limit(self):
         plan = test_plan.build_test_plan([], self.envs, zero_next(["a", "b", "c"], ("solid",)))
         by_habitats = {tuple(t["habitats"]): t for t in plan["tests"]}
@@ -144,6 +174,7 @@ class PlanRealDataTest(unittest.TestCase):
         cls.test_next = read_json(os.path.join(SITE, "test_next.json"))
         cls.conditions = read_json(os.path.join(ROOT, "data", "unified", "conditions.json"))
         cls.by_key = {(r["source_file"], r["source_row"]): r for r in cls.conditions}
+        cls.solid_pressures = read_json(os.path.join(SITE, "outside_psi.json"))["solid_pressures"]
 
     def window(self, env_id, key):
         block = self.env_by_id[env_id][key]
@@ -211,7 +242,11 @@ class PlanRealDataTest(unittest.TestCase):
             self.assertEqual(row_["psi_id"], near["psi_id"])
             self.assertEqual(row_["fuel_class"], t["fuel_class"])
             self.assertEqual(row_["o2_frac"], near["o2_frac"])
-            self.assertEqual(row_["pressure_atm"] if row_["pressure_atm"] else None, near["pressure_atm"])
+            if near["pressure_sourced"]:
+                self.assertFalse(row_["pressure_atm"])
+                self.assertEqual(near["pressure_atm"], self.solid_pressures[near["psi_id"]]["pressure_atm"])
+            else:
+                self.assertEqual(row_["pressure_atm"] if row_["pressure_atm"] else None, near["pressure_atm"])
             o2_gap = abs(row_["o2_frac"] - t["point"]["o2"]) * 100
             self.assertAlmostEqual(o2_gap, near["o2_gap_points"], places=3)
 
@@ -219,10 +254,33 @@ class PlanRealDataTest(unittest.TestCase):
         for t in self.plan["tests"]:
             rows = [r for r in self.conditions
                     if r["fuel_class"] == t["fuel_class"] and r["o2_basis"] == "ambient" and r["value_quality"] in ("exact", "approximate") and r["o2_frac"] is not None]
+            rows = test_plan.with_sourced_pressure(rows, self.solid_pressures)
             with_p = [r for r in rows if r["pressure_atm"]]
             pool = with_p or rows
             best = min(test_plan.distance_to(t["point"], r)[0] for r in pool)
             self.assertAlmostEqual(best, t["nearest"]["distance"], places=2)
+
+    def test_bass_ii_is_the_solid_nearest_at_its_report_pressure(self):
+        solids = [t for t in self.plan["tests"] if t["fuel_class"] == "solid"]
+        self.assertTrue(solids)
+        for t in solids:
+            near = t["nearest"]
+            self.assertEqual(near["investigation"], "BASS-II")
+            self.assertTrue(near["pressure_sourced"])
+            self.assertEqual(round(near["pressure_atm"] * test_plan.PSIA_PER_ATM, 1), 14.4)
+            self.assertIsNotNone(near["pressure_gap_psia"])
+            self.assertGreater(near["distance"], near["o2_gap_points"])
+
+    def test_habitat_names_match_the_app_short_names(self):
+        with open(os.path.join(ROOT, "public", "app.js"), "r", encoding="utf-8") as handle:
+            source = handle.read()
+        block = re.search(r"const HABITAT_SHORT = \{(.*?)\};", source, re.S).group(1)
+        app = dict(re.findall(r'(\w+): "([^"]+)"', block))
+        self.assertEqual(app, test_plan.HABITAT_SHORT)
+        for t in self.plan["tests"]:
+            self.assertEqual(t["habitat_names"], [app[e] for e in t["habitats"]])
+        for env_id, w in self.plan["windows"].items():
+            self.assertEqual(w["name"], app[env_id])
 
     def test_greedy_matches_the_exhaustive_minimum_per_fuel_class(self):
         windows = {}

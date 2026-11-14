@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.join(ROOT, "pipeline"))
 
 import build_site_data
 import outside_psi
+import partial_g_site
 import scoring
 
 UNIFIED = os.path.join(ROOT, "data", "unified")
@@ -452,11 +453,11 @@ class SiteDataTest(unittest.TestCase):
             self.assertTrue(insight["links"] or insight.get("sources"))
 
     def test_corpus_has_one_document_per_investigation(self):
-        self.assertEqual(len(self.corpus), len(self.investigations) + 4)
+        self.assertEqual(len(self.corpus), len(self.investigations) + 5)
         ids = [d["psi_id"] for d in self.corpus]
-        self.assertEqual(ids, [inv["psi_id"] for inv in self.investigations] + [build_site_data.LUNAR_G_CORPUS_ID, outside_psi.CORPUS_ID, "DASHBOARD-RESULTS", build_site_data.EARTH_CORPUS_ID])
+        self.assertEqual(ids, [inv["psi_id"] for inv in self.investigations] + [build_site_data.LUNAR_G_CORPUS_ID, partial_g_site.CORPUS_ID, outside_psi.CORPUS_ID, "DASHBOARD-RESULTS", build_site_data.EARTH_CORPUS_ID])
         self.assertEqual(len(set(ids)), len(ids))
-        for doc in self.corpus[:-4]:
+        for doc in self.corpus[:-5]:
             self.assertTrue(doc["title"].startswith(doc["psi_id"] + " "))
             self.assertIn(" - ", doc["title"])
             self.assertGreater(len(doc["body"]), 100)
@@ -517,7 +518,7 @@ class SiteDataTest(unittest.TestCase):
         self.assertFalse(result["meta_present"])
         unified = read_json(os.path.join(UNIFIED, "investigations.json"))
         self.assertEqual({i["psi_id"] for i in result["investigations"]}, set(unified))
-        self.assertEqual(len(result["corpus"]["documents"]), len(unified) + 4)
+        self.assertEqual(len(result["corpus"]["documents"]), len(unified) + 5)
         for inv in result["investigations"]:
             self.assertFalse(inv["meta_present"])
             for entry in inv["functions"]:

@@ -1348,3 +1348,13 @@ body.ask-open #ask-panel { display: flex; animation: slidein 0.28s ease; }
   .plan-grid { grid-template-columns: 1fr; }
   .plan-viz { position: static; order: -1; }
 }
+
+.gv-meas-head { margin: 0.6rem 0 0; font-size: 1.1rem; max-width: 40rem; }
+
+.gv-meas-chart { max-width: 52rem; }
+
+.gv-meas-block h3 { margin-top: 1.6rem; font-size: 1.1rem; }
+
+.gv-meas-list { max-width: 52rem; padding-left: 1.1rem; }
+
+.gv-meas-list li { margin: 0.35rem 0; }

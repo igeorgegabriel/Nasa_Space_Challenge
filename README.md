@@ -43,7 +43,7 @@ flowchart LR
 
 - **One gesture shows it all.** Drag a cabin's oxygen and pressure, or pick a habitat: the card counts the NASA tests in that air, names the closest one with its source row, runs the FLEX model or refuses with the distance, and adds the lunar gravity allowance. Every state has its own link.
 - **It knows where the evidence stops.** The model refuses habitats outside the tested range and says by how much. Moon base air is 0.14 atm below any FLEX test.
-- **Gravity, not just oxygen.** The lunar gravity check uses NASA Glenn's 2025 lunar-g tests: a 1-g margin can shrink by up to 2.3 O2 points, and some materials went the other way.
+- **Gravity, not just oxygen.** The lunar gravity check uses NASA Glenn's 2025 lunar-g tests: NASA Glenn's allowance for six materials is up to 2.3 O2 points, drop tests measured larger drops for some (Mylar 21.2 to 15.6, 5.6 points, at 10.2 psia), and some materials went the other way. A chart of 24 quote-checked partial-gravity points from 7 NASA sources sits below it.
 - **The newest flights, as data.** The 9 Saffire IV-VI flight tests that are not in PSI yet are rows in the app, each tied to a verbatim quote from its NASA report. Six burned solids between 25.4% and 31.0% oxygen, above PSI's 22.2% ceiling.
 - **Checked, not just cited.** Each Ask answer shows how many of its numbers match NASA data or the cited NASA sentence. Quotes on every page are machine-checked against saved source text.
 
@@ -53,7 +53,7 @@ flowchart LR
 |---|---|
 | Identify investigations most relevant to crew habitats | Rank: five habitats, re-weightable score, rank stability per row. Home: Check any cabin air for any oxygen and pressure |
 | Extract data for predictive modelling | Data: a FLEX droplet model tested on held-out test days (AUC 0.85, Brier skill +0.35) that predicts for ISS air and refuses Moon air; where a model can be trusted (oxygen x pressure map); model readiness per habitat; CSV/JSON downloads |
-| Partial gravity (lunar habitat) | Data > Lunar gravity check: NASA GRC allowance per material (up to 2.3 O2 points), measured lunar-g direction, quenching vs blowoff |
+| Partial gravity (lunar habitat) | Data > Lunar gravity check: NASA GRC allowance per material (up to 2.3 O2 points, not a maximum), measured lunar and Martian limits, quenching vs blowoff |
 | Research for next-generation fire safety equipment | Investigations > Equipment: prevention, detection, suppression |
 | Earth applications | Investigations > On Earth: water mist, smoke detection, firefighter air tanks and clothing (NASA Spinoff, quoted) |
 

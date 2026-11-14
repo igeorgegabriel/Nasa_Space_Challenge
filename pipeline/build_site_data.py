@@ -10,6 +10,7 @@ ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 
 import outside_psi
+import partial_g_site
 import scoring
 import test_plan
 import verify_lunar_g
@@ -1234,7 +1235,7 @@ def lunar_g_corpus_document(lunar):
         lines.append("%s: best-fit slope %s, 95 percent slope %s, delta %s O2 points; %s." % (
             m["name"], format(m["best_fit_slope_s_per_cm"], "g"), format(m["ci95_slope_s_per_cm"], "g"), format(m["delta_o2_points"], "g"), m["direction_text"]))
     lines.append("The 35 cm/s 1-g buoyant velocity is a conservatively high estimate and the lunar-g velocity is not known, so no lunar-g flammability limit is stated for any material and nothing is interpolated.")
-    lines.append("Habitat reading: the paper's conservative allowance is that a 1-g test margin may be read as up to %s oxygen points smaller (worst case across these materials). The allowance extrapolates the 1-g forced-flow slope from 35 cm/s to zero flow and is not a measured lunar-g limit. In the lunar-g tests themselves, PMMA, P 213 and flaming Beefy-T burned at lower oxygen, while polycarbonate and Nomex Velcro burned only at higher oxygen." % format(paper["worst_case_delta_o2_points"], "g"))
+    lines.append("Habitat reading: NASA Glenn's 2025 conservative allowance for these %d materials is up to %s oxygen points. It extrapolates the 1-g forced-flow slope from 35 cm/s to zero flow, so it is an allowance, not a maximum and not a measured lunar-g limit; drop-tower tests measured larger drops for some materials (see the partial-gravity document). In the lunar-g tests themselves, PMMA, P 213 and flaming Beefy-T burned at lower oxygen, while polycarbonate and Nomex Velcro burned only at higher oxygen." % (len(lunar["materials"]), format(paper["worst_case_delta_o2_points"], "g")))
     for qid in ("worst_case", "velocity_unknown", "lower_extinction", "higher_extinction", "conclusion", "bass_blowoff", "fm2_plan"):
         q = quotes[qid]
         page = (", page %s" % q["page"]) if q["page"] else ""
@@ -1269,7 +1270,7 @@ def fmt_num(value):
     return ("%.4f" % value).rstrip("0").rstrip(".")
 
 
-def build_corpus(investigations, rankings, outside=None, psi_max=None, environments=None, test_next=None, earth=None, lunar=None):
+def build_corpus(investigations, rankings, outside=None, psi_max=None, environments=None, test_next=None, earth=None, lunar=None, partial=None):
     docs = []
     for inv in investigations:
         lines = []
@@ -1333,6 +1334,8 @@ def build_corpus(investigations, rankings, outside=None, psi_max=None, environme
         })
     if lunar:
         docs.append(lunar_g_corpus_document(lunar))
+    if partial and lunar:
+        docs.append(partial_g_site.corpus_document(partial, lunar["paper"]["worst_case_delta_o2_points"], len(lunar["materials"])))
     if outside and outside["tests"]:
         docs.append(outside_psi.corpus_document(outside, psi_max))
     if environments and test_next:
@@ -2130,10 +2133,11 @@ def build():
     test_next = build_test_next(rows, environments, outside)
     plan = test_plan.build_test_plan(
         [r for r in countable(rows) if r.get("o2_basis") == "ambient" and r.get("o2_frac") is not None],
-        environments, test_next)
+        environments, test_next, outside["solid_pressures"])
     earth = build_earth()
     lunar = build_lunar_g()
-    corpus = build_corpus(investigations, default_rankings, outside, outside["summary"]["psi_solid_max_o2"], environments, test_next, earth, lunar)
+    partial = partial_g_site.build_partial_g()
+    corpus = build_corpus(investigations, default_rankings, outside, outside["summary"]["psi_solid_max_o2"], environments, test_next, earth, lunar, partial)
     return {
         "investigations": investigations,
         "conditions": slim_conditions(rows),
@@ -2141,6 +2145,7 @@ def build():
         "insights": insights,
         "earth": {"applications": earth},
         "lunar_g": lunar,
+        "partial_g": partial,
         "model_readiness": build_model_readiness(rows, environments),
         "rank_reference": reference,
         "test_next": test_next,
@@ -2161,6 +2166,7 @@ def main():
     dump(os.path.join(SITE_DATA_DIR, "insights.json"), result["insights"])
     dump(os.path.join(SITE_DATA_DIR, "earth.json"), result["earth"])
     dump(os.path.join(SITE_DATA_DIR, "lunar_g.json"), result["lunar_g"])
+    dump(os.path.join(SITE_DATA_DIR, "partial_g.json"), result["partial_g"])
     dump(os.path.join(SITE_DATA_DIR, "model_readiness.json"), result["model_readiness"])
     dump(os.path.join(SITE_DATA_DIR, "rank_reference.json"), result["rank_reference"])
     dump(os.path.join(SITE_DATA_DIR, "test_next.json"), result["test_next"])

@@ -373,6 +373,7 @@ async function main() {
   assert.deepStrictEqual(JSON.parse(await js("JSON.stringify(Array.from(document.querySelectorAll('.scenario .pill.active')).map(function (b) { return b.getAttribute('data-key'); }))")), ["env-lunar", "fuel-solid", "g-moon"]);
   assert.strictEqual(await airWord(), "Not tested");
   assert.ok((await airCards()).indexOf("up to 2.3 O2 points") >= 0, "Moon gravity allowance");
+  assert.ok((await airCards()).indexOf("measured up to 5.6") >= 0, "Moon gravity measured drop");
   assert.ok((await airCards()).indexOf("Polycarbonate") >= 0);
   assert.strictEqual(await js("location.hash"), "#/home", "hash stays clean until the user touches the card");
   await airSet(22.2, 14.4);

@@ -8,6 +8,30 @@ CLASS_PRIORITY = ["solid", "liquid_droplet", "gas"]
 NOT_SPECIFIED_TEXT = "not specified by NASA sources"
 MICRO_G_LIMIT = 0.05
 DIGITS = 6
+HABITAT_SHORT = {
+    "iss": "ISS cabin",
+    "gateway": "Gateway",
+    "lunar": "Moon base",
+    "rover": "Pressurized rover",
+    "mars": "Mars base",
+}
+
+
+def short_name(env):
+    return HABITAT_SHORT.get(env["id"], env["name"])
+
+
+def with_sourced_pressure(rows, solid_pressures):
+    out = []
+    for r in rows:
+        has = r.get("pressure_atm") is not None and r["pressure_atm"] > 0
+        ref = (solid_pressures or {}).get(r.get("psi_id")) if r.get("fuel_class") == "solid" and not has else None
+        if ref and ref.get("pressure_atm"):
+            r = dict(r)
+            r["pressure_atm"] = ref["pressure_atm"]
+            r["pressure_sourced_url"] = ref.get("source_url")
+        out.append(r)
+    return out
 
 
 def psi_number(psi_id):
@@ -104,6 +128,8 @@ def nearest_test(point, rows):
         "source_row": row["source_row"],
         "o2_frac": row["o2_frac"],
         "pressure_atm": row["pressure_atm"] if row.get("pressure_atm") and row["pressure_atm"] > 0 else None,
+        "pressure_sourced": bool(row.get("pressure_sourced_url")),
+        "pressure_source_url": row.get("pressure_sourced_url"),
         "flow_cm_s": row.get("flow_cm_s"),
         "o2_gap_points": round(o2_gap, 3),
         "pressure_gap_psia": round(p_gap, 3) if p_gap is not None else None,
@@ -186,7 +212,8 @@ def plan_class(gap_envs, windows, class_rows):
     return chosen, sorted(uncovered)
 
 
-def build_test_plan(rows, environments, test_next):
+def build_test_plan(rows, environments, test_next, solid_pressures=None):
+    rows = with_sourced_pressure(rows, solid_pressures)
     envs_by_id = OrderedDict((e["id"], e) for e in environments["environments"])
     windows = {}
     for env_id in test_next["environments"]:
@@ -241,7 +268,7 @@ def build_test_plan(rows, environments, test_next):
             ("flow_note", None if flow else NOT_SPECIFIED_TEXT),
             ("point", t["point"]),
             ("habitats", t["closes"]),
-            ("habitat_names", [envs_by_id[e]["name"] for e in t["closes"]]),
+            ("habitat_names", [short_name(envs_by_id[e]) for e in t["closes"]]),
             ("gravity", gravity_info(t["closes"], envs_by_id)),
             ("nearest", t["nearest"]),
             ("source_refs", source_refs(t["closes"], envs_by_id)),
@@ -258,7 +285,7 @@ def build_test_plan(rows, environments, test_next):
     plan_windows = OrderedDict()
     for env_id, w in windows.items():
         plan_windows[env_id] = {
-            "name": envs_by_id[env_id]["name"],
+            "name": short_name(envs_by_id[env_id]),
             "o2": range_block(w["o2"]),
             "pressure_atm": range_block(w["pressure_atm"]),
             "flow_cm_s": range_block(w["flow_cm_s"]),
@@ -274,7 +301,7 @@ def build_test_plan(rows, environments, test_next):
             "A gap is a habitat and fuel class with no PSI test inside the habitat window (the count in test_next.json is 0).",
             "Candidate tests are the habitat windows and every overlap of them; a planned test is a box that lies inside the windows it covers.",
             "Greedy cover per fuel class: pick the box that covers the most uncovered habitats; ties go to the box furthest from any existing PSI test.",
-            "Distance is derived: sqrt(O2 gap in percentage points squared + pressure gap in psia squared) from the box centre to the nearest PSI row of that fuel class with a recorded pressure; where the class has no recorded pressure at all (solid fuels) it is the O2 gap alone.",
+            "Distance is derived: sqrt(O2 gap in percentage points squared + pressure gap in psia squared) from the box centre to the nearest PSI row of that fuel class with a pressure; solid rows that record no pressure in PSI use the pressure stated in the NASA report for that flight (outside_psi.json), and a class with no pressure at all would use the O2 gap alone.",
             "Gravity is not part of the cover: a microgravity facility matches the free-fall habitats only.",
         ]),
     ])

@@ -250,12 +250,41 @@ def outside_reference(data_tools):
     return items
 
 
+PARTIAL_UNITS = {"percent O2": "percent", "psia": "psia", "psi": "psia", "atm": "atm", "kPa": "kpa", "g": "g", "cm/s": "cm/s"}
+
+
+def partial_g_reference(data_tools):
+    items = []
+    try:
+        partial = data_tools.load_json("partial_g.json")
+    except (OSError, ValueError):
+        return items
+    for point in partial.get("points", []):
+        for field in point.get("fields", []):
+            value = field.get("value")
+            if isinstance(value, bool) or not isinstance(value, (int, float)):
+                continue
+            unit = PARTIAL_UNITS.get(field.get("unit"))
+            items.append({"value": float(value), "decimals": decimals_of(field.get("raw", "")), "unit": unit})
+    summary = partial.get("summary", {})
+    for drop in summary.get("ulois_drops_1g_to_lunar", []):
+        items.append({"value": float(drop["points"]), "decimals": decimals_of(str(drop["points"])), "unit": None})
+    for key in ("moon_o2_percent",):
+        if isinstance(summary.get(key), (int, float)):
+            items.append({"value": float(summary[key]), "decimals": 0, "unit": "percent"})
+    return items
+
+
+def reference_extras(data_tools):
+    return habitat_reference(data_tools) + outside_reference(data_tools) + partial_g_reference(data_tools)
+
+
 def check_live(answer, citations, log, data_tools):
     return check_answer(
         answer,
         tool_results=[result for _, _, result in log],
         texts=citation_texts(citations),
-        items=habitat_reference(data_tools) + outside_reference(data_tools),
+        items=reference_extras(data_tools),
     )
 
 
@@ -265,5 +294,5 @@ def check_cached(question, answer, citations, steps, data_tools):
         answer,
         tool_results=habitat_results(data_tools, habitats),
         texts=citation_texts(citations) + step_texts(steps),
-        items=habitat_reference(data_tools) + outside_reference(data_tools),
+        items=reference_extras(data_tools),
     )
