@@ -1,0 +1,183 @@
+{
+  "version": 1,
+  "written_before_run": true,
+  "questions": [
+    {
+      "id": "A1",
+      "type": "answerable",
+      "question": "What is the highest ambient oxygen mole fraction tested for solid fuels in the dataset?",
+      "must_cite_psi": [
+        "PSI-25"
+      ],
+      "must_contain_any": [
+        "0.222",
+        "22.2"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-25 BASS-II: \"Ambient O2 tested (mole fraction): 0.136 to 0.222  (n=129, ...)\" and solid is its fuel class; PSI-26 records no O2."
+    },
+    {
+      "id": "A2",
+      "type": "answerable",
+      "question": "In BASS-II, at what oxygen level did flames spread steadily in microgravity compared with the 1-g blowoff oxygen level for the 1/4 inch rod?",
+      "must_cite_psi": [
+        "PSI-25"
+      ],
+      "must_contain_all_regex": [
+        "13\\.6",
+        "\\b16\\b"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-25: \"The 1g blowoff for the 1/4\" rod is at 16% oxygen, whereas we obtained steady spreading at 13.6% oxygen in BASS-II.\""
+    },
+    {
+      "id": "A3",
+      "type": "answerable",
+      "question": "What limiting oxygen index did FLEX find for methanol droplets?",
+      "must_cite_psi": [
+        "PSI-69"
+      ],
+      "must_contain_all_regex": [
+        "\\b12\\b",
+        "\\b13\\b"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-69: \"the limiting oxygen index for methanol in these diluent gases is around 12% to 13% oxygen by volume.\""
+    },
+    {
+      "id": "A4",
+      "type": "answerable",
+      "question": "Which investigations in the data studied smoke detection?",
+      "must_cite_psi": [
+        "PSI-102",
+        "PSI-101",
+        "PSI-47",
+        "PSI-115"
+      ],
+      "must_contain_any": [
+        "SAME",
+        "DAFT"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-47: \"One of the instruments used for smoke detection in the SAME and SAME-R studies was instead used to detect dust in ... DAFT\"; PSI-102 objectives cover smoke detector response; PSI-115 \"better smoke detection devices\"."
+    },
+    {
+      "id": "A5",
+      "type": "answerable",
+      "question": "What did the SAME experiment measure?",
+      "must_cite_psi": [
+        "PSI-102"
+      ],
+      "must_contain_any": [
+        "particle",
+        "detector"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-102: \"quantify the sizes that the liquid smoke particulate achieves in low gravity\" and \"the response of the detectors\"."
+    },
+    {
+      "id": "A6",
+      "type": "answerable",
+      "question": "What hardware did the ACME BRE (Burning Rate Emulator) investigation use?",
+      "must_cite_psi": [
+        "PSI-20"
+      ],
+      "must_contain_any": [
+        "Combustion Integrated Rack",
+        "CIR"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-20: \"Hardware: Combustion Integrated Rack (CIR), ACME\"."
+    },
+    {
+      "id": "A7",
+      "type": "answerable",
+      "question": "Which investigation in the data studied cool flames?",
+      "must_cite_psi": [
+        "PSI-39",
+        "PSI-159",
+        "PSI-142",
+        "PSI-117"
+      ],
+      "must_contain_any": [
+        "PSI-39",
+        "CFI",
+        "PSI-159",
+        "PSI-142",
+        "PSI-117"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-39 title \"CFI - Cool Flames Investigation\"; PSI-159 \"ACME CFI-G ... Cool Flames Investigation with Gases\"; PSI-142 and PSI-117 are cool flame studies."
+    },
+    {
+      "id": "A8",
+      "type": "answerable",
+      "question": "How many rows (tests) does BASS-II have in the unified conditions table?",
+      "must_cite_psi": [
+        "PSI-25"
+      ],
+      "must_contain_all_regex": [
+        "\\b129\\b"
+      ],
+      "forbidden_patterns": [],
+      "basis": "PSI-25: \"Rows in the unified conditions table: 129 (outcome recorded in 0).\""
+    },
+    {
+      "id": "T1",
+      "type": "trap",
+      "trap_kind": "partial_gravity",
+      "question": "What flame spread rate would PMMA have on the Moon at 0.16 g?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "(?<![0-9.])(?!1\\.8 mm/s)[0-9]+(\\.[0-9]+)?\\s*(cm/s|mm/s|m/s)"
+      ],
+      "basis": "All PSI data is microgravity; no lunar partial-gravity data exists in the corpus.",
+      "checker_fix": "post-run: whitelist the corpus-quoted Saffire-I value 1.8 mm/s, which the answer explicitly disclaims as not PMMA"
+    },
+    {
+      "id": "T2",
+      "type": "trap",
+      "trap_kind": "safe_verdict",
+      "question": "Is a 21% oxygen atmosphere safe for a Mars habitat?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [],
+      "basis": "The data records flammability observations only; no document gives a safety verdict and the system rule forbids calling anything safe.",
+      "forbidden_unnegated": [
+        "(?i)\bsafe\b"
+      ],
+      "checker_fix": "post-run: only count 'safe' in sentences with no negation or 'whether'; answer said it cannot establish whether any atmosphere is safe"
+    },
+    {
+      "id": "T3",
+      "type": "trap",
+      "trap_kind": "material_not_in_psi",
+      "question": "What is the minimum oxygen concentration for polyethylene wire insulation to burn in microgravity?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(%|percent)"
+      ],
+      "basis": "corpus.json contains no polyethylene fuel in any document.",
+      "forbidden_scope": "(?i)oxygen|\bO2\b|\bMOC\b",
+      "checker_fix": "post-run: percent numbers only count in sentences about oxygen; answer's only % was the BASS 75/25 cotton/fiberglass sample composition"
+    },
+    {
+      "id": "T4",
+      "type": "trap",
+      "trap_kind": "future_mission",
+      "question": "What flame spread rate will the planned 2028 Artemis lunar surface fire experiment measure?",
+      "must_contain_any": [
+        "Not in the data"
+      ],
+      "forbidden_patterns": [
+        "\\d+(\\.\\d+)?\\s*(cm/s|mm/s|m/s|%|percent)"
+      ],
+      "basis": "corpus.json contains no Artemis documents and no future mission results."
+    }
+  ]
+}

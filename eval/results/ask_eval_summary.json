@@ -1,0 +1,31 @@
+{
+  "run_at": "2026-11-14T12:05:39",
+  "model": [
+    "claude-opus-5-5"
+  ],
+  "total": 12,
+  "passed": 12,
+  "answerable_passed": 8,
+  "traps_refused": 4,
+  "failures": [],
+  "checker_fixes": [
+    {
+      "id": "T1",
+      "fix": "post-run: whitelist the corpus-quoted Saffire-I value 1.8 mm/s, which the answer explicitly disclaims as not PMMA",
+      "initial_passed": false,
+      "passed_after": true
+    },
+    {
+      "id": "T2",
+      "fix": "post-run: only count 'safe' in sentences with no negation or 'whether'; answer said it cannot establish whether any atmosphere is safe",
+      "initial_passed": false,
+      "passed_after": true
+    },
+    {
+      "id": "T3",
+      "fix": "post-run: percent numbers only count in sentences about oxygen; answer's only % was the BASS 75/25 cotton/fiberglass sample composition",
+      "initial_passed": false,
+      "passed_after": true
+    }
+  ]
+}
