@@ -1,33 +1,38 @@
 import math
 
-COMPONENTS = ["o2", "pressure", "flow", "fuel", "function", "richness"]
+TOPIC_COMPONENTS = ["fuel", "function", "richness"]
+CONDITION_COMPONENTS = ["o2", "pressure", "flow"]
+COMPONENTS = TOPIC_COMPONENTS + CONDITION_COMPONENTS
 
 COMPONENT_LABELS = {
-    "o2": "O2 coverage",
-    "pressure": "Pressure coverage",
-    "flow": "Flow coverage",
     "fuel": "Fuel realism",
     "function": "Fire-safety function",
     "richness": "Data richness",
+    "o2": "O2 coverage",
+    "pressure": "Pressure coverage",
+    "flow": "Flow coverage",
 }
 
 DEFAULT_WEIGHTS = {
-    "o2": 0.30,
-    "pressure": 0.15,
+    "fuel": 0.25,
+    "function": 0.25,
+    "richness": 0.10,
+    "o2": 0.20,
+    "pressure": 0.10,
     "flow": 0.10,
-    "fuel": 0.15,
-    "function": 0.15,
-    "richness": 0.15,
 }
 
 FUEL_REALISM = {"solid": 1.0, "liquid_droplet": 0.5, "gas": 0.3}
 
 CORE_FUNCTIONS = ("prevention", "detection", "suppression")
+FUNDAMENTAL_ONLY_VALUE = 0.4
+UNASSIGNED_VALUE = 0.2
 
 RICHNESS_ROWS_CAP = 500
 RICHNESS_ROW_WEIGHT = 0.6
 PERTURBATION = 0.2
 ROUND_DIGITS = 9
+SPAN_SHARE = 0.5
 
 
 def overlap(env_lo, env_hi, lo, hi):
@@ -41,23 +46,49 @@ def overlap(env_lo, env_hi, lo, hi):
     return min(1.0, inter / (env_hi - env_lo))
 
 
-def range_pair(block):
+def value_inside(env_lo, env_hi, block):
+    for value in block.get("values") or []:
+        if env_lo <= value <= env_hi:
+            return True
+    for lo, hi in block.get("spans") or []:
+        if lo <= env_hi and hi >= env_lo:
+            return True
+    return False
+
+
+def coverage(env_lo, env_hi, block):
     if not block:
-        return None, None
-    return block.get("min"), block.get("max")
+        return 0.0
+    span = overlap(env_lo, env_hi, block.get("min"), block.get("max"))
+    hit = 1.0 if value_inside(env_lo, env_hi, block) else 0.0
+    return round(SPAN_SHARE * span + (1.0 - SPAN_SHARE) * hit, ROUND_DIGITS)
+
+
+def window_of(env, key):
+    block = env[key]
+    lo = block["window_min"] if "window_min" in block else block["min"]
+    hi = block["window_max"] if "window_max" in block else block["max"]
+    return lo, hi
 
 
 def fuel_realism(fuel_class):
     return FUEL_REALISM.get(fuel_class)
 
 
+def function_names(functions):
+    names = set()
+    for item in functions or []:
+        names.add(item["function"] if isinstance(item, dict) else item)
+    return names
+
+
 def function_relevance(functions):
-    funcs = list(functions or [])
-    if any(f in CORE_FUNCTIONS for f in funcs):
+    names = function_names(functions)
+    if names & set(CORE_FUNCTIONS):
         return 1.0, "core"
-    if "fundamental" in funcs:
-        return 0.5, "fundamental"
-    return 0.5, "unassigned"
+    if "fundamental" in names:
+        return FUNDAMENTAL_ONLY_VALUE, "fundamental"
+    return UNASSIGNED_VALUE, "unassigned"
 
 
 def richness(row_count, outcome_rows):
@@ -70,30 +101,30 @@ def richness(row_count, outcome_rows):
 
 def components(inv, env, include_stream=False):
     ranges = inv.get("ranges", {})
-    o2_lo, o2_hi = env["o2"]["min"], env["o2"]["max"]
-    p_lo, p_hi = env["pressure_atm"]["min"], env["pressure_atm"]["max"]
-    f_lo, f_hi = env["flow_cm_s"]["min"], env["flow_cm_s"]["max"]
-    amb = overlap(o2_lo, o2_hi, *range_pair(ranges.get("o2_ambient")))
-    stream = overlap(o2_lo, o2_hi, *range_pair(ranges.get("o2_oxidizer_stream")))
+    o2_lo, o2_hi = window_of(env, "o2")
+    p_lo, p_hi = window_of(env, "pressure_atm")
+    f_lo, f_hi = window_of(env, "flow_cm_s")
+    amb = coverage(o2_lo, o2_hi, ranges.get("o2_ambient"))
+    stream = coverage(o2_lo, o2_hi, ranges.get("o2_oxidizer_stream"))
     o2 = max(amb, stream) if include_stream else amb
     func_value, func_label = function_relevance(inv.get("functions"))
     return {
-        "o2": o2,
-        "o2_ambient": amb,
-        "o2_stream": stream,
-        "pressure": overlap(p_lo, p_hi, *range_pair(ranges.get("pressure_atm"))),
-        "flow": overlap(f_lo, f_hi, *range_pair(ranges.get("flow_cm_s"))),
         "fuel": fuel_realism(inv.get("fuel_class")),
         "function": func_value,
         "function_label": func_label,
         "richness": richness(inv.get("row_count", 0), inv.get("outcome_rows", 0)),
+        "o2": o2,
+        "o2_ambient": amb,
+        "o2_stream": stream,
+        "pressure": coverage(p_lo, p_hi, ranges.get("pressure_atm")),
+        "flow": coverage(f_lo, f_hi, ranges.get("flow_cm_s")),
     }
 
 
-def weighted_score(comps, weights):
+def weighted_average(comps, weights, names):
     total = 0.0
     used = 0.0
-    for name in COMPONENTS:
+    for name in names:
         value = comps.get(name)
         weight = weights.get(name, 0.0)
         if value is None or weight <= 0:
@@ -103,6 +134,10 @@ def weighted_score(comps, weights):
     if used == 0:
         return 0.0
     return round(total / used, ROUND_DIGITS)
+
+
+def weighted_score(comps, weights):
+    return weighted_average(comps, weights, COMPONENTS)
 
 
 def rank_all(investigations, env, weights=None, include_stream=False):
@@ -115,6 +150,8 @@ def rank_all(investigations, env, weights=None, include_stream=False):
         scored.append({
             "psi_id": inv["psi_id"],
             "components": comps,
+            "topic": weighted_average(comps, weights, TOPIC_COMPONENTS),
+            "condition": weighted_average(comps, weights, CONDITION_COMPONENTS),
             "score": weighted_score(comps, weights),
         })
     scored.sort(key=lambda item: (-item["score"], item["psi_id"]))

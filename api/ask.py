@@ -1,6 +1,9 @@
 import json
 import os
 import re
+import threading
+import time
+from collections import deque
 from http.server import BaseHTTPRequestHandler
 
 import anthropic
@@ -10,6 +13,10 @@ MAX_TOKENS = 4000
 MAX_QUESTION_CHARS = 1000
 MAX_BODY_BYTES = 8192
 NOT_IN_DATA = "Not in the data."
+RATE_LIMIT_QUESTIONS = 10
+RATE_LIMIT_WINDOW_SECONDS = 600
+RATE_LIMIT_MAX_KEYS = 5000
+RATE_LIMIT_MESSAGE = "Too many questions from your connection. Please wait a few minutes and ask again."
 
 SYSTEM = (
     "You answer questions about NASA Physical Sciences Informatics (PSI) combustion investigations. "
@@ -32,6 +39,41 @@ def load_corpus():
 
 
 CORPUS = load_corpus()
+
+
+class RateLimiter:
+    def __init__(self, limit=RATE_LIMIT_QUESTIONS, window=RATE_LIMIT_WINDOW_SECONDS, max_keys=RATE_LIMIT_MAX_KEYS):
+        self.limit = limit
+        self.window = window
+        self.max_keys = max_keys
+        self.hits = {}
+        self.lock = threading.Lock()
+
+    def prune(self, now):
+        for key in [k for k, q in self.hits.items() if not q or q[-1] <= now - self.window]:
+            del self.hits[key]
+
+    def check(self, key, now=None):
+        now = time.time() if now is None else now
+        with self.lock:
+            if len(self.hits) >= self.max_keys:
+                self.prune(now)
+            queue = self.hits.setdefault(key, deque())
+            while queue and queue[0] <= now - self.window:
+                queue.popleft()
+            if len(queue) >= self.limit:
+                return False, max(1, int(queue[0] + self.window - now) + 1)
+            queue.append(now)
+            return True, 0
+
+
+RATE_LIMITER = RateLimiter()
+
+
+def client_ip(headers, fallback):
+    forwarded = headers.get("X-Forwarded-For") or ""
+    first = forwarded.split(",")[0].strip()
+    return first or fallback or "unknown"
 
 
 def build_content(question, corpus=None):
@@ -148,12 +190,14 @@ def answer_question(question, client=None, corpus=None):
 
 
 class handler(BaseHTTPRequestHandler):
-    def send_json(self, status, payload):
+    def send_json(self, status, payload, extra_headers=None):
         body = json.dumps(payload).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Cache-Control", "no-store")
+        for name, value in (extra_headers or {}).items():
+            self.send_header(name, value)
         self.end_headers()
         self.wfile.write(body)
 
@@ -174,6 +218,10 @@ class handler(BaseHTTPRequestHandler):
         question, error = validate_question(payload)
         if error:
             self.send_json(400, {"error": error})
+            return
+        allowed, retry_after = RATE_LIMITER.check(client_ip(self.headers, self.client_address[0]))
+        if not allowed:
+            self.send_json(429, {"error": RATE_LIMIT_MESSAGE}, {"Retry-After": str(retry_after)})
             return
         status, body = answer_question(question)
         self.send_json(status, body)

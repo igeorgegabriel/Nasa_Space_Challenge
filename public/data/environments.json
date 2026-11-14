@@ -2,57 +2,87 @@
  "environments": [
   {
    "flow_cm_s": {
-    "assumption": true,
-    "display": "10 to 20 cm/s",
-    "max": 20.0,
-    "min": 10.0,
-    "note": "Not documented for this environment in the loaded notes. The lunar habitat HVAC figure is reused as a placeholder.",
+    "assumption": false,
+    "display": "5.1 to 20.3 cm/s nominal (10 to 40 ft/min)",
+    "max": 20.3,
+    "min": 5.1,
+    "note": "Opened full text of both. NanoRacks IDD is a payload interface document quoting ISS conditions (SSP 41000 itself not public, not opened); Raatschen is a conference paper on the Columbus module.",
     "point_value": false,
-    "sources": [],
-    "window_max": 20.0,
-    "window_min": 10.0
+    "sources": [
+     {
+      "detail": "ISS environment table: Air velocity (Nominal) 0.051 to 0.203 m/s (10 to 40 ft/min)",
+      "ref": "NR-NRCSD-S0003",
+      "title": "NanoRacks CubeSat Deployer (NRCSD) Interface Definition Document (ISS environment table)",
+      "url": "https://s3vi.ndc.nasa.gov/ssri-kb/static/resources/Nanoracks-CubeSat-Deployer-NRCSD-IDD.pdf"
+     },
+     {
+      "detail": "Table 3: Columbus requirement 0.076 to 0.203 m/s for 67 percent of measured velocities; 0.036 to 1.016 m/s for all",
+      "ref": "AIVC 2001 Raatschen",
+      "title": "Ventilation and Air Revitalization on the International Space Station (ISS), 22nd AIVC Conference",
+      "url": "https://www.aivc.org/sites/default/files/members_area/medias/pdf/Conf/2001/Raatschen%20Ventilation%20on%20the%20ISS.pdf"
+     }
+    ],
+    "window_max": 20.3,
+    "window_min": 5.1
    },
    "gravity": {
     "assumption": false,
     "bracket_note": "All PSI data is microgravity (0 g), the same gravity level as this environment.",
     "display": "0 g (free fall)",
     "g": 0.0,
-    "note": "Matches the PSI data directly.",
+    "note": "Challenge-defined baseline.",
     "sources": [
      {
       "detail": "flames in free fall (microgravity)",
-      "ref": "challenge"
+      "ref": "challenge",
+      "title": "Space Apps 2026 Flame in Freefall challenge",
+      "url": ""
      }
     ]
    },
    "id": "iss",
    "name": "ISS / spacecraft cabin",
    "o2": {
-    "assumption": true,
-    "display": "21 to 22 percent O2",
-    "max": 0.22,
+    "assumption": false,
+    "display": "21 percent nominal, up to 24.1 percent maximum allowable",
+    "max": 0.241,
     "min": 0.21,
-    "note": "Air-like cabin. Not stated in the loaded notes; 22.0 percent matches the Saffire IV-1 test card (Urban 2021) as the nearest sourced air-like point.",
+    "note": "Opened full text. ppO2 band 2.83-3.35 psia is 19.3-22.8 percent at 14.7 psia. Orion/MPCV cabin 21 to 26.5 percent at 10.2-14.7 psia per NESC Table 1. Orion HSIR 30 mole percent max is a search snippet only (ICES-2015-148, not opened).",
     "point_value": false,
-    "sources": [],
-    "window_max": 0.22,
+    "sources": [
+     {
+      "detail": "PDF p.18: ISS design bands 13.9-15.2 psia, ppO2 2.83-3.35 psia, maximum allowable 24.1 vol% O2 (cites SSP 41000)",
+      "ref": "NTRS 20260003925",
+      "title": "Impacts of Reduced Pressure Atmospheres on ECLSS Architectures (NASA/TM-2026-0003925, NESC-RP-20-01610)",
+      "url": "https://ntrs.nasa.gov/api/citations/20260003925/downloads/20260003925.pdf"
+     },
+     {
+      "detail": "Table: ISS/US nominal 14.7 psia, 21% O2",
+      "ref": "NASA/TP-2010-216134",
+      "title": "Recommendations for Exploration Spacecraft Internal Atmospheres: Final Report of the NASA Exploration Atmospheres Working Group",
+      "url": "https://www.nasa.gov/wp-content/uploads/2023/03/henninger-8.2-34-atm-tp216134-2010.pdf"
+     }
+    ],
+    "window_max": 0.241,
     "window_min": 0.21
    },
    "pressure_atm": {
-    "assumption": true,
-    "display": "14.7 psia, 1.000 atm",
-    "max": 1.0,
-    "min": 1.0,
-    "note": "ISS cabin pressure itself is not stated in the loaded notes; Earth sea-level pressure is used as a placeholder.",
-    "point_value": true,
+    "assumption": false,
+    "display": "14.7 psia nominal (1.000 atm), design band 13.9-15.2 psia",
+    "max": 1.034,
+    "min": 0.946,
+    "note": "Opened full text. Pressure extremes 0-104.8 kPa (0-15.2 psia) also appear in the NanoRacks IDD ISS environment table.",
+    "point_value": false,
     "sources": [
      {
-      "detail": "Earth sea-level pressure 14.7 psi",
-      "ref": "challenge"
+      "detail": "PDF p.18: ISS environmental control band 13.9-15.2 psia; nominal 14.7 psia 21% O2",
+      "ref": "NTRS 20260003925",
+      "title": "Impacts of Reduced Pressure Atmospheres on ECLSS Architectures (NASA/TM-2026-0003925, NESC-RP-20-01610)",
+      "url": "https://ntrs.nasa.gov/api/citations/20260003925/downloads/20260003925.pdf"
      }
     ],
-    "window_max": 1.02,
-    "window_min": 0.98
+    "window_max": 1.034,
+    "window_min": 0.946
    }
   },
   {
@@ -68,41 +98,81 @@
     "window_min": 10.0
    },
    "gravity": {
-    "assumption": true,
+    "assumption": false,
     "bracket_note": "All PSI data is microgravity (0 g), the same gravity level as this environment.",
-    "display": "0 g (orbiting station)",
+    "display": "Free fall (space station in lunar orbit)",
     "g": 0.0,
-    "note": "Assumed free-fall habitat; not stated in the loaded notes.",
-    "sources": []
+    "note": "An orbiting station is in free fall, the same microgravity condition as the ISS and the PSI tests.",
+    "sources": [
+     {
+      "detail": "\"Gateway will be a space station in lunar orbit\"",
+      "ref": "NASA Gateway overview",
+      "title": "About Gateway",
+      "url": "https://www.nasa.gov/reference/gateway-about/"
+     }
+    ]
    },
    "id": "gateway",
    "name": "Gateway-class station",
    "o2": {
     "assumption": false,
-    "display": "about 26.5 percent O2",
+    "display": "about 26 to 26.5 percent O2 (nominal, crewed, 10.2 psia)",
     "max": 0.265,
-    "min": 0.265,
-    "note": "Single value, lower confidence: taken from a search summary of the source, not from the opened document.",
-    "point_value": true,
+    "min": 0.26,
+    "note": "Opened full text of three sources. Not the controlling spec: GP 10004 / GP 100047 (Gateway ECLSS subsystem spec) not public. Search snippets only (lower confidence): ICES-2025-389 says crewed HALO O2 raised to 22-28 percent and about 10 percent while uncrewed; ICES-2023 (NTRS 20230002103, opened) gives Transit Habitat/Gateway O2 20-27 percent across 14.7-10.2 psia. Max 30 percent from ICES-2022-45.",
+    "point_value": false,
     "sources": [
      {
-      "detail": "Gateway about 26.5 percent O2 (search summary only)",
-      "ref": "ucl"
+      "detail": "slides 8 and 17: 10.2 psia (26.5% O2) atmosphere for Gateway ops",
+      "ref": "NTRS 20230009095",
+      "title": "Environmental Control and Life Support (ECLS) System Options for Mars Transit and Mars Surface Missions (MSFC, July 2023)",
+      "url": "https://ntrs.nasa.gov/api/citations/20230009095/downloads/20230009095_Presentation.pdf"
+     },
+     {
+      "detail": "PDF p.11: Gateway's nominal operating pressure of 10.2 psia and 26% Oxygen",
+      "ref": "NTRS 20220006727 (ICES-2022-196)",
+      "title": "Regenerative Life Support Systems for Exploration Habitats (Howard et al.)",
+      "url": "https://ntrs.nasa.gov/api/citations/20220006727/downloads/ICES-2022-196.pdf"
+     },
+     {
+      "detail": "Hardware certified to 30% O2 at 10.2 psia (worst-case limit)",
+      "ref": "NTRS 20220006612 (ICES-2022-45)",
+      "title": "Evaluation of Heritage Hardware for Use in Cabin Atmospheres (Low P ECLSS)",
+      "url": "https://ntrs.nasa.gov/api/citations/20220006612/downloads/ICES-2022-45%20Low%20P%20ECLSS_Second%20Submission_2.pdf"
      }
     ],
-    "window_max": 0.27,
+    "window_max": 0.265,
     "window_min": 0.26
    },
    "pressure_atm": {
-    "assumption": true,
-    "display": "14.7 psia, 1.000 atm",
-    "max": 1.0,
-    "min": 1.0,
-    "note": "Gateway pressure is not stated in the loaded notes; Earth sea-level pressure is used as a placeholder.",
+    "assumption": false,
+    "display": "10.2 psia nominal (0.694 atm); crewed range 70-101.3 kPa",
+    "max": 0.694,
+    "min": 0.694,
+    "note": "Opened full text. Search snippets only (lower confidence): HALO PCS design range 9.5-15.0 psia (ICES-2024-443); uncrewed hold 9.5-10.2 psia (ICES-2025-389); both Texas Tech repository PDFs returned HTTP 403 to automated download.",
     "point_value": true,
-    "sources": [],
-    "window_max": 1.02,
-    "window_min": 0.98
+    "sources": [
+     {
+      "detail": "Introduction: Pressure range when crewed is 70 kPa-101.3 kPa (cites GP-10004)",
+      "ref": "NTRS 20240016087 (GP 10265)",
+      "title": "Gateway Payload Users Guide",
+      "url": "https://ntrs.nasa.gov/api/citations/20240016087/downloads/Users%20Guide.pdf"
+     },
+     {
+      "detail": "PDF p.11: Gateway's nominal operating pressure of 10.2 psia",
+      "ref": "NTRS 20220006727 (ICES-2022-196)",
+      "title": "Regenerative Life Support Systems for Exploration Habitats (Howard et al.)",
+      "url": "https://ntrs.nasa.gov/api/citations/20220006727/downloads/ICES-2022-196.pdf"
+     },
+     {
+      "detail": "10.2 psia for Gateway ops",
+      "ref": "NTRS 20230009095",
+      "title": "Environmental Control and Life Support (ECLS) System Options for Mars Transit and Mars Surface Missions (MSFC, July 2023)",
+      "url": "https://ntrs.nasa.gov/api/citations/20230009095/downloads/20230009095_Presentation.pdf"
+     }
+    ],
+    "window_max": 0.714,
+    "window_min": 0.674
    }
   },
   {
@@ -111,12 +181,14 @@
     "display": "about 10 to 20 cm/s HVAC flow",
     "max": 20.0,
     "min": 10.0,
-    "note": "",
+    "note": "Opened full text; a single slide bullet for the lunar lander/habitat, no further derivation.",
     "point_value": false,
     "sources": [
      {
-      "detail": "lunar lander and habitat conditions, HVAC flows about 10-20 cm/s",
-      "ref": "urban"
+      "detail": "slide 11: Low velocity flows (HVAC) ~ 10-20 cm/sec",
+      "ref": "NTRS 20210021181",
+      "title": "Urban, NASA Materials Flammability Update, FLARE 2021",
+      "url": "https://ntrs.nasa.gov/api/citations/20210021181/downloads/NASA%20Materials%20Flammability%20Update%20update%209.09.2021%20Final.pdf"
      }
     ],
     "window_max": 20.0,
@@ -125,13 +197,21 @@
    "gravity": {
     "assumption": false,
     "bracket_note": "All PSI data is microgravity (0 g). Results are bracketed between 0 g and 1 g; this gravity level lies in the bracket and no partial-gravity value is computed or implied.",
-    "display": "0.16 g",
-    "g": 0.16,
-    "note": "",
+    "display": "One-sixth of Earth gravity (about 0.16 g)",
+    "g": 0.165,
+    "note": "NSSDC value is a search snippet only (page not reachable from the tool, ECONNREFUSED); the 0.16 g figure is from the opened Urban slide.",
     "sources": [
      {
-      "detail": "lunar lander and habitat, g = 0.16 g_earth",
-      "ref": "urban"
+      "detail": "\"the gravity on the surface of the Moon is one-sixth of Earth's\"",
+      "ref": "NASA Science, Moon facts",
+      "title": "Earth's Moon: Facts",
+      "url": "https://science.nasa.gov/moon/facts/"
+     },
+     {
+      "detail": "slide 11: g_lunar = 0.16 g_earth",
+      "ref": "NTRS 20210021181",
+      "title": "Urban, NASA Materials Flammability Update, FLARE 2021",
+      "url": "https://ntrs.nasa.gov/api/citations/20210021181/downloads/NASA%20Materials%20Flammability%20Update%20update%209.09.2021%20Final.pdf"
      }
     ]
    },
@@ -139,43 +219,75 @@
    "name": "Lunar surface habitat",
    "o2": {
     "assumption": false,
-    "display": "28 to 34 percent O2",
-    "max": 0.34,
-    "min": 0.28,
-    "note": "",
+    "display": "34 percent O2 (control box 33.5-35 percent)",
+    "max": 0.35,
+    "min": 0.335,
+    "note": "Opened full text. Caveat: the Artemis Base Camp surface habitat concept is assumed nominal 10.2 psia / 26.5% O2 with capability of 8.2 psia / 34% O2 (NTRS 20220000245, opened). NESC: 34 +2 percent, analyses to 40 percent. Worst case: NESC says NASA has data for many materials at 30 percent O2 with limited data above; ICES-2022-45 cites certification at 30% O2 / 10.2 psia.",
     "point_value": false,
     "sources": [
      {
-      "detail": "atmosphere trade: 10.2 psia with 28 percent O2 or 8.2 psia with 34 percent O2",
-      "ref": "ruff"
+      "detail": "PDF p.46: control box of 8.1 to 8.3 psia and 33.5% to 35% O2",
+      "ref": "NASA/TM-2013-217377 (NTRS 20130013505)",
+      "title": "Effects of the 8 psia / 32% O2 Atmosphere on the Human in the Spaceflight Environment",
+      "url": "https://ntrs.nasa.gov/api/citations/20130013505/downloads/20130013505.pdf"
      },
      {
-      "detail": "lunar lander and habitat: 8.2 psi, 34 percent or more O2",
-      "ref": "urban"
+      "detail": "PDF p.12: nominal atmospheres at center of control box +/-0.2 psia, +/-2.0% O2; original surface recommendation 8.0 psia 32% O2",
+      "ref": "NASA/TP-2010-216134",
+      "title": "Recommendations for Exploration Spacecraft Internal Atmospheres: Final Report of the NASA Exploration Atmospheres Working Group",
+      "url": "https://www.nasa.gov/wp-content/uploads/2023/03/henninger-8.2-34-atm-tp216134-2010.pdf"
+     },
+     {
+      "detail": "HEO-DM-1006 specifies nominal 8.2 psia and O2 >= 33.7% for high-frequency EVA missions",
+      "ref": "NTRS 20220006612 (ICES-2022-45)",
+      "title": "Evaluation of Heritage Hardware for Use in Cabin Atmospheres (Low P ECLSS)",
+      "url": "https://ntrs.nasa.gov/api/citations/20220006612/downloads/ICES-2022-45%20Low%20P%20ECLSS_Second%20Submission_2.pdf"
+     },
+     {
+      "detail": "slide 11: 8.2 psi/56.5 kPa and 34%+ vol.% O2",
+      "ref": "NTRS 20210021181",
+      "title": "Urban, NASA Materials Flammability Update, FLARE 2021",
+      "url": "https://ntrs.nasa.gov/api/citations/20210021181/downloads/NASA%20Materials%20Flammability%20Update%20update%209.09.2021%20Final.pdf"
      }
     ],
-    "window_max": 0.34,
-    "window_min": 0.28
+    "window_max": 0.35,
+    "window_min": 0.335
    },
    "pressure_atm": {
     "assumption": false,
-    "display": "8.2 to 10.2 psia (56.5 to 70.3 kPa), 0.558 to 0.694 atm",
-    "max": 0.6941,
-    "min": 0.558,
-    "note": "",
+    "display": "8.2 psia (0.558 atm), control box 8.1-8.3 psia",
+    "max": 0.565,
+    "min": 0.551,
+    "note": "Opened full text. Nominal-vs-capability ambiguity: see o2 note.",
     "point_value": false,
     "sources": [
      {
-      "detail": "8.2 psi / 56.5 kPa",
-      "ref": "urban"
+      "detail": "PDF p.46: control box of 8.1 to 8.3 psia",
+      "ref": "NASA/TM-2013-217377 (NTRS 20130013505)",
+      "title": "Effects of the 8 psia / 32% O2 Atmosphere on the Human in the Spaceflight Environment",
+      "url": "https://ntrs.nasa.gov/api/citations/20130013505/downloads/20130013505.pdf"
      },
      {
-      "detail": "pressure 10.2 psi or less with 30 percent or more O2",
-      "ref": "challenge"
+      "detail": "PDF p.5: after re-evaluation in 2012 the 8/32 environment was altered to 8.2 psia and 34% O2",
+      "ref": "NTRS 20150021491",
+      "title": "Risk of Hypobaric Hypoxia from the Exploration Atmosphere (HRP Evidence Report)",
+      "url": "https://ntrs.nasa.gov/api/citations/20150021491/downloads/20150021491.pdf"
+     },
+     {
+      "detail": "slide 11: 8.2 psi/56.5 kPa",
+      "ref": "NTRS 20210021181",
+      "title": "Urban, NASA Materials Flammability Update, FLARE 2021",
+      "url": "https://ntrs.nasa.gov/api/citations/20210021181/downloads/NASA%20Materials%20Flammability%20Update%20update%209.09.2021%20Final.pdf"
+     },
+     {
+      "detail": "SH assumed nominal 10.2 psia and 26.5% O2, capability of 8.2 psia and 34% O2",
+      "ref": "NTRS 20220000245",
+      "title": "Artemis Deep Space Habitation: Enabling a Sustained Human Presence on the Moon and Beyond (Kessler et al., IEEE 2022)",
+      "url": "https://ntrs.nasa.gov/api/citations/20220000245/downloads/Artemis%20Deep%20Space%20Habitation%20Enabling%20a%20Sustained%20Human%20Presence%20on%20the%20Moon%20and%20Beyond%20(3).pdf"
      }
     ],
-    "window_max": 0.6941,
-    "window_min": 0.558
+    "window_max": 0.565,
+    "window_min": 0.551
    }
   },
   {
@@ -193,57 +305,73 @@
    "gravity": {
     "assumption": false,
     "bracket_note": "All PSI data is microgravity (0 g). Results are bracketed between 0 g and 1 g; this gravity level lies in the bracket and no partial-gravity value is computed or implied.",
-    "display": "0.16 g",
-    "g": 0.16,
-    "note": "",
+    "display": "One-sixth of Earth gravity (about 0.16 g)",
+    "g": 0.165,
+    "note": "Same as lunar habitat.",
     "sources": [
      {
-      "detail": "lunar lander and habitat, g = 0.16 g_earth",
-      "ref": "urban"
+      "detail": "\"the gravity on the surface of the Moon is one-sixth of Earth's\"",
+      "ref": "NASA Science, Moon facts",
+      "title": "Earth's Moon: Facts",
+      "url": "https://science.nasa.gov/moon/facts/"
+     },
+     {
+      "detail": "g_lunar = 0.16 g_earth",
+      "ref": "NTRS 20210021181",
+      "title": "Urban, NASA Materials Flammability Update, FLARE 2021",
+      "url": "https://ntrs.nasa.gov/api/citations/20210021181/downloads/NASA%20Materials%20Flammability%20Update%20update%209.09.2021%20Final.pdf"
      }
     ]
    },
    "id": "rover",
-   "name": "Pressurized rover",
+   "name": "Pressurized rover (lunar)",
    "o2": {
     "assumption": false,
-    "display": "30 to 34 percent O2",
-    "max": 0.34,
+    "display": "30 percent O2 or greater (shared Moon base and rover atmosphere)",
+    "max": 0.35,
     "min": 0.3,
-    "note": "",
+    "note": "Lower bound from the challenge statement; upper bound from the lunar habitat control box (35 percent O2).",
     "point_value": false,
     "sources": [
      {
-      "detail": "Moon base and pressurized rovers: O2 30 percent or greater",
-      "ref": "challenge"
+      "detail": "\"it is expected that the Moon Base and pressurized rover(s) will be at a pressure and oxygen concentration between those in a spacesuit and the Earth's atmosphere\" and \"The intermediate oxygen concentration used on the Moon will likely be 30% or greater, with a corresponding pressure of 10.2 psi or less.\"",
+      "ref": "NASA Space Apps 2026 challenge statement",
+      "title": "Flame in Freefall: SI-Powered Fire Safety Insights from Microgravity Combustion Data",
+      "url": "https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/"
      },
      {
-      "detail": "34 percent O2 upper value for lunar vehicles and habitats",
-      "ref": "urban"
+      "detail": "PDF p.46: control box of 8.1 to 8.3 psia and 33.5% to 35% O2",
+      "ref": "NASA/TM-2013-217377 (NTRS 20130013505)",
+      "title": "Effects of the 8 psia / 32% O2 Atmosphere on the Human in the Spaceflight Environment",
+      "url": "https://ntrs.nasa.gov/api/citations/20130013505/downloads/20130013505.pdf"
      }
     ],
-    "window_max": 0.34,
+    "window_max": 0.35,
     "window_min": 0.3
    },
    "pressure_atm": {
     "assumption": false,
-    "display": "8.2 to 10.2 psia (56.5 to 70.3 kPa), 0.558 to 0.694 atm",
+    "display": "10.2 psia or less (0.694 atm or less)",
     "max": 0.6941,
-    "min": 0.558,
-    "note": "",
+    "min": 0.551,
+    "note": "Upper bound from the challenge statement; lower bound from the lunar habitat control box (8.1 psia).",
     "point_value": false,
     "sources": [
      {
-      "detail": "10.2 psi or less for Moon base and pressurized rovers",
-      "ref": "challenge"
+      "detail": "\"30% or greater, with a corresponding pressure of 10.2 psi or less\"",
+      "ref": "NASA Space Apps 2026 challenge statement",
+      "title": "Flame in Freefall: SI-Powered Fire Safety Insights from Microgravity Combustion Data",
+      "url": "https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/"
      },
      {
-      "detail": "8.2 psi lower value",
-      "ref": "urban"
+      "detail": "PDF p.46: control box of 8.1 to 8.3 psia",
+      "ref": "NASA/TM-2013-217377 (NTRS 20130013505)",
+      "title": "Effects of the 8 psia / 32% O2 Atmosphere on the Human in the Spaceflight Environment",
+      "url": "https://ntrs.nasa.gov/api/citations/20130013505/downloads/20130013505.pdf"
      }
     ],
     "window_max": 0.6941,
-    "window_min": 0.558
+    "window_min": 0.551
    }
   },
   {
@@ -259,40 +387,143 @@
     "window_min": 10.0
    },
    "gravity": {
-    "assumption": true,
+    "assumption": false,
     "bracket_note": "All PSI data is microgravity (0 g). Results are bracketed between 0 g and 1 g; this gravity level lies in the bracket and no partial-gravity value is computed or implied.",
-    "display": "0.38 g",
+    "display": "About one-third of Earth gravity",
     "g": 0.38,
-    "note": "Standard value, not stated in the loaded notes.",
-    "sources": []
+    "note": "NASA states approximately one-third of Earth gravity; no partial-gravity value is computed from it.",
+    "sources": [
+     {
+      "detail": "\"While living and working on Mars, crews will be in approximately one-third of Earth's gravity.\"",
+      "ref": "NASA, The Human Body in Space",
+      "title": "The Human Body in Space",
+      "url": "https://www.nasa.gov/humans-in-space/the-human-body-in-space/"
+     }
+    ]
    },
    "id": "mars",
    "name": "Mars surface habitat",
    "o2": {
-    "assumption": true,
-    "display": "28 to 34 percent O2",
-    "max": 0.34,
-    "min": 0.28,
-    "note": "No Mars habitat atmosphere is given in the loaded notes; the lunar exploration atmosphere range is reused as a placeholder.",
+    "assumption": false,
+    "display": "34 percent O2 (Exploration Atmosphere)",
+    "max": 0.35,
+    "min": 0.335,
+    "note": "Opened full text. No Mars-specific final O2 requirement found; 34 percent is the general Exploration Atmosphere. The M2M slide (NTRS 20230009095) states only 8.2 psia for Mars habitats.",
     "point_value": false,
-    "sources": [],
-    "window_max": 0.34,
-    "window_min": 0.28
+    "sources": [
+     {
+      "detail": "PDF p.12: long-duration lunar and Mars surface habitats nominal 8.0 psia 32% O2 (and 7.6 psia 32%); superseded by 8.2/34",
+      "ref": "NASA/TP-2010-216134",
+      "title": "Recommendations for Exploration Spacecraft Internal Atmospheres: Final Report of the NASA Exploration Atmospheres Working Group",
+      "url": "https://www.nasa.gov/wp-content/uploads/2023/03/henninger-8.2-34-atm-tp216134-2010.pdf"
+     },
+     {
+      "detail": "PDF p.46: 8.2 psia, 34% O2, control box 33.5-35%",
+      "ref": "NASA/TM-2013-217377 (NTRS 20130013505)",
+      "title": "Effects of the 8 psia / 32% O2 Atmosphere on the Human in the Spaceflight Environment",
+      "url": "https://ntrs.nasa.gov/api/citations/20130013505/downloads/20130013505.pdf"
+     },
+     {
+      "detail": "HEO-DM-1006: nominal 8.2 psia, O2 >= 33.7% for high-frequency EVA missions (not Mars-specific)",
+      "ref": "NTRS 20220006612 (ICES-2022-45)",
+      "title": "Evaluation of Heritage Hardware for Use in Cabin Atmospheres (Low P ECLSS)",
+      "url": "https://ntrs.nasa.gov/api/citations/20220006612/downloads/ICES-2022-45%20Low%20P%20ECLSS_Second%20Submission_2.pdf"
+     }
+    ],
+    "window_max": 0.35,
+    "window_min": 0.335
    },
    "pressure_atm": {
-    "assumption": true,
-    "display": "8.2 to 10.2 psia (56.5 to 70.3 kPa), 0.558 to 0.694 atm",
-    "max": 0.6941,
-    "min": 0.558,
-    "note": "No Mars habitat pressure is given in the loaded notes; the lunar range is reused as a placeholder.",
+    "assumption": false,
+    "display": "8.2 psia (0.558 atm)",
+    "max": 0.565,
+    "min": 0.551,
+    "note": "Opened full text. Band 8.1-8.3 psia is the TM-2013-217377 control box.",
     "point_value": false,
-    "sources": [],
-    "window_max": 0.6941,
-    "window_min": 0.558
+    "sources": [
+     {
+      "detail": "slide 16: Mars surface habitats 8.2 psia atmosphere (initial pressurized rover and later larger habitat)",
+      "ref": "NTRS 20230009095",
+      "title": "Environmental Control and Life Support (ECLS) System Options for Mars Transit and Mars Surface Missions (MSFC, July 2023)",
+      "url": "https://ntrs.nasa.gov/api/citations/20230009095/downloads/20230009095_Presentation.pdf"
+     },
+     {
+      "detail": "PDF p.12: nominal 8.0 psia (earlier recommendation)",
+      "ref": "NASA/TP-2010-216134",
+      "title": "Recommendations for Exploration Spacecraft Internal Atmospheres: Final Report of the NASA Exploration Atmospheres Working Group",
+      "url": "https://www.nasa.gov/wp-content/uploads/2023/03/henninger-8.2-34-atm-tp216134-2010.pdf"
+     }
+    ],
+    "window_max": 0.565,
+    "window_min": 0.551
    }
   }
  ],
  "sources": {
+  "AIVC 2001 Raatschen": {
+   "label": "Ventilation and Air Revitalization on the International Space Station (ISS), 22nd AIVC Conference",
+   "url": "https://www.aivc.org/sites/default/files/members_area/medias/pdf/Conf/2001/Raatschen%20Ventilation%20on%20the%20ISS.pdf"
+  },
+  "NASA Gateway overview": {
+   "label": "About Gateway",
+   "url": "https://www.nasa.gov/reference/gateway-about/"
+  },
+  "NASA Science, Moon facts": {
+   "label": "Earth's Moon: Facts",
+   "url": "https://science.nasa.gov/moon/facts/"
+  },
+  "NASA Space Apps 2026 challenge statement": {
+   "label": "Flame in Freefall: SI-Powered Fire Safety Insights from Microgravity Combustion Data",
+   "url": "https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/"
+  },
+  "NASA, The Human Body in Space": {
+   "label": "The Human Body in Space",
+   "url": "https://www.nasa.gov/humans-in-space/the-human-body-in-space/"
+  },
+  "NASA/TM-2013-217377 (NTRS 20130013505)": {
+   "label": "Effects of the 8 psia / 32% O2 Atmosphere on the Human in the Spaceflight Environment",
+   "url": "https://ntrs.nasa.gov/api/citations/20130013505/downloads/20130013505.pdf"
+  },
+  "NASA/TP-2010-216134": {
+   "label": "Recommendations for Exploration Spacecraft Internal Atmospheres: Final Report of the NASA Exploration Atmospheres Working Group",
+   "url": "https://www.nasa.gov/wp-content/uploads/2023/03/henninger-8.2-34-atm-tp216134-2010.pdf"
+  },
+  "NR-NRCSD-S0003": {
+   "label": "NanoRacks CubeSat Deployer (NRCSD) Interface Definition Document (ISS environment table)",
+   "url": "https://s3vi.ndc.nasa.gov/ssri-kb/static/resources/Nanoracks-CubeSat-Deployer-NRCSD-IDD.pdf"
+  },
+  "NTRS 20150021491": {
+   "label": "Risk of Hypobaric Hypoxia from the Exploration Atmosphere (HRP Evidence Report)",
+   "url": "https://ntrs.nasa.gov/api/citations/20150021491/downloads/20150021491.pdf"
+  },
+  "NTRS 20210021181": {
+   "label": "Urban, NASA Materials Flammability Update, FLARE 2021",
+   "url": "https://ntrs.nasa.gov/api/citations/20210021181/downloads/NASA%20Materials%20Flammability%20Update%20update%209.09.2021%20Final.pdf"
+  },
+  "NTRS 20220000245": {
+   "label": "Artemis Deep Space Habitation: Enabling a Sustained Human Presence on the Moon and Beyond (Kessler et al., IEEE 2022)",
+   "url": "https://ntrs.nasa.gov/api/citations/20220000245/downloads/Artemis%20Deep%20Space%20Habitation%20Enabling%20a%20Sustained%20Human%20Presence%20on%20the%20Moon%20and%20Beyond%20(3).pdf"
+  },
+  "NTRS 20220006612 (ICES-2022-45)": {
+   "label": "Evaluation of Heritage Hardware for Use in Cabin Atmospheres (Low P ECLSS)",
+   "url": "https://ntrs.nasa.gov/api/citations/20220006612/downloads/ICES-2022-45%20Low%20P%20ECLSS_Second%20Submission_2.pdf"
+  },
+  "NTRS 20220006727 (ICES-2022-196)": {
+   "label": "Regenerative Life Support Systems for Exploration Habitats (Howard et al.)",
+   "url": "https://ntrs.nasa.gov/api/citations/20220006727/downloads/ICES-2022-196.pdf"
+  },
+  "NTRS 20230009095": {
+   "label": "Environmental Control and Life Support (ECLS) System Options for Mars Transit and Mars Surface Missions (MSFC, July 2023)",
+   "url": "https://ntrs.nasa.gov/api/citations/20230009095/downloads/20230009095_Presentation.pdf"
+  },
+  "NTRS 20240016087 (GP 10265)": {
+   "label": "Gateway Payload Users Guide",
+   "url": "https://ntrs.nasa.gov/api/citations/20240016087/downloads/Users%20Guide.pdf"
+  },
+  "NTRS 20260003925": {
+   "label": "Impacts of Reduced Pressure Atmospheres on ECLSS Architectures (NASA/TM-2026-0003925, NESC-RP-20-01610)",
+   "url": "https://ntrs.nasa.gov/api/citations/20260003925/downloads/20260003925.pdf"
+  },
   "challenge": {
    "label": "Challenge statement, Space Apps 2026 Flame in Freefall",
    "url": "https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/"

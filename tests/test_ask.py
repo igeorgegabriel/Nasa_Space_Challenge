@@ -193,6 +193,67 @@ class AskTest(unittest.TestCase):
         self.assertEqual(status, 500)
         self.assertIn("not configured", body["error"])
 
+    def test_rate_limiter_window_and_keys(self):
+        limiter = self.ask.RateLimiter(limit=3, window=100)
+        for second in (0, 1, 2):
+            self.assertEqual(limiter.check("a", now=1000 + second), (True, 0))
+        allowed, retry = limiter.check("a", now=1003)
+        self.assertFalse(allowed)
+        self.assertGreaterEqual(retry, 1)
+        self.assertLessEqual(retry, 100)
+        self.assertEqual(limiter.check("b", now=1003), (True, 0))
+        self.assertEqual(limiter.check("a", now=1100), (True, 0))
+        self.assertFalse(limiter.check("a", now=1100)[0])
+
+    def test_rate_limiter_defaults_and_pruning(self):
+        self.assertEqual(self.ask.RATE_LIMIT_QUESTIONS, 10)
+        self.assertEqual(self.ask.RATE_LIMIT_WINDOW_SECONDS, 600)
+        limiter = self.ask.RateLimiter(limit=1, window=10, max_keys=3)
+        for index in range(3):
+            limiter.check("ip%d" % index, now=100)
+        limiter.check("ip9", now=500)
+        self.assertLessEqual(len(limiter.hits), 2)
+
+    def test_client_ip_prefers_forwarded_for(self):
+        self.assertEqual(self.ask.client_ip({"X-Forwarded-For": "1.2.3.4, 10.0.0.1"}, "127.0.0.1"), "1.2.3.4")
+        self.assertEqual(self.ask.client_ip({}, "127.0.0.1"), "127.0.0.1")
+        self.assertEqual(self.ask.client_ip({"X-Forwarded-For": ""}, "127.0.0.1"), "127.0.0.1")
+
+    def test_http_rate_limit_returns_429(self):
+        original = self.ask.answer_question
+        original_limiter = self.ask.RATE_LIMITER
+        self.ask.RATE_LIMITER = self.ask.RateLimiter(limit=2, window=600)
+        self.ask.answer_question = lambda question, client=None, corpus=None: (200, {"answer": "ok", "citations": [], "model": "m"})
+        server = HTTPServer(("127.0.0.1", 0), self.ask.handler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            port = server.server_address[1]
+
+            def post(ip, question="hello"):
+                conn = http.client.HTTPConnection("127.0.0.1", port, timeout=5)
+                conn.request("POST", "/api/ask", body=json.dumps({"question": question}),
+                             headers={"Content-Type": "application/json", "X-Forwarded-For": ip})
+                res = conn.getresponse()
+                payload = json.loads(res.read().decode("utf-8"))
+                retry = res.getheader("Retry-After")
+                conn.close()
+                return res.status, payload, retry
+
+            self.assertEqual(post("9.9.9.9")[0], 200)
+            self.assertEqual(post("9.9.9.9")[0], 200)
+            status, payload, retry = post("9.9.9.9")
+            self.assertEqual(status, 429)
+            self.assertIn("Too many questions", payload["error"])
+            self.assertTrue(retry and int(retry) >= 1)
+            self.assertEqual(post("8.8.8.8")[0], 200)
+            self.assertEqual(post("9.9.9.9", question="")[0], 400)
+        finally:
+            server.shutdown()
+            server.server_close()
+            self.ask.answer_question = original
+            self.ask.RATE_LIMITER = original_limiter
+
     def test_http_handler_validation(self):
         original = self.ask.answer_question
         self.ask.answer_question = lambda question, client=None, corpus=None: (200, {"answer": "echo " + question, "citations": [], "model": "m"})

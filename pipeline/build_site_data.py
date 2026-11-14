@@ -13,6 +13,13 @@ from build_unified import to_ascii
 
 UNIFIED_DIR = os.path.join(ROOT, "data", "unified")
 META_PATH = os.path.join(ROOT, "data", "investigations", "investigations_meta.json")
+PROFILE_PATH = os.path.join(ROOT, "data", "environment_profiles.json")
+
+PROFILE_ID_MAP = {
+    "lunar_habitat": "lunar",
+    "pressurized_rover": "rover",
+    "mars_habitat": "mars",
+}
 SITE_DATA_DIR = os.path.join(ROOT, "public", "data")
 CORPUS_PATH = os.path.join(ROOT, "api", "context", "corpus.json")
 
@@ -26,6 +33,7 @@ MAIN_FUEL_CLASSES = ["solid", "liquid_droplet", "gas"]
 
 POINT_TOLERANCE = {"o2": 0.005, "pressure_atm": 0.02, "flow_cm_s": 0.0}
 
+VALUE_DIGITS = 6
 ROUND_O2 = 3
 ROUND_PRESSURE = 2
 ROUND_FLOW = 1
@@ -98,7 +106,7 @@ def lunar_flow(assumption):
     )
 
 
-def build_environments():
+def builtin_environments():
     lunar_o2 = quantity(
         0.28, 0.34, "28 to 34 percent O2",
         [
@@ -206,6 +214,94 @@ def build_environments():
             },
         },
     ]
+    return envs
+
+
+def fmt_display(lo, hi, unit):
+    if lo == hi:
+        return "%s %s" % (fmt_num(lo), unit)
+    return "%s to %s %s" % (fmt_num(lo), fmt_num(hi), unit)
+
+
+def normalize_quantity(block, unit):
+    lo = float(block["min"])
+    hi = float(block["max"])
+    sources = list(block.get("sources") or [])
+    if "assumption" in block:
+        assumption = bool(block["assumption"])
+    else:
+        assumption = not sources
+    return {
+        "min": lo,
+        "max": hi,
+        "display": block.get("display") or fmt_display(lo, hi, unit),
+        "sources": sources,
+        "assumption": assumption,
+        "note": block.get("note") or "",
+    }
+
+
+def normalize_gravity(block):
+    g = float(block["g"])
+    sources = list(block.get("sources") or [])
+    return {
+        "g": g,
+        "display": block.get("display") or ("%s g" % fmt_num(g)),
+        "sources": sources,
+        "assumption": bool(block["assumption"]) if "assumption" in block else not sources,
+        "note": block.get("note") or "",
+    }
+
+
+QUANTITY_UNITS = (("o2", "mole fraction O2"), ("pressure_atm", "atm"), ("flow_cm_s", "cm/s"))
+
+
+def load_profile_file(path):
+    if not path or not os.path.exists(path):
+        return None
+    with open(path, "r", encoding="utf-8-sig") as handle:
+        data = json.load(handle)
+    data = ascii_deep(data)
+    if isinstance(data, list):
+        return {"environments": data, "sources": {}}
+    return {"environments": data.get("environments") or [], "sources": data.get("sources") or {}}
+
+
+def apply_profiles(envs, sources, profile):
+    by_id = {env["id"]: env for env in envs}
+    for entry in profile["environments"]:
+        env_id = PROFILE_ID_MAP.get(entry.get("id"), entry.get("id"))
+        env = by_id.get(env_id)
+        if env is None:
+            continue
+        if entry.get("name"):
+            env["name"] = entry["name"]
+        for key, unit in QUANTITY_UNITS:
+            block = entry.get(key)
+            if isinstance(block, dict) and block.get("min") is not None and block.get("max") is not None:
+                env[key] = normalize_quantity(block, unit)
+        if isinstance(entry.get("gravity"), dict) and entry["gravity"].get("g") is not None:
+            env["gravity"] = normalize_gravity(entry["gravity"])
+    merged = OrderedDict(sources)
+    for key, value in profile["sources"].items():
+        merged[key] = value
+    for entry in profile["environments"]:
+        for block in entry.values():
+            if not isinstance(block, dict):
+                continue
+            for source in block.get("sources") or []:
+                ref = source.get("ref")
+                if ref and ref not in merged:
+                    merged[ref] = {"label": source.get("title") or ref, "url": source.get("url") or ""}
+    return merged
+
+
+def build_environments(profile_path=PROFILE_PATH):
+    envs = builtin_environments()
+    sources = SOURCES
+    profile = load_profile_file(profile_path)
+    if profile:
+        sources = apply_profiles(envs, SOURCES, profile)
     for env in envs:
         for key, tol in POINT_TOLERANCE.items():
             block = env[key]
@@ -220,7 +316,7 @@ def build_environments():
             if gravity["g"] > 0 else
             "All PSI data is microgravity (0 g), the same gravity level as this environment."
         )
-    return {"environments": envs, "sources": SOURCES}
+    return {"environments": envs, "sources": sources}
 
 
 def load_json(path):
@@ -230,7 +326,7 @@ def load_json(path):
 
 def ascii_deep(value):
     if isinstance(value, str):
-        return to_ascii(value)
+        return to_ascii(value.replace("�", "-"))
     if isinstance(value, list):
         return [ascii_deep(item) for item in value]
     if isinstance(value, dict):
@@ -323,6 +419,45 @@ def slim_ntrs(pub):
     }
 
 
+FUNCTION_NAMES = ("prevention", "detection", "suppression", "fundamental")
+SOURCE_CHALLENGE = "challenge statement"
+SOURCE_KEYWORD = "keyword match on PSI text"
+EVIDENCE_QUOTES_SHOWN = 2
+
+QUOTE_FLAMMABILITY = (
+    "Flammability studies focus on solid materials such as fabrics and plastics, as studied in the Burning and "
+    "Suppression of Solids (BASS and BASS-II) and Spacecraft Fire Safety Demonstration (Saffire-I, -II, and -III) investigations."
+)
+QUOTE_SAME = (
+    "Fire detection was tested in microgravity through the Smoke and Aerosol Measurement Experiment studies (SAME and SAME-R)."
+)
+QUOTE_FLEX = (
+    "Suppression was studied in the Flame Extinguishment Experiment (FLEX) through dilution of the chamber atmosphere "
+    "with carbon dioxide and helium, both of which suppress fire."
+)
+QUOTE_BRE = (
+    "While it burned gaseous fuels, the Burning Rate Emulator (BRE) experiment of the Advanced Combustion via Microgravity "
+    "Experiments (ACME) project was a study of materials flammability in still atmospheres as a function of material properties."
+)
+QUOTE_DAFT = (
+    "One of the instruments used for smoke detection in the SAME and SAME-R studies was instead used to detect dust in the "
+    "Dust and Aerosol Measurement Feasibility Test (DAFT and DAFT-2) studies."
+)
+
+CHALLENGE_FUNCTIONS = {
+    "PSI-26": [("prevention", QUOTE_FLAMMABILITY)],
+    "PSI-25": [("prevention", QUOTE_FLAMMABILITY)],
+    "PSI-98": [("prevention", QUOTE_FLAMMABILITY)],
+    "PSI-99": [("prevention", QUOTE_FLAMMABILITY)],
+    "PSI-100": [("prevention", QUOTE_FLAMMABILITY)],
+    "PSI-102": [("detection", QUOTE_SAME)],
+    "PSI-101": [("detection", QUOTE_SAME)],
+    "PSI-69": [("suppression", QUOTE_FLEX)],
+    "PSI-20": [("prevention", QUOTE_BRE)],
+    "PSI-47": [("detection", QUOTE_DAFT)],
+}
+
+
 def normalize_functions(raw):
     if raw is None:
         return []
@@ -331,11 +466,46 @@ def normalize_functions(raw):
     else:
         text = str(raw)
     text = text.lower()
-    found = []
-    for name in ("prevention", "detection", "suppression", "fundamental"):
-        if name in text:
-            found.append(name)
-    return found
+    return [name for name in FUNCTION_NAMES if name in text]
+
+
+def evidence_basis(candidate):
+    quotes = []
+    for item in (candidate.get("evidence") or [])[:EVIDENCE_QUOTES_SHOWN]:
+        quote = str(item.get("quote") or "").strip()
+        if quote:
+            quotes.append("[%s] %s" % (item.get("source_field") or "text", quote))
+    return " | ".join(quotes)
+
+
+def derive_functions(psi_id, record):
+    entries = []
+    taken = set()
+    for name, quote in CHALLENGE_FUNCTIONS.get(psi_id, []):
+        entries.append({"function": name, "source": SOURCE_CHALLENGE, "basis": quote, "score": None})
+        taken.add(name)
+    candidates = [c for c in (record.get("fire_safety_function_candidates") or []) if isinstance(c, dict)]
+    candidates.sort(key=lambda c: (-(c.get("score") or 0), str(c.get("function"))))
+    for candidate in candidates:
+        name = candidate.get("function")
+        if name not in FUNCTION_NAMES or name in taken:
+            continue
+        taken.add(name)
+        entries.append({
+            "function": name,
+            "source": SOURCE_KEYWORD,
+            "basis": evidence_basis(candidate),
+            "score": candidate.get("score"),
+        })
+    return entries
+
+
+def primary_function(entries, record):
+    for entry in entries:
+        if entry["source"] == SOURCE_CHALLENGE:
+            return entry["function"]
+    found = normalize_functions(record.get("fire_safety_function"))
+    return found[0] if found else "unassigned"
 
 
 def numeric_psi_key(psi_id):
@@ -350,12 +520,16 @@ def range_block(pairs):
     his = [hi for lo, hi, row in pairs]
     files = sorted({row["source_file"] for lo, hi, row in pairs})
     source_rows = [row["source_row"] for lo, hi, row in pairs]
+    values = sorted({round(lo, VALUE_DIGITS) for lo, hi, row in pairs if lo == hi})
+    spans = sorted({(round(lo, VALUE_DIGITS), round(hi, VALUE_DIGITS)) for lo, hi, row in pairs if lo != hi})
     return {
         "min": min(los),
         "max": max(his),
         "n": len(pairs),
         "files": files,
         "source_rows": [min(source_rows), max(source_rows)],
+        "values": values,
+        "spans": [list(span) for span in spans],
     }
 
 
@@ -432,7 +606,7 @@ def build_investigations(rows, unified, meta):
         base = unified.get(psi_id, {})
         record = meta.get(psi_id, {})
         inv_rows = by_psi.get(psi_id, [])
-        functions = normalize_functions(record.get("fire_safety_function"))
+        functions = derive_functions(psi_id, record)
         fuel_class = base.get("fuel_class") if base.get("fuel_class") else None
         if fuel_class is None and inv_rows:
             classes = {r["fuel_class"] for r in inv_rows if r.get("fuel_class")}
@@ -464,6 +638,7 @@ def build_investigations(rows, unified, meta):
             "ntrs_publications": [slim_ntrs(p) for p in (record.get("ntrs_publications") or [])],
             "fire_safety_function_raw": record.get("fire_safety_function") or "",
             "functions": functions,
+            "primary_function": primary_function(functions, record),
             "fire_safety_function_basis": record.get("fire_safety_function_basis") or "",
             "meta_present": psi_id in meta,
             "row_count": len(inv_rows),
@@ -819,9 +994,10 @@ def build_corpus(investigations, rankings):
                 lines.append("Outcomes recorded: %s." % ", ".join("%s (%d)" % (o["value"], o["count"]) for o in inv["outcomes"]))
         else:
             lines.append("This investigation has no rows in the unified conditions table.")
-        if inv["functions"]:
-            lines.append("Fire-safety function: %s. Basis: %s" % (", ".join(inv["functions"]), inv["fire_safety_function_basis"]))
-        else:
+        lines.append("Primary fire-safety function: %s." % inv["primary_function"])
+        for entry in inv["functions"]:
+            lines.append("Supports %s (%s): %s" % (entry["function"], entry["source"], entry["basis"] or "no basis text"))
+        if not inv["functions"]:
             lines.append("Fire-safety function: unassigned.")
         for env_id, ranking in rankings.items():
             for item in ranking:
@@ -844,6 +1020,263 @@ def build_corpus(investigations, rankings):
             "body": "\n".join(lines),
         })
     return {"documents": docs}
+
+
+MIN_SUPPORTED_ROWS = 10
+STATUS_SUPPORTED = "Supported"
+STATUS_PARTLY = "Partly"
+STATUS_NOT = "Not supported"
+
+AXIS_LABELS = {"o2": "ambient O2", "pressure": "pressure", "flow": "flow speed"}
+AXIS_TITLES = {"o2": "Ambient O2", "pressure": "Pressure", "flow": "Flow speed"}
+AXIS_FIELDS = {"o2": "o2_frac", "pressure": "pressure_atm", "flow": "flow_cm_s"}
+AXIS_KEYS = {"o2": "o2", "pressure": "pressure_atm", "flow": "flow_cm_s"}
+AXIS_PARAMS = {"o2": ("o2min", "o2max"), "pressure": ("pmin", "pmax"), "flow": ("fmin", "fmax")}
+AXIS_UNITS = {"o2": "", "pressure": " atm", "flow": " cm/s"}
+
+RULE_TEXT = (
+    "Status is computed from the unified table for the selected environment. A relationship counts a row only if the row has a recorded "
+    "response (the measured outcome the model would predict), has value quality exact or approximate, and lies inside the environment window "
+    "on every axis the relationship uses (ambient O2 only, pressure above 0). Supported: at least %d such rows. "
+    "Partly: some rows exist but fewer than %d count, because they lie outside the window or carry no response column. "
+    "Not supported: no rows at all." % (MIN_SUPPORTED_ROWS, MIN_SUPPORTED_ROWS)
+)
+
+NO_MODEL_NOTE = (
+    "No trained model is shipped. A model fitted to this table would be asked for predictions outside the tested range, "
+    "which would not be valid. The downloads are model-ready instead: units, provenance, a group column and a validity note."
+)
+
+GROUPED_VALIDATION_NOTE = (
+    "Validate any model with grouped (leave-one-investigation-out) splits on the group column. Rows within one investigation share "
+    "hardware, fuel and procedure, so a random row split leaks information and overstates accuracy."
+)
+
+RELATIONSHIPS = [
+    {
+        "id": "droplet_extinction",
+        "title": "Droplet extinction diameter and burn time versus O2, diluent and pressure",
+        "psi_ids": ["PSI-69", "PSI-68", "PSI-39"],
+        "axes": ["o2", "pressure"],
+        "response_keys": ["extinction_diameter_mm", "burn_time_s"],
+        "response_label": "extinction diameter or burn time",
+        "needs": "Droplet extinction runs (extinction diameter, burn time) at the window O2 and pressure with the CO2, helium and nitrogen diluent set.",
+    },
+    {
+        "id": "gas_flame_limits",
+        "title": "Gas-flame ignition and self-extinction versus O2",
+        "psi_ids": ["PSI-159", "PSI-10", "PSI-20"],
+        "axes": ["o2"],
+        "response_keys": ["outcome", "note:flames_ignited"],
+        "response_label": "ignition or extinction outcome",
+        "needs": "Ignition and self-extinction outcomes for gas flames at ambient O2 inside the window, with the outcome recorded per test.",
+    },
+    {
+        "id": "solid_flammability",
+        "title": "Solid-material ignition and burn versus O2 and flow",
+        "psi_ids": ["PSI-26", "PSI-25", "PSI-98", "PSI-99", "PSI-100"],
+        "axes": ["o2"],
+        "response_keys": ["outcome", "burn_time_s", "note:burn_time_text", "note:ug_burn_length"],
+        "response_label": "burn outcome or burn time",
+        "needs": "Solid-material ignition and burn results at ambient O2 inside the window, recorded with the flow speed of each test.",
+    },
+    {
+        "id": "smoke_particle_size",
+        "title": "Smoke particle size versus flow and aging",
+        "psi_ids": ["PSI-102", "PSI-101"],
+        "axes": ["flow"],
+        "response_keys": [],
+        "response_label": "particle size",
+        "needs": "The measured particle-size results of each SAME and SAME-R test, joined to the flow speed and aging times already in the table.",
+    },
+    {
+        "id": "partial_gravity",
+        "title": "Any relationship at partial gravity (lunar 0.16 g, Mars 0.38 g)",
+        "psi_ids": [],
+        "axes": [],
+        "response_keys": [],
+        "response_label": "any response",
+        "needs": "Partial-gravity flight data such as LUCI (Lunar-g Combustion Investigation) and FM2 (Flammability of Materials on the Moon), both named in the challenge statement as expected additions to PSI.",
+    },
+]
+
+
+def has_response(row, keys):
+    for key in keys:
+        if key.startswith("note:"):
+            if ("%s=" % key[5:]) in (row.get("measurement_notes") or ""):
+                return True
+        elif row.get(key) is not None:
+            return True
+    return False
+
+
+def axis_inside(row, axis, env):
+    lo, hi = win(env, AXIS_KEYS[axis])
+    value = row.get(AXIS_FIELDS[axis])
+    if axis == "o2" and row.get("o2_basis") != "ambient":
+        return False
+    if axis == "pressure" and (value is None or value <= 0):
+        return False
+    return in_window(value, lo, hi)
+
+
+def window_text(axes, env):
+    parts = []
+    for axis in axes:
+        lo, hi = win(env, AXIS_KEYS[axis])
+        parts.append("%s %s to %s%s" % (AXIS_LABELS[axis], fmt_num(lo), fmt_num(hi), AXIS_UNITS[axis]))
+    return " and ".join(parts)
+
+
+def value_range(rows, axis):
+    values = []
+    for row in rows:
+        if axis == "o2" and row.get("o2_basis") != "ambient":
+            continue
+        value = row.get(AXIS_FIELDS[axis])
+        if value is None or (axis == "pressure" and value <= 0):
+            continue
+        values.append(value)
+        if axis == "o2" and row.get("o2_min_frac") is not None:
+            values.append(row["o2_min_frac"])
+    if not values:
+        return None
+    return {"min": min(values), "max": max(values), "n": len(values)}
+
+
+def diluent_names(rows):
+    names = set()
+    for row in rows:
+        for part in str(row.get("diluent") or "").split(";"):
+            token = part.strip().split(" ")[0]
+            if token and re.match(r"^[A-Za-z][A-Za-z0-9]*$", token):
+                names.add(token)
+    return sorted(names)
+
+
+def readiness_gap(rel, env, rows, response_rows, counted, status):
+    if status == STATUS_NOT:
+        return rel["needs"]
+    if status == STATUS_SUPPORTED:
+        if env["gravity"]["g"] > 0:
+            return "No gap inside this window for the rows counted. All rows are 0 g, so this says nothing about a fire at the environment's own gravity."
+        return "No gap inside this window for the rows counted. All rows are 0 g, the same gravity level as this environment."
+    parts = []
+    if not response_rows:
+        parts.append("No %s is recorded in the table for these rows." % rel["response_label"])
+    else:
+        for axis in rel["axes"]:
+            axis_rows = [r for r in response_rows if countable([r]) and axis_inside(r, axis, env)]
+            lo, hi = win(env, AXIS_KEYS[axis])
+            rng = value_range(response_rows, axis)
+            if not axis_rows:
+                if rng and rng["max"] < lo:
+                    parts.append("%s tested with a response only reaches %s, below the window (%s to %s)." % (
+                        AXIS_TITLES[axis], fmt_num(rng["max"]), fmt_num(lo), fmt_num(hi)))
+                elif rng and rng["min"] > hi:
+                    parts.append("%s tested with a response starts at %s, above the window (%s to %s)." % (
+                        AXIS_TITLES[axis], fmt_num(rng["min"]), fmt_num(lo), fmt_num(hi)))
+                else:
+                    parts.append("No row with a response lies inside the %s window (%s to %s)." % (
+                        AXIS_LABELS[axis], fmt_num(lo), fmt_num(hi)))
+            elif len(axis_rows) < MIN_SUPPORTED_ROWS:
+                parts.append("Only %d %s with a response lie inside the %s window." % (
+                    len(axis_rows), "row" if len(axis_rows) == 1 else "rows", AXIS_LABELS[axis]))
+        if not parts:
+            parts.append("Only %d rows with a response lie inside the full window (%d needed)." % (len(counted), MIN_SUPPORTED_ROWS))
+    parts.append("To close it: " + rel["needs"])
+    return " ".join(parts)
+
+
+def readiness_item(rel, env, rows_all, e_field_rows):
+    ids = rel["psi_ids"]
+    rows = [r for r in rows_all if r["psi_id"] in ids]
+    response_rows = [r for r in rows if has_response(r, rel["response_keys"])]
+    counted = [r for r in countable(response_rows) if all(axis_inside(r, a, env) for a in rel["axes"])] if rel["axes"] else []
+    if not rows:
+        status = STATUS_NOT
+    elif len(counted) >= MIN_SUPPORTED_ROWS:
+        status = STATUS_SUPPORTED
+    else:
+        status = STATUS_PARTLY
+    per_inv = []
+    for psi_id in ids:
+        inv_rows = [r for r in rows if r["psi_id"] == psi_id]
+        if not inv_rows:
+            continue
+        inv_resp = [r for r in inv_rows if has_response(r, rel["response_keys"])]
+        inv_counted = [r for r in counted if r["psi_id"] == psi_id]
+        per_inv.append({
+            "psi_id": psi_id,
+            "investigation": inv_rows[0].get("investigation") or psi_id,
+            "rows": len(inv_rows),
+            "response_rows": len(inv_resp),
+            "counted_rows": len(inv_counted),
+        })
+    if rel["id"] == "partial_gravity":
+        reason = (
+            "No PSI table has a gravity column and every row is a 0 g test. The challenge statement says partial gravity was mimicked in "
+            "ACME E-FIELD Flames (PSI-22, %d rows in the table) through an electric field acting on flame ions; that is not a partial-gravity measurement."
+            % e_field_rows
+        )
+    elif not ids:
+        reason = "No rows."
+    else:
+        reason = (
+            "%d rows in %d investigations; %d carry a recorded %s; %d of those count inside the window (%s). Rule: at least %d."
+            % (len(rows), len(per_inv), len(response_rows), rel["response_label"], len(counted), window_text(rel["axes"], env), MIN_SUPPORTED_ROWS)
+        )
+    link = {"env": env["id"]}
+    if ids:
+        link["inv"] = ",".join(ids)
+    if "o2" in rel["axes"]:
+        link["basis"] = "ambient"
+    for axis in rel["axes"]:
+        lo, hi = win(env, AXIS_KEYS[axis])
+        link[AXIS_PARAMS[axis][0]] = lo
+        link[AXIS_PARAMS[axis][1]] = hi
+    item = {
+        "id": rel["id"],
+        "status": status,
+        "rows_total": len(rows),
+        "rows_with_response": len(response_rows),
+        "rows_counted": len(counted),
+        "investigations": per_inv,
+        "ranges": {axis: value_range(rows, axis) for axis in ("o2", "pressure", "flow")},
+        "reason": reason,
+        "gap": readiness_gap(rel, env, rows, response_rows, counted, status),
+        "link": link,
+    }
+    if rel["id"] == "droplet_extinction":
+        item["diluents"] = diluent_names(rows)
+    return item
+
+
+def build_model_readiness(rows, environments):
+    e_field_rows = sum(1 for r in rows if r["psi_id"] == "PSI-22")
+    per_env = OrderedDict()
+    for env in environments["environments"]:
+        per_env[env["id"]] = {
+            "name": env["name"],
+            "gravity_g": env["gravity"]["g"],
+            "window": {
+                key: {"min": win(env, key)[0], "max": win(env, key)[1]}
+                for key in ("o2", "pressure_atm", "flow_cm_s")
+            },
+            "items": [readiness_item(rel, env, rows, e_field_rows) for rel in RELATIONSHIPS],
+        }
+    return {
+        "rule": RULE_TEXT,
+        "min_rows": MIN_SUPPORTED_ROWS,
+        "no_model_note": NO_MODEL_NOTE,
+        "grouped_validation_note": GROUPED_VALIDATION_NOTE,
+        "relationships": [
+            {"id": r["id"], "title": r["title"], "psi_ids": r["psi_ids"], "axes": r["axes"], "response_label": r["response_label"]}
+            for r in RELATIONSHIPS
+        ],
+        "environments": per_env,
+    }
 
 
 def build_rank_reference(investigations, environments):
@@ -894,6 +1327,7 @@ def build():
         "environments": environments,
         "insights": insights,
         "earth": {"applications": EARTH},
+        "model_readiness": build_model_readiness(rows, environments),
         "rank_reference": reference,
         "corpus": corpus,
         "meta_present": bool(meta),
@@ -907,6 +1341,7 @@ def main():
     dump(os.path.join(SITE_DATA_DIR, "environments.json"), result["environments"])
     dump(os.path.join(SITE_DATA_DIR, "insights.json"), result["insights"])
     dump(os.path.join(SITE_DATA_DIR, "earth.json"), result["earth"])
+    dump(os.path.join(SITE_DATA_DIR, "model_readiness.json"), result["model_readiness"])
     dump(os.path.join(SITE_DATA_DIR, "rank_reference.json"), result["rank_reference"])
     dump(CORPUS_PATH, result["corpus"])
     print("investigations=%d rows=%d meta=%s documents=%d" % (

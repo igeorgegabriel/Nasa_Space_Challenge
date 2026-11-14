@@ -234,9 +234,29 @@ button:disabled { opacity: 0.55; cursor: default; }
 
 .chart { width: 100%; min-height: 380px; }
 
-.answer { white-space: pre-wrap; }
+.answer p { margin: 0.4rem 0; }
+
+.answer ul, .answer ol { margin: 0.4rem 0; padding-left: 1.4rem; }
+
+.answer table { width: auto; margin: 0.5rem 0; }
+
+.answer h4 { margin: 0.8rem 0 0.2rem; }
 
 .answer .cite-link { font-size: 0.8rem; vertical-align: super; }
+
+.citations li { margin: 0.4rem 0; }
+
+.cite-quote { display: block; }
+
+button.small-button { font-size: 0.75rem; padding: 0.05rem 0.4rem; margin-top: 0.2rem; }
+
+.bar-groups { display: flex; gap: 10px; }
+
+.tag.supported { background: #e6f1e8; border-color: #a9cdb1; color: var(--ok); }
+.tag.partly { background: var(--warn-soft); border-color: #e0c27a; color: var(--warn); }
+.tag.notsupported { background: #f4e6e1; border-color: #d9a99a; color: var(--accent); }
+
+table.readiness td ul { margin: 0; padding-left: 1.1rem; }
 
 .not-in-data { font-weight: 700; color: var(--warn); }
 

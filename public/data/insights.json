@@ -25,7 +25,7 @@
     }
    ],
    "numbers": {
-    "lunar_o2_min": 0.28,
+    "lunar_o2_min": 0.335,
     "max_by_fuel_class": {
      "gas": {
       "max_o2": 0.4,
@@ -53,7 +53,7 @@
     "solid_rows": 272,
     "solid_rows_with_o2": 140
    },
-   "text": "Highest ambient O2 tested per fuel class: solid 0.222 (PSI-25 row 48); liquid droplet 0.34 (PSI-69 row 39); gas 0.4 (PSI-10 row 207). No solid-fuel row in the table has ambient O2 above 0.222, which is below the 0.28 to 0.34 range of the lunar surface habitat profile.",
+   "text": "Highest ambient O2 tested per fuel class: solid 0.222 (PSI-25 row 48); liquid droplet 0.34 (PSI-69 row 39); gas 0.4 (PSI-10 row 207). No solid-fuel row in the table has ambient O2 above 0.222, which is below the 0.335 to 0.35 range of the lunar surface habitat profile.",
    "title": "Highest ambient O2 tested, by fuel class"
   },
   {
@@ -95,7 +95,7 @@
      "params": {
       "basis": "ambient",
       "env": "iss",
-      "o2max": 0.22,
+      "o2max": 0.241,
       "o2min": 0.21,
       "quality": "exact,approximate"
      }
@@ -105,8 +105,8 @@
      "params": {
       "basis": "ambient",
       "env": "lunar",
-      "o2max": 0.34,
-      "o2min": 0.28,
+      "o2max": 0.35,
+      "o2min": 0.335,
       "quality": "exact,approximate"
      }
     },
@@ -115,10 +115,10 @@
      "params": {
       "basis": "ambient",
       "env": "lunar",
-      "o2max": 0.34,
-      "o2min": 0.28,
-      "pmax": 0.6941,
-      "pmin": 0.558,
+      "o2max": 0.35,
+      "o2min": 0.335,
+      "pmax": 0.565,
+      "pmin": 0.551,
       "quality": "exact,approximate"
      }
     }
@@ -148,20 +148,20 @@
      "iss": {
       "by_fuel_class": {
        "gas": {
-        "o2_and_pressure_window": 28,
-        "o2_window": 53
+        "o2_and_pressure_window": 34,
+        "o2_window": 59
        },
        "liquid_droplet": {
-        "o2_and_pressure_window": 62,
-        "o2_window": 117
+        "o2_and_pressure_window": 71,
+        "o2_window": 155
        },
        "solid": {
         "o2_and_pressure_window": 0,
-        "o2_window": 15
+        "o2_window": 35
        }
       },
       "name": "ISS / spacecraft cabin",
-      "o2_and_pressure_window_rows": 90,
+      "o2_and_pressure_window_rows": 105,
       "o2_window_investigations": [
        "PSI-10",
        "PSI-20",
@@ -173,17 +173,17 @@
        "PSI-99",
        "PSI-159"
       ],
-      "o2_window_rows": 185
+      "o2_window_rows": 249
      },
      "lunar": {
       "by_fuel_class": {
        "gas": {
         "o2_and_pressure_window": 0,
-        "o2_window": 12
+        "o2_window": 2
        },
        "liquid_droplet": {
         "o2_and_pressure_window": 0,
-        "o2_window": 24
+        "o2_window": 9
        },
        "solid": {
         "o2_and_pressure_window": 0,
@@ -193,23 +193,21 @@
       "name": "Lunar surface habitat",
       "o2_and_pressure_window_rows": 0,
       "o2_window_investigations": [
-       "PSI-10",
        "PSI-20",
-       "PSI-23",
        "PSI-69",
        "PSI-159"
       ],
-      "o2_window_rows": 36
+      "o2_window_rows": 11
      },
      "mars": {
       "by_fuel_class": {
        "gas": {
         "o2_and_pressure_window": 0,
-        "o2_window": 12
+        "o2_window": 2
        },
        "liquid_droplet": {
         "o2_and_pressure_window": 0,
-        "o2_window": 24
+        "o2_window": 9
        },
        "solid": {
         "o2_and_pressure_window": 0,
@@ -219,19 +217,17 @@
       "name": "Mars surface habitat",
       "o2_and_pressure_window_rows": 0,
       "o2_window_investigations": [
-       "PSI-10",
        "PSI-20",
-       "PSI-23",
        "PSI-69",
        "PSI-159"
       ],
-      "o2_window_rows": 36
+      "o2_window_rows": 11
      },
      "rover": {
       "by_fuel_class": {
        "gas": {
         "o2_and_pressure_window": 0,
-        "o2_window": 7
+        "o2_window": 8
        },
        "liquid_droplet": {
         "o2_and_pressure_window": 0,
@@ -242,7 +238,7 @@
         "o2_window": 0
        }
       },
-      "name": "Pressurized rover",
+      "name": "Pressurized rover (lunar)",
       "o2_and_pressure_window_rows": 0,
       "o2_window_investigations": [
        "PSI-10",
@@ -251,11 +247,11 @@
        "PSI-69",
        "PSI-159"
       ],
-      "o2_window_rows": 31
+      "o2_window_rows": 32
      }
     }
    },
-   "text": "ISS / spacecraft cabin: 185 rows with ambient O2 inside the window, 90 also inside the pressure window; Gateway-class station: 0 rows with ambient O2 inside the window, 0 also inside the pressure window; Lunar surface habitat: 36 rows with ambient O2 inside the window, 0 also inside the pressure window; Pressurized rover: 31 rows with ambient O2 inside the window, 0 also inside the pressure window; Mars surface habitat: 36 rows with ambient O2 inside the window, 0 also inside the pressure window.",
+   "text": "ISS / spacecraft cabin: 249 rows with ambient O2 inside the window, 105 also inside the pressure window; Gateway-class station: 0 rows with ambient O2 inside the window, 0 also inside the pressure window; Lunar surface habitat: 11 rows with ambient O2 inside the window, 0 also inside the pressure window; Pressurized rover (lunar): 32 rows with ambient O2 inside the window, 0 also inside the pressure window; Mars surface habitat: 11 rows with ambient O2 inside the window, 0 also inside the pressure window.",
    "title": "Rows inside each environment window"
   },
   {
@@ -267,10 +263,10 @@
      "params": {
       "basis": "ambient",
       "env": "lunar",
-      "o2max": 0.34,
-      "o2min": 0.28,
-      "pmax": 0.6941,
-      "pmin": 0.558,
+      "o2max": 0.35,
+      "o2min": 0.335,
+      "pmax": 0.565,
+      "pmin": 0.551,
       "quality": "exact,approximate"
      }
     },
@@ -305,7 +301,7 @@
       ],
       "fuel_classes_zero_o2_window": [],
       "name": "ISS / spacecraft cabin",
-      "rows_o2_and_flow_window": 2
+      "rows_o2_and_flow_window": 8
      },
      "lunar": {
       "fuel_classes_zero_o2_pressure_window": [
@@ -340,13 +336,13 @@
       "fuel_classes_zero_o2_window": [
        "solid"
       ],
-      "name": "Pressurized rover",
+      "name": "Pressurized rover (lunar)",
       "rows_o2_and_flow_window": 0
      }
     },
     "rows_o2_pressure_flow_all_recorded": 0
    },
-   "text": "ISS / spacecraft cabin: zero rows inside both the O2 and pressure window for solid; Gateway-class station: zero rows inside both the O2 and pressure window for every main fuel class (solid, liquid droplet, gas); Lunar surface habitat: zero rows inside both the O2 and pressure window for every main fuel class (solid, liquid droplet, gas); Pressurized rover: zero rows inside both the O2 and pressure window for every main fuel class (solid, liquid droplet, gas); Mars surface habitat: zero rows inside both the O2 and pressure window for every main fuel class (solid, liquid droplet, gas). Rows that record O2, pressure and flow speed together: 0.",
+   "text": "ISS / spacecraft cabin: zero rows inside both the O2 and pressure window for solid; Gateway-class station: zero rows inside both the O2 and pressure window for every main fuel class (solid, liquid droplet, gas); Lunar surface habitat: zero rows inside both the O2 and pressure window for every main fuel class (solid, liquid droplet, gas); Pressurized rover (lunar): zero rows inside both the O2 and pressure window for every main fuel class (solid, liquid droplet, gas); Mars surface habitat: zero rows inside both the O2 and pressure window for every main fuel class (solid, liquid droplet, gas). Rows that record O2, pressure and flow speed together: 0.",
    "title": "Coverage gaps per environment"
   },
   {

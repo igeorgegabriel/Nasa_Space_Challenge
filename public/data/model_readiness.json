@@ -1,0 +1,1346 @@
+{
+ "environments": {
+  "gateway": {
+   "gravity_g": 0.0,
+   "items": [
+    {
+     "diluents": [
+      "CO2",
+      "He",
+      "N2"
+     ],
+     "gap": "No row with a response lies inside the ambient O2 window (0.26 to 0.265). To close it: Droplet extinction runs (extinction diameter, burn time) at the window O2 and pressure with the CO2, helium and nitrogen diluent set.",
+     "id": "droplet_extinction",
+     "investigations": [
+      {
+       "counted_rows": 0,
+       "investigation": "FLEX",
+       "psi_id": "PSI-69",
+       "response_rows": 269,
+       "rows": 274
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "FLEX-2",
+       "psi_id": "PSI-68",
+       "response_rows": 0,
+       "rows": 8
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "CFI",
+       "psi_id": "PSI-39",
+       "response_rows": 0,
+       "rows": 87
+      }
+     ],
+     "link": {
+      "basis": "ambient",
+      "env": "gateway",
+      "inv": "PSI-69,PSI-68,PSI-39",
+      "o2max": 0.265,
+      "o2min": 0.26,
+      "pmax": 0.714,
+      "pmin": 0.674
+     },
+     "ranges": {
+      "flow": null,
+      "o2": {
+       "max": 0.34,
+       "min": 0.12,
+       "n": 738
+      },
+      "pressure": {
+       "max": 5,
+       "min": 0.5,
+       "n": 360
+      }
+     },
+     "reason": "369 rows in 3 investigations; 269 carry a recorded extinction diameter or burn time; 0 of those count inside the window (ambient O2 0.26 to 0.265 and pressure 0.674 to 0.714 atm). Rule: at least 10.",
+     "rows_counted": 0,
+     "rows_total": 369,
+     "rows_with_response": 269,
+     "status": "Partly"
+    },
+    {
+     "gap": "No row with a response lies inside the ambient O2 window (0.26 to 0.265). To close it: Ignition and self-extinction outcomes for gas flames at ambient O2 inside the window, with the outcome recorded per test.",
+     "id": "gas_flame_limits",
+     "investigations": [
+      {
+       "counted_rows": 0,
+       "investigation": "ACME CFI-G",
+       "psi_id": "PSI-159",
+       "response_rows": 285,
+       "rows": 333
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "ACME/Flame Design",
+       "psi_id": "PSI-10",
+       "response_rows": 0,
+       "rows": 327
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "ACME BRE",
+       "psi_id": "PSI-20",
+       "response_rows": 18,
+       "rows": 18
+      }
+     ],
+     "link": {
+      "basis": "ambient",
+      "env": "gateway",
+      "inv": "PSI-159,PSI-10,PSI-20",
+      "o2max": 0.265,
+      "o2min": 0.26
+     },
+     "ranges": {
+      "flow": null,
+      "o2": {
+       "max": 0.4,
+       "min": 0.179686,
+       "n": 808
+      },
+      "pressure": {
+       "max": 3.266617,
+       "min": 0.424607,
+       "n": 660
+      }
+     },
+     "reason": "678 rows in 3 investigations; 303 carry a recorded ignition or extinction outcome; 0 of those count inside the window (ambient O2 0.26 to 0.265). Rule: at least 10.",
+     "rows_counted": 0,
+     "rows_total": 678,
+     "rows_with_response": 303,
+     "status": "Partly"
+    },
+    {
+     "gap": "Ambient O2 tested with a response only reaches 0.221, below the window (0.26 to 0.265). To close it: Solid-material ignition and burn results at ambient O2 inside the window, recorded with the flow speed of each test.",
+     "id": "solid_flammability",
+     "investigations": [
+      {
+       "counted_rows": 0,
+       "investigation": "BASS",
+       "psi_id": "PSI-26",
+       "response_rows": 0,
+       "rows": 122
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "BASS-II",
+       "psi_id": "PSI-25",
+       "response_rows": 0,
+       "rows": 129
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "SAFFIRE-I",
+       "psi_id": "PSI-98",
+       "response_rows": 2,
+       "rows": 4
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "SAFFIRE-II",
+       "psi_id": "PSI-99",
+       "response_rows": 9,
+       "rows": 15
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "SAFFIRE-III",
+       "psi_id": "PSI-100",
+       "response_rows": 0,
+       "rows": 2
+      }
+     ],
+     "link": {
+      "basis": "ambient",
+      "env": "gateway",
+      "inv": "PSI-26,PSI-25,PSI-98,PSI-99,PSI-100",
+      "o2max": 0.265,
+      "o2min": 0.26
+     },
+     "ranges": {
+      "flow": {
+       "max": 30,
+       "min": 20,
+       "n": 13
+      },
+      "o2": {
+       "max": 0.222,
+       "min": 0.136,
+       "n": 280
+      },
+      "pressure": null
+     },
+     "reason": "272 rows in 5 investigations; 11 carry a recorded burn outcome or burn time; 0 of those count inside the window (ambient O2 0.26 to 0.265). Rule: at least 10.",
+     "rows_counted": 0,
+     "rows_total": 272,
+     "rows_with_response": 11,
+     "status": "Partly"
+    },
+    {
+     "gap": "No particle size is recorded in the table for these rows. To close it: The measured particle-size results of each SAME and SAME-R test, joined to the flow speed and aging times already in the table.",
+     "id": "smoke_particle_size",
+     "investigations": [
+      {
+       "counted_rows": 0,
+       "investigation": "SAME",
+       "psi_id": "PSI-102",
+       "response_rows": 0,
+       "rows": 8
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "SAME-R",
+       "psi_id": "PSI-101",
+       "response_rows": 0,
+       "rows": 109
+      }
+     ],
+     "link": {
+      "env": "gateway",
+      "fmax": 20.0,
+      "fmin": 10.0,
+      "inv": "PSI-102,PSI-101"
+     },
+     "ranges": {
+      "flow": {
+       "max": 10,
+       "min": 0,
+       "n": 113
+      },
+      "o2": null,
+      "pressure": null
+     },
+     "reason": "117 rows in 2 investigations; 0 carry a recorded particle size; 0 of those count inside the window (flow speed 10 to 20 cm/s). Rule: at least 10.",
+     "rows_counted": 0,
+     "rows_total": 117,
+     "rows_with_response": 0,
+     "status": "Partly"
+    },
+    {
+     "gap": "Partial-gravity flight data such as LUCI (Lunar-g Combustion Investigation) and FM2 (Flammability of Materials on the Moon), both named in the challenge statement as expected additions to PSI.",
+     "id": "partial_gravity",
+     "investigations": [],
+     "link": {
+      "env": "gateway"
+     },
+     "ranges": {
+      "flow": null,
+      "o2": null,
+      "pressure": null
+     },
+     "reason": "No PSI table has a gravity column and every row is a 0 g test. The challenge statement says partial gravity was mimicked in ACME E-FIELD Flames (PSI-22, 32 rows in the table) through an electric field acting on flame ions; that is not a partial-gravity measurement.",
+     "rows_counted": 0,
+     "rows_total": 0,
+     "rows_with_response": 0,
+     "status": "Not supported"
+    }
+   ],
+   "name": "Gateway-class station",
+   "window": {
+    "flow_cm_s": {
+     "max": 20.0,
+     "min": 10.0
+    },
+    "o2": {
+     "max": 0.265,
+     "min": 0.26
+    },
+    "pressure_atm": {
+     "max": 0.714,
+     "min": 0.674
+    }
+   }
+  },
+  "iss": {
+   "gravity_g": 0.0,
+   "items": [
+    {
+     "diluents": [
+      "CO2",
+      "He",
+      "N2"
+     ],
+     "gap": "No gap inside this window for the rows counted. All rows are 0 g, the same gravity level as this environment.",
+     "id": "droplet_extinction",
+     "investigations": [
+      {
+       "counted_rows": 41,
+       "investigation": "FLEX",
+       "psi_id": "PSI-69",
+       "response_rows": 269,
+       "rows": 274
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "FLEX-2",
+       "psi_id": "PSI-68",
+       "response_rows": 0,
+       "rows": 8
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "CFI",
+       "psi_id": "PSI-39",
+       "response_rows": 0,
+       "rows": 87
+      }
+     ],
+     "link": {
+      "basis": "ambient",
+      "env": "iss",
+      "inv": "PSI-69,PSI-68,PSI-39",
+      "o2max": 0.241,
+      "o2min": 0.21,
+      "pmax": 1.034,
+      "pmin": 0.946
+     },
+     "ranges": {
+      "flow": null,
+      "o2": {
+       "max": 0.34,
+       "min": 0.12,
+       "n": 738
+      },
+      "pressure": {
+       "max": 5,
+       "min": 0.5,
+       "n": 360
+      }
+     },
+     "reason": "369 rows in 3 investigations; 269 carry a recorded extinction diameter or burn time; 41 of those count inside the window (ambient O2 0.21 to 0.241 and pressure 0.946 to 1.034 atm). Rule: at least 10.",
+     "rows_counted": 41,
+     "rows_total": 369,
+     "rows_with_response": 269,
+     "status": "Supported"
+    },
+    {
+     "gap": "No gap inside this window for the rows counted. All rows are 0 g, the same gravity level as this environment.",
+     "id": "gas_flame_limits",
+     "investigations": [
+      {
+       "counted_rows": 27,
+       "investigation": "ACME CFI-G",
+       "psi_id": "PSI-159",
+       "response_rows": 285,
+       "rows": 333
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "ACME/Flame Design",
+       "psi_id": "PSI-10",
+       "response_rows": 0,
+       "rows": 327
+      },
+      {
+       "counted_rows": 1,
+       "investigation": "ACME BRE",
+       "psi_id": "PSI-20",
+       "response_rows": 18,
+       "rows": 18
+      }
+     ],
+     "link": {
+      "basis": "ambient",
+      "env": "iss",
+      "inv": "PSI-159,PSI-10,PSI-20",
+      "o2max": 0.241,
+      "o2min": 0.21
+     },
+     "ranges": {
+      "flow": null,
+      "o2": {
+       "max": 0.4,
+       "min": 0.179686,
+       "n": 808
+      },
+      "pressure": {
+       "max": 3.266617,
+       "min": 0.424607,
+       "n": 660
+      }
+     },
+     "reason": "678 rows in 3 investigations; 303 carry a recorded ignition or extinction outcome; 28 of those count inside the window (ambient O2 0.21 to 0.241). Rule: at least 10.",
+     "rows_counted": 28,
+     "rows_total": 678,
+     "rows_with_response": 303,
+     "status": "Supported"
+    },
+    {
+     "gap": "Only 8 rows with a response lie inside the ambient O2 window. To close it: Solid-material ignition and burn results at ambient O2 inside the window, recorded with the flow speed of each test.",
+     "id": "solid_flammability",
+     "investigations": [
+      {
+       "counted_rows": 0,
+       "investigation": "BASS",
+       "psi_id": "PSI-26",
+       "response_rows": 0,
+       "rows": 122
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "BASS-II",
+       "psi_id": "PSI-25",
+       "response_rows": 0,
+       "rows": 129
+      },
+      {
+       "counted_rows": 1,
+       "investigation": "SAFFIRE-I",
+       "psi_id": "PSI-98",
+       "response_rows": 2,
+       "rows": 4
+      },
+      {
+       "counted_rows": 7,
+       "investigation": "SAFFIRE-II",
+       "psi_id": "PSI-99",
+       "response_rows": 9,
+       "rows": 15
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "SAFFIRE-III",
+       "psi_id": "PSI-100",
+       "response_rows": 0,
+       "rows": 2
+      }
+     ],
+     "link": {
+      "basis": "ambient",
+      "env": "iss",
+      "inv": "PSI-26,PSI-25,PSI-98,PSI-99,PSI-100",
+      "o2max": 0.241,
+      "o2min": 0.21
+     },
+     "ranges": {
+      "flow": {
+       "max": 30,
+       "min": 20,
+       "n": 13
+      },
+      "o2": {
+       "max": 0.222,
+       "min": 0.136,
+       "n": 280
+      },
+      "pressure": null
+     },
+     "reason": "272 rows in 5 investigations; 11 carry a recorded burn outcome or burn time; 8 of those count inside the window (ambient O2 0.21 to 0.241). Rule: at least 10.",
+     "rows_counted": 8,
+     "rows_total": 272,
+     "rows_with_response": 11,
+     "status": "Partly"
+    },
+    {
+     "gap": "No particle size is recorded in the table for these rows. To close it: The measured particle-size results of each SAME and SAME-R test, joined to the flow speed and aging times already in the table.",
+     "id": "smoke_particle_size",
+     "investigations": [
+      {
+       "counted_rows": 0,
+       "investigation": "SAME",
+       "psi_id": "PSI-102",
+       "response_rows": 0,
+       "rows": 8
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "SAME-R",
+       "psi_id": "PSI-101",
+       "response_rows": 0,
+       "rows": 109
+      }
+     ],
+     "link": {
+      "env": "iss",
+      "fmax": 20.3,
+      "fmin": 5.1,
+      "inv": "PSI-102,PSI-101"
+     },
+     "ranges": {
+      "flow": {
+       "max": 10,
+       "min": 0,
+       "n": 113
+      },
+      "o2": null,
+      "pressure": null
+     },
+     "reason": "117 rows in 2 investigations; 0 carry a recorded particle size; 0 of those count inside the window (flow speed 5.1 to 20.3 cm/s). Rule: at least 10.",
+     "rows_counted": 0,
+     "rows_total": 117,
+     "rows_with_response": 0,
+     "status": "Partly"
+    },
+    {
+     "gap": "Partial-gravity flight data such as LUCI (Lunar-g Combustion Investigation) and FM2 (Flammability of Materials on the Moon), both named in the challenge statement as expected additions to PSI.",
+     "id": "partial_gravity",
+     "investigations": [],
+     "link": {
+      "env": "iss"
+     },
+     "ranges": {
+      "flow": null,
+      "o2": null,
+      "pressure": null
+     },
+     "reason": "No PSI table has a gravity column and every row is a 0 g test. The challenge statement says partial gravity was mimicked in ACME E-FIELD Flames (PSI-22, 32 rows in the table) through an electric field acting on flame ions; that is not a partial-gravity measurement.",
+     "rows_counted": 0,
+     "rows_total": 0,
+     "rows_with_response": 0,
+     "status": "Not supported"
+    }
+   ],
+   "name": "ISS / spacecraft cabin",
+   "window": {
+    "flow_cm_s": {
+     "max": 20.3,
+     "min": 5.1
+    },
+    "o2": {
+     "max": 0.241,
+     "min": 0.21
+    },
+    "pressure_atm": {
+     "max": 1.034,
+     "min": 0.946
+    }
+   }
+  },
+  "lunar": {
+   "gravity_g": 0.165,
+   "items": [
+    {
+     "diluents": [
+      "CO2",
+      "He",
+      "N2"
+     ],
+     "gap": "Only 8 rows with a response lie inside the ambient O2 window. Pressure tested with a response starts at 0.6925, above the window (0.551 to 0.565). To close it: Droplet extinction runs (extinction diameter, burn time) at the window O2 and pressure with the CO2, helium and nitrogen diluent set.",
+     "id": "droplet_extinction",
+     "investigations": [
+      {
+       "counted_rows": 0,
+       "investigation": "FLEX",
+       "psi_id": "PSI-69",
+       "response_rows": 269,
+       "rows": 274
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "FLEX-2",
+       "psi_id": "PSI-68",
+       "response_rows": 0,
+       "rows": 8
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "CFI",
+       "psi_id": "PSI-39",
+       "response_rows": 0,
+       "rows": 87
+      }
+     ],
+     "link": {
+      "basis": "ambient",
+      "env": "lunar",
+      "inv": "PSI-69,PSI-68,PSI-39",
+      "o2max": 0.35,
+      "o2min": 0.335,
+      "pmax": 0.565,
+      "pmin": 0.551
+     },
+     "ranges": {
+      "flow": null,
+      "o2": {
+       "max": 0.34,
+       "min": 0.12,
+       "n": 738
+      },
+      "pressure": {
+       "max": 5,
+       "min": 0.5,
+       "n": 360
+      }
+     },
+     "reason": "369 rows in 3 investigations; 269 carry a recorded extinction diameter or burn time; 0 of those count inside the window (ambient O2 0.335 to 0.35 and pressure 0.551 to 0.565 atm). Rule: at least 10.",
+     "rows_counted": 0,
+     "rows_total": 369,
+     "rows_with_response": 269,
+     "status": "Partly"
+    },
+    {
+     "gap": "Only 2 rows with a response lie inside the ambient O2 window. To close it: Ignition and self-extinction outcomes for gas flames at ambient O2 inside the window, with the outcome recorded per test.",
+     "id": "gas_flame_limits",
+     "investigations": [
+      {
+       "counted_rows": 1,
+       "investigation": "ACME CFI-G",
+       "psi_id": "PSI-159",
+       "response_rows": 285,
+       "rows": 333
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "ACME/Flame Design",
+       "psi_id": "PSI-10",
+       "response_rows": 0,
+       "rows": 327
+      },
+      {
+       "counted_rows": 1,
+       "investigation": "ACME BRE",
+       "psi_id": "PSI-20",
+       "response_rows": 18,
+       "rows": 18
+      }
+     ],
+     "link": {
+      "basis": "ambient",
+      "env": "lunar",
+      "inv": "PSI-159,PSI-10,PSI-20",
+      "o2max": 0.35,
+      "o2min": 0.335
+     },
+     "ranges": {
+      "flow": null,
+      "o2": {
+       "max": 0.4,
+       "min": 0.179686,
+       "n": 808
+      },
+      "pressure": {
+       "max": 3.266617,
+       "min": 0.424607,
+       "n": 660
+      }
+     },
+     "reason": "678 rows in 3 investigations; 303 carry a recorded ignition or extinction outcome; 2 of those count inside the window (ambient O2 0.335 to 0.35). Rule: at least 10.",
+     "rows_counted": 2,
+     "rows_total": 678,
+     "rows_with_response": 303,
+     "status": "Partly"
+    },
+    {
+     "gap": "Ambient O2 tested with a response only reaches 0.221, below the window (0.335 to 0.35). To close it: Solid-material ignition and burn results at ambient O2 inside the window, recorded with the flow speed of each test.",
+     "id": "solid_flammability",
+     "investigations": [
+      {
+       "counted_rows": 0,
+       "investigation": "BASS",
+       "psi_id": "PSI-26",
+       "response_rows": 0,
+       "rows": 122
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "BASS-II",
+       "psi_id": "PSI-25",
+       "response_rows": 0,
+       "rows": 129
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "SAFFIRE-I",
+       "psi_id": "PSI-98",
+       "response_rows": 2,
+       "rows": 4
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "SAFFIRE-II",
+       "psi_id": "PSI-99",
+       "response_rows": 9,
+       "rows": 15
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "SAFFIRE-III",
+       "psi_id": "PSI-100",
+       "response_rows": 0,
+       "rows": 2
+      }
+     ],
+     "link": {
+      "basis": "ambient",
+      "env": "lunar",
+      "inv": "PSI-26,PSI-25,PSI-98,PSI-99,PSI-100",
+      "o2max": 0.35,
+      "o2min": 0.335
+     },
+     "ranges": {
+      "flow": {
+       "max": 30,
+       "min": 20,
+       "n": 13
+      },
+      "o2": {
+       "max": 0.222,
+       "min": 0.136,
+       "n": 280
+      },
+      "pressure": null
+     },
+     "reason": "272 rows in 5 investigations; 11 carry a recorded burn outcome or burn time; 0 of those count inside the window (ambient O2 0.335 to 0.35). Rule: at least 10.",
+     "rows_counted": 0,
+     "rows_total": 272,
+     "rows_with_response": 11,
+     "status": "Partly"
+    },
+    {
+     "gap": "No particle size is recorded in the table for these rows. To close it: The measured particle-size results of each SAME and SAME-R test, joined to the flow speed and aging times already in the table.",
+     "id": "smoke_particle_size",
+     "investigations": [
+      {
+       "counted_rows": 0,
+       "investigation": "SAME",
+       "psi_id": "PSI-102",
+       "response_rows": 0,
+       "rows": 8
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "SAME-R",
+       "psi_id": "PSI-101",
+       "response_rows": 0,
+       "rows": 109
+      }
+     ],
+     "link": {
+      "env": "lunar",
+      "fmax": 20.0,
+      "fmin": 10.0,
+      "inv": "PSI-102,PSI-101"
+     },
+     "ranges": {
+      "flow": {
+       "max": 10,
+       "min": 0,
+       "n": 113
+      },
+      "o2": null,
+      "pressure": null
+     },
+     "reason": "117 rows in 2 investigations; 0 carry a recorded particle size; 0 of those count inside the window (flow speed 10 to 20 cm/s). Rule: at least 10.",
+     "rows_counted": 0,
+     "rows_total": 117,
+     "rows_with_response": 0,
+     "status": "Partly"
+    },
+    {
+     "gap": "Partial-gravity flight data such as LUCI (Lunar-g Combustion Investigation) and FM2 (Flammability of Materials on the Moon), both named in the challenge statement as expected additions to PSI.",
+     "id": "partial_gravity",
+     "investigations": [],
+     "link": {
+      "env": "lunar"
+     },
+     "ranges": {
+      "flow": null,
+      "o2": null,
+      "pressure": null
+     },
+     "reason": "No PSI table has a gravity column and every row is a 0 g test. The challenge statement says partial gravity was mimicked in ACME E-FIELD Flames (PSI-22, 32 rows in the table) through an electric field acting on flame ions; that is not a partial-gravity measurement.",
+     "rows_counted": 0,
+     "rows_total": 0,
+     "rows_with_response": 0,
+     "status": "Not supported"
+    }
+   ],
+   "name": "Lunar surface habitat",
+   "window": {
+    "flow_cm_s": {
+     "max": 20.0,
+     "min": 10.0
+    },
+    "o2": {
+     "max": 0.35,
+     "min": 0.335
+    },
+    "pressure_atm": {
+     "max": 0.565,
+     "min": 0.551
+    }
+   }
+  },
+  "mars": {
+   "gravity_g": 0.38,
+   "items": [
+    {
+     "diluents": [
+      "CO2",
+      "He",
+      "N2"
+     ],
+     "gap": "Only 8 rows with a response lie inside the ambient O2 window. Pressure tested with a response starts at 0.6925, above the window (0.551 to 0.565). To close it: Droplet extinction runs (extinction diameter, burn time) at the window O2 and pressure with the CO2, helium and nitrogen diluent set.",
+     "id": "droplet_extinction",
+     "investigations": [
+      {
+       "counted_rows": 0,
+       "investigation": "FLEX",
+       "psi_id": "PSI-69",
+       "response_rows": 269,
+       "rows": 274
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "FLEX-2",
+       "psi_id": "PSI-68",
+       "response_rows": 0,
+       "rows": 8
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "CFI",
+       "psi_id": "PSI-39",
+       "response_rows": 0,
+       "rows": 87
+      }
+     ],
+     "link": {
+      "basis": "ambient",
+      "env": "mars",
+      "inv": "PSI-69,PSI-68,PSI-39",
+      "o2max": 0.35,
+      "o2min": 0.335,
+      "pmax": 0.565,
+      "pmin": 0.551
+     },
+     "ranges": {
+      "flow": null,
+      "o2": {
+       "max": 0.34,
+       "min": 0.12,
+       "n": 738
+      },
+      "pressure": {
+       "max": 5,
+       "min": 0.5,
+       "n": 360
+      }
+     },
+     "reason": "369 rows in 3 investigations; 269 carry a recorded extinction diameter or burn time; 0 of those count inside the window (ambient O2 0.335 to 0.35 and pressure 0.551 to 0.565 atm). Rule: at least 10.",
+     "rows_counted": 0,
+     "rows_total": 369,
+     "rows_with_response": 269,
+     "status": "Partly"
+    },
+    {
+     "gap": "Only 2 rows with a response lie inside the ambient O2 window. To close it: Ignition and self-extinction outcomes for gas flames at ambient O2 inside the window, with the outcome recorded per test.",
+     "id": "gas_flame_limits",
+     "investigations": [
+      {
+       "counted_rows": 1,
+       "investigation": "ACME CFI-G",
+       "psi_id": "PSI-159",
+       "response_rows": 285,
+       "rows": 333
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "ACME/Flame Design",
+       "psi_id": "PSI-10",
+       "response_rows": 0,
+       "rows": 327
+      },
+      {
+       "counted_rows": 1,
+       "investigation": "ACME BRE",
+       "psi_id": "PSI-20",
+       "response_rows": 18,
+       "rows": 18
+      }
+     ],
+     "link": {
+      "basis": "ambient",
+      "env": "mars",
+      "inv": "PSI-159,PSI-10,PSI-20",
+      "o2max": 0.35,
+      "o2min": 0.335
+     },
+     "ranges": {
+      "flow": null,
+      "o2": {
+       "max": 0.4,
+       "min": 0.179686,
+       "n": 808
+      },
+      "pressure": {
+       "max": 3.266617,
+       "min": 0.424607,
+       "n": 660
+      }
+     },
+     "reason": "678 rows in 3 investigations; 303 carry a recorded ignition or extinction outcome; 2 of those count inside the window (ambient O2 0.335 to 0.35). Rule: at least 10.",
+     "rows_counted": 2,
+     "rows_total": 678,
+     "rows_with_response": 303,
+     "status": "Partly"
+    },
+    {
+     "gap": "Ambient O2 tested with a response only reaches 0.221, below the window (0.335 to 0.35). To close it: Solid-material ignition and burn results at ambient O2 inside the window, recorded with the flow speed of each test.",
+     "id": "solid_flammability",
+     "investigations": [
+      {
+       "counted_rows": 0,
+       "investigation": "BASS",
+       "psi_id": "PSI-26",
+       "response_rows": 0,
+       "rows": 122
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "BASS-II",
+       "psi_id": "PSI-25",
+       "response_rows": 0,
+       "rows": 129
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "SAFFIRE-I",
+       "psi_id": "PSI-98",
+       "response_rows": 2,
+       "rows": 4
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "SAFFIRE-II",
+       "psi_id": "PSI-99",
+       "response_rows": 9,
+       "rows": 15
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "SAFFIRE-III",
+       "psi_id": "PSI-100",
+       "response_rows": 0,
+       "rows": 2
+      }
+     ],
+     "link": {
+      "basis": "ambient",
+      "env": "mars",
+      "inv": "PSI-26,PSI-25,PSI-98,PSI-99,PSI-100",
+      "o2max": 0.35,
+      "o2min": 0.335
+     },
+     "ranges": {
+      "flow": {
+       "max": 30,
+       "min": 20,
+       "n": 13
+      },
+      "o2": {
+       "max": 0.222,
+       "min": 0.136,
+       "n": 280
+      },
+      "pressure": null
+     },
+     "reason": "272 rows in 5 investigations; 11 carry a recorded burn outcome or burn time; 0 of those count inside the window (ambient O2 0.335 to 0.35). Rule: at least 10.",
+     "rows_counted": 0,
+     "rows_total": 272,
+     "rows_with_response": 11,
+     "status": "Partly"
+    },
+    {
+     "gap": "No particle size is recorded in the table for these rows. To close it: The measured particle-size results of each SAME and SAME-R test, joined to the flow speed and aging times already in the table.",
+     "id": "smoke_particle_size",
+     "investigations": [
+      {
+       "counted_rows": 0,
+       "investigation": "SAME",
+       "psi_id": "PSI-102",
+       "response_rows": 0,
+       "rows": 8
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "SAME-R",
+       "psi_id": "PSI-101",
+       "response_rows": 0,
+       "rows": 109
+      }
+     ],
+     "link": {
+      "env": "mars",
+      "fmax": 20.0,
+      "fmin": 10.0,
+      "inv": "PSI-102,PSI-101"
+     },
+     "ranges": {
+      "flow": {
+       "max": 10,
+       "min": 0,
+       "n": 113
+      },
+      "o2": null,
+      "pressure": null
+     },
+     "reason": "117 rows in 2 investigations; 0 carry a recorded particle size; 0 of those count inside the window (flow speed 10 to 20 cm/s). Rule: at least 10.",
+     "rows_counted": 0,
+     "rows_total": 117,
+     "rows_with_response": 0,
+     "status": "Partly"
+    },
+    {
+     "gap": "Partial-gravity flight data such as LUCI (Lunar-g Combustion Investigation) and FM2 (Flammability of Materials on the Moon), both named in the challenge statement as expected additions to PSI.",
+     "id": "partial_gravity",
+     "investigations": [],
+     "link": {
+      "env": "mars"
+     },
+     "ranges": {
+      "flow": null,
+      "o2": null,
+      "pressure": null
+     },
+     "reason": "No PSI table has a gravity column and every row is a 0 g test. The challenge statement says partial gravity was mimicked in ACME E-FIELD Flames (PSI-22, 32 rows in the table) through an electric field acting on flame ions; that is not a partial-gravity measurement.",
+     "rows_counted": 0,
+     "rows_total": 0,
+     "rows_with_response": 0,
+     "status": "Not supported"
+    }
+   ],
+   "name": "Mars surface habitat",
+   "window": {
+    "flow_cm_s": {
+     "max": 20.0,
+     "min": 10.0
+    },
+    "o2": {
+     "max": 0.35,
+     "min": 0.335
+    },
+    "pressure_atm": {
+     "max": 0.565,
+     "min": 0.551
+    }
+   }
+  },
+  "rover": {
+   "gravity_g": 0.165,
+   "items": [
+    {
+     "diluents": [
+      "CO2",
+      "He",
+      "N2"
+     ],
+     "gap": "Only 1 row with a response lie inside the pressure window. To close it: Droplet extinction runs (extinction diameter, burn time) at the window O2 and pressure with the CO2, helium and nitrogen diluent set.",
+     "id": "droplet_extinction",
+     "investigations": [
+      {
+       "counted_rows": 0,
+       "investigation": "FLEX",
+       "psi_id": "PSI-69",
+       "response_rows": 269,
+       "rows": 274
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "FLEX-2",
+       "psi_id": "PSI-68",
+       "response_rows": 0,
+       "rows": 8
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "CFI",
+       "psi_id": "PSI-39",
+       "response_rows": 0,
+       "rows": 87
+      }
+     ],
+     "link": {
+      "basis": "ambient",
+      "env": "rover",
+      "inv": "PSI-69,PSI-68,PSI-39",
+      "o2max": 0.35,
+      "o2min": 0.3,
+      "pmax": 0.6941,
+      "pmin": 0.551
+     },
+     "ranges": {
+      "flow": null,
+      "o2": {
+       "max": 0.34,
+       "min": 0.12,
+       "n": 738
+      },
+      "pressure": {
+       "max": 5,
+       "min": 0.5,
+       "n": 360
+      }
+     },
+     "reason": "369 rows in 3 investigations; 269 carry a recorded extinction diameter or burn time; 0 of those count inside the window (ambient O2 0.3 to 0.35 and pressure 0.551 to 0.6941 atm). Rule: at least 10.",
+     "rows_counted": 0,
+     "rows_total": 369,
+     "rows_with_response": 269,
+     "status": "Partly"
+    },
+    {
+     "gap": "Only 4 rows with a response lie inside the ambient O2 window. To close it: Ignition and self-extinction outcomes for gas flames at ambient O2 inside the window, with the outcome recorded per test.",
+     "id": "gas_flame_limits",
+     "investigations": [
+      {
+       "counted_rows": 3,
+       "investigation": "ACME CFI-G",
+       "psi_id": "PSI-159",
+       "response_rows": 285,
+       "rows": 333
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "ACME/Flame Design",
+       "psi_id": "PSI-10",
+       "response_rows": 0,
+       "rows": 327
+      },
+      {
+       "counted_rows": 1,
+       "investigation": "ACME BRE",
+       "psi_id": "PSI-20",
+       "response_rows": 18,
+       "rows": 18
+      }
+     ],
+     "link": {
+      "basis": "ambient",
+      "env": "rover",
+      "inv": "PSI-159,PSI-10,PSI-20",
+      "o2max": 0.35,
+      "o2min": 0.3
+     },
+     "ranges": {
+      "flow": null,
+      "o2": {
+       "max": 0.4,
+       "min": 0.179686,
+       "n": 808
+      },
+      "pressure": {
+       "max": 3.266617,
+       "min": 0.424607,
+       "n": 660
+      }
+     },
+     "reason": "678 rows in 3 investigations; 303 carry a recorded ignition or extinction outcome; 4 of those count inside the window (ambient O2 0.3 to 0.35). Rule: at least 10.",
+     "rows_counted": 4,
+     "rows_total": 678,
+     "rows_with_response": 303,
+     "status": "Partly"
+    },
+    {
+     "gap": "Ambient O2 tested with a response only reaches 0.221, below the window (0.3 to 0.35). To close it: Solid-material ignition and burn results at ambient O2 inside the window, recorded with the flow speed of each test.",
+     "id": "solid_flammability",
+     "investigations": [
+      {
+       "counted_rows": 0,
+       "investigation": "BASS",
+       "psi_id": "PSI-26",
+       "response_rows": 0,
+       "rows": 122
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "BASS-II",
+       "psi_id": "PSI-25",
+       "response_rows": 0,
+       "rows": 129
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "SAFFIRE-I",
+       "psi_id": "PSI-98",
+       "response_rows": 2,
+       "rows": 4
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "SAFFIRE-II",
+       "psi_id": "PSI-99",
+       "response_rows": 9,
+       "rows": 15
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "SAFFIRE-III",
+       "psi_id": "PSI-100",
+       "response_rows": 0,
+       "rows": 2
+      }
+     ],
+     "link": {
+      "basis": "ambient",
+      "env": "rover",
+      "inv": "PSI-26,PSI-25,PSI-98,PSI-99,PSI-100",
+      "o2max": 0.35,
+      "o2min": 0.3
+     },
+     "ranges": {
+      "flow": {
+       "max": 30,
+       "min": 20,
+       "n": 13
+      },
+      "o2": {
+       "max": 0.222,
+       "min": 0.136,
+       "n": 280
+      },
+      "pressure": null
+     },
+     "reason": "272 rows in 5 investigations; 11 carry a recorded burn outcome or burn time; 0 of those count inside the window (ambient O2 0.3 to 0.35). Rule: at least 10.",
+     "rows_counted": 0,
+     "rows_total": 272,
+     "rows_with_response": 11,
+     "status": "Partly"
+    },
+    {
+     "gap": "No particle size is recorded in the table for these rows. To close it: The measured particle-size results of each SAME and SAME-R test, joined to the flow speed and aging times already in the table.",
+     "id": "smoke_particle_size",
+     "investigations": [
+      {
+       "counted_rows": 0,
+       "investigation": "SAME",
+       "psi_id": "PSI-102",
+       "response_rows": 0,
+       "rows": 8
+      },
+      {
+       "counted_rows": 0,
+       "investigation": "SAME-R",
+       "psi_id": "PSI-101",
+       "response_rows": 0,
+       "rows": 109
+      }
+     ],
+     "link": {
+      "env": "rover",
+      "fmax": 20.0,
+      "fmin": 10.0,
+      "inv": "PSI-102,PSI-101"
+     },
+     "ranges": {
+      "flow": {
+       "max": 10,
+       "min": 0,
+       "n": 113
+      },
+      "o2": null,
+      "pressure": null
+     },
+     "reason": "117 rows in 2 investigations; 0 carry a recorded particle size; 0 of those count inside the window (flow speed 10 to 20 cm/s). Rule: at least 10.",
+     "rows_counted": 0,
+     "rows_total": 117,
+     "rows_with_response": 0,
+     "status": "Partly"
+    },
+    {
+     "gap": "Partial-gravity flight data such as LUCI (Lunar-g Combustion Investigation) and FM2 (Flammability of Materials on the Moon), both named in the challenge statement as expected additions to PSI.",
+     "id": "partial_gravity",
+     "investigations": [],
+     "link": {
+      "env": "rover"
+     },
+     "ranges": {
+      "flow": null,
+      "o2": null,
+      "pressure": null
+     },
+     "reason": "No PSI table has a gravity column and every row is a 0 g test. The challenge statement says partial gravity was mimicked in ACME E-FIELD Flames (PSI-22, 32 rows in the table) through an electric field acting on flame ions; that is not a partial-gravity measurement.",
+     "rows_counted": 0,
+     "rows_total": 0,
+     "rows_with_response": 0,
+     "status": "Not supported"
+    }
+   ],
+   "name": "Pressurized rover (lunar)",
+   "window": {
+    "flow_cm_s": {
+     "max": 20.0,
+     "min": 10.0
+    },
+    "o2": {
+     "max": 0.35,
+     "min": 0.3
+    },
+    "pressure_atm": {
+     "max": 0.6941,
+     "min": 0.551
+    }
+   }
+  }
+ },
+ "grouped_validation_note": "Validate any model with grouped (leave-one-investigation-out) splits on the group column. Rows within one investigation share hardware, fuel and procedure, so a random row split leaks information and overstates accuracy.",
+ "min_rows": 10,
+ "no_model_note": "No trained model is shipped. A model fitted to this table would be asked for predictions outside the tested range, which would not be valid. The downloads are model-ready instead: units, provenance, a group column and a validity note.",
+ "relationships": [
+  {
+   "axes": [
+    "o2",
+    "pressure"
+   ],
+   "id": "droplet_extinction",
+   "psi_ids": [
+    "PSI-69",
+    "PSI-68",
+    "PSI-39"
+   ],
+   "response_label": "extinction diameter or burn time",
+   "title": "Droplet extinction diameter and burn time versus O2, diluent and pressure"
+  },
+  {
+   "axes": [
+    "o2"
+   ],
+   "id": "gas_flame_limits",
+   "psi_ids": [
+    "PSI-159",
+    "PSI-10",
+    "PSI-20"
+   ],
+   "response_label": "ignition or extinction outcome",
+   "title": "Gas-flame ignition and self-extinction versus O2"
+  },
+  {
+   "axes": [
+    "o2"
+   ],
+   "id": "solid_flammability",
+   "psi_ids": [
+    "PSI-26",
+    "PSI-25",
+    "PSI-98",
+    "PSI-99",
+    "PSI-100"
+   ],
+   "response_label": "burn outcome or burn time",
+   "title": "Solid-material ignition and burn versus O2 and flow"
+  },
+  {
+   "axes": [
+    "flow"
+   ],
+   "id": "smoke_particle_size",
+   "psi_ids": [
+    "PSI-102",
+    "PSI-101"
+   ],
+   "response_label": "particle size",
+   "title": "Smoke particle size versus flow and aging"
+  },
+  {
+   "axes": [],
+   "id": "partial_gravity",
+   "psi_ids": [],
+   "response_label": "any response",
+   "title": "Any relationship at partial gravity (lunar 0.16 g, Mars 0.38 g)"
+  }
+ ],
+ "rule": "Status is computed from the unified table for the selected environment. A relationship counts a row only if the row has a recorded response (the measured outcome the model would predict), has value quality exact or approximate, and lies inside the environment window on every axis the relationship uses (ambient O2 only, pressure above 0). Supported: at least 10 such rows. Partly: some rows exist but fewer than 10 count, because they lie outside the window or carry no response column. Not supported: no rows at all."
+}

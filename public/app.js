@@ -19,6 +19,7 @@ const OBJECTIVES = {
   habitat: "Identify investigations most relevant to the fire safety needs of habitable crew environments, including spacecraft, space stations, bases on the lunar and Martian surfaces, and pressurized rovers.",
   insights: "ranks, and interprets ... to deliver critical foundational insights for fire safety",
   extractor: "Extract data that supports predictive modeling of flammability and fire scenarios in space exploration.",
+  readiness: "Extract data that supports predictive modeling of flammability and fire scenarios in space exploration.",
   functions: "Highlight research that informs the development of next-generation fire safety controls and equipment.",
   compare: "Consider how to summarize and display similarities and differences between different investigations.",
   earth: "Your dashboard could also address potential applications of the PSI data to fire safety on Earth.",
@@ -30,6 +31,7 @@ const SECTION_BLURB = {
   habitat: "Pick an environment and see investigations ranked by a visible score you can re-weight.",
   insights: "Computed findings, each with its numbers, the rows behind it and its limits.",
   extractor: "Filter the unified table, see coverage, download CSV or JSON with units and provenance.",
+  readiness: "Which predictive flammability relationships the PSI data supports for each environment, and what data would close the gaps.",
   functions: "Investigations grouped by the fire-safety function they inform.",
   compare: "Side-by-side view of two to four investigations.",
   earth: "Terrestrial applications, marked as documented spinoff or inference.",
@@ -63,20 +65,25 @@ const FUNCTION_INFO = {
 };
 
 const COMPONENTS = [
-  ["o2", "O2 coverage", "a"],
-  ["pressure", "Pressure coverage", "b"],
-  ["flow", "Flow coverage", "c"],
-  ["fuel", "Fuel realism", "d"],
-  ["function", "Fire-safety function", "e"],
-  ["richness", "Data richness", "f"]
+  ["fuel", "Fuel realism", "a"],
+  ["function", "Fire-safety function", "b"],
+  ["richness", "Data richness", "c"],
+  ["o2", "O2 coverage", "d"],
+  ["pressure", "Pressure coverage", "e"],
+  ["flow", "Flow coverage", "f"]
 ];
 
+const TOPIC_NAMES = ["fuel", "function", "richness"];
+const CONDITION_NAMES = ["o2", "pressure", "flow"];
+
 const COLUMNS = [
-  "row_id", "psi_id", "investigation", "source_file", "source_row", "fuel_class", "fuel",
+  "row_id", "psi_id", "group", "investigation", "source_file", "source_row", "fuel_class", "fuel",
   "sample_geometry", "o2_frac", "o2_min_frac", "o2_raw", "o2_basis", "diluent", "pressure_atm",
   "flow_cm_s", "flow_direction", "ignition", "outcome", "burn_time_s", "extinction_diameter_mm",
   "measurement_notes", "value_quality", "notes"
 ];
+
+const STATUS_CLASS = { "Supported": "supported", "Partly": "partly", "Not supported": "notsupported" };
 
 const COUNTABLE_QUALITY = ["exact", "approximate"];
 
@@ -157,7 +164,6 @@ function pct(value) {
 function sortById(a, b) {
   return numericId(a) - numericId(b);
 }
-
 function numericId(psiId) {
   const m = /\d+/.exec(psiId);
   return m ? parseInt(m[0], 10) : 0;
@@ -204,7 +210,11 @@ function fuelClassOf(inv) {
 }
 
 function functionLabel(inv) {
-  return inv.functions.length ? inv.functions.join(", ") : "unassigned";
+  return inv.primary_function || "unassigned";
+}
+
+function functionNames(inv) {
+  return inv.functions.map(function (f) { return f.function; });
 }
 
 function srcText(psiId, block) {
@@ -237,8 +247,38 @@ function overlap(elo, ehi, lo, hi) {
   return Math.min(1, inter / (ehi - elo));
 }
 
-function rangePair(block) {
-  return block ? [block.min, block.max] : [null, null];
+function valueInside(elo, ehi, block) {
+  const values = block.values || [];
+  const spans = block.spans || [];
+  for (let i = 0; i < values.length; i += 1) {
+    if (values[i] >= elo && values[i] <= ehi) {
+      return true;
+    }
+  }
+  for (let j = 0; j < spans.length; j += 1) {
+    if (spans[j][0] <= ehi && spans[j][1] >= elo) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function round9(x) {
+  return Math.round(x * 1e9) / 1e9;
+}
+
+function coverage(elo, ehi, block) {
+  if (!block) {
+    return 0;
+  }
+  const span = overlap(elo, ehi, block.min, block.max);
+  const hit = valueInside(elo, ehi, block) ? 1 : 0;
+  return round9(0.5 * span + 0.5 * hit);
+}
+
+function windowOf(env, key) {
+  const block = env[key];
+  return [block.window_min !== undefined ? block.window_min : block.min, block.window_max !== undefined ? block.window_max : block.max];
 }
 
 function fuelRealism(fc) {
@@ -256,13 +296,14 @@ function fuelRealism(fc) {
 
 function functionRelevance(funcs) {
   const core = ["prevention", "detection", "suppression"];
-  if (funcs.some(function (f) { return core.indexOf(f) >= 0; })) {
+  const names = funcs.map(function (f) { return f.function; });
+  if (names.some(function (f) { return core.indexOf(f) >= 0; })) {
     return { value: 1, label: "core" };
   }
-  if (funcs.indexOf("fundamental") >= 0) {
-    return { value: 0.5, label: "fundamental" };
+  if (names.indexOf("fundamental") >= 0) {
+    return { value: 0.4, label: "fundamental" };
   }
-  return { value: 0.5, label: "unassigned" };
+  return { value: 0.2, label: "unassigned" };
 }
 
 function richness(rows, outcomeRows) {
@@ -275,32 +316,31 @@ function richness(rows, outcomeRows) {
 
 function components(inv, env, includeStream) {
   const r = inv.ranges;
-  const amb = overlap(env.o2.min, env.o2.max, rangePair(r.o2_ambient)[0], rangePair(r.o2_ambient)[1]);
-  const stream = overlap(env.o2.min, env.o2.max, rangePair(r.o2_oxidizer_stream)[0], rangePair(r.o2_oxidizer_stream)[1]);
+  const o2w = windowOf(env, "o2");
+  const pw = windowOf(env, "pressure_atm");
+  const fw = windowOf(env, "flow_cm_s");
+  const amb = coverage(o2w[0], o2w[1], r.o2_ambient);
+  const stream = coverage(o2w[0], o2w[1], r.o2_oxidizer_stream);
   const fr = functionRelevance(inv.functions);
   return {
-    o2: includeStream ? Math.max(amb, stream) : amb,
-    o2_ambient: amb,
-    o2_stream: stream,
-    pressure: overlap(env.pressure_atm.min, env.pressure_atm.max, rangePair(r.pressure_atm)[0], rangePair(r.pressure_atm)[1]),
-    flow: overlap(env.flow_cm_s.min, env.flow_cm_s.max, rangePair(r.flow_cm_s)[0], rangePair(r.flow_cm_s)[1]),
     fuel: fuelRealism(inv.fuel_class),
     function: fr.value,
     function_label: fr.label,
-    richness: richness(inv.row_count, inv.outcome_rows)
+    richness: richness(inv.row_count, inv.outcome_rows),
+    o2: includeStream ? Math.max(amb, stream) : amb,
+    o2_ambient: amb,
+    o2_stream: stream,
+    pressure: coverage(pw[0], pw[1], r.pressure_atm),
+    flow: coverage(fw[0], fw[1], r.flow_cm_s)
   };
 }
 
-function round9(x) {
-  return Math.round(x * 1e9) / 1e9;
-}
-
-function weightedScore(comps, weights) {
+function weightedAverage(comps, weights, names) {
   let total = 0;
   let used = 0;
-  COMPONENTS.forEach(function (c) {
-    const value = comps[c[0]];
-    const w = weights[c[0]];
+  names.forEach(function (name) {
+    const value = comps[name];
+    const w = weights[name];
     if (value === null || value === undefined || !(w > 0)) {
       return;
     }
@@ -310,12 +350,22 @@ function weightedScore(comps, weights) {
   return used === 0 ? 0 : round9(total / used);
 }
 
+function weightedScore(comps, weights) {
+  return weightedAverage(comps, weights, TOPIC_NAMES.concat(CONDITION_NAMES));
+}
+
 function rankAll(investigations, env, weights, includeStream) {
   const scored = investigations.filter(function (inv) {
     return inv.row_count > 0;
   }).map(function (inv) {
     const comps = components(inv, env, includeStream);
-    return { psi_id: inv.psi_id, components: comps, score: weightedScore(comps, weights) };
+    return {
+      psi_id: inv.psi_id,
+      components: comps,
+      topic: weightedAverage(comps, weights, TOPIC_NAMES),
+      condition: weightedAverage(comps, weights, CONDITION_NAMES),
+      score: weightedScore(comps, weights)
+    };
   });
   scored.sort(function (a, b) {
     if (b.score !== a.score) {
@@ -369,7 +419,8 @@ function parityCheck() {
       expected.ranking.forEach(function (exp, index) {
         const got = ranking[index];
         checks += 1;
-        const same = got && got.psi_id === exp.psi_id && got.rank === exp.rank && Math.abs(got.score - exp.score) < 2e-9;
+        const same = got && got.psi_id === exp.psi_id && got.rank === exp.rank && Math.abs(got.score - exp.score) < 2e-9 &&
+          Math.abs(got.topic - exp.topic) < 2e-9 && Math.abs(got.condition - exp.condition) < 2e-9;
         const st = stability[exp.psi_id];
         const stable = st && st.min === expected.stability[exp.psi_id].min && st.max === expected.stability[exp.psi_id].max;
         if (!same || !stable) {
@@ -429,7 +480,14 @@ function renderOverview() {
   const lead = state.data.insights.insights[0];
   const stats = state.data.investigations;
   const withRows = stats.filter(function (i) { return i.row_count > 0; }).length;
-  const cards = NAV.slice(1).map(function (item) {
+  const sections = [];
+  NAV.slice(1).forEach(function (item) {
+    sections.push(item);
+    if (item[0] === "extractor") {
+      sections.push(["readiness", "Model Readiness"]);
+    }
+  });
+  const cards = sections.map(function (item) {
     return el("div", { class: "card" },
       el("h3", null, el("a", { href: "#/" + item[0], text: item[1] })),
       el("p", { class: "obj", text: "\"" + OBJECTIVES[item[0]] + "\"" }),
@@ -477,7 +535,7 @@ function renderInvestigations() {
         return false;
       }
       if (filters.fn) {
-        const fns = inv.functions.length ? inv.functions : ["unassigned"];
+        const fns = inv.functions.length ? functionNames(inv) : ["unassigned"];
         if (fns.indexOf(filters.fn) < 0) {
           return false;
         }
@@ -625,8 +683,15 @@ function renderInvestigation(psiId) {
     inv.outcomes.length ? el("p", { text: inv.outcomes.map(function (o) { return o.value + " (" + o.count + ")"; }).join(", ") + ". " + inv.outcome_rows + " of " + inv.row_count + " rows carry an outcome label." }) : el("p", { class: "muted", text: "No outcome column in the table rows." }),
     inv.row_count ? el("p", { class: "small muted", text: "Value quality of rows: " + quality + "." }) : null,
     el("h2", { text: "Fire-safety function" }),
-    el("p", null, tag(functionLabel(inv), inv.functions.length ? "" : "unassigned")),
-    inv.fire_safety_function_basis ? el("p", { class: "small pre", text: "Basis: " + inv.fire_safety_function_basis }) : null,
+    el("p", null, "Primary label: ", tag(functionLabel(inv), inv.functions.length ? "" : "unassigned")),
+    inv.functions.length ? el("div", { class: "table-wrap" }, el("table", null,
+      el("thead", null, el("tr", null, ["Function", "Source", "Basis"].map(function (h) { return el("th", { text: h }); }))),
+      el("tbody", null, inv.functions.map(function (f) {
+        return el("tr", null,
+          el("td", { text: f.function }),
+          el("td", null, tag(f.source, f.source === "challenge statement" ? "documented" : "inference")),
+          el("td", { class: "small pre", text: f.basis || "No basis text." }));
+      })))) : el("p", { class: "muted", text: "No function assigned." }),
     el("h2", { text: "Publications" }),
     el("h3", { text: "PSI record" }), pubs,
     el("h3", { text: "NTRS" }), ntrs,
@@ -687,22 +752,22 @@ function whyLine(inv, item, counts) {
   const c = item.components;
   const r = inv.ranges;
   const parts = [];
-  parts.push("O2 " + (r.o2_ambient ? "span " + rangeText(r.o2_ambient) + " covers " + pct(c.o2_ambient) + " of the window" : "ambient not recorded"));
-  if (state.includeStream && r.o2_oxidizer_stream) {
-    parts.push("oxidizer-stream span " + rangeText(r.o2_oxidizer_stream) + " covers " + pct(c.o2_stream));
-  }
-  parts.push(r.pressure_atm ? "pressure span " + rangeText(r.pressure_atm) + " covers " + pct(c.pressure) : "pressure not recorded");
-  parts.push(r.flow_cm_s ? "flow span " + rangeText(r.flow_cm_s) + " covers " + pct(c.flow) : "flow not recorded");
   parts.push(c.fuel === null ? "fuel realism not applicable (" + FUEL_LABELS[fuelClassOf(inv)] + ")" : FUEL_LABELS[fuelClassOf(inv)] + " fuel = " + fmt(c.fuel, 1));
-  parts.push("function " + (inv.functions.length ? inv.functions.join("/") : "unassigned"));
+  parts.push("function " + (inv.functions.length ? functionNames(inv).join("/") : "unassigned") + " = " + fmt(c.function, 1));
   parts.push(inv.row_count + " rows, " + inv.outcome_rows + " with an outcome");
+  parts.push("O2 " + (r.o2_ambient ? "tested " + rangeText(r.o2_ambient) + ", coverage " + fmt(c.o2_ambient, 2) : "ambient not recorded"));
+  if (state.includeStream && r.o2_oxidizer_stream) {
+    parts.push("oxidizer-stream tested " + rangeText(r.o2_oxidizer_stream) + ", coverage " + fmt(c.o2_stream, 2));
+  }
+  parts.push(r.pressure_atm ? "pressure tested " + rangeText(r.pressure_atm) + ", coverage " + fmt(c.pressure, 2) : "pressure not recorded");
+  parts.push(r.flow_cm_s ? "flow tested " + rangeText(r.flow_cm_s) + ", coverage " + fmt(c.flow, 2) : "flow not recorded");
   parts.push((counts[inv.psi_id] || 0) + " rows inside the O2 window");
   return parts.join("; ") + ".";
 }
 
-function barCell(item, weights) {
+function barGroup(item, weights, names) {
   const wrap = el("div", { class: "bars" });
-  COMPONENTS.forEach(function (c) {
+  COMPONENTS.filter(function (c) { return names.indexOf(c[0]) >= 0; }).forEach(function (c) {
     const value = item.components[c[0]];
     const na = value === null || value === undefined;
     const title = c[1] + ": " + (na ? "not applicable" : fmt(value, 2)) + " (weight " + fmt(weights[c[0]], 2) + ")";
@@ -712,6 +777,10 @@ function barCell(item, weights) {
       el("div", { class: "bar-letter", text: c[2] })));
   });
   return wrap;
+}
+
+function barCell(item, weights) {
+  return el("div", { class: "bar-groups" }, barGroup(item, weights, TOPIC_NAMES), barGroup(item, weights, CONDITION_NAMES));
 }
 
 function renderHabitat() {
@@ -743,16 +812,19 @@ function renderHabitat() {
       }
     });
     const unscored = data.investigations.filter(function (inv) { return !inv.row_count; });
-    holder.appendChild(el("p", { class: "legend", text: "Components, each 0 to 1: a O2 coverage, b pressure coverage, c flow coverage, d fuel realism, e fire-safety function, f data richness. Hatched means not applicable and is left out of that investigation's weighted average. Coverage is the share of the environment window lying inside the span the investigation tested; it does not mean every point in the span was tested." }));
+    holder.appendChild(el("p", { id: "score-explainer", text: "Topic relevance is how relevant the investigation is to fire safety (fuel, fire-safety function, data richness), condition match is how close its tests are to this environment's O2, pressure and flow, and overall combines both using the weights above." }));
+    holder.appendChild(el("p", { class: "legend", text: "Bars, each 0 to 1, left group is topic relevance: a fuel realism, b fire-safety function, c data richness; right group is condition match: d O2 coverage, e pressure coverage, f flow coverage. Hatched means not applicable and is left out of that investigation's weighted average. Coverage is half the share of the environment window spanned by the tested range plus half credit if at least one tested value lies inside the window." }));
     holder.appendChild(el("div", { class: "table-wrap" }, el("table", null,
-      el("thead", null, el("tr", null, ["Rank", "Investigation", "Score", "Components", "Rank range (+/-20% weights)", "Why"].map(function (h) { return el("th", { text: h }); }))),
+      el("thead", null, el("tr", null, ["Rank", "Investigation", "Overall", "Topic relevance", "Condition match", "Components (a-c topic, d-f condition)", "Rank range (+/-20% weights)", "Why"].map(function (h) { return el("th", { text: h }); }))),
       el("tbody", null, ranking.map(function (item) {
         const inv = invById(item.psi_id);
         const st = stability[item.psi_id];
         return el("tr", null,
           el("td", { class: "num", text: item.rank }),
-          el("td", null, invLink(inv), el("span", { class: "src", text: FUEL_LABELS[fuelClassOf(inv)] })),
+          el("td", null, invLink(inv), el("span", { class: "src", text: FUEL_LABELS[fuelClassOf(inv)] + " | " + functionLabel(inv) })),
           el("td", { class: "num", text: fmt(item.score, 3) }),
+          el("td", { class: "num", text: fmt(item.topic, 3) }),
+          el("td", { class: "num", text: fmt(item.condition, 3) }),
           el("td", null, barCell(item, state.weights)),
           el("td", { class: "num", text: st.min === st.max ? String(st.min) : st.min + " to " + st.max }),
           el("td", { class: "small", text: whyLine(inv, item, counts) }));
@@ -766,7 +838,7 @@ function renderHabitat() {
   function drawSliders() {
     clear(sliderHolder);
     sliderHolder.appendChild(el("h3", { text: "Score weights" }));
-    sliderHolder.appendChild(el("p", { class: "small muted", text: "Score is the weighted average of the components. Defaults: O2 0.30, pressure 0.15, flow 0.10, fuel realism 0.15, function 0.15, richness 0.15. O2 is weighted highest because NASA sources state that O2 matters far more than pressure for flammability (Ruff and Urban, FLARE 2021). Move the sliders to test other priorities." }));
+    sliderHolder.appendChild(el("p", { class: "small muted", text: "Overall is the weighted average of all six components. Defaults: fuel realism 0.25, fire-safety function 0.25, data richness 0.10, O2 0.20, pressure 0.10, flow 0.10. O2 is the heaviest condition weight because NASA sources state that O2 matters far more than pressure for flammability (Ruff and Urban, FLARE 2021). Move the sliders to test other priorities." }));
     COMPONENTS.forEach(function (c) {
       const out = el("span", { text: fmt(state.weights[c[0]], 2) });
       const input = el("input", { type: "range", min: "0", max: "1", step: "0.05", value: String(state.weights[c[0]]), "aria-label": c[1] + " weight" });
@@ -798,7 +870,7 @@ function renderHabitat() {
 
   const root = setView(
     pageHead("habitat", "Habitat Relevance"),
-    el("p", { class: "lede", text: "Choose an environment. Each investigation is scored for it from six visible components and ranked. All PSI data is microgravity, so this ranks how closely each investigation's tested O2, pressure and flow overlap the environment, not how a fire would behave there." }),
+    el("p", { class: "lede", text: "Choose an environment. Each investigation is scored for it from six visible components and ranked. All PSI data is microgravity, so this ranks how relevant each investigation is and how closely its tested O2, pressure and flow match the environment, not how a fire would behave there." }),
     el("div", { class: "row-controls" },
       el("label", { class: "field" }, "Environment", envSelect),
       el("label", { class: "checks" }, streamBox, " Count oxidizer-stream O2 as well (a different quantity from ambient O2, off by default)")),
@@ -972,6 +1044,7 @@ function noteLines(f, count, total) {
     "o2_basis: ambient is chamber O2; oxidizer_stream is the O2 fraction in the burner flow and is not a cabin atmosphere; none means no O2 value.",
     "value_quality: exact and approximate are single values; summary_row, range and ramped rows hold a bound or a list, with o2_frac the upper bound and o2_min_frac the lower.",
     "outcome labels are specific to each investigation table and are not harmonized into MOC, LOI or ULOI. pressure_atm at or below 0 is not physical and should be treated as not recorded.",
+    "group column: equals psi_id. " + state.data.model_readiness.grouped_validation_note,
     "Filters applied: " + filterSummary(f),
     "Rows: " + count + " of " + total + ". Generated " + new Date().toISOString().slice(0, 10) + ". Each PSI investigation record states its own license."
   ];
@@ -999,11 +1072,15 @@ function download(name, text, mime) {
   }, 0);
 }
 
+function cellValue(r, column) {
+  return column === "group" ? r.psi_id : r[column];
+}
+
 function exportCsv(rows, f) {
   const lines = noteLines(f, rows.length, state.data.conditions.length).map(function (l) { return "# " + l; });
   lines.push(COLUMNS.join(","));
   rows.forEach(function (r) {
-    lines.push(COLUMNS.map(function (c) { return csvCell(r[c]); }).join(","));
+    lines.push(COLUMNS.map(function (c) { return csvCell(cellValue(r, c)); }).join(","));
   });
   download("flame_in_freefall_extract.csv", lines.join("\r\n") + "\r\n", "text/csv");
 }
@@ -1015,7 +1092,10 @@ function exportJson(rows, f) {
     columns: COLUMNS,
     rows: rows.map(function (r) {
       const o = {};
-      COLUMNS.forEach(function (c) { o[c] = r[c] === undefined ? null : r[c]; });
+      COLUMNS.forEach(function (c) {
+        const v = cellValue(r, c);
+        o[c] = v === undefined ? null : v;
+      });
       return o;
     })
   };
@@ -1039,6 +1119,61 @@ function numberField(label, value, onChange) {
   const input = el("input", { type: "number", step: "any", value: value === null ? "" : String(value) });
   input.addEventListener("input", function () { onChange(numOrNull(input.value)); });
   return el("label", { class: "field" }, label, input);
+}
+
+function readinessRanges(item) {
+  const parts = [];
+  [["o2", "Ambient O2", ""], ["pressure", "Pressure", "atm"], ["flow", "Flow", "cm/s"]].forEach(function (a) {
+    const r = item.ranges[a[0]];
+    parts.push(a[1] + ": " + (r ? rangeText(r, a[2]) : "not recorded"));
+  });
+  return parts.join("; ");
+}
+
+function readinessPanel() {
+  const mr = state.data.model_readiness;
+  const holder = el("div");
+  let envId = state.envId;
+
+  function draw() {
+    clear(holder);
+    const block = mr.environments[envId];
+    const titles = {};
+    mr.relationships.forEach(function (rel) { titles[rel.id] = rel.title; });
+    const win = block.window;
+    holder.appendChild(el("p", { class: "small muted", text: "Window used for " + block.name + ": ambient O2 " + fmt(win.o2.min, 3) + " to " + fmt(win.o2.max, 3) + ", pressure " + fmt(win.pressure_atm.min, 4) + " to " + fmt(win.pressure_atm.max, 4) + " atm, flow " + fmt(win.flow_cm_s.min, 1) + " to " + fmt(win.flow_cm_s.max, 1) + " cm/s, gravity " + fmt(block.gravity_g, 2) + " g." }));
+    holder.appendChild(el("div", { class: "table-wrap" }, el("table", { class: "readiness" },
+      el("thead", null, el("tr", null, ["Relationship", "Status", "Data behind it", "What would close the gap"].map(function (h) { return el("th", { text: h }); }))),
+      el("tbody", null, block.items.map(function (item) {
+        const invList = item.investigations.length ? el("ul", null, item.investigations.map(function (i) {
+          const inv = invById(i.psi_id);
+          return el("li", null, inv ? invLink(inv) : i.psi_id,
+            ": " + i.rows + " rows, " + i.response_rows + " with a response, " + i.counted_rows + " counted");
+        })) : el("p", { class: "muted", text: "No investigations." });
+        return el("tr", { id: "ready-" + item.id },
+          el("td", null, el("strong", { text: titles[item.id] })),
+          el("td", null, tag(item.status, STATUS_CLASS[item.status]), el("span", { class: "src", text: item.reason })),
+          el("td", { class: "small" },
+            invList,
+            item.investigations.length ? el("p", { class: "small muted", text: readinessRanges(item) + (item.diluents && item.diluents.length ? "; diluents: " + item.diluents.join(", ") : "") + "." }) : null,
+            item.investigations.length ? el("a", { href: "#/extractor?" + qs(item.link), text: "Open these rows in the extractor" }) : null),
+          el("td", { class: "small", text: item.gap }));
+      })))));
+  }
+
+  const select = el("select", { id: "readiness-env", onchange: function (e) { envId = e.target.value; draw(); } },
+    state.data.environments.environments.map(function (env) {
+      return el("option", { value: env.id, text: env.name, selected: env.id === envId });
+    }));
+  const root = el("div", { class: "panel", id: "model-readiness" },
+    el("h2", { text: "Model readiness" }),
+    el("p", { text: "Which predictive relationships of flammability and fire scenarios the PSI data can support for each environment, from the data in the unified table." }),
+    el("p", { class: "small", text: mr.rule }),
+    el("p", { class: "notice", text: mr.no_model_note }),
+    el("div", { class: "row-controls" }, el("label", { class: "field" }, "Environment", select)),
+    holder);
+  draw();
+  return root;
 }
 
 function renderExtractor(params) {
@@ -1153,12 +1288,14 @@ function renderExtractor(params) {
 
   const root = setView(
     pageHead("extractor", "Data Extractor"),
-    el("p", { class: "lede", text: "Filter the unified conditions table, check coverage against an environment window, and download the filtered rows with units, provenance and a validity-domain note." }),
+    el("p", { class: "lede", text: "Filter the unified conditions table, check coverage against an environment window, and download the filtered rows with units, provenance and a validity-domain note. Model readiness below says which modelling relationships the data can support." }),
+    readinessPanel(),
     controls,
     summary,
     el("div", { class: "row-controls" },
-      el("button", { type: "button", text: "Download CSV", onclick: function () { exportCsv(filtered, f); } }),
-      el("button", { type: "button", class: "secondary", text: "Download JSON", onclick: function () { exportJson(filtered, f); } })),
+      el("button", { type: "button", id: "download-csv", text: "Download CSV", onclick: function () { exportCsv(filtered, f); } }),
+      el("button", { type: "button", id: "download-json", class: "secondary", text: "Download JSON", onclick: function () { exportJson(filtered, f); } })),
+    el("p", { class: "small muted", text: "The group column equals the investigation id. " + data.model_readiness.grouped_validation_note }),
     el("h2", { text: "Coverage: O2 versus pressure" }),
     chart,
     chartNote,
@@ -1173,26 +1310,34 @@ function renderFunctions() {
   const order = ["prevention", "detection", "suppression", "fundamental", "unassigned"];
   const sections = order.map(function (fn) {
     const members = state.data.investigations.filter(function (inv) {
-      const fns = inv.functions.length ? inv.functions : ["unassigned"];
+      const fns = inv.functions.length ? functionNames(inv) : ["unassigned"];
       return fns.indexOf(fn) >= 0;
+    }).sort(function (a, b) {
+      const sa = a.functions.some(function (f) { return f.function === fn && f.source === "challenge statement"; }) ? 0 : 1;
+      const sb = b.functions.some(function (f) { return f.function === fn && f.source === "challenge statement"; }) ? 0 : 1;
+      return sa !== sb ? sa - sb : sortById(a.psi_id, b.psi_id);
     });
     return el("div", { class: "panel" },
       el("h2", { text: fn.charAt(0).toUpperCase() + fn.slice(1) + " (" + members.length + ")" }),
       el("p", { class: "small muted", text: "Equipment area: " + FUNCTION_INFO[fn] + (fn === "unassigned" ? "" : ". This area is the dashboard's mapping, not a PSI field.") }),
       members.length ? el("div", { class: "grid" }, members.map(function (inv) {
-        const basis = inv.fire_safety_function_basis || "No basis text in the metadata.";
+        const entry = inv.functions.find(function (f) { return f.function === fn; });
+        const basis = entry ? (entry.basis || "No basis text.") : "";
         const trimmed = basis.length > 320 ? basis.slice(0, 320) + " ..." : basis;
+        const isPrimary = functionLabel(inv) === fn;
         return el("div", { class: "card" },
           el("h3", null, invLink(inv)),
           el("p", { class: "obj", text: inv.title }),
-          el("p", { class: "small" }, tag(FUEL_LABELS[fuelClassOf(inv)]), " ", tag(inv.row_count + " rows")),
-          fn === "unassigned" ? el("p", { class: "small muted", text: "No fire-safety function has been assigned to this investigation." }) : el("p", { class: "small pre", text: "Basis: " + trimmed }),
-          inv.functions.length > 1 ? el("p", { class: "small muted", text: "Also grouped under: " + inv.functions.filter(function (x) { return x !== fn; }).join(", ") + "." }) : null);
+          el("p", { class: "small" }, tag(FUEL_LABELS[fuelClassOf(inv)]), " ", tag(inv.row_count + " rows"), " ",
+            entry ? tag(entry.source, entry.source === "challenge statement" ? "documented" : "inference") : null, " ",
+            isPrimary ? tag("primary label", "same") : null),
+          fn === "unassigned" ? el("p", { class: "small muted", text: "No fire-safety function has been assigned to this investigation." }) : el("p", { class: "small pre", text: (entry && entry.source === "challenge statement" ? "Challenge statement: \"" + trimmed + "\"" : "Basis: " + trimmed) }),
+          inv.functions.length > 1 ? el("p", { class: "small muted", text: "Also listed under: " + functionNames(inv).filter(function (x) { return x !== fn; }).join(", ") + "." }) : null);
       })) : el("p", { class: "muted", text: "No investigations in this group." }));
   });
   return setView(
     pageHead("functions", "Prevention / Detection / Suppression"),
-    el("p", { class: "lede", text: "NASA spacecraft fire safety work is organized around prevention, detection and suppression. Each investigation is grouped by the function its metadata assigns; the basis text says why. Investigations with no assignment stay listed as unassigned." }),
+    el("p", { class: "lede", text: "NASA spacecraft fire safety work is organized around prevention, detection and suppression. An investigation is listed under every function it supports. Assignments quoted from the challenge statement come first; the rest are keyword matches on the PSI text and are weaker. The primary label is the challenge-statement assignment if there is one, otherwise the metadata's primary function." }),
     sections
   );
 }
@@ -1305,17 +1450,140 @@ function renderEarth() {
   );
 }
 
-function answerNodes(answer, citations) {
-  const byN = {};
-  citations.forEach(function (c) { byN[c.n] = c; });
-  const parts = answer.split(/(\[\d+\])/);
-  return parts.map(function (part) {
-    const m = /^\[(\d+)\]$/.exec(part);
-    if (m && byN[m[1]] && byN[m[1]].psi_id) {
-      return el("a", { class: "cite-link", href: "#/investigation/" + byN[m[1]].psi_id, text: part, title: byN[m[1]].title });
+function escapeHtml(text) {
+  return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+function inlineMarkdown(raw, citeMap) {
+  let out = escapeHtml(raw);
+  out = out.replace(/\*\*([^*]+?)\*\*/g, "<strong>$1</strong>");
+  out = out.replace(/\[(\d{1,3})\]/g, function (whole, n) {
+    if (!citeMap || !citeMap[n]) {
+      return whole;
     }
-    return part;
+    return "<a class=\"cite-link\" href=\"#\" data-cite=\"" + n + "\">[" + n + "]</a>";
   });
+  return out;
+}
+
+function splitTableRow(line) {
+  let t = line.trim();
+  if (t.charAt(0) === "|") {
+    t = t.slice(1);
+  }
+  if (t.charAt(t.length - 1) === "|") {
+    t = t.slice(0, -1);
+  }
+  return t.split("|").map(function (cell) { return cell.trim(); });
+}
+
+function isTableSep(line) {
+  if (line === undefined || line.indexOf("|") < 0 || line.indexOf("-") < 0) {
+    return false;
+  }
+  return splitTableRow(line).every(function (cell) { return /^:?-{2,}:?$/.test(cell); });
+}
+
+const BULLET_RE = /^\s*[-*]\s+(.*)$/;
+const ORDERED_RE = /^\s*\d+[.)]\s+(.*)$/;
+const HEADING_RE = /^\s*#{1,6}\s+(.*)$/;
+
+function startsBlock(line, next) {
+  return BULLET_RE.test(line) || ORDERED_RE.test(line) || HEADING_RE.test(line) || (line.indexOf("|") >= 0 && isTableSep(next));
+}
+
+function renderMarkdown(text, citeMap) {
+  const lines = String(text === undefined || text === null ? "" : text).replace(/\r\n?/g, "\n").split("\n");
+  const html = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    if (!line.trim()) {
+      i += 1;
+      continue;
+    }
+    if (line.indexOf("|") >= 0 && isTableSep(lines[i + 1])) {
+      const head = splitTableRow(line);
+      const body = [];
+      i += 2;
+      while (i < lines.length && lines[i].trim() && lines[i].indexOf("|") >= 0) {
+        body.push(splitTableRow(lines[i]));
+        i += 1;
+      }
+      html.push("<table><thead><tr>" + head.map(function (c) { return "<th>" + inlineMarkdown(c, citeMap) + "</th>"; }).join("") + "</tr></thead><tbody>" +
+        body.map(function (row) {
+          return "<tr>" + row.map(function (c) { return "<td>" + inlineMarkdown(c, citeMap) + "</td>"; }).join("") + "</tr>";
+        }).join("") + "</tbody></table>");
+      continue;
+    }
+    const listRe = BULLET_RE.test(line) ? BULLET_RE : ORDERED_RE.test(line) ? ORDERED_RE : null;
+    if (listRe) {
+      const tagName = listRe === BULLET_RE ? "ul" : "ol";
+      const items = [];
+      while (i < lines.length && listRe.test(lines[i])) {
+        items.push("<li>" + inlineMarkdown(listRe.exec(lines[i])[1], citeMap) + "</li>");
+        i += 1;
+      }
+      html.push("<" + tagName + ">" + items.join("") + "</" + tagName + ">");
+      continue;
+    }
+    const heading = HEADING_RE.exec(line);
+    if (heading) {
+      html.push("<h4>" + inlineMarkdown(heading[1], citeMap) + "</h4>");
+      i += 1;
+      continue;
+    }
+    const para = [];
+    while (i < lines.length && lines[i].trim() && !(para.length && startsBlock(lines[i], lines[i + 1]))) {
+      para.push(lines[i].trim());
+      i += 1;
+    }
+    html.push("<p>" + inlineMarkdown(para.join(" "), citeMap) + "</p>");
+  }
+  return html.join("");
+}
+
+function citationMap(citations) {
+  const map = {};
+  citations.forEach(function (c) { map[String(c.n)] = c; });
+  return map;
+}
+
+const CITE_PREVIEW_CHARS = 300;
+
+function citationList(citations) {
+  return el("ol", { class: "citations" }, citations.map(function (c) {
+    const inv = c.psi_id ? invById(c.psi_id) : null;
+    const full = String(c.cited_text || "");
+    const long = full.length > CITE_PREVIEW_CHARS;
+    const quote = el("span", { class: "src cite-quote", text: "\"" + (long ? full.slice(0, CITE_PREVIEW_CHARS) + " ..." : full) + "\"" });
+    let open = false;
+    const toggle = long ? el("button", { type: "button", class: "secondary small-button", text: "Show more", onclick: function (e) {
+      open = !open;
+      quote.textContent = "\"" + (open ? full : full.slice(0, CITE_PREVIEW_CHARS) + " ...") + "\"";
+      e.target.textContent = open ? "Show less" : "Show more";
+    } }) : null;
+    return el("li", { value: c.n, id: "cite-" + c.n, tabindex: "-1" },
+      inv ? invLink(inv, c.title || invLabel(inv)) : (c.title || "document"), quote, toggle);
+  }));
+}
+
+function answerView(answer, citations) {
+  const body = el("div", { class: "answer" });
+  body.innerHTML = renderMarkdown(answer, citationMap(citations));
+  body.addEventListener("click", function (e) {
+    const n = e.target && e.target.getAttribute ? e.target.getAttribute("data-cite") : null;
+    if (!n) {
+      return;
+    }
+    e.preventDefault();
+    const target = document.getElementById("cite-" + n);
+    if (target) {
+      target.scrollIntoView();
+      target.focus();
+    }
+  });
+  return body;
 }
 
 function renderAsk() {
@@ -1362,13 +1630,8 @@ function renderAsk() {
       const notIn = answer.indexOf("Not in the data.") >= 0;
       show(el("div", null,
         notIn ? el("p", null, tag("Not in the data", "assumption")) : null,
-        el("div", { class: "answer" }, answerNodes(answer, citations)),
-        citations.length ? el("div", null, el("h3", { text: "Citations" }),
-          el("ol", null, citations.map(function (c) {
-            const inv = c.psi_id ? invById(c.psi_id) : null;
-            return el("li", { value: c.n }, inv ? invLink(inv, c.title || invLabel(inv)) : (c.title || "document"),
-              el("span", { class: "src", text: "\"" + c.cited_text + "\"" }));
-          }))) : null,
+        answerView(answer, citations),
+        citations.length ? el("div", null, el("h3", { text: "Citations" }), citationList(citations)) : null,
         el("p", { class: "small muted", text: "Model: " + (result.json.model || "unknown") + "." })));
     }).catch(function () {
       button.disabled = false;
@@ -1388,7 +1651,7 @@ function renderAsk() {
 
 function route() {
   const r = parseHash();
-  buildNav(r.name === "investigation" ? "investigations" : r.name);
+  buildNav(r.name === "investigation" ? "investigations" : r.name === "readiness" ? "extractor" : r.name);
   document.title = "Flame in Freefall";
   if (r.name === "investigation") {
     renderInvestigation(r.arg);
@@ -1399,6 +1662,8 @@ function route() {
   } else if (r.name === "insights") {
     renderInsights();
   } else if (r.name === "extractor") {
+    renderExtractor(r.params);
+  } else if (r.name === "readiness") {
     renderExtractor(r.params);
   } else if (r.name === "functions") {
     renderFunctions();
@@ -1412,10 +1677,16 @@ function route() {
     renderOverview();
   }
   window.scrollTo(0, 0);
+  if (r.name === "readiness") {
+    const target = document.getElementById("model-readiness");
+    if (target) {
+      target.scrollIntoView();
+    }
+  }
 }
 
 function init() {
-  const names = ["investigations", "conditions", "environments", "insights", "earth", "rank_reference"];
+  const names = ["investigations", "conditions", "environments", "insights", "earth", "rank_reference", "model_readiness"];
   Promise.all(names.map(loadJson)).then(function (loaded) {
     state.data = {
       investigations: loaded[0].investigations,
@@ -1423,7 +1694,8 @@ function init() {
       environments: loaded[2],
       insights: loaded[3],
       earth: loaded[4],
-      rank_reference: loaded[5]
+      rank_reference: loaded[5],
+      model_readiness: loaded[6]
     };
     state.weights = Object.assign({}, state.data.rank_reference.weights);
     parityCheck();
