@@ -1,0 +1,75 @@
+{
+ "applications": [
+  {
+   "application": "Fine-water-mist extinguishers",
+   "id": "water_mist",
+   "inference": "FLEX and FLEX-2 measure how diluents extinguish burning droplets and are the nearest PSI suppression data. No PSI table is a water-mist test, so this link is an inference.",
+   "inference_psi_ids": [
+    "PSI-69",
+    "PSI-68"
+   ],
+   "psi_ids": [],
+   "sources": [
+    {
+     "label": "Challenge statement",
+     "url": "https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/"
+    }
+   ],
+   "statement": "Fine-water-mist extinguishers developed for use on the ISS have practical applications on Earth.",
+   "status": "documented spinoff"
+  },
+  {
+   "application": "Smoke detector that tells smoke from dust",
+   "id": "smoke_dust_detector",
+   "inference": "Documented in the challenge statement: an instrument used for smoke detection in SAME and SAME-R was used to detect dust in DAFT and DAFT-2. The 1970s shuttle detector itself predates these investigations, so the spinoff is historical and the link to the PSI tables is the instrument reuse only.",
+   "inference_psi_ids": [],
+   "psi_ids": [
+    "PSI-102",
+    "PSI-101",
+    "PSI-47"
+   ],
+   "sources": [
+    {
+     "label": "NASA Spinoff: Fire Detector",
+     "url": "https://spinoff.nasa.gov/node/9407"
+    },
+    {
+     "label": "Challenge statement",
+     "url": "https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/"
+    }
+   ],
+   "statement": "A 1970s smoke detector developed for the shuttle discriminates smoke from dust, giving fewer nuisance alarms, with industrial uses such as mining.",
+   "status": "documented spinoff"
+  },
+  {
+   "application": "Firefighter air tanks and breathing gear",
+   "id": "firefighter_air_tanks",
+   "inference": "No PSI combustion investigation is linked: this is spacesuit hardware history, not combustion data.",
+   "inference_psi_ids": [],
+   "psi_ids": [],
+   "sources": [
+    {
+     "label": "NASA Spinoff: Fireman's Air Tanks",
+     "url": "https://spinoff.nasa.gov/node/9582"
+    }
+   ],
+   "statement": "A 1970s adaptation of spacesuit technology improved firefighter air tanks and breathing gear.",
+   "status": "documented spinoff"
+  },
+  {
+   "application": "Firefighter protective clothing",
+   "id": "firefighter_clothing",
+   "inference": "No PSI combustion investigation is linked: this is spacesuit materials history. Fabric flammability tests in the PSI tables (Saffire, BASS) address spacecraft materials, not firefighter clothing.",
+   "inference_psi_ids": [],
+   "psi_ids": [],
+   "sources": [
+    {
+     "label": "NASA Spinoff: New Technology for the Fire Attire",
+     "url": "https://spinoff.nasa.gov/node/9918"
+    }
+   ],
+   "statement": "A 1980s application of NASA spacesuit technology improved firefighter clothing.",
+   "status": "documented spinoff"
+  }
+ ]
+}

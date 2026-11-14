@@ -1,0 +1,317 @@
+{
+ "environments": [
+  {
+   "flow_cm_s": {
+    "assumption": true,
+    "display": "10 to 20 cm/s",
+    "max": 20.0,
+    "min": 10.0,
+    "note": "Not documented for this environment in the loaded notes. The lunar habitat HVAC figure is reused as a placeholder.",
+    "point_value": false,
+    "sources": [],
+    "window_max": 20.0,
+    "window_min": 10.0
+   },
+   "gravity": {
+    "assumption": false,
+    "bracket_note": "All PSI data is microgravity (0 g), the same gravity level as this environment.",
+    "display": "0 g (free fall)",
+    "g": 0.0,
+    "note": "Matches the PSI data directly.",
+    "sources": [
+     {
+      "detail": "flames in free fall (microgravity)",
+      "ref": "challenge"
+     }
+    ]
+   },
+   "id": "iss",
+   "name": "ISS / spacecraft cabin",
+   "o2": {
+    "assumption": true,
+    "display": "21 to 22 percent O2",
+    "max": 0.22,
+    "min": 0.21,
+    "note": "Air-like cabin. Not stated in the loaded notes; 22.0 percent matches the Saffire IV-1 test card (Urban 2021) as the nearest sourced air-like point.",
+    "point_value": false,
+    "sources": [],
+    "window_max": 0.22,
+    "window_min": 0.21
+   },
+   "pressure_atm": {
+    "assumption": true,
+    "display": "14.7 psia, 1.000 atm",
+    "max": 1.0,
+    "min": 1.0,
+    "note": "ISS cabin pressure itself is not stated in the loaded notes; Earth sea-level pressure is used as a placeholder.",
+    "point_value": true,
+    "sources": [
+     {
+      "detail": "Earth sea-level pressure 14.7 psi",
+      "ref": "challenge"
+     }
+    ],
+    "window_max": 1.02,
+    "window_min": 0.98
+   }
+  },
+  {
+   "flow_cm_s": {
+    "assumption": true,
+    "display": "10 to 20 cm/s",
+    "max": 20.0,
+    "min": 10.0,
+    "note": "Not documented for this environment in the loaded notes. The lunar habitat HVAC figure is reused as a placeholder.",
+    "point_value": false,
+    "sources": [],
+    "window_max": 20.0,
+    "window_min": 10.0
+   },
+   "gravity": {
+    "assumption": true,
+    "bracket_note": "All PSI data is microgravity (0 g), the same gravity level as this environment.",
+    "display": "0 g (orbiting station)",
+    "g": 0.0,
+    "note": "Assumed free-fall habitat; not stated in the loaded notes.",
+    "sources": []
+   },
+   "id": "gateway",
+   "name": "Gateway-class station",
+   "o2": {
+    "assumption": false,
+    "display": "about 26.5 percent O2",
+    "max": 0.265,
+    "min": 0.265,
+    "note": "Single value, lower confidence: taken from a search summary of the source, not from the opened document.",
+    "point_value": true,
+    "sources": [
+     {
+      "detail": "Gateway about 26.5 percent O2 (search summary only)",
+      "ref": "ucl"
+     }
+    ],
+    "window_max": 0.27,
+    "window_min": 0.26
+   },
+   "pressure_atm": {
+    "assumption": true,
+    "display": "14.7 psia, 1.000 atm",
+    "max": 1.0,
+    "min": 1.0,
+    "note": "Gateway pressure is not stated in the loaded notes; Earth sea-level pressure is used as a placeholder.",
+    "point_value": true,
+    "sources": [],
+    "window_max": 1.02,
+    "window_min": 0.98
+   }
+  },
+  {
+   "flow_cm_s": {
+    "assumption": false,
+    "display": "about 10 to 20 cm/s HVAC flow",
+    "max": 20.0,
+    "min": 10.0,
+    "note": "",
+    "point_value": false,
+    "sources": [
+     {
+      "detail": "lunar lander and habitat conditions, HVAC flows about 10-20 cm/s",
+      "ref": "urban"
+     }
+    ],
+    "window_max": 20.0,
+    "window_min": 10.0
+   },
+   "gravity": {
+    "assumption": false,
+    "bracket_note": "All PSI data is microgravity (0 g). Results are bracketed between 0 g and 1 g; this gravity level lies in the bracket and no partial-gravity value is computed or implied.",
+    "display": "0.16 g",
+    "g": 0.16,
+    "note": "",
+    "sources": [
+     {
+      "detail": "lunar lander and habitat, g = 0.16 g_earth",
+      "ref": "urban"
+     }
+    ]
+   },
+   "id": "lunar",
+   "name": "Lunar surface habitat",
+   "o2": {
+    "assumption": false,
+    "display": "28 to 34 percent O2",
+    "max": 0.34,
+    "min": 0.28,
+    "note": "",
+    "point_value": false,
+    "sources": [
+     {
+      "detail": "atmosphere trade: 10.2 psia with 28 percent O2 or 8.2 psia with 34 percent O2",
+      "ref": "ruff"
+     },
+     {
+      "detail": "lunar lander and habitat: 8.2 psi, 34 percent or more O2",
+      "ref": "urban"
+     }
+    ],
+    "window_max": 0.34,
+    "window_min": 0.28
+   },
+   "pressure_atm": {
+    "assumption": false,
+    "display": "8.2 to 10.2 psia (56.5 to 70.3 kPa), 0.558 to 0.694 atm",
+    "max": 0.6941,
+    "min": 0.558,
+    "note": "",
+    "point_value": false,
+    "sources": [
+     {
+      "detail": "8.2 psi / 56.5 kPa",
+      "ref": "urban"
+     },
+     {
+      "detail": "pressure 10.2 psi or less with 30 percent or more O2",
+      "ref": "challenge"
+     }
+    ],
+    "window_max": 0.6941,
+    "window_min": 0.558
+   }
+  },
+  {
+   "flow_cm_s": {
+    "assumption": true,
+    "display": "10 to 20 cm/s",
+    "max": 20.0,
+    "min": 10.0,
+    "note": "Not documented for this environment in the loaded notes. The lunar habitat HVAC figure is reused as a placeholder.",
+    "point_value": false,
+    "sources": [],
+    "window_max": 20.0,
+    "window_min": 10.0
+   },
+   "gravity": {
+    "assumption": false,
+    "bracket_note": "All PSI data is microgravity (0 g). Results are bracketed between 0 g and 1 g; this gravity level lies in the bracket and no partial-gravity value is computed or implied.",
+    "display": "0.16 g",
+    "g": 0.16,
+    "note": "",
+    "sources": [
+     {
+      "detail": "lunar lander and habitat, g = 0.16 g_earth",
+      "ref": "urban"
+     }
+    ]
+   },
+   "id": "rover",
+   "name": "Pressurized rover",
+   "o2": {
+    "assumption": false,
+    "display": "30 to 34 percent O2",
+    "max": 0.34,
+    "min": 0.3,
+    "note": "",
+    "point_value": false,
+    "sources": [
+     {
+      "detail": "Moon base and pressurized rovers: O2 30 percent or greater",
+      "ref": "challenge"
+     },
+     {
+      "detail": "34 percent O2 upper value for lunar vehicles and habitats",
+      "ref": "urban"
+     }
+    ],
+    "window_max": 0.34,
+    "window_min": 0.3
+   },
+   "pressure_atm": {
+    "assumption": false,
+    "display": "8.2 to 10.2 psia (56.5 to 70.3 kPa), 0.558 to 0.694 atm",
+    "max": 0.6941,
+    "min": 0.558,
+    "note": "",
+    "point_value": false,
+    "sources": [
+     {
+      "detail": "10.2 psi or less for Moon base and pressurized rovers",
+      "ref": "challenge"
+     },
+     {
+      "detail": "8.2 psi lower value",
+      "ref": "urban"
+     }
+    ],
+    "window_max": 0.6941,
+    "window_min": 0.558
+   }
+  },
+  {
+   "flow_cm_s": {
+    "assumption": true,
+    "display": "10 to 20 cm/s",
+    "max": 20.0,
+    "min": 10.0,
+    "note": "Not documented for this environment in the loaded notes. The lunar habitat HVAC figure is reused as a placeholder.",
+    "point_value": false,
+    "sources": [],
+    "window_max": 20.0,
+    "window_min": 10.0
+   },
+   "gravity": {
+    "assumption": true,
+    "bracket_note": "All PSI data is microgravity (0 g). Results are bracketed between 0 g and 1 g; this gravity level lies in the bracket and no partial-gravity value is computed or implied.",
+    "display": "0.38 g",
+    "g": 0.38,
+    "note": "Standard value, not stated in the loaded notes.",
+    "sources": []
+   },
+   "id": "mars",
+   "name": "Mars surface habitat",
+   "o2": {
+    "assumption": true,
+    "display": "28 to 34 percent O2",
+    "max": 0.34,
+    "min": 0.28,
+    "note": "No Mars habitat atmosphere is given in the loaded notes; the lunar exploration atmosphere range is reused as a placeholder.",
+    "point_value": false,
+    "sources": [],
+    "window_max": 0.34,
+    "window_min": 0.28
+   },
+   "pressure_atm": {
+    "assumption": true,
+    "display": "8.2 to 10.2 psia (56.5 to 70.3 kPa), 0.558 to 0.694 atm",
+    "max": 0.6941,
+    "min": 0.558,
+    "note": "No Mars habitat pressure is given in the loaded notes; the lunar range is reused as a placeholder.",
+    "point_value": false,
+    "sources": [],
+    "window_max": 0.6941,
+    "window_min": 0.558
+   }
+  }
+ ],
+ "sources": {
+  "challenge": {
+   "label": "Challenge statement, Space Apps 2026 Flame in Freefall",
+   "url": "https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/"
+  },
+  "fortenberry": {
+   "label": "Fortenberry et al., fire detection white paper, NASEM decadal survey",
+   "url": "https://science.nasa.gov/wp-content/uploads/2023/05/154_33f28c6ef0c27b92cf1f526cef0c44b4_Fire_detection_white_paper_final_211031.pdf"
+  },
+  "ruff": {
+   "label": "Ruff, Tech Dev for Spacecraft Fire Safety, FLARE 2021 (NTRS 20210021318)",
+   "url": "https://ntrs.nasa.gov/api/citations/20210021318/downloads/Tech%20Dev%20for%20Spacecraft%20Fire%20Safety_Location_10-7-2021.pdf"
+  },
+  "ucl": {
+   "label": "UCL review of exploration atmospheres (search summary, not opened, lower confidence)",
+   "url": "https://discovery.ucl.ac.uk/id/eprint/10146827/1/AA-D-21-01435-uploaded.pdf"
+  },
+  "urban": {
+   "label": "Urban, NASA Materials Flammability Update, FLARE 2021 (NTRS 20210021181)",
+   "url": "https://ntrs.nasa.gov/api/citations/20210021181/downloads/NASA%20Materials%20Flammability%20Update%20update%209.09.2021%20Final.pdf"
+  }
+ }
+}

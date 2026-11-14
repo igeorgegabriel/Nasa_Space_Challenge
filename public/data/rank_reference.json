@@ -1,0 +1,4077 @@
+{
+ "perturbation": 0.2,
+ "variants": {
+  "default": {
+   "gateway": {
+    "ranking": [
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 1.0,
+       "richness": 0.9421065133935107
+      },
+      "psi_id": "PSI-69",
+      "rank": 1,
+      "score": 0.816315977
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 1.0,
+       "pressure": 1.0,
+       "richness": 0.9032085994432316
+      },
+      "psi_id": "PSI-159",
+      "rank": 2,
+      "score": 0.70548129
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 1.0,
+       "pressure": 1.0,
+       "richness": 0.5591166801486619
+      },
+      "psi_id": "PSI-10",
+      "rank": 3,
+      "score": 0.653867502
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 1.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-23",
+      "rank": 4,
+      "score": 0.612627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-68",
+      "rank": 5,
+      "score": 0.481809995
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "unassigned",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-20",
+      "rank": 6,
+      "score": 0.462627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4697934247054332
+      },
+      "psi_id": "PSI-25",
+      "rank": 7,
+      "score": 0.370469014
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4644512723300232
+      },
+      "psi_id": "PSI-26",
+      "rank": 8,
+      "score": 0.369667691
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 1.0,
+       "richness": 0.43213323234652384
+      },
+      "psi_id": "PSI-39",
+      "rank": 9,
+      "score": 0.364819985
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.3742649681021655
+      },
+      "psi_id": "PSI-99",
+      "rank": 10,
+      "score": 0.356139745
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.15533600356180546
+      },
+      "psi_id": "PSI-98",
+      "rank": 11,
+      "score": 0.323300401
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-100",
+      "rank": 12,
+      "score": 0.315904998
+     },
+     {
+      "components": {
+       "flow": 1.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.5938352143910536
+      },
+      "psi_id": "PSI-107",
+      "rank": 13,
+      "score": 0.309075282
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4536700851905799
+      },
+      "psi_id": "PSI-101",
+      "rank": 14,
+      "score": 0.256530015
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-102",
+      "rank": 15,
+      "score": 0.213894112
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-47",
+      "rank": 16,
+      "score": 0.19518235
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-21",
+      "rank": 17,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-22",
+      "rank": 18,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.24755784578475304
+      },
+      "psi_id": "PSI-106",
+      "rank": 19,
+      "score": 0.157133677
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-142",
+      "rank": 20,
+      "score": 0.125658818
+     }
+    ],
+    "stability": {
+     "PSI-10": {
+      "max": 3,
+      "min": 3
+     },
+     "PSI-100": {
+      "max": 13,
+      "min": 12
+     },
+     "PSI-101": {
+      "max": 14,
+      "min": 14
+     },
+     "PSI-102": {
+      "max": 15,
+      "min": 15
+     },
+     "PSI-106": {
+      "max": 19,
+      "min": 19
+     },
+     "PSI-107": {
+      "max": 13,
+      "min": 11
+     },
+     "PSI-142": {
+      "max": 20,
+      "min": 20
+     },
+     "PSI-159": {
+      "max": 2,
+      "min": 2
+     },
+     "PSI-20": {
+      "max": 6,
+      "min": 6
+     },
+     "PSI-21": {
+      "max": 17,
+      "min": 17
+     },
+     "PSI-22": {
+      "max": 18,
+      "min": 18
+     },
+     "PSI-23": {
+      "max": 4,
+      "min": 4
+     },
+     "PSI-25": {
+      "max": 8,
+      "min": 7
+     },
+     "PSI-26": {
+      "max": 9,
+      "min": 8
+     },
+     "PSI-39": {
+      "max": 10,
+      "min": 7
+     },
+     "PSI-47": {
+      "max": 16,
+      "min": 16
+     },
+     "PSI-68": {
+      "max": 5,
+      "min": 5
+     },
+     "PSI-69": {
+      "max": 1,
+      "min": 1
+     },
+     "PSI-98": {
+      "max": 12,
+      "min": 11
+     },
+     "PSI-99": {
+      "max": 10,
+      "min": 9
+     }
+    }
+   },
+   "iss": {
+    "ranking": [
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 1.0,
+       "richness": 0.9421065133935107
+      },
+      "psi_id": "PSI-69",
+      "rank": 1,
+      "score": 0.816315977
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 1.0,
+       "pressure": 1.0,
+       "richness": 0.9032085994432316
+      },
+      "psi_id": "PSI-159",
+      "rank": 2,
+      "score": 0.70548129
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4697934247054332
+      },
+      "psi_id": "PSI-25",
+      "rank": 3,
+      "score": 0.670469014
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.7982999999999983,
+       "pressure": 1.0,
+       "richness": 0.5591166801486619
+      },
+      "psi_id": "PSI-10",
+      "rank": 4,
+      "score": 0.653867502
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 1.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-23",
+      "rank": 5,
+      "score": 0.612627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.5,
+       "o2_ambient": 0.5,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.3742649681021655
+      },
+      "psi_id": "PSI-99",
+      "rank": 6,
+      "score": 0.506139745
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-68",
+      "rank": 7,
+      "score": 0.481809995
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "unassigned",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-20",
+      "rank": 8,
+      "score": 0.462627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.2,
+       "o2_ambient": 0.2,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.15533600356180546
+      },
+      "psi_id": "PSI-98",
+      "rank": 9,
+      "score": 0.383300401
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4644512723300232
+      },
+      "psi_id": "PSI-26",
+      "rank": 10,
+      "score": 0.369667691
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 1.0,
+       "richness": 0.43213323234652384
+      },
+      "psi_id": "PSI-39",
+      "rank": 11,
+      "score": 0.364819985
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-100",
+      "rank": 12,
+      "score": 0.315904998
+     },
+     {
+      "components": {
+       "flow": 1.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.5938352143910536
+      },
+      "psi_id": "PSI-107",
+      "rank": 13,
+      "score": 0.309075282
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4536700851905799
+      },
+      "psi_id": "PSI-101",
+      "rank": 14,
+      "score": 0.256530015
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-102",
+      "rank": 15,
+      "score": 0.213894112
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-47",
+      "rank": 16,
+      "score": 0.19518235
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-21",
+      "rank": 17,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-22",
+      "rank": 18,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.24755784578475304
+      },
+      "psi_id": "PSI-106",
+      "rank": 19,
+      "score": 0.157133677
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-142",
+      "rank": 20,
+      "score": 0.125658818
+     }
+    ],
+    "stability": {
+     "PSI-10": {
+      "max": 4,
+      "min": 3
+     },
+     "PSI-100": {
+      "max": 13,
+      "min": 12
+     },
+     "PSI-101": {
+      "max": 14,
+      "min": 14
+     },
+     "PSI-102": {
+      "max": 15,
+      "min": 15
+     },
+     "PSI-106": {
+      "max": 19,
+      "min": 19
+     },
+     "PSI-107": {
+      "max": 13,
+      "min": 12
+     },
+     "PSI-142": {
+      "max": 20,
+      "min": 20
+     },
+     "PSI-159": {
+      "max": 2,
+      "min": 2
+     },
+     "PSI-20": {
+      "max": 8,
+      "min": 8
+     },
+     "PSI-21": {
+      "max": 17,
+      "min": 17
+     },
+     "PSI-22": {
+      "max": 18,
+      "min": 18
+     },
+     "PSI-23": {
+      "max": 5,
+      "min": 5
+     },
+     "PSI-25": {
+      "max": 4,
+      "min": 3
+     },
+     "PSI-26": {
+      "max": 11,
+      "min": 10
+     },
+     "PSI-39": {
+      "max": 11,
+      "min": 9
+     },
+     "PSI-47": {
+      "max": 16,
+      "min": 16
+     },
+     "PSI-68": {
+      "max": 7,
+      "min": 6
+     },
+     "PSI-69": {
+      "max": 1,
+      "min": 1
+     },
+     "PSI-98": {
+      "max": 10,
+      "min": 9
+     },
+     "PSI-99": {
+      "max": 7,
+      "min": 6
+     }
+    }
+   },
+   "lunar": {
+    "ranking": [
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 1.0,
+       "pressure": 1.0,
+       "richness": 0.9032085994432316
+      },
+      "psi_id": "PSI-159",
+      "rank": 1,
+      "score": 0.70548129
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.011756061719324364,
+       "richness": 0.9421065133935107
+      },
+      "psi_id": "PSI-69",
+      "rank": 2,
+      "score": 0.668079386
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 1.0,
+       "pressure": 1.0,
+       "richness": 0.5591166801486619
+      },
+      "psi_id": "PSI-10",
+      "rank": 3,
+      "score": 0.653867502
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "unassigned",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-20",
+      "rank": 4,
+      "score": 0.462627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4697934247054332
+      },
+      "psi_id": "PSI-25",
+      "rank": 5,
+      "score": 0.370469014
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4644512723300232
+      },
+      "psi_id": "PSI-26",
+      "rank": 6,
+      "score": 0.369667691
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 1.0,
+       "richness": 0.43213323234652384
+      },
+      "psi_id": "PSI-39",
+      "rank": 7,
+      "score": 0.364819985
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.3742649681021655
+      },
+      "psi_id": "PSI-99",
+      "rank": 8,
+      "score": 0.356139745
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.15533600356180546
+      },
+      "psi_id": "PSI-98",
+      "rank": 9,
+      "score": 0.323300401
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-100",
+      "rank": 10,
+      "score": 0.315904998
+     },
+     {
+      "components": {
+       "flow": 1.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.5938352143910536
+      },
+      "psi_id": "PSI-107",
+      "rank": 11,
+      "score": 0.309075282
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.3333333333333327,
+       "o2_ambient": 0.3333333333333327,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-68",
+      "rank": 12,
+      "score": 0.281809995
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.3333333333333327,
+       "o2_ambient": 0.3333333333333327,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-23",
+      "rank": 13,
+      "score": 0.262627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4536700851905799
+      },
+      "psi_id": "PSI-101",
+      "rank": 14,
+      "score": 0.256530015
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-102",
+      "rank": 15,
+      "score": 0.213894112
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-47",
+      "rank": 16,
+      "score": 0.19518235
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-21",
+      "rank": 17,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-22",
+      "rank": 18,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.24755784578475304
+      },
+      "psi_id": "PSI-106",
+      "rank": 19,
+      "score": 0.157133677
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-142",
+      "rank": 20,
+      "score": 0.125658818
+     }
+    ],
+    "stability": {
+     "PSI-10": {
+      "max": 3,
+      "min": 2
+     },
+     "PSI-100": {
+      "max": 11,
+      "min": 10
+     },
+     "PSI-101": {
+      "max": 14,
+      "min": 13
+     },
+     "PSI-102": {
+      "max": 15,
+      "min": 15
+     },
+     "PSI-106": {
+      "max": 19,
+      "min": 19
+     },
+     "PSI-107": {
+      "max": 11,
+      "min": 9
+     },
+     "PSI-142": {
+      "max": 20,
+      "min": 20
+     },
+     "PSI-159": {
+      "max": 1,
+      "min": 1
+     },
+     "PSI-20": {
+      "max": 4,
+      "min": 4
+     },
+     "PSI-21": {
+      "max": 17,
+      "min": 17
+     },
+     "PSI-22": {
+      "max": 18,
+      "min": 18
+     },
+     "PSI-23": {
+      "max": 14,
+      "min": 13
+     },
+     "PSI-25": {
+      "max": 6,
+      "min": 5
+     },
+     "PSI-26": {
+      "max": 7,
+      "min": 6
+     },
+     "PSI-39": {
+      "max": 8,
+      "min": 5
+     },
+     "PSI-47": {
+      "max": 16,
+      "min": 16
+     },
+     "PSI-68": {
+      "max": 12,
+      "min": 12
+     },
+     "PSI-69": {
+      "max": 3,
+      "min": 2
+     },
+     "PSI-98": {
+      "max": 10,
+      "min": 9
+     },
+     "PSI-99": {
+      "max": 8,
+      "min": 7
+     }
+    }
+   },
+   "mars": {
+    "ranking": [
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 1.0,
+       "pressure": 1.0,
+       "richness": 0.9032085994432316
+      },
+      "psi_id": "PSI-159",
+      "rank": 1,
+      "score": 0.70548129
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.011756061719324364,
+       "richness": 0.9421065133935107
+      },
+      "psi_id": "PSI-69",
+      "rank": 2,
+      "score": 0.668079386
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 1.0,
+       "pressure": 1.0,
+       "richness": 0.5591166801486619
+      },
+      "psi_id": "PSI-10",
+      "rank": 3,
+      "score": 0.653867502
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "unassigned",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-20",
+      "rank": 4,
+      "score": 0.462627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4697934247054332
+      },
+      "psi_id": "PSI-25",
+      "rank": 5,
+      "score": 0.370469014
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4644512723300232
+      },
+      "psi_id": "PSI-26",
+      "rank": 6,
+      "score": 0.369667691
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 1.0,
+       "richness": 0.43213323234652384
+      },
+      "psi_id": "PSI-39",
+      "rank": 7,
+      "score": 0.364819985
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.3742649681021655
+      },
+      "psi_id": "PSI-99",
+      "rank": 8,
+      "score": 0.356139745
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.15533600356180546
+      },
+      "psi_id": "PSI-98",
+      "rank": 9,
+      "score": 0.323300401
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-100",
+      "rank": 10,
+      "score": 0.315904998
+     },
+     {
+      "components": {
+       "flow": 1.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.5938352143910536
+      },
+      "psi_id": "PSI-107",
+      "rank": 11,
+      "score": 0.309075282
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.3333333333333327,
+       "o2_ambient": 0.3333333333333327,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-68",
+      "rank": 12,
+      "score": 0.281809995
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.3333333333333327,
+       "o2_ambient": 0.3333333333333327,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-23",
+      "rank": 13,
+      "score": 0.262627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4536700851905799
+      },
+      "psi_id": "PSI-101",
+      "rank": 14,
+      "score": 0.256530015
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-102",
+      "rank": 15,
+      "score": 0.213894112
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-47",
+      "rank": 16,
+      "score": 0.19518235
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-21",
+      "rank": 17,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-22",
+      "rank": 18,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.24755784578475304
+      },
+      "psi_id": "PSI-106",
+      "rank": 19,
+      "score": 0.157133677
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-142",
+      "rank": 20,
+      "score": 0.125658818
+     }
+    ],
+    "stability": {
+     "PSI-10": {
+      "max": 3,
+      "min": 2
+     },
+     "PSI-100": {
+      "max": 11,
+      "min": 10
+     },
+     "PSI-101": {
+      "max": 14,
+      "min": 13
+     },
+     "PSI-102": {
+      "max": 15,
+      "min": 15
+     },
+     "PSI-106": {
+      "max": 19,
+      "min": 19
+     },
+     "PSI-107": {
+      "max": 11,
+      "min": 9
+     },
+     "PSI-142": {
+      "max": 20,
+      "min": 20
+     },
+     "PSI-159": {
+      "max": 1,
+      "min": 1
+     },
+     "PSI-20": {
+      "max": 4,
+      "min": 4
+     },
+     "PSI-21": {
+      "max": 17,
+      "min": 17
+     },
+     "PSI-22": {
+      "max": 18,
+      "min": 18
+     },
+     "PSI-23": {
+      "max": 14,
+      "min": 13
+     },
+     "PSI-25": {
+      "max": 6,
+      "min": 5
+     },
+     "PSI-26": {
+      "max": 7,
+      "min": 6
+     },
+     "PSI-39": {
+      "max": 8,
+      "min": 5
+     },
+     "PSI-47": {
+      "max": 16,
+      "min": 16
+     },
+     "PSI-68": {
+      "max": 12,
+      "min": 12
+     },
+     "PSI-69": {
+      "max": 3,
+      "min": 2
+     },
+     "PSI-98": {
+      "max": 10,
+      "min": 9
+     },
+     "PSI-99": {
+      "max": 8,
+      "min": 7
+     }
+    }
+   },
+   "rover": {
+    "ranking": [
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 1.0,
+       "pressure": 1.0,
+       "richness": 0.9032085994432316
+      },
+      "psi_id": "PSI-159",
+      "rank": 1,
+      "score": 0.70548129
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.011756061719324364,
+       "richness": 0.9421065133935107
+      },
+      "psi_id": "PSI-69",
+      "rank": 2,
+      "score": 0.668079386
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 1.0,
+       "pressure": 1.0,
+       "richness": 0.5591166801486619
+      },
+      "psi_id": "PSI-10",
+      "rank": 3,
+      "score": 0.653867502
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "unassigned",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-20",
+      "rank": 4,
+      "score": 0.462627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4697934247054332
+      },
+      "psi_id": "PSI-25",
+      "rank": 5,
+      "score": 0.370469014
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4644512723300232
+      },
+      "psi_id": "PSI-26",
+      "rank": 6,
+      "score": 0.369667691
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 1.0,
+       "richness": 0.43213323234652384
+      },
+      "psi_id": "PSI-39",
+      "rank": 7,
+      "score": 0.364819985
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.3742649681021655
+      },
+      "psi_id": "PSI-99",
+      "rank": 8,
+      "score": 0.356139745
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.15533600356180546
+      },
+      "psi_id": "PSI-98",
+      "rank": 9,
+      "score": 0.323300401
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-100",
+      "rank": 10,
+      "score": 0.315904998
+     },
+     {
+      "components": {
+       "flow": 1.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.5938352143910536
+      },
+      "psi_id": "PSI-107",
+      "rank": 11,
+      "score": 0.309075282
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4536700851905799
+      },
+      "psi_id": "PSI-101",
+      "rank": 12,
+      "score": 0.256530015
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-102",
+      "rank": 13,
+      "score": 0.213894112
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-47",
+      "rank": 14,
+      "score": 0.19518235
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-68",
+      "rank": 15,
+      "score": 0.181809995
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-21",
+      "rank": 16,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-22",
+      "rank": 17,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-23",
+      "rank": 18,
+      "score": 0.162627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.24755784578475304
+      },
+      "psi_id": "PSI-106",
+      "rank": 19,
+      "score": 0.157133677
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-142",
+      "rank": 20,
+      "score": 0.125658818
+     }
+    ],
+    "stability": {
+     "PSI-10": {
+      "max": 3,
+      "min": 2
+     },
+     "PSI-100": {
+      "max": 11,
+      "min": 10
+     },
+     "PSI-101": {
+      "max": 12,
+      "min": 12
+     },
+     "PSI-102": {
+      "max": 13,
+      "min": 13
+     },
+     "PSI-106": {
+      "max": 19,
+      "min": 19
+     },
+     "PSI-107": {
+      "max": 11,
+      "min": 9
+     },
+     "PSI-142": {
+      "max": 20,
+      "min": 20
+     },
+     "PSI-159": {
+      "max": 1,
+      "min": 1
+     },
+     "PSI-20": {
+      "max": 4,
+      "min": 4
+     },
+     "PSI-21": {
+      "max": 16,
+      "min": 16
+     },
+     "PSI-22": {
+      "max": 17,
+      "min": 17
+     },
+     "PSI-23": {
+      "max": 18,
+      "min": 18
+     },
+     "PSI-25": {
+      "max": 6,
+      "min": 5
+     },
+     "PSI-26": {
+      "max": 7,
+      "min": 6
+     },
+     "PSI-39": {
+      "max": 8,
+      "min": 5
+     },
+     "PSI-47": {
+      "max": 15,
+      "min": 14
+     },
+     "PSI-68": {
+      "max": 15,
+      "min": 14
+     },
+     "PSI-69": {
+      "max": 3,
+      "min": 2
+     },
+     "PSI-98": {
+      "max": 10,
+      "min": 9
+     },
+     "PSI-99": {
+      "max": 8,
+      "min": 7
+     }
+    }
+   }
+  },
+  "with_stream": {
+   "gateway": {
+    "ranking": [
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 1.0,
+       "richness": 0.9421065133935107
+      },
+      "psi_id": "PSI-69",
+      "rank": 1,
+      "score": 0.816315977
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 1.0,
+       "pressure": 1.0,
+       "richness": 0.9032085994432316
+      },
+      "psi_id": "PSI-159",
+      "rank": 2,
+      "score": 0.70548129
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 1.0,
+       "pressure": 1.0,
+       "richness": 0.5591166801486619
+      },
+      "psi_id": "PSI-10",
+      "rank": 3,
+      "score": 0.653867502
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 1.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-23",
+      "rank": 4,
+      "score": 0.612627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-68",
+      "rank": 5,
+      "score": 0.481809995
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "unassigned",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-20",
+      "rank": 6,
+      "score": 0.462627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4697934247054332
+      },
+      "psi_id": "PSI-25",
+      "rank": 7,
+      "score": 0.370469014
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4644512723300232
+      },
+      "psi_id": "PSI-26",
+      "rank": 8,
+      "score": 0.369667691
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 1.0,
+       "richness": 0.43213323234652384
+      },
+      "psi_id": "PSI-39",
+      "rank": 9,
+      "score": 0.364819985
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.3742649681021655
+      },
+      "psi_id": "PSI-99",
+      "rank": 10,
+      "score": 0.356139745
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.15533600356180546
+      },
+      "psi_id": "PSI-98",
+      "rank": 11,
+      "score": 0.323300401
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-100",
+      "rank": 12,
+      "score": 0.315904998
+     },
+     {
+      "components": {
+       "flow": 1.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.5938352143910536
+      },
+      "psi_id": "PSI-107",
+      "rank": 13,
+      "score": 0.309075282
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4536700851905799
+      },
+      "psi_id": "PSI-101",
+      "rank": 14,
+      "score": 0.256530015
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-102",
+      "rank": 15,
+      "score": 0.213894112
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-47",
+      "rank": 16,
+      "score": 0.19518235
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-21",
+      "rank": 17,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-22",
+      "rank": 18,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.24755784578475304
+      },
+      "psi_id": "PSI-106",
+      "rank": 19,
+      "score": 0.157133677
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-142",
+      "rank": 20,
+      "score": 0.125658818
+     }
+    ],
+    "stability": {
+     "PSI-10": {
+      "max": 3,
+      "min": 3
+     },
+     "PSI-100": {
+      "max": 13,
+      "min": 12
+     },
+     "PSI-101": {
+      "max": 14,
+      "min": 14
+     },
+     "PSI-102": {
+      "max": 15,
+      "min": 15
+     },
+     "PSI-106": {
+      "max": 19,
+      "min": 19
+     },
+     "PSI-107": {
+      "max": 13,
+      "min": 11
+     },
+     "PSI-142": {
+      "max": 20,
+      "min": 20
+     },
+     "PSI-159": {
+      "max": 2,
+      "min": 2
+     },
+     "PSI-20": {
+      "max": 6,
+      "min": 6
+     },
+     "PSI-21": {
+      "max": 17,
+      "min": 17
+     },
+     "PSI-22": {
+      "max": 18,
+      "min": 18
+     },
+     "PSI-23": {
+      "max": 4,
+      "min": 4
+     },
+     "PSI-25": {
+      "max": 8,
+      "min": 7
+     },
+     "PSI-26": {
+      "max": 9,
+      "min": 8
+     },
+     "PSI-39": {
+      "max": 10,
+      "min": 7
+     },
+     "PSI-47": {
+      "max": 16,
+      "min": 16
+     },
+     "PSI-68": {
+      "max": 5,
+      "min": 5
+     },
+     "PSI-69": {
+      "max": 1,
+      "min": 1
+     },
+     "PSI-98": {
+      "max": 12,
+      "min": 11
+     },
+     "PSI-99": {
+      "max": 10,
+      "min": 9
+     }
+    }
+   },
+   "iss": {
+    "ranking": [
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 1.0,
+       "richness": 0.9421065133935107
+      },
+      "psi_id": "PSI-69",
+      "rank": 1,
+      "score": 0.816315977
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 1.0,
+       "pressure": 1.0,
+       "richness": 0.9032085994432316
+      },
+      "psi_id": "PSI-159",
+      "rank": 2,
+      "score": 0.70548129
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4697934247054332
+      },
+      "psi_id": "PSI-25",
+      "rank": 3,
+      "score": 0.670469014
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.7982999999999983,
+       "pressure": 1.0,
+       "richness": 0.5591166801486619
+      },
+      "psi_id": "PSI-10",
+      "rank": 4,
+      "score": 0.653867502
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 1.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-23",
+      "rank": 5,
+      "score": 0.612627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.5,
+       "o2_ambient": 0.5,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.3742649681021655
+      },
+      "psi_id": "PSI-99",
+      "rank": 6,
+      "score": 0.506139745
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-68",
+      "rank": 7,
+      "score": 0.481809995
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "unassigned",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-20",
+      "rank": 8,
+      "score": 0.462627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.2,
+       "o2_ambient": 0.2,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.15533600356180546
+      },
+      "psi_id": "PSI-98",
+      "rank": 9,
+      "score": 0.383300401
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4644512723300232
+      },
+      "psi_id": "PSI-26",
+      "rank": 10,
+      "score": 0.369667691
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 1.0,
+       "richness": 0.43213323234652384
+      },
+      "psi_id": "PSI-39",
+      "rank": 11,
+      "score": 0.364819985
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-100",
+      "rank": 12,
+      "score": 0.315904998
+     },
+     {
+      "components": {
+       "flow": 1.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.5938352143910536
+      },
+      "psi_id": "PSI-107",
+      "rank": 13,
+      "score": 0.309075282
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4536700851905799
+      },
+      "psi_id": "PSI-101",
+      "rank": 14,
+      "score": 0.256530015
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-102",
+      "rank": 15,
+      "score": 0.213894112
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-47",
+      "rank": 16,
+      "score": 0.19518235
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-21",
+      "rank": 17,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-22",
+      "rank": 18,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.24755784578475304
+      },
+      "psi_id": "PSI-106",
+      "rank": 19,
+      "score": 0.157133677
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-142",
+      "rank": 20,
+      "score": 0.125658818
+     }
+    ],
+    "stability": {
+     "PSI-10": {
+      "max": 4,
+      "min": 3
+     },
+     "PSI-100": {
+      "max": 13,
+      "min": 12
+     },
+     "PSI-101": {
+      "max": 14,
+      "min": 14
+     },
+     "PSI-102": {
+      "max": 15,
+      "min": 15
+     },
+     "PSI-106": {
+      "max": 19,
+      "min": 19
+     },
+     "PSI-107": {
+      "max": 13,
+      "min": 12
+     },
+     "PSI-142": {
+      "max": 20,
+      "min": 20
+     },
+     "PSI-159": {
+      "max": 2,
+      "min": 2
+     },
+     "PSI-20": {
+      "max": 8,
+      "min": 8
+     },
+     "PSI-21": {
+      "max": 17,
+      "min": 17
+     },
+     "PSI-22": {
+      "max": 18,
+      "min": 18
+     },
+     "PSI-23": {
+      "max": 5,
+      "min": 5
+     },
+     "PSI-25": {
+      "max": 4,
+      "min": 3
+     },
+     "PSI-26": {
+      "max": 11,
+      "min": 10
+     },
+     "PSI-39": {
+      "max": 11,
+      "min": 9
+     },
+     "PSI-47": {
+      "max": 16,
+      "min": 16
+     },
+     "PSI-68": {
+      "max": 7,
+      "min": 6
+     },
+     "PSI-69": {
+      "max": 1,
+      "min": 1
+     },
+     "PSI-98": {
+      "max": 10,
+      "min": 9
+     },
+     "PSI-99": {
+      "max": 7,
+      "min": 6
+     }
+    }
+   },
+   "lunar": {
+    "ranking": [
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 1.0,
+       "pressure": 1.0,
+       "richness": 0.9032085994432316
+      },
+      "psi_id": "PSI-159",
+      "rank": 1,
+      "score": 0.70548129
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.011756061719324364,
+       "richness": 0.9421065133935107
+      },
+      "psi_id": "PSI-69",
+      "rank": 2,
+      "score": 0.668079386
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 1.0,
+       "pressure": 1.0,
+       "richness": 0.5591166801486619
+      },
+      "psi_id": "PSI-10",
+      "rank": 3,
+      "score": 0.653867502
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "unassigned",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-20",
+      "rank": 4,
+      "score": 0.462627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4697934247054332
+      },
+      "psi_id": "PSI-25",
+      "rank": 5,
+      "score": 0.370469014
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4644512723300232
+      },
+      "psi_id": "PSI-26",
+      "rank": 6,
+      "score": 0.369667691
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 1.0,
+       "richness": 0.43213323234652384
+      },
+      "psi_id": "PSI-39",
+      "rank": 7,
+      "score": 0.364819985
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.3742649681021655
+      },
+      "psi_id": "PSI-99",
+      "rank": 8,
+      "score": 0.356139745
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.15533600356180546
+      },
+      "psi_id": "PSI-98",
+      "rank": 9,
+      "score": 0.323300401
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-100",
+      "rank": 10,
+      "score": 0.315904998
+     },
+     {
+      "components": {
+       "flow": 1.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.5938352143910536
+      },
+      "psi_id": "PSI-107",
+      "rank": 11,
+      "score": 0.309075282
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.3333333333333327,
+       "o2_ambient": 0.3333333333333327,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-68",
+      "rank": 12,
+      "score": 0.281809995
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.3333333333333327,
+       "o2_ambient": 0.3333333333333327,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-23",
+      "rank": 13,
+      "score": 0.262627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4536700851905799
+      },
+      "psi_id": "PSI-101",
+      "rank": 14,
+      "score": 0.256530015
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-102",
+      "rank": 15,
+      "score": 0.213894112
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-47",
+      "rank": 16,
+      "score": 0.19518235
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-21",
+      "rank": 17,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-22",
+      "rank": 18,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.24755784578475304
+      },
+      "psi_id": "PSI-106",
+      "rank": 19,
+      "score": 0.157133677
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-142",
+      "rank": 20,
+      "score": 0.125658818
+     }
+    ],
+    "stability": {
+     "PSI-10": {
+      "max": 3,
+      "min": 2
+     },
+     "PSI-100": {
+      "max": 11,
+      "min": 10
+     },
+     "PSI-101": {
+      "max": 14,
+      "min": 13
+     },
+     "PSI-102": {
+      "max": 15,
+      "min": 15
+     },
+     "PSI-106": {
+      "max": 19,
+      "min": 19
+     },
+     "PSI-107": {
+      "max": 11,
+      "min": 9
+     },
+     "PSI-142": {
+      "max": 20,
+      "min": 20
+     },
+     "PSI-159": {
+      "max": 1,
+      "min": 1
+     },
+     "PSI-20": {
+      "max": 4,
+      "min": 4
+     },
+     "PSI-21": {
+      "max": 17,
+      "min": 17
+     },
+     "PSI-22": {
+      "max": 18,
+      "min": 18
+     },
+     "PSI-23": {
+      "max": 14,
+      "min": 13
+     },
+     "PSI-25": {
+      "max": 6,
+      "min": 5
+     },
+     "PSI-26": {
+      "max": 7,
+      "min": 6
+     },
+     "PSI-39": {
+      "max": 8,
+      "min": 5
+     },
+     "PSI-47": {
+      "max": 16,
+      "min": 16
+     },
+     "PSI-68": {
+      "max": 12,
+      "min": 12
+     },
+     "PSI-69": {
+      "max": 3,
+      "min": 2
+     },
+     "PSI-98": {
+      "max": 10,
+      "min": 9
+     },
+     "PSI-99": {
+      "max": 8,
+      "min": 7
+     }
+    }
+   },
+   "mars": {
+    "ranking": [
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 1.0,
+       "pressure": 1.0,
+       "richness": 0.9032085994432316
+      },
+      "psi_id": "PSI-159",
+      "rank": 1,
+      "score": 0.70548129
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.011756061719324364,
+       "richness": 0.9421065133935107
+      },
+      "psi_id": "PSI-69",
+      "rank": 2,
+      "score": 0.668079386
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 1.0,
+       "pressure": 1.0,
+       "richness": 0.5591166801486619
+      },
+      "psi_id": "PSI-10",
+      "rank": 3,
+      "score": 0.653867502
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "unassigned",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-20",
+      "rank": 4,
+      "score": 0.462627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4697934247054332
+      },
+      "psi_id": "PSI-25",
+      "rank": 5,
+      "score": 0.370469014
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4644512723300232
+      },
+      "psi_id": "PSI-26",
+      "rank": 6,
+      "score": 0.369667691
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 1.0,
+       "richness": 0.43213323234652384
+      },
+      "psi_id": "PSI-39",
+      "rank": 7,
+      "score": 0.364819985
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.3742649681021655
+      },
+      "psi_id": "PSI-99",
+      "rank": 8,
+      "score": 0.356139745
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.15533600356180546
+      },
+      "psi_id": "PSI-98",
+      "rank": 9,
+      "score": 0.323300401
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-100",
+      "rank": 10,
+      "score": 0.315904998
+     },
+     {
+      "components": {
+       "flow": 1.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.5938352143910536
+      },
+      "psi_id": "PSI-107",
+      "rank": 11,
+      "score": 0.309075282
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.3333333333333327,
+       "o2_ambient": 0.3333333333333327,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-68",
+      "rank": 12,
+      "score": 0.281809995
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.3333333333333327,
+       "o2_ambient": 0.3333333333333327,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-23",
+      "rank": 13,
+      "score": 0.262627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4536700851905799
+      },
+      "psi_id": "PSI-101",
+      "rank": 14,
+      "score": 0.256530015
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-102",
+      "rank": 15,
+      "score": 0.213894112
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-47",
+      "rank": 16,
+      "score": 0.19518235
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-21",
+      "rank": 17,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-22",
+      "rank": 18,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.24755784578475304
+      },
+      "psi_id": "PSI-106",
+      "rank": 19,
+      "score": 0.157133677
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-142",
+      "rank": 20,
+      "score": 0.125658818
+     }
+    ],
+    "stability": {
+     "PSI-10": {
+      "max": 3,
+      "min": 2
+     },
+     "PSI-100": {
+      "max": 11,
+      "min": 10
+     },
+     "PSI-101": {
+      "max": 14,
+      "min": 13
+     },
+     "PSI-102": {
+      "max": 15,
+      "min": 15
+     },
+     "PSI-106": {
+      "max": 19,
+      "min": 19
+     },
+     "PSI-107": {
+      "max": 11,
+      "min": 9
+     },
+     "PSI-142": {
+      "max": 20,
+      "min": 20
+     },
+     "PSI-159": {
+      "max": 1,
+      "min": 1
+     },
+     "PSI-20": {
+      "max": 4,
+      "min": 4
+     },
+     "PSI-21": {
+      "max": 17,
+      "min": 17
+     },
+     "PSI-22": {
+      "max": 18,
+      "min": 18
+     },
+     "PSI-23": {
+      "max": 14,
+      "min": 13
+     },
+     "PSI-25": {
+      "max": 6,
+      "min": 5
+     },
+     "PSI-26": {
+      "max": 7,
+      "min": 6
+     },
+     "PSI-39": {
+      "max": 8,
+      "min": 5
+     },
+     "PSI-47": {
+      "max": 16,
+      "min": 16
+     },
+     "PSI-68": {
+      "max": 12,
+      "min": 12
+     },
+     "PSI-69": {
+      "max": 3,
+      "min": 2
+     },
+     "PSI-98": {
+      "max": 10,
+      "min": 9
+     },
+     "PSI-99": {
+      "max": 8,
+      "min": 7
+     }
+    }
+   },
+   "rover": {
+    "ranking": [
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 1.0,
+       "pressure": 1.0,
+       "richness": 0.9032085994432316
+      },
+      "psi_id": "PSI-159",
+      "rank": 1,
+      "score": 0.70548129
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.011756061719324364,
+       "richness": 0.9421065133935107
+      },
+      "psi_id": "PSI-69",
+      "rank": 2,
+      "score": 0.668079386
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 1.0,
+       "pressure": 1.0,
+       "richness": 0.5591166801486619
+      },
+      "psi_id": "PSI-10",
+      "rank": 3,
+      "score": 0.653867502
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "unassigned",
+       "o2": 1.0,
+       "o2_ambient": 1.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-20",
+      "rank": 4,
+      "score": 0.462627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4697934247054332
+      },
+      "psi_id": "PSI-25",
+      "rank": 5,
+      "score": 0.370469014
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4644512723300232
+      },
+      "psi_id": "PSI-26",
+      "rank": 6,
+      "score": 0.369667691
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 1.0,
+       "richness": 0.43213323234652384
+      },
+      "psi_id": "PSI-39",
+      "rank": 7,
+      "score": 0.364819985
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.3742649681021655
+      },
+      "psi_id": "PSI-99",
+      "rank": 8,
+      "score": 0.356139745
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.15533600356180546
+      },
+      "psi_id": "PSI-98",
+      "rank": 9,
+      "score": 0.323300401
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 1.0,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-100",
+      "rank": 10,
+      "score": 0.315904998
+     },
+     {
+      "components": {
+       "flow": 1.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.5938352143910536
+      },
+      "psi_id": "PSI-107",
+      "rank": 11,
+      "score": 0.309075282
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.4536700851905799
+      },
+      "psi_id": "PSI-101",
+      "rank": 12,
+      "score": 0.256530015
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-102",
+      "rank": 13,
+      "score": 0.213894112
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 1.0,
+       "function_label": "core",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.10603331825798548
+      },
+      "psi_id": "PSI-47",
+      "rank": 14,
+      "score": 0.19518235
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.5,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-68",
+      "rank": 15,
+      "score": 0.181809995
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-21",
+      "rank": 16,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.33746782452788526
+      },
+      "psi_id": "PSI-22",
+      "rank": 17,
+      "score": 0.170620174
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.2841845468046563
+      },
+      "psi_id": "PSI-23",
+      "rank": 18,
+      "score": 0.162627682
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": 0.3,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.24755784578475304
+      },
+      "psi_id": "PSI-106",
+      "rank": 19,
+      "score": 0.157133677
+     },
+     {
+      "components": {
+       "flow": 0.0,
+       "fuel": null,
+       "function": 0.5,
+       "function_label": "fundamental",
+       "o2": 0.0,
+       "o2_ambient": 0.0,
+       "o2_stream": 0.0,
+       "pressure": 0.0,
+       "richness": 0.21206663651597096
+      },
+      "psi_id": "PSI-142",
+      "rank": 20,
+      "score": 0.125658818
+     }
+    ],
+    "stability": {
+     "PSI-10": {
+      "max": 3,
+      "min": 2
+     },
+     "PSI-100": {
+      "max": 11,
+      "min": 10
+     },
+     "PSI-101": {
+      "max": 12,
+      "min": 12
+     },
+     "PSI-102": {
+      "max": 13,
+      "min": 13
+     },
+     "PSI-106": {
+      "max": 19,
+      "min": 19
+     },
+     "PSI-107": {
+      "max": 11,
+      "min": 9
+     },
+     "PSI-142": {
+      "max": 20,
+      "min": 20
+     },
+     "PSI-159": {
+      "max": 1,
+      "min": 1
+     },
+     "PSI-20": {
+      "max": 4,
+      "min": 4
+     },
+     "PSI-21": {
+      "max": 16,
+      "min": 16
+     },
+     "PSI-22": {
+      "max": 17,
+      "min": 17
+     },
+     "PSI-23": {
+      "max": 18,
+      "min": 18
+     },
+     "PSI-25": {
+      "max": 6,
+      "min": 5
+     },
+     "PSI-26": {
+      "max": 7,
+      "min": 6
+     },
+     "PSI-39": {
+      "max": 8,
+      "min": 5
+     },
+     "PSI-47": {
+      "max": 15,
+      "min": 14
+     },
+     "PSI-68": {
+      "max": 15,
+      "min": 14
+     },
+     "PSI-69": {
+      "max": 3,
+      "min": 2
+     },
+     "PSI-98": {
+      "max": 10,
+      "min": 9
+     },
+     "PSI-99": {
+      "max": 8,
+      "min": 7
+     }
+    }
+   }
+  }
+ },
+ "weights": {
+  "flow": 0.1,
+  "fuel": 0.15,
+  "function": 0.15,
+  "o2": 0.3,
+  "pressure": 0.15,
+  "richness": 0.15
+ }
+}

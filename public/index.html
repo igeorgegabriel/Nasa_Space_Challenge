@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flame in Freefall - fire-safety dashboard over NASA PSI combustion data</title>
+<meta name="description" content="Summaries, rankings and computed insights over NASA PSI microgravity combustion investigations, built for spacecraft and lunar habitat fire safety questions.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="#/overview">Flame in Freefall</a>
+    <nav id="nav" aria-label="Sections"></nav>
+  </div>
+</header>
+<main id="view" tabindex="-1">
+  <p class="loading">Loading data...</p>
+</main>
+<footer class="foot">
+  <div class="foot-inner">
+    <p><strong>Data sources.</strong> NASA Physical Sciences Informatics (PSI) combustion investigations and experimental tables, <a href="https://psi.nasa.gov/physci/repo/search?q=combustion">psi.nasa.gov</a>; publications from the NASA Technical Reports Server (NTRS), <a href="https://ntrs.nasa.gov/">ntrs.nasa.gov</a>. Every number on a page carries its PSI id, file and rows, or an NTRS reference.</p>
+    <p><strong>SI disclosure.</strong> The Ask section uses a super intelligence (SI) model, Claude, restricted to the loaded PSI documents. Insights and rankings are computed by plain code from the PSI tables, not by a model. Parts of this dashboard were written with SI assistance.</p>
+    <p><strong>License.</strong> Each PSI investigation record states its own license; it is shown on the investigation page. NTRS documents are linked, not copied. No partial-gravity data exists in PSI: every result here is microgravity, and nothing on this site says a condition is safe.</p>
+    <p><a href="https://github.com/igeorgegabriel/Nasa_Space_Challenge">Source repository</a> | NASA Space Apps Challenge 2026, Flame in Freefall</p>
+  </div>
+</footer>
+<script src="vendor/plotly-basic-2.35.2.min.js" charset="utf-8"></script>
+<script src="app.js" charset="utf-8"></script>
+</body>
+</html>
