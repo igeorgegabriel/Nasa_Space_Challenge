@@ -223,7 +223,7 @@ class AskTest(unittest.TestCase):
         original = self.ask.answer_question
         original_limiter = self.ask.RATE_LIMITER
         self.ask.RATE_LIMITER = self.ask.RateLimiter(limit=2, window=600)
-        self.ask.answer_question = lambda question, client=None, corpus=None: (200, {"answer": "ok", "citations": [], "model": "m"})
+        self.ask.answer_question = lambda question, client=None, corpus=None, **kwargs: (200, {"answer": "ok", "citations": [], "model": "m"})
         server = HTTPServer(("127.0.0.1", 0), self.ask.handler)
         thread = threading.Thread(target=server.serve_forever, daemon=True)
         thread.start()
@@ -256,7 +256,7 @@ class AskTest(unittest.TestCase):
 
     def test_http_handler_validation(self):
         original = self.ask.answer_question
-        self.ask.answer_question = lambda question, client=None, corpus=None: (200, {"answer": "echo " + question, "citations": [], "model": "m"})
+        self.ask.answer_question = lambda question, client=None, corpus=None, **kwargs: (200, {"answer": "echo " + question, "citations": [], "model": "m"})
         server = HTTPServer(("127.0.0.1", 0), self.ask.handler)
         thread = threading.Thread(target=server.serve_forever, daemon=True)
         thread.start()
@@ -286,6 +286,144 @@ class AskTest(unittest.TestCase):
             server.shutdown()
             server.server_close()
             self.ask.answer_question = original
+
+
+    def test_context_validation(self):
+        v = self.ask.validate_context
+        self.assertEqual(v({}), (None, None))
+        self.assertIsNotNone(v({"context": "home"})[1])
+        self.assertIsNotNone(v({"context": {"page": "settings"}})[1])
+        self.assertIsNotNone(v({"context": {}})[1])
+        self.assertIsNotNone(v({"context": {"page": "investigation", "psi_id": "PSI-99999"}})[1])
+        self.assertIsNotNone(v({"context": {"page": "investigation", "psi_id": 25}})[1])
+        self.assertIsNotNone(v({"context": {"page": "rank", "habitat": "venus"}})[1])
+        self.assertIsNotNone(v({"context": {"page": "rank", "habitat": ["lunar"]}})[1])
+        sentence, error = v({"context": {"page": "investigation", "psi_id": "PSI-25"}})
+        self.assertIsNone(error)
+        self.assertTrue(sentence.startswith("The user is viewing investigation PSI-25 ("))
+        self.assertTrue(sentence.endswith(" in the dashboard."))
+        sentence, error = v({"context": {"page": "rank", "habitat": "lunar"}})
+        self.assertEqual(sentence, "The user is viewing the habitat ranking for lunar.")
+        for page in self.ask.CONTEXT_PAGES:
+            self.assertIsNone(v({"context": {"page": page}})[1])
+
+    def test_history_validation(self):
+        v = self.ask.validate_history
+        self.assertEqual(v({}), ([], None))
+        self.assertIsNotNone(v({"history": "x"})[1])
+        self.assertIsNotNone(v({"history": [{"question": "q", "answer": "a"}] * 4})[1])
+        self.assertIsNotNone(v({"history": ["x"]})[1])
+        self.assertIsNotNone(v({"history": [{"question": "", "answer": "a"}]})[1])
+        self.assertIsNotNone(v({"history": [{"question": "q" * 1001, "answer": "a"}]})[1])
+        self.assertIsNotNone(v({"history": [{"question": "q", "answer": 5}]})[1])
+        self.assertIsNotNone(v({"history": [{"question": "q", "answer": "  "}]})[1])
+        turns, error = v({"history": [{"question": " q ", "answer": "a" * 5000}]})
+        self.assertIsNone(error)
+        self.assertEqual(turns[0]["question"], "q")
+        self.assertEqual(len(turns[0]["answer"]), 1500)
+
+    def test_message_structure_with_history_and_context(self):
+        corpus = [
+            {"psi_id": "PSI-25", "title": "PSI-25 BASS-II - Burning", "body": "a"},
+            {"psi_id": "PSI-69", "title": "PSI-69 FLEX - Flame", "body": "b"},
+        ]
+        history = [
+            {"question": "first q", "answer": "first a"},
+            {"question": "second q", "answer": "second a"},
+        ]
+        sentence = "The user is viewing the home page of the dashboard."
+        messages = self.ask.build_messages("third q", history, sentence, corpus)
+        self.assertEqual([m["role"] for m in messages], ["user", "assistant", "user", "assistant", "user"])
+        first = messages[0]["content"]
+        docs = [b for b in first if b["type"] == "document"]
+        self.assertEqual(len(docs), 2)
+        self.assertNotIn("cache_control", docs[0])
+        self.assertEqual(docs[1]["cache_control"], {"type": "ephemeral"})
+        self.assertEqual(first[:2], docs)
+        self.assertEqual(first[2], {"type": "text", "text": sentence})
+        self.assertEqual(first[3], {"type": "text", "text": "first q"})
+        self.assertEqual(len(first), 4)
+        for message in messages[1:]:
+            self.assertEqual([b["type"] for b in message["content"]], ["text"])
+            self.assertNotIn("cache_control", message["content"][0])
+        self.assertEqual(messages[1]["content"][0]["text"], "first a")
+        self.assertEqual(messages[2]["content"][0]["text"], "second q")
+        self.assertEqual(messages[3]["content"][0]["text"], "second a")
+        self.assertEqual(messages[4]["content"][0]["text"], "third q")
+
+    def test_message_structure_without_history_or_context(self):
+        corpus = [{"psi_id": "PSI-25", "title": "PSI-25 X", "body": "a"}]
+        messages = self.ask.build_messages("only q", None, None, corpus)
+        self.assertEqual(len(messages), 1)
+        types = [b["type"] for b in messages[0]["content"]]
+        self.assertEqual(types, ["document", "text"])
+        self.assertEqual(messages[0]["content"][-1]["text"], "only q")
+
+    def test_answer_question_passes_history_and_context(self):
+        corpus = [{"psi_id": "PSI-25", "title": "PSI-25 X", "body": "a"}]
+        response = SimpleNamespace(content=[text_block("ok")], stop_reason="end_turn", model="m")
+        client = StubClient(response)
+        history = [{"question": "q1", "answer": "a1"}]
+        status, _ = self.ask.answer_question("q2", client=client, corpus=corpus, context_sentence="ctx sentence", history=history)
+        self.assertEqual(status, 200)
+        messages = client.beta.messages.calls[0]["messages"]
+        self.assertEqual([m["role"] for m in messages], ["user", "assistant", "user"])
+        self.assertEqual(messages[-1]["content"][0]["text"], "q2")
+        self.assertIn({"type": "text", "text": "ctx sentence"}, messages[0]["content"])
+        client2 = StubClient(response)
+        self.ask.answer_question("q", client=client2, corpus=corpus)
+        texts = [b["text"] for b in client2.beta.messages.calls[0]["messages"][0]["content"] if b["type"] == "text"]
+        self.assertEqual(texts, ["q"])
+
+    def test_http_context_and_history_validation(self):
+        original = self.ask.answer_question
+        seen = {}
+
+        def fake(question, client=None, corpus=None, context_sentence=None, history=None):
+            seen["context"] = context_sentence
+            seen["history"] = history
+            return 200, {"answer": "ok", "citations": [], "model": "m"}
+
+        self.ask.answer_question = fake
+        original_limiter = self.ask.RATE_LIMITER
+        self.ask.RATE_LIMITER = self.ask.RateLimiter(limit=100, window=600)
+        server = HTTPServer(("127.0.0.1", 0), self.ask.handler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            port = server.server_address[1]
+
+            def post(body):
+                conn = http.client.HTTPConnection("127.0.0.1", port, timeout=5)
+                conn.request("POST", "/api/ask", body=json.dumps(body), headers={"Content-Type": "application/json"})
+                res = conn.getresponse()
+                payload = json.loads(res.read().decode("utf-8"))
+                conn.close()
+                return res.status, payload
+
+            self.assertEqual(post({"question": "q", "context": {"page": "investigation", "psi_id": "PSI-99999"}})[0], 400)
+            self.assertEqual(post({"question": "q", "context": {"page": "rank", "habitat": "venus"}})[0], 400)
+            self.assertEqual(post({"question": "q", "context": {"page": "nowhere"}})[0], 400)
+            self.assertEqual(post({"question": "q", "history": [{"question": "a", "answer": "b"}] * 4})[0], 400)
+            self.assertEqual(post({"question": "q", "history": "no"})[0], 400)
+            self.assertEqual(post({"question": "q", "history": [{"question": "a" * 1001, "answer": "b"}]})[0], 400)
+            seen.clear()
+            self.assertEqual(post({"question": "q"})[0], 200)
+            self.assertIsNone(seen["context"])
+            self.assertEqual(seen["history"], [])
+            status, _ = post({"question": "q", "context": {"page": "rank", "habitat": "mars"},
+                              "history": [{"question": "a", "answer": "b" * 3000}]})
+            self.assertEqual(status, 200)
+            self.assertEqual(seen["context"], "The user is viewing the habitat ranking for mars.")
+            self.assertEqual(len(seen["history"][0]["answer"]), 1500)
+            big = {"question": "q", "history": [{"question": "a" * 1000, "answer": "b" * 3000}] * 3}
+            self.assertEqual(post(big)[0], 200)
+        finally:
+            server.shutdown()
+            server.server_close()
+            self.ask.answer_question = original
+            self.ask.RATE_LIMITER = original_limiter
+
 
 
 if __name__ == "__main__":

@@ -6,8 +6,7 @@ const NAV = [
   ["home", "Home"],
   ["rank", "Rank for a habitat"],
   ["investigations", "Investigations"],
-  ["data", "Data & Models"],
-  ["ask", "Ask"]
+  ["data", "Data & Models"]
 ];
 
 const NAV_ACTIVE = {
@@ -73,11 +72,40 @@ const HABITAT_SHORT = {
   mars: "Mars base"
 };
 
-const EXAMPLE_QUESTIONS = [
-  "Which solid materials were tested and at what oxygen?",
-  "What did FLEX learn about extinguishing flames?",
-  "What is Nomex flame spread at lunar gravity?"
-];
+const ASK_STORAGE_KEY = "ask_panel_v1";
+const ASK_NARROW_PX = 900;
+const ASK_HISTORY_TURNS = 3;
+const ASK_ANSWER_SEND_CHARS = 1500;
+const ASK_MAX_STORED_TURNS = 20;
+const ASK_DISCLOSURE = "Answers by an SI model (Claude) from NASA PSI and NTRS documents only, with citations. Says 'Not in the data' when it is not.";
+
+const ASK_SUGGESTIONS = {
+  home: [
+    "Which solid materials were tested and at what oxygen?",
+    "What did FLEX learn about extinguishing flames?",
+    "Which investigations studied smoke or fire detection?"
+  ],
+  investigations: [
+    "Which investigations used solid fuels?",
+    "What did FLEX learn about extinguishing flames?",
+    "Which investigations studied smoke or fire detection?"
+  ],
+  data: [
+    "Which fire-modelling relationships do the PSI data support?",
+    "What oxygen and pressure range do the solid-fuel tests cover?",
+    "What data is missing to model a fire in a Moon base cabin?"
+  ]
+};
+
+const askPanel = {
+  built: false,
+  open: false,
+  useContext: true,
+  busy: false,
+  generation: 0,
+  thread: [],
+  nodes: {}
+};
 
 const RANK_PREVIEW = 10;
 const EXTRACT_PREVIEW = 20;
@@ -577,6 +605,7 @@ function envButtons(onPick) {
         b.setAttribute("aria-pressed", on ? "true" : "false");
       });
       onPick(env);
+      refreshAskPanel();
     });
     wrap.appendChild(button);
   });
@@ -755,7 +784,7 @@ function renderHome() {
     el("div", { class: "cta" },
       el("a", { class: "btn primary", href: "#/rank", text: "Rank for my habitat" }),
       el("a", { class: "btn", href: "#/investigations", text: "Explore " + data.investigations.length + " investigations" }),
-      el("a", { class: "btn", href: "#/ask", text: "Ask the data" })),
+      el("button", { type: "button", class: "btn secondary", text: "Ask the data", onclick: function () { openAskPanel(true); } })),
     expander("How this map is computed", notes)
   );
   const counts = drawGapMap(chart);
@@ -1784,7 +1813,7 @@ function citationMap(citations) {
 
 const CITE_PREVIEW_CHARS = 300;
 
-function citationList(citations) {
+function citationList(citations, scope) {
   return el("ol", { class: "citations" }, citations.map(function (c) {
     const inv = c.psi_id ? invById(c.psi_id) : null;
     const full = String(c.cited_text || "");
@@ -1796,12 +1825,12 @@ function citationList(citations) {
       quote.textContent = "\"" + (open ? full : full.slice(0, CITE_PREVIEW_CHARS) + " ...") + "\"";
       e.target.textContent = open ? "Show less" : "Show more";
     } }) : null;
-    return el("li", { value: c.n, id: "cite-" + c.n, tabindex: "-1" },
+    return el("li", { value: c.n, id: "cite-" + scope + "-" + c.n, tabindex: "-1" },
       inv ? invLink(inv, c.title || invLabel(inv)) : (c.title || "document"), quote, toggle);
   }));
 }
 
-function answerView(answer, citations) {
+function answerView(answer, citations, scope) {
   const body = el("div", { class: "answer" });
   body.innerHTML = renderMarkdown(answer, citationMap(citations));
   body.addEventListener("click", function (e) {
@@ -1810,82 +1839,328 @@ function answerView(answer, citations) {
       return;
     }
     e.preventDefault();
-    const target = document.getElementById("cite-" + n);
+    const target = document.getElementById("cite-" + scope + "-" + n);
     if (target) {
-      target.scrollIntoView();
+      target.scrollIntoView({ block: "nearest" });
       target.focus();
     }
   });
   return body;
 }
 
-function renderAsk() {
-  const input = el("textarea", { id: "ask-input", maxlength: "1000", rows: "3", placeholder: "Ask about the PSI combustion investigations" });
-  const out = el("div", { class: "answer-box", "aria-live": "polite" });
-  const button = el("button", { type: "button", id: "ask-button", text: "Ask" });
-
-  function show(node) {
-    clear(out);
-    out.appendChild(node);
+function contextFromRoute(r, envId) {
+  if (r.name === "investigation" && r.arg && invById(r.arg)) {
+    return { page: "investigation", psi_id: r.arg };
   }
+  if (r.name === "rank") {
+    return { page: "rank", habitat: envId };
+  }
+  if (r.name === "investigations" || r.name === "investigation" || r.name === "compare" || r.name === "earth") {
+    return { page: "investigations" };
+  }
+  if (r.name === "data" || r.name === "verification") {
+    return { page: "data" };
+  }
+  return { page: "home" };
+}
 
-  button.addEventListener("click", function () {
-    const question = input.value.trim();
-    if (!question) {
-      show(el("p", { class: "muted", text: "Type a question first." }));
+function envById(id) {
+  return state.data.environments.environments.find(function (e) {
+    return e.id === id;
+  });
+}
+
+function contextLabel(ctx) {
+  if (ctx.page === "investigation") {
+    return invLabel(invById(ctx.psi_id)) + " (" + ctx.psi_id + ")";
+  }
+  if (ctx.page === "rank") {
+    return "Rank: " + envById(ctx.habitat).name;
+  }
+  if (ctx.page === "investigations") {
+    return "Investigations";
+  }
+  if (ctx.page === "data") {
+    return "Data & Models";
+  }
+  return "Home";
+}
+
+function suggestionsFor(ctx) {
+  if (ctx.page === "investigation") {
+    const name = invLabel(invById(ctx.psi_id));
+    return [
+      "What did " + name + " find?",
+      "What conditions did " + name + " test?",
+      "How is " + name + " relevant to a Moon base?"
+    ];
+  }
+  if (ctx.page === "rank") {
+    const env = envById(ctx.habitat);
+    const ranking = rankAll(state.data.investigations, env, state.weights, state.includeStream);
+    const top = ranking.length ? invLabel(invById(ranking[0].psi_id)) : null;
+    return [
+      top ? "Why is " + top + " ranked first for " + env.name + "?" : "Which investigations matter most for " + env.name + "?",
+      "What should NASA test next for " + env.name + "?",
+      "Which solid materials were tested for this habitat?"
+    ];
+  }
+  return (ASK_SUGGESTIONS[ctx.page] || ASK_SUGGESTIONS.home).slice();
+}
+
+function askRequestBody(question, ctx, useContext, thread) {
+  const body = { question: question };
+  if (useContext) {
+    body.context = ctx;
+  }
+  const turns = thread.filter(function (t) {
+    return !t.pending && !t.error && typeof t.answer === "string" && t.answer;
+  }).slice(-ASK_HISTORY_TURNS).map(function (t) {
+    return { question: t.question, answer: t.answer.slice(0, ASK_ANSWER_SEND_CHARS) };
+  });
+  if (turns.length) {
+    body.history = turns;
+  }
+  return body;
+}
+
+function askStorage() {
+  try {
+    return window.sessionStorage || null;
+  } catch (err) {
+    return null;
+  }
+}
+
+function saveAskState() {
+  const storage = askStorage();
+  if (!storage) {
+    return;
+  }
+  const thread = askPanel.thread.filter(function (t) {
+    return !t.pending;
+  }).slice(-ASK_MAX_STORED_TURNS).map(function (t) {
+    return { question: t.question, answer: t.answer || null, citations: t.citations || [], error: t.error || null };
+  });
+  try {
+    storage.setItem(ASK_STORAGE_KEY, JSON.stringify({ open: askPanel.open, useContext: askPanel.useContext, thread: thread }));
+  } catch (err) {
+    return;
+  }
+}
+
+function loadAskState() {
+  const storage = askStorage();
+  if (!storage) {
+    return;
+  }
+  try {
+    const saved = JSON.parse(storage.getItem(ASK_STORAGE_KEY) || "null");
+    if (!saved || typeof saved !== "object") {
       return;
     }
-    button.disabled = true;
-    show(el("p", { class: "muted", text: "Reading the investigation documents..." }));
-    fetch("/api/ask", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question: question })
-    }).then(function (res) {
-      return res.text().then(function (text) {
-        let json = null;
-        try {
-          json = JSON.parse(text);
-        } catch (err) {
-          json = null;
-        }
-        return { ok: res.ok, status: res.status, json: json };
-      });
-    }).then(function (result) {
-      button.disabled = false;
-      if (!result.ok || !result.json || !result.json.answer) {
-        const message = result.json && result.json.error ? result.json.error : "The Ask service is not available here (HTTP " + result.status + ").";
-        show(el("p", { class: "muted", text: message }));
-        return;
-      }
-      const answer = result.json.answer;
-      const citations = result.json.citations || [];
-      const notIn = answer.indexOf("Not in the data.") >= 0;
-      show(el("div", null,
-        notIn ? el("p", null, tag("Not in the data")) : null,
-        answerView(answer, citations),
-        citations.length ? expander("Citations (" + citations.length + ")", citationList(citations), true) : null,
-        el("p", { class: "small muted", text: "Model: " + (result.json.model || "unknown") + "." })));
-    }).catch(function () {
-      button.disabled = false;
-      show(el("p", { class: "muted", text: "Could not reach the Ask service. Check your connection and try again." }));
+    askPanel.open = saved.open === true;
+    askPanel.useContext = saved.useContext !== false;
+    askPanel.thread = (Array.isArray(saved.thread) ? saved.thread : []).filter(function (t) {
+      return t && typeof t.question === "string" && (typeof t.answer === "string" || typeof t.error === "string");
+    }).map(function (t) {
+      return {
+        question: t.question,
+        answer: typeof t.answer === "string" ? t.answer : null,
+        citations: Array.isArray(t.citations) ? t.citations : [],
+        error: typeof t.error === "string" ? t.error : null
+      };
     });
+  } catch (err) {
+    askPanel.thread = [];
+  }
+}
+
+function askTurnView(turn, index) {
+  const scope = "t" + index;
+  const kids = [el("div", { class: "ask-q", text: turn.question })];
+  if (turn.pending) {
+    kids.push(el("p", { class: "ask-status muted", text: "Searching NASA documents..." }));
+  } else if (turn.error) {
+    kids.push(el("p", { class: "ask-error", role: "alert", text: turn.error }));
+  } else {
+    const citations = turn.citations || [];
+    kids.push(el("div", { class: "ask-a" },
+      turn.answer.indexOf("Not in the data.") >= 0 ? el("p", null, tag("Not in the data")) : null,
+      answerView(turn.answer, citations, scope),
+      citations.length ? el("div", { class: "ask-cites" }, el("p", { class: "small muted", text: "Citations" }), citationList(citations, scope)) : null));
+  }
+  return el("div", { class: "ask-turn" }, kids);
+}
+
+function renderAskThread() {
+  const holder = askPanel.nodes.thread;
+  clear(holder);
+  if (!askPanel.thread.length) {
+    holder.appendChild(el("p", { class: "muted small", text: "Ask a question about the NASA PSI combustion investigations." }));
+  }
+  askPanel.thread.forEach(function (turn, index) {
+    holder.appendChild(askTurnView(turn, index));
   });
+  const turns = holder.querySelectorAll(".ask-turn");
+  holder.scrollTop = turns.length ? turns[turns.length - 1].offsetTop - 4 : 0;
+  askPanel.nodes.send.disabled = askPanel.busy;
+}
 
-  const chips = el("div", { class: "chips" }, EXAMPLE_QUESTIONS.map(function (q) {
-    return el("button", { type: "button", class: "chip", text: q, onclick: function () {
-      input.value = q;
-      input.focus();
-    } });
-  }));
+function refreshAskPanel() {
+  if (!askPanel.built || !state.data) {
+    return;
+  }
+  const ctx = contextFromRoute(parseHash(), state.envId);
+  askPanel.nodes.context.textContent = askPanel.useContext ? "Looking at: " + contextLabel(ctx) : "Page context is off.";
+  const box = askPanel.nodes.suggestions;
+  clear(box);
+  suggestionsFor(ctx).forEach(function (q) {
+    box.appendChild(el("button", { type: "button", class: "suggest secondary", text: q, onclick: function () { sendAsk(q); } }));
+  });
+}
 
-  return setView(
-    pageHead("What does the PSI data say about your question?", "Answers come only from the loaded investigations, with citations."),
-    chips,
-    input,
-    el("p", null, button),
-    out
-  );
+function setAskOpen(open, focus) {
+  askPanel.open = open;
+  document.body.classList.toggle("ask-open", open);
+  askPanel.nodes.toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  saveAskState();
+  window.dispatchEvent(new Event("resize"));
+  if (focus) {
+    (open ? askPanel.nodes.input : askPanel.nodes.toggle).focus();
+  }
+}
+
+function openAskPanel(focus) {
+  if (askPanel.built) {
+    setAskOpen(true, focus);
+  }
+}
+
+function closeAskPanel(focus) {
+  if (askPanel.built) {
+    setAskOpen(false, focus);
+  }
+}
+
+function newAskConversation() {
+  askPanel.generation += 1;
+  askPanel.busy = false;
+  askPanel.thread = [];
+  saveAskState();
+  renderAskThread();
+  askPanel.nodes.input.focus();
+}
+
+function askFailure(result) {
+  if (result.json && result.json.error) {
+    return result.json.error;
+  }
+  return "The Ask service is not available here (HTTP " + result.status + ").";
+}
+
+function sendAsk(text) {
+  const question = String(text || "").trim();
+  if (askPanel.busy || !question) {
+    return;
+  }
+  const ctx = contextFromRoute(parseHash(), state.envId);
+  const body = askRequestBody(question, ctx, askPanel.useContext, askPanel.thread);
+  const turn = { question: question, pending: true, answer: null, citations: [], error: null };
+  const generation = askPanel.generation;
+  askPanel.thread.push(turn);
+  askPanel.busy = true;
+  askPanel.nodes.input.value = "";
+  renderAskThread();
+  function finish() {
+    if (generation !== askPanel.generation) {
+      return;
+    }
+    turn.pending = false;
+    askPanel.busy = false;
+    saveAskState();
+    renderAskThread();
+  }
+  fetch("/api/ask", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  }).then(function (res) {
+    return res.text().then(function (raw) {
+      let json = null;
+      try {
+        json = JSON.parse(raw);
+      } catch (err) {
+        json = null;
+      }
+      return { ok: res.ok, status: res.status, json: json };
+    });
+  }).then(function (result) {
+    if (!result.ok || !result.json || !result.json.answer) {
+      turn.error = askFailure(result);
+    } else {
+      turn.answer = result.json.answer;
+      turn.citations = result.json.citations || [];
+    }
+    finish();
+  }).catch(function () {
+    turn.error = "Could not reach the Ask service. Check your connection and try again.";
+    finish();
+  });
+}
+
+function buildAskPanel() {
+  const node = document.getElementById("ask-panel");
+  const toggle = document.getElementById("ask-open");
+  const context = el("p", { class: "ask-context", id: "ask-context" });
+  const checkbox = el("input", { type: "checkbox", id: "ask-use-context", checked: askPanel.useContext });
+  const thread = el("div", { class: "ask-thread", id: "ask-thread", "aria-live": "polite" });
+  const suggestions = el("div", { class: "ask-suggest", id: "ask-suggest" });
+  const input = el("textarea", { id: "ask-input", maxlength: "1000", rows: "2", placeholder: "Ask about the PSI combustion investigations", "aria-label": "Your question" });
+  const send = el("button", { type: "button", id: "ask-send", text: "Send" });
+  askPanel.nodes = { toggle: toggle, context: context, thread: thread, suggestions: suggestions, input: input, send: send };
+  checkbox.addEventListener("change", function () {
+    askPanel.useContext = checkbox.checked;
+    saveAskState();
+    refreshAskPanel();
+  });
+  send.addEventListener("click", function () { sendAsk(input.value); });
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
+      e.preventDefault();
+      sendAsk(input.value);
+    }
+  });
+  toggle.addEventListener("click", function () { setAskOpen(!askPanel.open, true); });
+  toggle.hidden = false;
+  node.addEventListener("click", function (e) {
+    const link = e.target && e.target.closest ? e.target.closest("a") : null;
+    if (link && thread.contains(link) && window.innerWidth < ASK_NARROW_PX) {
+      closeAskPanel(false);
+    }
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && askPanel.open) {
+      closeAskPanel(true);
+    }
+  });
+  appendKids(node, [
+    el("div", { class: "ask-head" },
+      el("h2", { text: "Ask the data" }),
+      el("span", { class: "ask-head-buttons" },
+        el("button", { type: "button", class: "secondary small-button", text: "New conversation", onclick: newAskConversation }),
+        el("button", { type: "button", class: "secondary small-button", text: "Close", onclick: function () { closeAskPanel(true); } }))),
+    context,
+    el("label", { class: "ask-check small" }, checkbox, " Use this page as context"),
+    thread,
+    suggestions,
+    el("div", { class: "ask-input-row" }, input, send),
+    el("p", { class: "ask-disclosure small muted", text: ASK_DISCLOSURE })
+  ]);
+  askPanel.built = true;
+  renderAskThread();
+  document.body.classList.toggle("ask-open", askPanel.open);
+  toggle.setAttribute("aria-expanded", askPanel.open ? "true" : "false");
 }
 
 function redirectLegacy(r) {
@@ -1910,6 +2185,11 @@ function route() {
   if (redirectLegacy(r)) {
     return;
   }
+  if (r.name === "ask") {
+    openAskPanel(false);
+    location.replace("#/home");
+    return;
+  }
   buildNav(NAV_ACTIVE[r.name] || r.name);
   document.title = "Flame in Freefall";
   if (r.name === "investigation") {
@@ -1926,11 +2206,10 @@ function route() {
     renderCompare(r.params);
   } else if (r.name === "earth") {
     renderEarth();
-  } else if (r.name === "ask") {
-    renderAsk();
   } else {
     renderHome();
   }
+  refreshAskPanel();
   window.scrollTo(0, 0);
   if (r.params.at) {
     const target = document.getElementById(r.params.at);
@@ -1956,6 +2235,8 @@ function init() {
     };
     state.weights = Object.assign({}, state.data.rank_reference.weights);
     parityCheck();
+    loadAskState();
+    buildAskPanel();
     window.addEventListener("hashchange", route);
     route();
   }).catch(function (err) {

@@ -11,7 +11,10 @@ import anthropic
 MODEL = "claude-opus-5-5"
 MAX_TOKENS = 4000
 MAX_QUESTION_CHARS = 1000
-MAX_BODY_BYTES = 8192
+MAX_BODY_BYTES = 16384
+MAX_HISTORY_TURNS = 3
+MAX_HISTORY_ANSWER_CHARS = 1500
+CONTEXT_PAGES = ("home", "rank", "investigations", "investigation", "data")
 NOT_IN_DATA = "Not in the data."
 RATE_LIMIT_QUESTIONS = 10
 RATE_LIMIT_WINDOW_SECONDS = 600
@@ -39,6 +42,16 @@ def load_corpus():
 
 
 CORPUS = load_corpus()
+
+ENVIRONMENTS_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "public", "data", "environments.json")
+
+
+def load_environments():
+    with open(ENVIRONMENTS_PATH, "r", encoding="utf-8") as handle:
+        return {env["id"]: env.get("name", "") for env in json.load(handle)["environments"]}
+
+
+ENVIRONMENTS = load_environments()
 
 
 class RateLimiter:
@@ -76,7 +89,7 @@ def client_ip(headers, fallback):
     return first or fallback or "unknown"
 
 
-def build_content(question, corpus=None):
+def build_content(question, corpus=None, context_sentence=None):
     documents = corpus if corpus is not None else CORPUS
     blocks = []
     for doc in documents:
@@ -88,22 +101,107 @@ def build_content(question, corpus=None):
         })
     if blocks:
         blocks[-1]["cache_control"] = {"type": "ephemeral"}
+    if context_sentence:
+        blocks.append({"type": "text", "text": context_sentence})
     blocks.append({"type": "text", "text": question})
     return blocks
+
+
+def build_messages(question, history=None, context_sentence=None, corpus=None):
+    turns = history or []
+    first_question = turns[0]["question"] if turns else question
+    messages = [{"role": "user", "content": build_content(first_question, corpus, context_sentence)}]
+    for index, turn in enumerate(turns):
+        next_question = turns[index + 1]["question"] if index + 1 < len(turns) else question
+        messages.append({"role": "assistant", "content": [{"type": "text", "text": turn["answer"]}]})
+        messages.append({"role": "user", "content": [{"type": "text", "text": next_question}]})
+    return messages
 
 
 def validate_question(payload):
     if not isinstance(payload, dict):
         return None, "Request body must be a JSON object with a question."
-    question = payload.get("question")
-    if not isinstance(question, str):
-        return None, "Field question must be a string."
-    question = question.strip()
-    if not question:
+    return clean_question(payload.get("question"), "question")
+
+
+def clean_question(value, name):
+    if not isinstance(value, str):
+        return None, "Field %s must be a string." % name
+    value = value.strip()
+    if not value:
         return None, "Question is empty."
-    if len(question) > MAX_QUESTION_CHARS:
+    if len(value) > MAX_QUESTION_CHARS:
         return None, "Question is longer than %d characters." % MAX_QUESTION_CHARS
-    return question, None
+    return value, None
+
+
+def corpus_psi_ids(corpus=None):
+    documents = corpus if corpus is not None else CORPUS
+    ids = {}
+    for index, doc in enumerate(documents):
+        psi_id = psi_id_for(index, documents)
+        if psi_id:
+            ids[psi_id] = doc.get("title", "")
+    return ids
+
+
+def short_name(psi_id, title):
+    rest = title[len(psi_id):].strip() if title.startswith(psi_id) else title.strip()
+    return rest.split(" - ")[0].strip()
+
+
+def validate_context(payload, corpus=None):
+    context = payload.get("context")
+    if context is None:
+        return None, None
+    if not isinstance(context, dict):
+        return None, "Field context must be an object."
+    page = context.get("page")
+    if page not in CONTEXT_PAGES:
+        return None, "Field context.page is not a known page."
+    psi_id = context.get("psi_id")
+    habitat = context.get("habitat")
+    ids = corpus_psi_ids(corpus)
+    if psi_id is not None and (not isinstance(psi_id, str) or psi_id not in ids):
+        return None, "Field context.psi_id is not a known investigation."
+    if habitat is not None and (not isinstance(habitat, str) or habitat not in ENVIRONMENTS):
+        return None, "Field context.habitat is not a known habitat."
+    if page == "investigation" and psi_id:
+        name = short_name(psi_id, ids[psi_id])
+        label = "%s (%s)" % (psi_id, name) if name else psi_id
+        return "The user is viewing investigation %s in the dashboard." % label, None
+    if page == "rank" and habitat:
+        return "The user is viewing the habitat ranking for %s." % habitat, None
+    sentences = {
+        "home": "The user is viewing the home page of the dashboard.",
+        "rank": "The user is viewing the habitat ranking page of the dashboard.",
+        "investigations": "The user is viewing the list of investigations in the dashboard.",
+        "investigation": "The user is viewing an investigation page in the dashboard.",
+        "data": "The user is viewing the data and models page of the dashboard.",
+    }
+    return sentences[page], None
+
+
+def validate_history(payload):
+    history = payload.get("history")
+    if history is None:
+        return [], None
+    if not isinstance(history, list):
+        return None, "Field history must be a list."
+    if len(history) > MAX_HISTORY_TURNS:
+        return None, "Field history has more than %d turns." % MAX_HISTORY_TURNS
+    turns = []
+    for turn in history:
+        if not isinstance(turn, dict):
+            return None, "Each history turn must be an object."
+        question, error = clean_question(turn.get("question"), "history.question")
+        if error:
+            return None, error
+        answer = turn.get("answer")
+        if not isinstance(answer, str) or not answer.strip():
+            return None, "Field history.answer must be a non-empty string."
+        turns.append({"question": question, "answer": answer.strip()[:MAX_HISTORY_ANSWER_CHARS]})
+    return turns, None
 
 
 def field(obj, name, default=None):
@@ -156,7 +254,7 @@ def make_client():
     return anthropic.Anthropic()
 
 
-def answer_question(question, client=None, corpus=None):
+def answer_question(question, client=None, corpus=None, context_sentence=None, history=None):
     try:
         client = client or make_client()
     except anthropic.AnthropicError:
@@ -169,7 +267,7 @@ def answer_question(question, client=None, corpus=None):
             fallbacks="default",
             output_config={"effort": "medium"},
             system=SYSTEM,
-            messages=[{"role": "user", "content": build_content(question, corpus)}],
+            messages=build_messages(question, history, context_sentence, corpus),
         )
     except anthropic.RateLimitError:
         return 429, {"error": "The Ask service is busy. Wait a minute and try again."}
@@ -219,11 +317,19 @@ class handler(BaseHTTPRequestHandler):
         if error:
             self.send_json(400, {"error": error})
             return
+        context_sentence, error = validate_context(payload)
+        if error:
+            self.send_json(400, {"error": error})
+            return
+        history, error = validate_history(payload)
+        if error:
+            self.send_json(400, {"error": error})
+            return
         allowed, retry_after = RATE_LIMITER.check(client_ip(self.headers, self.client_address[0]))
         if not allowed:
             self.send_json(429, {"error": RATE_LIMIT_MESSAGE}, {"Retry-After": str(retry_after)})
             return
-        status, body = answer_question(question)
+        status, body = answer_question(question, context_sentence=context_sentence, history=history)
         self.send_json(status, body)
 
     def do_GET(self):

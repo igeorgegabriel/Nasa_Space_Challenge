@@ -9,10 +9,13 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div id="shell">
+<div id="page">
 <header class="top">
   <div class="top-inner">
     <a class="brand" href="#/home">Flame in Freefall</a>
     <nav id="nav" aria-label="Sections"></nav>
+    <button type="button" id="ask-open" class="ask-toggle" aria-expanded="false" aria-controls="ask-panel" hidden>Ask the data</button>
   </div>
 </header>
 <main id="view" tabindex="-1">
@@ -23,6 +26,9 @@
     <p>Data: NASA PSI and NTRS. SI (Claude) used for the Ask box and to extract quotes; all quotes machine-checked. <a href="#/verification">Verification -&gt;</a></p>
   </div>
 </footer>
+</div>
+<aside id="ask-panel" aria-label="Ask the data"></aside>
+</div>
 <script src="vendor/plotly-basic-2.35.2.min.js" charset="utf-8"></script>
 <script src="app.js" charset="utf-8"></script>
 </body>
