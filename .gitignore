@@ -13,3 +13,4 @@ data/investigations/raw_ntrs/
 
 .vercel
 .env*
+brief_out/
