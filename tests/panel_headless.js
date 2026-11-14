@@ -24,6 +24,11 @@ function serve() {
       return;
     }
     const urlPath = decodeURIComponent(req.url.split("?")[0]);
+    if (urlPath === "/data/ask_cache.json") {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(CACHE));
+      return;
+    }
     const file = path.join(ROOT, urlPath === "/" ? "index.html" : urlPath);
     if (file.indexOf(ROOT) !== 0 || !fs.existsSync(file) || fs.statSync(file).isDirectory()) {
       res.writeHead(404);
@@ -47,6 +52,14 @@ function getJson(url, method) {
     req.end();
   });
 }
+
+const CACHE = {
+  "which solid materials were tested and at what oxygen": {
+    answer: "Cached: PSI solid tests top out at 22.2 percent ambient O2 [1].",
+    citations: [{ n: 1, psi_id: "PSI-25", title: "PSI-25 BASS-II", cited_text: "Rows in the BASS-II table record ambient O2 up to 0.222." }],
+    model: "cache"
+  }
+};
 
 const mock = { asks: [], mode: "ok" };
 
@@ -141,7 +154,7 @@ async function main() {
   await sleep(1200);
 
   const navLabels = JSON.parse(await js("JSON.stringify(Array.from(document.querySelectorAll('#nav a')).map(a => a.textContent))"));
-  assert.deepStrictEqual(navLabels, ["Home", "Rank for a habitat", "Investigations", "Data & Models"]);
+  assert.deepStrictEqual(navLabels, ["Story", "Rank", "Investigations", "Data"]);
   assert.strictEqual(await js("document.getElementById('ask-open').hidden"), false);
   assert.strictEqual(await js("getComputedStyle(document.getElementById('ask-panel')).display"), "none");
   const mainBefore = await js("document.getElementById('view').getBoundingClientRect().width");
@@ -151,8 +164,8 @@ async function main() {
   assert.ok(await js("document.body.classList.contains('ask-open')"));
   const geo = JSON.parse(await js("JSON.stringify({ panel: document.getElementById('ask-panel').getBoundingClientRect(), main: document.getElementById('view').getBoundingClientRect() })"));
   assert.ok(geo.panel.width >= 395 && geo.panel.width <= 405, "panel width " + geo.panel.width);
-  assert.ok(geo.main.right <= geo.panel.left + 1, "main overlaps panel");
-  assert.ok(geo.main.width < mainBefore, "main did not shrink");
+  assert.strictEqual(await js("getComputedStyle(document.getElementById('ask-panel')).position"), "fixed");
+  assert.ok(geo.panel.right >= 1365, "drawer is not on the right edge");
   assert.strictEqual(await js("document.getElementById('ask-open').getAttribute('aria-expanded')"), "true");
   assert.strictEqual(await js("document.getElementById('ask-use-context').checked"), true);
   assert.strictEqual(await js("document.querySelector('#ask-panel h2').textContent"), "Ask the data");
@@ -276,6 +289,15 @@ async function main() {
   await js("Array.from(document.querySelectorAll('#ask-panel button')).find(b => b.textContent === 'New conversation').click()");
   await sleep(200);
   assert.strictEqual(await js("document.querySelectorAll('.ask-turn').length"), 0, "new conversation did not clear");
+
+  const asksBefore = mock.asks.length;
+  await go("#/home");
+  await js("document.querySelector('#ask-suggest button').click()");
+  await waitFor("document.querySelectorAll('.ask-turn .ask-a').length === 1", "cached answer");
+  assert.strictEqual(mock.asks.length, asksBefore, "cached chip must not call the API");
+  assert.ok((await js("document.querySelector('.ask-a').textContent")).indexOf("Cached: PSI solid tests") === 0, "cached text");
+  await js("Array.from(document.querySelectorAll('#ask-panel button')).find(b => b.textContent === 'New conversation').click()");
+  await sleep(200);
 
   await go("#/investigation/PSI-25");
   await js("document.querySelector('#ask-suggest button').click()");

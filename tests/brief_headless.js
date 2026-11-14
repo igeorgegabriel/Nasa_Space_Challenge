@@ -113,7 +113,7 @@ async function main() {
   await cdp("Page.navigate", { url: site + "#/rank" });
   await sleep(1500);
   const link = await evalJs("(document.querySelector('#test-next a.btn')||{}).textContent + ' ' + (document.querySelector('#test-next a.btn')||{}).getAttribute('href')");
-  assert(/^Printable test brief #\/brief\?habitat=/.test(link), "rank link " + link);
+  assert(/^Printable test request #\/brief\?habitat=/.test(link), "rank link " + link);
   results.push("rank link: " + link);
   assert.strictEqual(errors.length, 0, "rank errors");
 
