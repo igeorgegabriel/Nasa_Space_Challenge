@@ -32,7 +32,7 @@ FUEL_CLASS = {
     "PSI-142": "",
 }
 
-NUMBER = re.compile(r"\d+\.\d+|\.\d+|\d+")
+NUMBER = re.compile(r"(?:(?<![\w%.)])-)?(?:\d+\.\d+|\.\d+|\d+)")
 
 
 def decode(raw_bytes):

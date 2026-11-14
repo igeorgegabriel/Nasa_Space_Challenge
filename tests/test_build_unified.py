@@ -57,6 +57,16 @@ class BuildUnifiedTest(unittest.TestCase):
         self.assertEqual(list(csv_rows[0].keys()), build_unified.COLUMNS)
         self.assertEqual(list(self.rows[0].keys()), build_unified.COLUMNS)
 
+    def test_negative_flow_keeps_sign(self):
+        spice = {r["source_row"]: r for r in self.by_file("PSI-107_")}
+        self.assertAlmostEqual(spice[295]["flow_cm_s"], -0.28, places=6)
+        self.assertAlmostEqual(spice[336]["flow_cm_s"], -5.92, places=6)
+
+    def test_number_regex_keeps_ranges_positive(self):
+        self.assertEqual(build_unified.NUMBER.findall("30%-40%"), ["30", "40"])
+        self.assertEqual(build_unified.NUMBER.findall("1-2"), ["1", "2"])
+        self.assertEqual(build_unified.NUMBER.findall("-0.28"), ["-0.28"])
+
     def test_flex_first_row(self):
         flex = self.by_file("FLEX.csv")
         self.assertEqual(len(flex), 274)
