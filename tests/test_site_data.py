@@ -9,6 +9,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "pipeline"))
 
 import build_site_data
+import outside_psi
 import scoring
 
 UNIFIED = os.path.join(ROOT, "data", "unified")
@@ -41,6 +42,9 @@ class SiteDataTest(unittest.TestCase):
         cls.env_by_id = {e["id"]: e for e in cls.environments["environments"]}
         cls.test_next = read_json(os.path.join(SITE, "test_next.json"))
         cls.verification = read_json(os.path.join(SITE, "verification.json"))
+        cls.outside = read_json(os.path.join(SITE, "outside_psi.json"))
+        cls.saffire = read_json(os.path.join(ROOT, "data", "outside_psi", "saffire_iv_vi.json"))["tests"]
+        cls.pressure_sources = read_json(os.path.join(ROOT, "data", "outside_psi", "solid_pressure_sources.json"))["records"]
 
     def test_site_files_exist_and_are_ascii(self):
         for name in ("investigations", "conditions", "environments", "insights", "earth", "rank_reference", "model_readiness"):
@@ -323,14 +327,17 @@ class SiteDataTest(unittest.TestCase):
             self.assertEqual(len(self.verification["audit"]["checks"]), len(audit["checks"]))
 
     def test_verification_absent_degrades(self):
-        saved = (build_site_data.AUDIT_PATH, build_site_data.FINDINGS_VERIFICATION_PATH, build_site_data.FINDINGS_PATH, build_site_data.IMAGES_PATH)
+        saved = (build_site_data.AUDIT_PATH, build_site_data.FINDINGS_VERIFICATION_PATH, build_site_data.FINDINGS_PATH, build_site_data.IMAGES_PATH,
+                 outside_psi.VERIFICATION_PATH, build_site_data.EVAL_SUMMARY_PATH)
         missing = os.path.join(tempfile.gettempdir(), "no_such_file.json")
         build_site_data.AUDIT_PATH = build_site_data.FINDINGS_VERIFICATION_PATH = build_site_data.FINDINGS_PATH = build_site_data.IMAGES_PATH = missing
+        outside_psi.VERIFICATION_PATH = build_site_data.EVAL_SUMMARY_PATH = missing
         try:
             result = build_site_data.build()
         finally:
             (build_site_data.AUDIT_PATH, build_site_data.FINDINGS_VERIFICATION_PATH,
-             build_site_data.FINDINGS_PATH, build_site_data.IMAGES_PATH) = saved
+             build_site_data.FINDINGS_PATH, build_site_data.IMAGES_PATH,
+             outside_psi.VERIFICATION_PATH, build_site_data.EVAL_SUMMARY_PATH) = saved
         self.assertFalse(result["verification"]["present"])
         for inv in result["investigations"]:
             self.assertEqual(inv["images"], [])
@@ -441,14 +448,14 @@ class SiteDataTest(unittest.TestCase):
         self.assertIn(str(self.insights["o2_with_outcome"]["numbers"]["rows"]), text)
         for insight in self.insights.values():
             self.assertTrue(insight["limits"])
-            self.assertTrue(insight["links"])
+            self.assertTrue(insight["links"] or insight.get("sources"))
 
     def test_corpus_has_one_document_per_investigation(self):
-        self.assertEqual(len(self.corpus), len(self.investigations))
+        self.assertEqual(len(self.corpus), len(self.investigations) + 1)
         ids = [d["psi_id"] for d in self.corpus]
-        self.assertEqual(ids, [inv["psi_id"] for inv in self.investigations])
+        self.assertEqual(ids, [inv["psi_id"] for inv in self.investigations] + [outside_psi.CORPUS_ID])
         self.assertEqual(len(set(ids)), len(ids))
-        for doc in self.corpus:
+        for doc in self.corpus[:-1]:
             self.assertTrue(doc["title"].startswith(doc["psi_id"] + " "))
             self.assertIn(" - ", doc["title"])
             self.assertGreater(len(doc["body"]), 100)
@@ -474,7 +481,7 @@ class SiteDataTest(unittest.TestCase):
         self.assertFalse(result["meta_present"])
         unified = read_json(os.path.join(UNIFIED, "investigations.json"))
         self.assertEqual({i["psi_id"] for i in result["investigations"]}, set(unified))
-        self.assertEqual(len(result["corpus"]["documents"]), len(unified))
+        self.assertEqual(len(result["corpus"]["documents"]), len(unified) + 1)
         for inv in result["investigations"]:
             self.assertFalse(inv["meta_present"])
             for entry in inv["functions"]:
@@ -650,6 +657,116 @@ class SiteDataTest(unittest.TestCase):
         self.assertEqual(solid["status"], "Partly")
         self.assertEqual(solid["rows_counted"], 0)
         self.assertIn("0.221", solid["gap"])
+
+    def test_sourced_solid_pressures_match_source_file(self):
+        sourced = self.outside["solid_pressures"]
+        self.assertEqual(set(sourced), set(self.pressure_sources))
+        self.assertEqual(sourced["PSI-26"]["pressure_atm"], 1.0)
+        self.assertEqual(sourced["PSI-98"]["pressure_atm"], 0.987)
+        low, high = self.pressure_sources["PSI-25"]["pressure_atm_range"]
+        self.assertAlmostEqual(sourced["PSI-25"]["pressure_atm"], (low + high) / 2.0, places=6)
+        for psi_id, rec in sourced.items():
+            self.assertTrue(rec["source_url"].startswith("https://ntrs.nasa.gov/citations/" + rec["source_id"]))
+
+    def test_every_plotted_solid_row_has_a_pressure_after_sourcing(self):
+        sourced = self.outside["solid_pressures"]
+        missing = [
+            r for r in self.conditions
+            if r["fuel_class"] == "solid" and r["o2_basis"] == "ambient" and r["o2_frac"] is not None and r["value_quality"] in COUNTABLE
+            and not (r["pressure_atm"] is not None and r["pressure_atm"] > 0) and r["psi_id"] not in sourced
+        ]
+        self.assertEqual(missing, [])
+        unified = read_json(os.path.join(UNIFIED, "conditions.json"))
+        self.assertTrue(any(r["fuel_class"] == "solid" and not r["pressure_atm"] for r in unified))
+
+    def test_outside_psi_trace_data_matches_source(self):
+        tests = self.outside["tests"]
+        self.assertEqual(len(tests), len(self.saffire))
+        by_id = {t["sample_id"]: t for t in tests}
+        for src in self.saffire:
+            t = by_id[src["sample_id"]]
+            self.assertEqual(t["o2_percent"], src["o2_percent"])
+            self.assertEqual(t["pressure_psia"], src["pressure_psia"])
+            self.assertEqual(t["plotted"], src["pressure_psia"] is not None)
+            self.assertEqual(t["source_url"], src["source_url"])
+        self.assertFalse(by_id["VI-1"]["plotted"])
+        self.assertEqual(by_id["VI-2"]["pressure_psia"], 7.85)
+        self.assertEqual(by_id["VI-2"]["o2_percent"], 31.0)
+        self.assertEqual(self.outside["summary"]["unplotted"], ["VI-1"])
+        self.assertEqual(self.outside["summary"]["highest_burned"], "VI-2")
+
+    def test_callout_numbers_are_computed(self):
+        solid = self.insights["max_o2_by_fuel_class"]["numbers"]["max_by_fuel_class"]["solid"]["max_o2"]
+        self.assertEqual(self.outside["summary"]["psi_solid_max_o2"], solid)
+        best = max((t for t in self.saffire if t["pressure_psia"] is not None and t["outcome"].startswith("Burned")), key=lambda t: t["o2_percent"])
+        self.assertEqual(best["sample_id"], self.outside["summary"]["highest_burned"])
+        self.assertEqual(best["o2_percent"], 31.0)
+
+    def test_outside_insight_numbers_come_from_the_json(self):
+        ins = self.insights["outside_psi_solids"]
+        above = [t for t in self.saffire if t["pressure_psia"] is not None and t["o2_percent"] / 100.0 > self.outside["summary"]["psi_solid_max_o2"]]
+        n = ins["numbers"]
+        self.assertEqual(n["o2_percent_range_above_psi_max"], [min(t["o2_percent"] for t in above), max(t["o2_percent"] for t in above)])
+        self.assertEqual(n["psia_range_above_psi_max"], [min(t["pressure_psia"] for t in above), max(t["pressure_psia"] for t in above)])
+        self.assertEqual(n["above_psi_max"], [t["sample_id"] for t in above])
+        self.assertIn("25.4-31.0", ins["headline"])
+        self.assertIn("7.85-10.53", ins["headline"])
+        self.assertTrue(ins["sources"])
+        self.assertEqual(len(n["tests_table"]), len(self.saffire))
+
+    def test_test_next_outside_column_selection(self):
+        for env_id, block in self.test_next["environments"].items():
+            env = self.env_by_id[env_id]
+            o2lo, o2hi = window(env, "o2")
+            plo, phi = window(env, "pressure_atm")
+
+            def gaps(o2, atm):
+                return (max(o2lo - o2, o2 - o2hi, 0.0), max(plo - atm, atm - phi, 0.0))
+
+            for entry in block["classes"]:
+                if entry["fuel_class"] != "solid":
+                    self.assertNotIn("outside_nearest", entry)
+                    continue
+                candidates = [(gaps(t["o2_percent"] / 100.0, t["pressure_kpa"] / 101.325), t["sample_id"]) for t in self.saffire if t["pressure_kpa"] is not None]
+                best_gap, best_id = min(candidates)
+                near = entry["nearest"]
+                psi_gap = (near["o2_gap"], near["pressure_gap_atm"] if near["pressure_gap_atm"] is not None else float("inf")) if near else None
+                chosen = entry["outside_nearest"]
+                if psi_gap is not None and (round(best_gap[0], 6), round(best_gap[1], 6)) >= psi_gap:
+                    self.assertIsNone(chosen, env_id)
+                else:
+                    self.assertEqual(chosen["sample_id"], best_id, env_id)
+                    self.assertEqual(chosen["inside"], best_gap == (0.0, 0.0))
+        lunar = next(e for e in self.test_next["environments"]["lunar"]["classes"] if e["fuel_class"] == "solid")
+        self.assertEqual(lunar["outside_nearest"]["sample_id"], "VI-2")
+        self.assertEqual(lunar["inside"], 0)
+
+    def test_outside_corpus_document_and_citation_mapping(self):
+        doc = self.corpus[-1]
+        self.assertEqual(doc["psi_id"], outside_psi.CORPUS_ID)
+        self.assertEqual(doc["title"], outside_psi.CORPUS_TITLE)
+        self.assertIn("not in the PSI repository", doc["body"])
+        for src in self.saffire:
+            self.assertIn(src["sample_id"], doc["body"])
+            self.assertIn(src["source_id"], doc["body"])
+            self.assertIn(src["quote"], doc["body"])
+
+    def test_verification_json_has_outside_psi_and_ask_eval(self):
+        out = self.verification["outside_psi"]
+        recorded = read_json(os.path.join(ROOT, "data", "outside_psi", "verification.json"))
+        self.assertEqual(out["checked"], recorded["checked"])
+        self.assertEqual(out["failed"], recorded["failed"])
+        self.assertEqual(out["checked"], 57)
+        self.assertEqual(out["failed"], 0)
+        ev = self.verification["ask_eval"]
+        summary = read_json(os.path.join(ROOT, "eval", "results", "ask_eval_summary.json"))
+        self.assertEqual(ev["total"], summary["total"])
+        self.assertEqual(ev["final_passed"], summary["passed"])
+        self.assertEqual(ev["answerable_passed"], 8)
+        self.assertEqual(ev["answerable_total"], 8)
+        self.assertEqual(ev["preregistered_passed"], 9)
+        self.assertEqual([f["id"] for f in ev["checker_fixes"]], ["T1", "T2", "T3"])
+        self.assertTrue(ev["url"].endswith("/tree/main/eval"))
 
 
 if __name__ == "__main__":

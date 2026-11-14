@@ -613,9 +613,17 @@ function envButtons(onPick) {
   return wrap;
 }
 
+function sourcedPressure(r) {
+  if (r.fuel_class !== "solid") {
+    return null;
+  }
+  return state.data.outside_psi.solid_pressures[r.psi_id] || null;
+}
+
 function gapMapData() {
   const classes = {};
-  const counts = { total: 0, plotted: 0, lane: 0, stream: 0, quality: 0, noO2: 0 };
+  const counts = { total: 0, plotted: 0, sourced: 0, lane: 0, stream: 0, quality: 0, noO2: 0 };
+  const sourcedIds = {};
   state.data.conditions.forEach(function (r) {
     counts.total += 1;
     if (r.o2_frac === undefined) {
@@ -634,18 +642,25 @@ function gapMapData() {
     if (!classes[fc]) {
       classes[fc] = { points: [], lane: [] };
     }
+    const sourced = sourcedPressure(r);
     if (r.pressure_atm !== undefined && r.pressure_atm > 0) {
-      classes[fc].points.push(r);
+      classes[fc].points.push({ r: r, atm: r.pressure_atm, sourced: false });
       counts.plotted += 1;
+    } else if (sourced) {
+      classes[fc].points.push({ r: r, atm: sourced.pressure_atm, sourced: true });
+      counts.sourced += 1;
+      sourcedIds[r.psi_id] = true;
     } else {
       classes[fc].lane.push(r);
       counts.lane += 1;
     }
   });
+  counts.sourcedIds = Object.keys(sourcedIds).sort(sortById);
   return { classes: classes, counts: counts };
 }
 
 const LANE_Y = 4;
+const MOBILE_LABEL_SPLIT_O2 = 28;
 
 function habitatBoxes() {
   const groups = [];
@@ -686,9 +701,9 @@ function drawGapMap(node) {
         mode: "markers",
         name: FUEL_LABELS[fc],
         legendgroup: fc,
-        x: group.points.map(function (r) { return r.o2_frac * 100; }),
-        y: group.points.map(function (r) { return psia(r.pressure_atm); }),
-        text: group.points.map(function (r) { return r.psi_id + " | row " + r.source_row; }),
+        x: group.points.map(function (p) { return p.r.o2_frac * 100; }),
+        y: group.points.map(function (p) { return psia(p.atm); }),
+        text: group.points.map(function (p) { return p.r.psi_id + " | row " + p.r.source_row + (p.sourced ? " | pressure from a NASA report" : ""); }),
         hovertemplate: "%{text}<br>O2 %{x:.1f} percent<br>%{y:.1f} psia<extra></extra>",
         marker: fc === "solid" ? { color: FUEL_COLORS[fc], size: 9, opacity: 0.9 } : { color: FUEL_COLORS[fc], size: 5, opacity: 0.35 }
       });
@@ -708,12 +723,32 @@ function drawGapMap(node) {
       });
     }
   });
+  const outside = state.data.outside_psi;
+  const outsidePlotted = outside.tests.filter(function (t) { return t.plotted; });
+  if (outsidePlotted.length) {
+    traces.push({
+      type: "scatter",
+      mode: "markers",
+      name: "NASA solid tests outside PSI (Saffire IV-VI)",
+      x: outsidePlotted.map(function (t) { return t.o2_percent; }),
+      y: outsidePlotted.map(function (t) { return t.pressure_psia; }),
+      text: outsidePlotted.map(function (t) {
+        return t.label + " | " + t.material_short + "<br>O2 " + t.o2_percent.toFixed(1) + " percent, " + t.pressure_psia.toFixed(2) + " psia<br>" +
+          t.outcome_short + " | NTRS " + t.source_id;
+      }),
+      hovertemplate: "%{text}<extra></extra>",
+      marker: { symbol: "diamond-open", size: 11, color: FUEL_COLORS.solid, line: { color: FUEL_COLORS.solid, width: 2 } }
+    });
+  }
   const solidGroup = info.classes.solid;
-  const solidMax = solidGroup ? Math.max.apply(null, solidGroup.points.concat(solidGroup.lane).map(function (r) { return r.o2_frac * 100; })) : null;
-  const shapes = [{
-    type: "line", xref: "paper", x0: 0, x1: 1, yref: "y", y0: LANE_Y * 1.28, y1: LANE_Y * 1.28,
-    line: { color: "#b8bec4", width: 1, dash: "dot" }
-  }];
+  const solidMax = solidGroup ? Math.max.apply(null, solidGroup.points.map(function (p) { return p.r; }).concat(solidGroup.lane).map(function (r) { return r.o2_frac * 100; })) : null;
+  const shapes = [];
+  if (info.counts.lane > 0) {
+    shapes.push({
+      type: "line", xref: "paper", x0: 0, x1: 1, yref: "y", y0: LANE_Y * 1.28, y1: LANE_Y * 1.28,
+      line: { color: "#b8bec4", width: 1, dash: "dot" }
+    });
+  }
   const annotations = [];
   habitatBoxes().forEach(function (box) {
     shapes.push({
@@ -722,9 +757,11 @@ function drawGapMap(node) {
     });
     const label = box.ids.map(function (id) { return HABITAT_SHORT[id] || id; }).join(" / ");
     const below = box.ids.indexOf("lunar") >= 0;
+    const edgeAlign = window.innerWidth < 640 && !below;
+    const rightSide = (box.x0 + box.x1) / 2 >= MOBILE_LABEL_SPLIT_O2;
     annotations.push({
-      x: (box.x0 + box.x1) / 2, y: Math.log10(below ? box.y0 : box.y1), xref: "x", yref: "y",
-      xanchor: "center", yanchor: below ? "top" : "bottom", yshift: below ? -3 : 3,
+      x: edgeAlign ? (rightSide ? box.x0 : box.x1) : (box.x0 + box.x1) / 2, y: Math.log10(below ? box.y0 : box.y1), xref: "x", yref: "y",
+      xanchor: edgeAlign ? (rightSide ? "left" : "right") : "center", yanchor: below ? "top" : "bottom", yshift: below ? -3 : 3,
       text: "<b>" + label + "</b>", showarrow: false, font: { size: 12, color: "#1b1f24" }, bgcolor: "rgba(255,255,255,0.9)"
     });
   });
@@ -735,17 +772,19 @@ function drawGapMap(node) {
     });
     annotations.push({
       x: solidMax, y: 1, xref: "x", yref: "paper", xanchor: "left", yanchor: "top", xshift: 4,
-      text: window.innerWidth < 640 ? "Solids stop at " + solidMax.toFixed(1) + "%" : "Solid materials: none tested above " + solidMax.toFixed(1) + "% O2", showarrow: false,
+      text: "PSI solids stop at " + solidMax.toFixed(1) + "% O2", showarrow: false,
       font: { size: 12, color: FUEL_COLORS.solid }, bgcolor: "rgba(255,255,255,0.9)"
     });
   }
-  annotations.push({
-    x: 1, y: Math.log10(LANE_Y), xref: "paper", yref: "y", xanchor: "right", yanchor: "middle",
-    text: "pressure not recorded", showarrow: false, font: { size: 11, color: "#5b6672" }
-  });
+  if (info.counts.lane > 0) {
+    annotations.push({
+      x: 1, y: Math.log10(LANE_Y), xref: "paper", yref: "y", xanchor: "right", yanchor: "middle",
+      text: "pressure not recorded", showarrow: false, font: { size: 11, color: "#5b6672" }
+    });
+  }
   const small = window.innerWidth < 640;
   const layout = {
-    margin: { l: small ? 48 : 60, r: 14, t: 8, b: small ? 50 : 56 },
+    margin: { l: small ? 48 : 60, r: 14, t: small ? 74 : 8, b: small ? 50 : 56 },
     xaxis: { title: { text: "Ambient oxygen (percent)", font: { size: 12 } }, range: [10, 42], zeroline: false },
     yaxis: {
       title: { text: "Total pressure (psia)", font: { size: 12 } }, type: "log",
@@ -755,7 +794,7 @@ function drawGapMap(node) {
     },
     shapes: shapes,
     annotations: annotations,
-    legend: { orientation: "h", y: 1.08, x: 0, font: { size: 12 } },
+    legend: small ? { orientation: "h", y: 1.02, yanchor: "bottom", x: 0, font: { size: 12 } } : { orientation: "h", y: 1.08, x: 0, font: { size: 12 } },
     hovermode: "closest",
     showlegend: true
   };
@@ -765,6 +804,46 @@ function drawGapMap(node) {
     node.textContent = "Chart library not loaded.";
   }
   return info.counts;
+}
+
+function ntrsLink(url, text) {
+  return el("a", { href: url, target: "_blank", rel: "noopener", text: text });
+}
+
+function outsideCalloutText(lunar) {
+  const out = state.data.outside_psi;
+  const top = out.tests.find(function (t) { return t.sample_id === out.summary.highest_burned; });
+  const first = "highest oxygen any solid material was tested at in PSI. ";
+  if (!top) {
+    return [first + "A Moon base runs at " + dashSpan(lunar.o2.min * 100, lunar.o2.max * 100, 1, "") + "%."];
+  }
+  return [first + "NASA's ", ntrsLink(top.source_url, top.flight), " flight burned " + top.material_short + " at " + top.o2_percent.toFixed(1) +
+    "% oxygen and " + top.pressure_psia.toFixed(2) + " psia, close to a Moon base (" + dashSpan(lunar.o2.min * 100, lunar.o2.max * 100, 1, "") +
+    "%), but those results are not in PSI."];
+}
+
+function outsideSolidRefs(counts) {
+  const refs = state.data.outside_psi.solid_pressures;
+  const parts = [];
+  counts.sourcedIds.forEach(function (id) {
+    const ref = refs[id];
+    parts.push(parts.length ? "; " : "", id + " " + ref.name + " " + ref.pressure_text + " (", ntrsLink(ref.source_url, "NTRS " + ref.source_id), ")");
+  });
+  return parts.length ? parts.concat(["."]) : [];
+}
+
+function outsideTestsNote() {
+  const out = state.data.outside_psi;
+  const missing = out.tests.filter(function (t) { return !t.plotted; });
+  const plotted = out.tests.length - missing.length;
+  const kids = ["Hollow diamonds are NASA Saffire IV-VI solid tests that are not in PSI (" + plotted + " plotted). "];
+  if (missing.length) {
+    kids.push("Not plotted, pressure not stated: " + missing.map(function (t) {
+      return t.label + " (" + t.material_short + ", " + t.o2_percent.toFixed(1) + "% O2, " + t.outcome_short.toLowerCase() + ")";
+    }).join("; ") + ". ");
+  }
+  kids.push("The dashed line marks the highest O2 of any solid row in PSI.");
+  return el("p", null, kids);
 }
 
 function renderHome() {
@@ -780,8 +859,7 @@ function renderHome() {
     chart,
     el("div", { class: "callout" },
       el("div", { class: "big", text: percent(solid.max_o2) + "%" }),
-      el("p", { class: "big-text", text: "highest oxygen any solid material was tested at in PSI. A Moon base runs at " +
-        dashSpan(lunar.o2.min * 100, lunar.o2.max * 100, 1, "") + "%." })),
+      el("p", { class: "big-text" }, outsideCalloutText(lunar))),
     el("div", { class: "cta" },
       el("a", { class: "btn primary", href: "#/rank", text: "Rank for my habitat" }),
       el("a", { class: "btn", href: "#/investigations", text: "Explore " + data.investigations.length + " investigations" }),
@@ -789,8 +867,15 @@ function renderHome() {
     expander("How this map is computed", notes)
   );
   const counts = drawGapMap(chart);
-  notes.appendChild(el("p", { text: "Each dot is one row of the unified PSI table with an ambient O2 value: " + (counts.plotted + counts.lane) + " rows. " +
-    counts.plotted + " also record pressure. " + counts.lane + " record no pressure and sit in the bottom lane." }));
+  const sourcedLine = counts.sourced > 0 ? " " + counts.sourced + " solid rows record no pressure in PSI and are plotted at the pressure NASA reports state." : "";
+  const laneLine = counts.lane > 0 ? " " + counts.lane + " record no pressure and sit in the bottom lane." : "";
+  notes.appendChild(el("p", { text: "Each dot is one row of the unified PSI table with an ambient O2 value: " + (counts.plotted + counts.sourced + counts.lane) + " rows. " +
+    counts.plotted + " record pressure in PSI." + sourcedLine + laneLine }));
+  const solidRefs = outsideSolidRefs(counts);
+  if (solidRefs.length) {
+    notes.appendChild(el("p", null, "Solid pressures come from NASA reports, not the PSI table: ", solidRefs));
+  }
+  notes.appendChild(outsideTestsNote());
   notes.appendChild(el("p", { text: "Not plotted: " + counts.noO2 + " rows with no O2 value (smoke and dust tests have none), " + counts.stream +
     " rows that give burner-stream O2 (a different quantity from cabin air) and " + counts.quality + " rows that give a range or summary instead of one value." }));
   notes.appendChild(el("p", { text: "Boxes are the habitat atmospheres from NASA sources. A habitat with no box has no sourced O2 and pressure. Highest solid O2: " +
@@ -899,11 +984,24 @@ function testNextRows(block, plain) {
       const inv = invById(n.psi_id);
       nearest = el("span", null, o2 + ", " + pr + ". ", inv && !plain ? invLink(inv, n.psi_id) : n.psi_id, ", row " + n.source_row);
     }
+    const outsideNearest = outsideCell(entry, plain);
     const inside = el("span", null, String(entry.inside),
       entry.o2_window_no_pressure_rows > 0 ? el("span", { class: "src", text: entry.o2_window_no_pressure_rows + " more match O2 but record no pressure" }) : null);
     const label = entry.inside === 0 ? String(++priority) : "-";
-    return [label, FUEL_LABELS[entry.fuel_class], inside, nearest];
+    return [label, FUEL_LABELS[entry.fuel_class], inside, nearest, outsideNearest];
   });
+}
+
+const TEST_NEXT_HEADERS = ["Priority", "Fuel class", "Tests inside the window", "Nearest tested condition", "Nearest NASA test outside PSI"];
+
+function outsideCell(entry, plain) {
+  const o = entry.outside_nearest;
+  if (!o) {
+    return "-";
+  }
+  const head = o.label + ": " + o.material_short + ", " + (o.o2_frac * 100).toFixed(1) + "% O2, " + o.pressure_psia.toFixed(2) + " psia, " +
+    o.outcome_short.toLowerCase() + " (";
+  return el("span", null, head, plain ? "NTRS " + o.source_id : ntrsLink(o.source_url, "NTRS " + o.source_id), ")", o.inside ? " Inside the window." : "");
 }
 
 function renderTestNext(env) {
@@ -919,10 +1017,11 @@ function renderTestNext(env) {
     "Conditions this habitat will run at that PSI has never tested." :
     "Every fuel class has at least one PSI test inside this habitat window." }));
   holder.appendChild(el("p", { class: "small muted", text: "Window: " + conditions + "." }));
-  holder.appendChild(plainTable(["Priority", "Fuel class", "Tests inside the window", "Nearest tested condition"], rows));
+  holder.appendChild(plainTable(TEST_NEXT_HEADERS, rows));
   holder.appendChild(expander("How this table is computed", el("div", null,
     el("p", { text: "A test counts as inside when its ambient O2, its pressure and, where NASA specifies one, its flow speed all lie in the window above. Rows of quality exact or approximate only. A row with no recorded pressure cannot count as inside." }),
-    el("p", { text: "Nearest tested condition is the row of that fuel class whose O2 is closest to the window, then pressure, then flow. Priority runs solid, liquid droplet, gas among classes with zero tests." }))));
+    el("p", { text: "Nearest tested condition is the row of that fuel class whose O2 is closest to the window, then pressure, then flow. Priority runs solid, liquid droplet, gas among classes with zero tests." }),
+    el("p", { text: "Nearest NASA test outside PSI is shown for solids only, and only when a Saffire IV-VI test with a stated pressure is closer to the window (O2 first, then pressure) than the PSI row. It is context and is never counted in Tests inside the window." }))));
   holder.appendChild(el("p", null, el("a", { class: "btn", href: "#/brief?habitat=" + encodeURIComponent(env.id), text: "Printable test brief" })));
   return holder;
 }
@@ -975,11 +1074,11 @@ function renderBrief(params) {
       el("button", { type: "button", id: "brief-print", text: "Print / Save as PDF", onclick: function () { window.print(); } })),
     el("h1", { text: "Fire-safety test request: " + env.name }),
     el("p", { class: "brief-purpose", text: "These conditions are planned for " + env.name + " but have never been tested in NASA's PSI combustion data." }),
-    plainTable(["Priority", "Fuel class", "Tests inside the window", "Nearest tested condition"], testNextRows(block, true)),
+    plainTable(TEST_NEXT_HEADERS, testNextRows(block, true)),
     el("h2", { text: "Habitat atmosphere" }),
     plainTable(["Quantity", "Value", "Source"], windowRows),
     el("p", { class: "brief-basis", text: "Basis: NASA PSI combustion data, " + invCount + " investigations, " + rowCount.toLocaleString("en-US") + " test rows. Generated " + briefDate() + " from https://flame-in-freefall-three.vercel.app" }),
-    el("p", { class: "brief-limits", text: "Counts cover PSI only; NASA tests published outside PSI are not counted." }),
+    el("p", { class: "brief-limits", text: "Counts cover PSI only; NASA tests published outside PSI are not counted. Nearest outside-PSI NASA tests are shown for context." }),
     el("h2", { text: "References" }),
     el("ol", { class: "brief-refs" }, refList.map(function (r, i) {
       return el("li", { value: i + 1, text: "[" + (i + 1) + "] " + r.label + (r.url ? " - " + r.url : "") });
@@ -1669,10 +1768,14 @@ function insightsPanel() {
         el("div", { class: "exp-body" },
           el("p", { text: ins.text }),
           insightTable(ins),
-          el("p", { class: "small" }, el("strong", { text: "Rows behind it: " }),
+          ins.links.length ? el("p", { class: "small" }, el("strong", { text: "Rows behind it: " }),
             ins.links.map(function (l, i) {
               return [i ? " | " : "", el("a", { href: "#/data?" + qs(Object.assign({ at: "extractor" }, l.params)), text: l.label })];
-            })),
+            })) : null,
+          ins.sources ? el("p", { class: "small" }, el("strong", { text: "Sources: " }),
+            ins.sources.map(function (l, i) {
+              return [i ? " | " : "", ntrsLink(l.url, l.label)];
+            })) : null,
           el("p", { class: "small muted" }, el("strong", { text: "Limits: " }), ins.limits))));
   });
   return el("section", { id: "insights", class: "section" },
@@ -1707,6 +1810,12 @@ function insightTable(ins) {
           g.rows_o2_and_flow_window === null ? NOT_SPECIFIED : String(g.rows_o2_and_flow_window)];
       }));
   }
+  if (ins.id === "outside_psi_solids") {
+    return plainTable(["Test", "Material", "O2", "Pressure", "Outcome", "Source"], n.tests_table.map(function (t) {
+      return [t.label, t.material_short, t.o2_percent.toFixed(1) + "%", t.pressure_psia === null ? "not stated" : t.pressure_psia.toFixed(2) + " psia",
+        t.outcome_short, ntrsLink(t.source_url, "NTRS " + t.source_id)];
+    }));
+  }
   if (ins.id === "o2_with_outcome") {
     return plainTable(["Investigation", "Rows with O2 and outcome"], Object.keys(n.by_investigation).sort(sortById).map(function (id) {
       const inv = invById(id);
@@ -1727,6 +1836,12 @@ function verificationSummary() {
   }
   if (v.quotes) {
     bits.push(v.quotes.verified + " of " + v.quotes.checked + " key-finding quotes found verbatim in their source.");
+  }
+  if (v.outside_psi) {
+    bits.push((v.outside_psi.checked - v.outside_psi.failed) + " of " + v.outside_psi.checked + " outside-PSI quotes verified.");
+  }
+  if (v.ask_eval) {
+    bits.push("Ask check: " + v.ask_eval.preregistered_passed + " of " + v.ask_eval.total + " passed on pre-registered checks.");
   }
   return el("section", { id: "verification", class: "section" },
     el("h2", { text: "How was this checked?" }),
@@ -1773,14 +1888,46 @@ function renderVerification() {
     })));
   }
   if (v.quotes) {
-    parts.push(el("h2", { text: "Key-finding quotes" }));
-    parts.push(el("p", { text: v.quotes.verified + " of " + v.quotes.checked + " quotes were found verbatim in their source text." }));
-    parts.push(plainTable(["Investigation", "Source", "Quote", "Verified"], v.quotes.items.map(function (q) {
+    const noFinding = v.quotes.no_finding || [];
+    parts.push(el("h2", { text: "Key-finding quotes: " + v.quotes.verified + " of " + v.quotes.checked + " verified" }));
+    parts.push(el("p", { text: "Each quote was found word for word in its NASA source text." + (noFinding.length ? " " + noFinding.length + " investigations (" + noFinding.join(", ") + ") have no result statement in the NASA text we could retrieve, so they carry no quote." : "") }));
+    parts.push(expander("All " + v.quotes.checked + " quotes", plainTable(["Investigation", "Source", "Quote", "Verified"], v.quotes.items.map(function (q) {
       const inv = invById(q.psi_id);
-      return [inv ? invLink(inv, q.psi_id) : q.psi_id, q.url ? el("a", { href: q.url, text: q.source || "source" }) : q.source, q.quote, q.verified ? "yes" : "no"];
-    })));
+      const text = q.quote.length > 160 ? q.quote.slice(0, 157) + "..." : q.quote;
+      return [inv ? invLink(inv, q.psi_id) : q.psi_id, q.url ? el("a", { href: q.url, text: q.source || "source" }) : q.source, text, q.verified ? "yes" : "no"];
+    }))));
+  }
+  if (v.outside_psi) {
+    parts.push(outsideVerificationBlock(v.outside_psi));
+  }
+  if (v.ask_eval) {
+    parts.push(askEvalBlock(v.ask_eval));
   }
   return setView.apply(null, parts);
+}
+
+function outsideVerificationBlock(o) {
+  const ok = o.checked - o.failed;
+  return el("section", { id: "outside-psi-quotes" },
+    el("h2", { text: "Outside-PSI quotes: " + ok + " of " + o.checked + " verified" }),
+    el("p", { text: "Every quote behind the Saffire IV-VI tests and the NASA-sourced solid pressures was matched to its NTRS text" + (o.failed ? ", except " + o.failed + " that failed." : ".") }),
+    expander("How this was checked", el("div", null,
+      el("p", { text: "pipeline/verify_outside_psi.py reads data/outside_psi/saffire_iv_vi.json and data/outside_psi/solid_pressure_sources.json. Each quote is normalized and searched on its stated page of the downloaded NTRS text; the result is written to data/outside_psi/verification.json." }),
+      o.errors.length ? el("ul", null, o.errors.map(function (e) { return el("li", { text: e }); })) : el("p", { text: "No failures." }),
+      el("p", null, el("a", { href: REPO_URL + "/tree/main/data/outside_psi", target: "_blank", rel: "noopener", text: "data/outside_psi on GitHub" })))));
+}
+
+function askEvalBlock(a) {
+  const failedCount = a.checker_fixes.length;
+  return el("section", { id: "ask-accuracy" },
+    el("h2", { text: "Ask accuracy check" }),
+    el("p", { text: a.preregistered_passed + " of " + a.total + " passed on checks fixed before the run: " + a.answerable_passed + " of " +
+      a.answerable_total + " answerable questions correct and cited." }),
+    el("p", { text: failedCount + " trap answers failed the original checks; on review each replied 'Not in the data' without inventing a value, and the checks were then loosened (listed)." }),
+    expander("The " + failedCount + " loosened checks", el("div", null,
+      el("ul", null, a.checker_fixes.map(function (f) { return el("li", { text: f.id + ": " + f.fix }); })),
+      el("p", { text: "After the loosening: " + a.final_passed + " of " + a.total + " passed. The question set, checks and raw answers are in the eval folder." }),
+      el("p", null, el("a", { href: a.url, target: "_blank", rel: "noopener", text: "eval files on GitHub" })))));
 }
 
 function escapeHtml(text) {
@@ -1884,6 +2031,18 @@ function citationMap(citations) {
 
 const CITE_PREVIEW_CHARS = 300;
 
+const NTRS_ID_RE = /NTRS (\d{8,})/;
+const NTRS_FALLBACK_URL = "https://ntrs.nasa.gov/citations/20250002675";
+
+function externalCitation(c) {
+  const title = c.title || "document";
+  if (!c.psi_id || c.psi_id.indexOf("NTRS-") !== 0) {
+    return title;
+  }
+  const match = NTRS_ID_RE.exec(String(c.cited_text || ""));
+  return ntrsLink(match ? "https://ntrs.nasa.gov/citations/" + match[1] : NTRS_FALLBACK_URL, title);
+}
+
 function citationList(citations, scope) {
   return el("ol", { class: "citations" }, citations.map(function (c) {
     const inv = c.psi_id ? invById(c.psi_id) : null;
@@ -1897,7 +2056,7 @@ function citationList(citations, scope) {
       e.target.textContent = open ? "Show less" : "Show more";
     } }) : null;
     return el("li", { value: c.n, id: "cite-" + scope + "-" + c.n, tabindex: "-1" },
-      inv ? invLink(inv, c.title || invLabel(inv)) : (c.title || "document"), quote, toggle);
+      inv ? invLink(inv, c.title || invLabel(inv)) : externalCitation(c), quote, toggle);
   }));
 }
 
@@ -2294,7 +2453,7 @@ function route() {
 }
 
 function init() {
-  const names = ["investigations", "conditions", "environments", "insights", "earth", "rank_reference", "model_readiness", "test_next", "verification"];
+  const names = ["investigations", "conditions", "environments", "insights", "earth", "rank_reference", "model_readiness", "test_next", "verification", "outside_psi"];
   Promise.all(names.map(loadJson)).then(function (loaded) {
     state.data = {
       investigations: loaded[0].investigations,
@@ -2305,7 +2464,8 @@ function init() {
       rank_reference: loaded[5],
       model_readiness: loaded[6],
       test_next: loaded[7],
-      verification: loaded[8]
+      verification: loaded[8],
+      outside_psi: loaded[9]
     };
     state.weights = Object.assign({}, state.data.rank_reference.weights);
     parityCheck();

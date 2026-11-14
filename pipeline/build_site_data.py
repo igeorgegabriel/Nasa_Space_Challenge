@@ -9,6 +9,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 
+import outside_psi
 import scoring
 from build_unified import to_ascii
 
@@ -33,6 +34,9 @@ CORPUS_PATH = os.path.join(ROOT, "api", "context", "corpus.json")
 
 PSI_PAGE = "https://psi.nasa.gov/physci/repo/data/investigations/"
 PSI_REPO_URL = "https://github.com/igeorgegabriel/Nasa_Space_Challenge"
+EVAL_SUMMARY_PATH = os.path.join(ROOT, "eval", "results", "ask_eval_summary.json")
+EVAL_SET_PATH = os.path.join(ROOT, "eval", "ask_eval_set.json")
+EVAL_URL = PSI_REPO_URL + "/tree/main/eval"
 
 PSIA_TO_ATM = 6894.757293168 / 101325.0
 COUNTABLE_QUALITY = ("exact", "approximate")
@@ -788,7 +792,7 @@ def window_filter_params(env, with_pressure):
     return params
 
 
-def build_insights(rows, environments):
+def build_insights(rows, environments, outside=None):
     ok_rows = countable(rows)
     insights = []
 
@@ -989,8 +993,55 @@ def build_insights(rows, environments):
             "and are not harmonized into one quantity such as MOC, LOI or ULOI. Only rows with both fields can feed a flammability model."
         ),
     })
+    if outside and outside["tests"]:
+        insights.append(outside_insight(outside))
     add_headlines(insights, environments)
     return {"insights": insights}
+
+
+def range_text(lo, hi, digits):
+    fmt = "%%.%df" % digits
+    return fmt % lo if lo == hi else (fmt + "-" + fmt) % (lo, hi)
+
+
+def outside_insight(outside):
+    s = outside["summary"]
+    psi_max = s["psi_solid_max_o2"]
+    unplotted = [t for t in outside["tests"] if not t["plotted"]]
+    text = (
+        "%d Saffire IV-VI solid tests in Cygnus are published on NTRS but are not in PSI. %d of them ran above the %s%% O2 where PSI solids stop, "
+        "at %s%% O2 and %s psia (%s)."
+        % (s["tests"], len(s["above_psi_max"]), pct_text(psi_max), range_text(s["above_o2_min"], s["above_o2_max"], 1),
+           range_text(s["above_psia_min"], s["above_psia_max"], 2), ", ".join(s["above_psi_max"]))
+    )
+    if unplotted:
+        text += " " + "; ".join(
+            "%s (%s, %.1f%% O2, %s) has no stated pressure" % (t["sample_id"], t["material_short"], t["o2_percent"], t["outcome_short"].lower())
+            for t in unplotted) + "."
+    columns = ("label", "sample_id", "material_short", "o2_percent", "pressure_psia", "outcome_short", "source_id", "source_url")
+    return {
+        "id": "outside_psi_solids",
+        "title": "NASA's most habitat-relevant solid fire tests are not in PSI",
+        "text": text,
+        "numbers": {
+            "tests": s["tests"],
+            "plotted": s["plotted"],
+            "psi_solid_max_o2": psi_max,
+            "above_psi_max": s["above_psi_max"],
+            "o2_percent_range_above_psi_max": [s["above_o2_min"], s["above_o2_max"]],
+            "psia_range_above_psi_max": [s["above_psia_min"], s["above_psia_max"]],
+            "tests_table": [{k: t[k] for k in columns} for t in outside["tests"]],
+        },
+        "links": [],
+        "sources": sorted(
+            [{"label": "NTRS " + sid, "url": outside_psi.NTRS_URL + sid} for sid in {t["source_id"] for t in outside["tests"]}],
+            key=lambda item: item["label"]),
+        "limits": (
+            "Adding Saffire IV-VI to PSI would extend solid coverage toward exploration atmospheres. "
+            "Quotes behind each test are machine-checked against the NTRS text, but these tests are not PSI rows and are not counted anywhere else "
+            "in this dashboard except where labelled."
+        ),
+    }
 
 
 def pct_text(value):
@@ -1018,6 +1069,12 @@ def add_headlines(insights, environments):
     n = by_id["o2_with_outcome"]["numbers"]
     by_id["o2_with_outcome"]["headline"] = (
         "%d rows in %d investigations record both an O2 value and an outcome." % (n["rows"], n["investigations"]))
+    if "outside_psi_solids" in by_id:
+        n = by_id["outside_psi_solids"]["numbers"]
+        by_id["outside_psi_solids"]["headline"] = (
+            "NASA's most habitat-relevant solid fire tests are not in PSI: Saffire IV-VI reached %s%% O2 at %s psia, PSI solids stop at %s%%."
+            % (range_text(n["o2_percent_range_above_psi_max"][0], n["o2_percent_range_above_psi_max"][1], 1),
+               range_text(n["psia_range_above_psi_max"][0], n["psia_range_above_psi_max"][1], 2), pct_text(n["psi_solid_max_o2"])))
 
 
 EARTH = [
@@ -1092,7 +1149,7 @@ def fmt_num(value):
     return ("%.4f" % value).rstrip("0").rstrip(".")
 
 
-def build_corpus(investigations, rankings):
+def build_corpus(investigations, rankings, outside=None, psi_max=None):
     docs = []
     for inv in investigations:
         lines = []
@@ -1155,6 +1212,8 @@ def build_corpus(investigations, rankings):
             "title": "%s %s - %s" % (inv["psi_id"], inv["acronym"], inv["title"]),
             "body": "\n".join(lines),
         })
+    if outside and outside["tests"]:
+        docs.append(outside_psi.corpus_document(outside, psi_max))
     return {"documents": docs}
 
 
@@ -1508,7 +1567,7 @@ def nearest_condition(eligible, env):
     }
 
 
-def build_test_next(rows, environments):
+def build_test_next(rows, environments, outside=None):
     ambient = [r for r in countable(rows) if r.get("o2_basis") == "ambient" and r.get("o2_frac") is not None]
     out = OrderedDict()
     for env in environments["environments"]:
@@ -1527,14 +1586,22 @@ def build_test_next(rows, environments):
                 and (flow_window is None or in_window(r.get("flow_cm_s"), flow_window[0], flow_window[1]))
             ]
             no_pressure = [r for r in o2_rows if r.get("pressure_atm") is None or r["pressure_atm"] <= 0]
-            entries.append({
+            nearest = nearest_condition(eligible, env)
+            entry = {
                 "fuel_class": fc,
                 "inside": len(inside),
                 "o2_window_rows": len(o2_rows),
                 "o2_window_no_pressure_rows": len(no_pressure),
                 "classified_rows": len(eligible),
-                "nearest": nearest_condition(eligible, env),
-            })
+                "nearest": nearest,
+            }
+            if fc == "solid" and outside and outside["tests"]:
+                psi_key = None
+                if nearest is not None:
+                    p_gap = nearest["pressure_gap_atm"]
+                    psi_key = (nearest["o2_gap"], p_gap if p_gap is not None else float("inf"))
+                entry["outside_nearest"] = outside_psi.nearest_outside(outside, (o2lo, o2hi), (plo, phi), psi_key)
+            entries.append(entry)
         entries.sort(key=lambda e: (e["inside"] > 0, CLASS_PRIORITY.index(e["fuel_class"])))
         out[env["id"]] = {
             "name": env["name"],
@@ -1665,8 +1732,19 @@ def load_verification_items():
     if data is None:
         return None, []
     summary = data if isinstance(data, dict) else {}
+    by_id = {}
+    for finding in record_list(read_json_file(FINDINGS_PATH) or [], ["findings", "key_findings", "items"]):
+        if finding.get("finding_id"):
+            by_id[finding["finding_id"]] = finding
     items = []
+    no_finding = []
     for item in record_list(data, ["quotes", "findings", "checks", "results", "items"]):
+        if item.get("result") == "no_finding":
+            no_finding.append(str(item.get("psi_id") or ""))
+            continue
+        merged = dict(by_id.get(item.get("finding_id"), {}))
+        merged.update({k: v for k, v in item.items() if v not in (None, "", [], {})})
+        item = merged
         quote = first_value(item, ["quote", "text", "finding"])
         verdict = is_verified(item)
         if verdict is None:
@@ -1679,6 +1757,8 @@ def load_verification_items():
             "url": url,
             "verified": verdict,
         })
+    summary = dict(summary)
+    summary["no_finding"] = sorted(set(p for p in no_finding if p))
     return summary, items
 
 
@@ -1715,9 +1795,40 @@ AUDIT_TITLES = {
 }
 
 
+def build_outside_verification():
+    data = read_json_file(outside_psi.VERIFICATION_PATH)
+    if not isinstance(data, dict):
+        return None
+    return {"checked": data.get("checked", 0), "failed": data.get("failed", 0), "errors": data.get("errors", [])}
+
+
+def build_ask_eval():
+    summary = read_json_file(EVAL_SUMMARY_PATH)
+    eval_set = read_json_file(EVAL_SET_PATH)
+    if not isinstance(summary, dict) or not isinstance(eval_set, dict):
+        return None
+    questions = eval_set.get("questions") or []
+    answerable = [q for q in questions if q.get("type") == "answerable"]
+    fixes = summary.get("checker_fixes") or []
+    initial_failed = [f for f in fixes if not f.get("initial_passed")]
+    total = summary.get("total", len(questions))
+    return {
+        "total": total,
+        "answerable_total": len(answerable),
+        "answerable_passed": summary.get("answerable_passed", 0),
+        "preregistered_passed": total - len(initial_failed),
+        "final_passed": summary.get("passed", 0),
+        "traps_total": len(questions) - len(answerable),
+        "checker_fixes": [{"id": f.get("id"), "fix": f.get("fix")} for f in initial_failed],
+        "url": EVAL_URL,
+    }
+
+
 def build_verification(verification_summary, verification_items):
     audit = read_json_file(AUDIT_PATH)
-    result = {"present": False, "audit": None, "quotes": None}
+    result = {"present": False, "audit": None, "quotes": None, "outside_psi": build_outside_verification(), "ask_eval": build_ask_eval()}
+    if result["outside_psi"] or result["ask_eval"]:
+        result["present"] = True
     if isinstance(audit, dict) and isinstance(audit.get("checks"), dict):
         checks = []
         for key, value in audit["checks"].items():
@@ -1745,6 +1856,7 @@ def build_verification(verification_summary, verification_items):
             "verified": verified,
             "failed": len(verification_items) - verified,
             "items": verification_items,
+            "no_finding": (verification_summary or {}).get("no_finding", []),
         }
         result["present"] = True
     return result
@@ -1773,12 +1885,13 @@ def build():
     verification_summary, verification_items = load_verification_items()
     findings = load_findings(verification_items)
     investigations = build_investigations(rows, unified, meta, public_images(images), findings)
-    insights = build_insights(rows, environments)
+    outside = outside_psi.build_outside(rows)
+    insights = build_insights(rows, environments, outside)
     reference = build_rank_reference(investigations, environments)
     default_rankings = {
         env_id: data["ranking"] for env_id, data in reference["variants"]["default"].items()
     }
-    corpus = build_corpus(investigations, default_rankings)
+    corpus = build_corpus(investigations, default_rankings, outside, outside["summary"]["psi_solid_max_o2"])
     return {
         "investigations": investigations,
         "conditions": slim_conditions(rows),
@@ -1787,7 +1900,8 @@ def build():
         "earth": {"applications": EARTH},
         "model_readiness": build_model_readiness(rows, environments),
         "rank_reference": reference,
-        "test_next": build_test_next(rows, environments),
+        "test_next": build_test_next(rows, environments, outside),
+        "outside_psi": outside,
         "verification": build_verification(verification_summary, verification_items),
         "images": images,
         "corpus": corpus,
@@ -1805,6 +1919,7 @@ def main():
     dump(os.path.join(SITE_DATA_DIR, "model_readiness.json"), result["model_readiness"])
     dump(os.path.join(SITE_DATA_DIR, "rank_reference.json"), result["rank_reference"])
     dump(os.path.join(SITE_DATA_DIR, "test_next.json"), result["test_next"])
+    dump(os.path.join(SITE_DATA_DIR, "outside_psi.json"), ascii_deep(result["outside_psi"]))
     dump(os.path.join(SITE_DATA_DIR, "verification.json"), result["verification"])
     publish_images(result["images"])
     dump(CORPUS_PATH, result["corpus"])

@@ -95,6 +95,14 @@ def main():
 
     for e in errors:
         print("FAIL " + e)
+    result = {
+        "checked": count,
+        "failed": len(errors),
+        "errors": errors,
+        "sources": ["data/outside_psi/saffire_iv_vi.json", "data/outside_psi/solid_pressure_sources.json"],
+    }
+    with open(DATA / "verification.json", "w", encoding="ascii", newline=chr(10)) as handle:
+        handle.write(json.dumps(result, indent=1, sort_keys=True, ensure_ascii=True) + chr(10))
     print("%d quotes checked, %d failures" % (count, len(errors)))
     return 1 if errors else 0
 

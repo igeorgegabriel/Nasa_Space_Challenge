@@ -1,4 +1,27 @@
 {
+ "ask_eval": {
+  "answerable_passed": 8,
+  "answerable_total": 8,
+  "checker_fixes": [
+   {
+    "fix": "post-run: whitelist the corpus-quoted Saffire-I value 1.8 mm/s, which the answer explicitly disclaims as not PMMA",
+    "id": "T1"
+   },
+   {
+    "fix": "post-run: only count 'safe' in sentences with no negation or 'whether'; answer said it cannot establish whether any atmosphere is safe",
+    "id": "T2"
+   },
+   {
+    "fix": "post-run: percent numbers only count in sentences about oxygen; answer's only % was the BASS 75/25 cotton/fiberglass sample composition",
+    "id": "T3"
+   }
+  ],
+  "final_passed": 12,
+  "preregistered_passed": 9,
+  "total": 12,
+  "traps_total": 4,
+  "url": "https://github.com/igeorgegabriel/Nasa_Space_Challenge/tree/main/eval"
+ },
  "audit": {
   "checked": 1012,
   "checks": [
@@ -55,312 +78,289 @@
   "passed": 1012,
   "seed": 20261114
  },
+ "outside_psi": {
+  "checked": 57,
+  "errors": [],
+  "failed": 0
+ },
  "present": true,
  "quotes": {
-  "checked": 43,
-  "failed": 5,
+  "checked": 38,
+  "failed": 0,
   "items": [
    {
     "psi_id": "PSI-10",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "Large flames increase in size over time until the flame extinguishes due to radiative heat loss.",
+    "source": "NTRS 20220007191",
+    "url": "https://ntrs.nasa.gov/citations/20220007191",
     "verified": true
    },
    {
     "psi_id": "PSI-10",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "Flame size increases with reactant flow rate and decreases with ambient oxygen concentration.",
+    "source": "NTRS 20220007191",
+    "url": "https://ntrs.nasa.gov/citations/20220007191",
     "verified": true
    },
    {
     "psi_id": "PSI-10",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "In these flames, structure has a defining influence on soot production, with soot suppressed entirely when nitrogen is supplied with the fuel.",
+    "source": "NTRS 20050195844",
+    "url": "https://ntrs.nasa.gov/citations/20050195844",
     "verified": true
    },
    {
     "psi_id": "PSI-20",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "While the flames can burn for minutes in elevated oxygen concentrations, like those being considered for future spacecraft, they were found to self-extinguish in concentrations below ~25% (by volume).",
+    "source": "NTRS 20220007191",
+    "url": "https://ntrs.nasa.gov/citations/20220007191",
     "verified": true
    },
    {
     "psi_id": "PSI-20",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "While smaller flames can burn for minutes at elevated oxygen concentrations, larger flames were generally seen to self-extinguish within 1.5 minutes.",
+    "source": "NTRS 20220007191",
+    "url": "https://ntrs.nasa.gov/citations/20220007191",
     "verified": true
    },
    {
     "psi_id": "PSI-20",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "Low-momentum microgravity flames can burn for minutes in the absence of an air flow or flame spread.",
+    "source": "NTRS 20220007191",
+    "url": "https://ntrs.nasa.gov/citations/20220007191",
     "verified": true
    },
    {
     "psi_id": "PSI-21",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "Sooty microgravity flames are taller & wider and contain 5x to 8x more soot than equivalent 1G flames.",
+    "source": "NTRS 20220007191",
+    "url": "https://ntrs.nasa.gov/citations/20220007191",
     "verified": true
    },
    {
     "psi_id": "PSI-21",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "Microgravity increases the limits of fuel dilution.",
+    "source": "NTRS 20220007191",
+    "url": "https://ntrs.nasa.gov/citations/20220007191",
     "verified": true
    },
    {
     "psi_id": "PSI-22",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "There are clear correlations between flame luminosity, combustion intensity, and ion current.",
+    "source": "NTRS 20220007191",
+    "url": "https://ntrs.nasa.gov/citations/20220007191",
     "verified": true
    },
    {
     "psi_id": "PSI-22",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "Highly-diluted flames can be stabilized with very weak electric fields.",
+    "source": "NTRS 20220007191",
+    "url": "https://ntrs.nasa.gov/citations/20220007191",
     "verified": true
    },
    {
     "psi_id": "PSI-23",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "Radiative extinction seems to occur at high flow rates and kinetic extinction at low flow rates.",
+    "source": "NTRS 20220007191",
+    "url": "https://ntrs.nasa.gov/citations/20220007191",
     "verified": true
    },
    {
     "psi_id": "PSI-23",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "With helium, rather than nitrogen, dilution of both the fuel and oxygen, the extinction limits are shifted and kinetic extinction is generally difficult to discern.",
+    "source": "NTRS 20220007191",
+    "url": "https://ntrs.nasa.gov/citations/20220007191",
     "verified": true
    },
    {
     "psi_id": "PSI-25",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "The 1g blowoff for the 1/4\" rod is at 16% oxygen, whereas we obtained steady spreading at 13.6% oxygen in BASS-II.",
+    "source": "NTRS 20160000593",
+    "url": "https://ntrs.nasa.gov/citations/20160000593",
     "verified": true
    },
    {
     "psi_id": "PSI-25",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "Thus the material has a negative Oxygen Margin of Safety of 2.4% O2, and the normal gravity flammability limits should be de-rated by at least that much.",
+    "source": "NTRS 20160000593",
+    "url": "https://ntrs.nasa.gov/citations/20160000593",
     "verified": true
    },
    {
     "psi_id": "PSI-25",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "the combustion products from a fire of the scale of a BASS-II test would quickly be diluted, so that even within just the U.S. Lab (106-m3 pressurized volume), the CO levels in the lab would only be 1.5 ppm, well below spacecraft maximum allowable concentration (SMAC) values for even long-term exposure (10 ppm), let alone the 1 hour SMAC of 55 ppm (Ref. 12).",
+    "source": "NTRS 20210011385",
+    "url": "https://ntrs.nasa.gov/citations/20210011385",
     "verified": true
    },
    {
     "psi_id": "PSI-26",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "even these burned for over 5 minutes before self-extinguishing. This has implications for spacecraft fire safety since a tiny flame might be undetected for a long time.",
+    "source": "NTRS 20140011099",
+    "url": "https://ntrs.nasa.gov/citations/20140011099",
     "verified": true
    },
    {
     "psi_id": "PSI-26",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "At the lowest speeds examined (less than 1 cms) all the flames tended to become dim blue and very stable.",
+    "source": "NTRS 20140011099",
+    "url": "https://ntrs.nasa.gov/citations/20140011099",
     "verified": true
    },
    {
     "psi_id": "PSI-39",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "Large n-alkane droplets exhibited quasi-steady low-temperature burning and extinction following radiative extinction of the visible flame while smaller droplets burned to completion or disruptively extinguished.",
+    "source": "NTRS 20140006750",
+    "url": "https://ntrs.nasa.gov/citations/20140006750",
     "verified": true
    },
    {
     "psi_id": "PSI-47",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "The ISS cabin was found to be a very clean environment with particulate levels substantially below the space shuttle and typical ground-based environments.",
+    "source": "NTRS 20070031686",
+    "url": "https://ntrs.nasa.gov/citations/20070031686",
     "verified": true
    },
    {
-    "psi_id": "PSI-60",
-    "quote": "",
-    "source": "",
-    "url": "",
-    "verified": false
-   },
-   {
     "psi_id": "PSI-62",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "Despite this limiting O2 concentration for ignition, flames ignited at a higher O2 survived to final O2 concentrations as low as 13.6 percent O2, indicating that the high heat loss to the initially cold rod will quench a postignition flame while a developed solid phase temperature profile allows a sustained flame down to these low ambient O2 concentrations.",
+    "source": "NTRS 20210011385",
+    "url": "https://ntrs.nasa.gov/citations/20210011385",
     "verified": true
    },
    {
     "psi_id": "PSI-68",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "large n-alkane droplets can continue to burn quasi-steadily following radiative extinction in a low-temperature regime",
+    "source": "NTRS 20140006750",
+    "url": "https://ntrs.nasa.gov/citations/20140006750",
     "verified": true
    },
    {
     "psi_id": "PSI-69",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "The experiments also show that the limiting oxygen index for methanol in these diluent gases is around 12% to 13% oxygen by volume.",
+    "source": "NTRS 20130014061",
+    "url": "https://ntrs.nasa.gov/citations/20130014061",
     "verified": true
    },
    {
     "psi_id": "PSI-69",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "At one atmosphere pressure, ignition and some burning were observed for an oxygen concentration of 13% with the rest being nitrogen.",
+    "source": "NTRS 20120016855",
+    "url": "https://ntrs.nasa.gov/citations/20120016855",
     "verified": true
    },
    {
     "psi_id": "PSI-69",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "Observed LOI values for these fuels appear to be slightly lower than initially expected.",
+    "source": "NTRS 20150023456",
+    "url": "https://ntrs.nasa.gov/citations/20150023456",
     "verified": true
    },
    {
     "psi_id": "PSI-98",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "Average flame spread rate is 1.8 mm/s; estimated average flame power is 1200 +/- 300 W",
+    "source": "NTRS 20180005168",
+    "url": "https://ntrs.nasa.gov/citations/20180005168",
     "verified": true
    },
    {
     "psi_id": "PSI-98",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "Flame spread over a large thin charring surface in low-gravity showed that steady flame spread was possible (unlike normal gravity).",
+    "source": "NTRS 20180005168",
+    "url": "https://ntrs.nasa.gov/citations/20180005168",
     "verified": true
    },
    {
     "psi_id": "PSI-98",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "For the concurrent flame spread test, the flame size remained constrained after the ignition transient, which is not the case in 1-g.",
+    "source": "NTRS 20170008805",
+    "url": "https://ntrs.nasa.gov/citations/20170008805",
     "verified": true
    },
    {
     "psi_id": "PSI-99",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "2-1 80 W 9.2 s Insignificant ~ 0 n/a ~ Complete Acceleratory",
+    "source": "NTRS 20180005168",
+    "url": "https://ntrs.nasa.gov/citations/20180005168",
     "verified": true
    },
    {
     "psi_id": "PSI-99",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "Concurrent flame spread (with the wind) was shown to be more sensitive to the flow duct dimension than previously anticipated.",
+    "source": "NTRS 20180005168",
+    "url": "https://ntrs.nasa.gov/citations/20180005168",
     "verified": true
    },
    {
     "psi_id": "PSI-100",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "3-1 182 W 8 s 300 s ~ 84 cm 2.3 mm/s Complete Acceleratory",
+    "source": "NTRS 20180005168",
+    "url": "https://ntrs.nasa.gov/citations/20180005168",
     "verified": true
    },
    {
     "psi_id": "PSI-101",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "Overall the majority of the average smoke particle sizes were found to be in the 200 nm to 400 nm range with the quiescent cases producing some cases with substantially larger particles.",
+    "source": "NTRS 20130000422",
+    "url": "https://ntrs.nasa.gov/citations/20130000422",
     "verified": true
    },
    {
     "psi_id": "PSI-101",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "For the conditions tested, the materials emit most of their particulate in the submicron range.",
+    "source": "NTRS 20150010172",
+    "url": "https://ntrs.nasa.gov/citations/20150010172",
     "verified": true
    },
    {
     "psi_id": "PSI-101",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "The ISS detector showed a relatively weak signal for some Teflon runs doubtless a result of the particle size.",
+    "source": "NTRS 20150010172",
+    "url": "https://ntrs.nasa.gov/citations/20150010172",
     "verified": true
    },
    {
     "psi_id": "PSI-102",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "The zero flow conditions produced smoke particles that were 2 to 3 times larger than those produced at the nominal 8 cm/s flow rate.",
+    "source": "NTRS 20130000422",
+    "url": "https://ntrs.nasa.gov/citations/20130000422",
     "verified": true
    },
    {
     "psi_id": "PSI-102",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "all samples produced significant numbers of sub-micron particulate that are readily detected using an ionization smoke detector.",
+    "source": "NTRS 20130000422",
+    "url": "https://ntrs.nasa.gov/citations/20130000422",
     "verified": true
    },
    {
     "psi_id": "PSI-106",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "The microgravity sooting flames were found to have lower soot temperatures and higher volume fraction than their normal gravity counterparts.",
+    "source": "NTRS 20140017780",
+    "url": "https://ntrs.nasa.gov/citations/20140017780",
     "verified": true
    },
    {
     "psi_id": "PSI-106",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "computed and measured nonbuoyant flames are noticeably longer than their 1g counterparts;",
+    "source": "NTRS 20150002322",
+    "url": "https://ntrs.nasa.gov/citations/20150002322",
     "verified": true
-   },
-   {
-    "psi_id": "PSI-107",
-    "quote": "",
-    "source": "",
-    "url": "",
-    "verified": false
-   },
-   {
-    "psi_id": "PSI-115",
-    "quote": "",
-    "source": "",
-    "url": "",
-    "verified": false
-   },
-   {
-    "psi_id": "PSI-117",
-    "quote": "",
-    "source": "",
-    "url": "",
-    "verified": false
-   },
-   {
-    "psi_id": "PSI-142",
-    "quote": "",
-    "source": "",
-    "url": "",
-    "verified": false
    },
    {
     "psi_id": "PSI-159",
-    "quote": "",
-    "source": "",
-    "url": "",
+    "quote": "Observed the first spherical, quasi-steady, burner-supported cool flames!",
+    "source": "NTRS 20220007191",
+    "url": "https://ntrs.nasa.gov/citations/20220007191",
     "verified": true
    }
+  ],
+  "no_finding": [
+   "PSI-107",
+   "PSI-115",
+   "PSI-117",
+   "PSI-142",
+   "PSI-60"
   ],
   "verified": 38
  }

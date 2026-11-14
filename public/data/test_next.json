@@ -17,7 +17,21 @@
       "source_row": 1
      },
      "o2_window_no_pressure_rows": 0,
-     "o2_window_rows": 0
+     "o2_window_rows": 0,
+     "outside_nearest": {
+      "inside": true,
+      "label": "Saffire V-2",
+      "material_short": "Cotton jersey",
+      "o2_frac": 0.262,
+      "o2_gap": 0.0,
+      "outcome_short": "Burned",
+      "pressure_atm": 0.697755,
+      "pressure_gap_atm": 0.0,
+      "pressure_psia": 10.25,
+      "sample_id": "V-2",
+      "source_id": "20210011521",
+      "source_url": "https://ntrs.nasa.gov/citations/20210011521"
+     }
     },
     {
      "classified_rows": 361,
@@ -85,7 +99,21 @@
       "source_row": 2
      },
      "o2_window_no_pressure_rows": 35,
-     "o2_window_rows": 35
+     "o2_window_rows": 35,
+     "outside_nearest": {
+      "inside": true,
+      "label": "Saffire IV-1",
+      "material_short": "SIBAL cloth",
+      "o2_frac": 0.22,
+      "o2_gap": 0.0,
+      "outcome_short": "Burned",
+      "pressure_atm": 0.986923,
+      "pressure_gap_atm": 0.0,
+      "pressure_psia": 14.5,
+      "sample_id": "IV-1",
+      "source_id": "20210011521",
+      "source_url": "https://ntrs.nasa.gov/citations/20210011521"
+     }
     },
     {
      "classified_rows": 361,
@@ -156,7 +184,21 @@
       "source_row": 1
      },
      "o2_window_no_pressure_rows": 0,
-     "o2_window_rows": 0
+     "o2_window_rows": 0,
+     "outside_nearest": {
+      "inside": false,
+      "label": "Saffire VI-2",
+      "material_short": "SIBAL cloth",
+      "o2_frac": 0.31,
+      "o2_gap": 0.025,
+      "outcome_short": "Burned",
+      "pressure_atm": 0.533925,
+      "pressure_gap_atm": 0.017075,
+      "pressure_psia": 7.85,
+      "sample_id": "VI-2",
+      "source_id": "20250002675",
+      "source_url": "https://ntrs.nasa.gov/citations/20250002675"
+     }
     },
     {
      "classified_rows": 361,
@@ -227,7 +269,21 @@
       "source_row": 1
      },
      "o2_window_no_pressure_rows": 0,
-     "o2_window_rows": 0
+     "o2_window_rows": 0,
+     "outside_nearest": {
+      "inside": false,
+      "label": "Saffire VI-2",
+      "material_short": "SIBAL cloth",
+      "o2_frac": 0.31,
+      "o2_gap": 0.025,
+      "outcome_short": "Burned",
+      "pressure_atm": 0.533925,
+      "pressure_gap_atm": 0.017075,
+      "pressure_psia": 7.85,
+      "sample_id": "VI-2",
+      "source_id": "20250002675",
+      "source_url": "https://ntrs.nasa.gov/citations/20250002675"
+     }
     },
     {
      "classified_rows": 361,
@@ -295,7 +351,21 @@
       "source_row": 1
      },
      "o2_window_no_pressure_rows": 0,
-     "o2_window_rows": 0
+     "o2_window_rows": 0,
+     "outside_nearest": {
+      "inside": false,
+      "label": "Saffire VI-3",
+      "material_short": "Cast PMMA",
+      "o2_frac": 0.303,
+      "o2_gap": 0.0,
+      "outcome_short": "Burned",
+      "pressure_atm": 0.53886,
+      "pressure_gap_atm": 0.01214,
+      "pressure_psia": 7.92,
+      "sample_id": "VI-3",
+      "source_id": "20250002675",
+      "source_url": "https://ntrs.nasa.gov/citations/20250002675"
+     }
     },
     {
      "classified_rows": 361,

@@ -378,6 +378,137 @@
    },
    "text": "563 rows in 3 investigations record both an O2 value and an outcome label (PSI-159 285, PSI-69 274, PSI-99 4).",
    "title": "Investigations with both an O2 value and an outcome"
+  },
+  {
+   "headline": "NASA's most habitat-relevant solid fire tests are not in PSI: Saffire IV-VI reached 25.4-31.0% O2 at 7.85-10.53 psia, PSI solids stop at 22.2%.",
+   "id": "outside_psi_solids",
+   "limits": "Adding Saffire IV-VI to PSI would extend solid coverage toward exploration atmospheres. Quotes behind each test are machine-checked against the NTRS text, but these tests are not PSI rows and are not counted anywhere else in this dashboard except where labelled.",
+   "links": [],
+   "numbers": {
+    "above_psi_max": [
+     "V-2",
+     "V-3",
+     "V-4",
+     "VI-2",
+     "VI-3",
+     "VI-4"
+    ],
+    "o2_percent_range_above_psi_max": [
+     25.4,
+     31.0
+    ],
+    "plotted": 8,
+    "psi_solid_max_o2": 0.222,
+    "psia_range_above_psi_max": [
+     7.85,
+     10.53
+    ],
+    "tests": 9,
+    "tests_table": [
+     {
+      "label": "Saffire IV-1",
+      "material_short": "SIBAL cloth",
+      "o2_percent": 22.0,
+      "outcome_short": "Burned",
+      "pressure_psia": 14.5,
+      "sample_id": "IV-1",
+      "source_id": "20210011521",
+      "source_url": "https://ntrs.nasa.gov/citations/20210011521"
+     },
+     {
+      "label": "Saffire IV-2",
+      "material_short": "Cast PMMA",
+      "o2_percent": 22.0,
+      "outcome_short": "Burned",
+      "pressure_psia": 14.5,
+      "sample_id": "IV-2",
+      "source_id": "20210011521",
+      "source_url": "https://ntrs.nasa.gov/citations/20210011521"
+     },
+     {
+      "label": "Saffire V-2",
+      "material_short": "Cotton jersey",
+      "o2_percent": 26.2,
+      "outcome_short": "Burned",
+      "pressure_psia": 10.25,
+      "sample_id": "V-2",
+      "source_id": "20210011521",
+      "source_url": "https://ntrs.nasa.gov/citations/20210011521"
+     },
+     {
+      "label": "Saffire V-3",
+      "material_short": "Cast PMMA",
+      "o2_percent": 25.4,
+      "outcome_short": "Burned",
+      "pressure_psia": 10.34,
+      "sample_id": "V-3",
+      "source_id": "20210011521",
+      "source_url": "https://ntrs.nasa.gov/citations/20210011521"
+     },
+     {
+      "label": "Saffire V-4",
+      "material_short": "Structured cast PMMA",
+      "o2_percent": 25.7,
+      "outcome_short": "Burned",
+      "pressure_psia": 10.53,
+      "sample_id": "V-4",
+      "source_id": "20210011521",
+      "source_url": "https://ntrs.nasa.gov/citations/20210011521"
+     },
+     {
+      "label": "Saffire VI-1",
+      "material_short": "Nomex fabric",
+      "o2_percent": 31.9,
+      "outcome_short": "Did not ignite",
+      "pressure_psia": null,
+      "sample_id": "VI-1",
+      "source_id": "20250002675",
+      "source_url": "https://ntrs.nasa.gov/citations/20250002675"
+     },
+     {
+      "label": "Saffire VI-2",
+      "material_short": "SIBAL cloth",
+      "o2_percent": 31.0,
+      "outcome_short": "Burned",
+      "pressure_psia": 7.85,
+      "sample_id": "VI-2",
+      "source_id": "20250002675",
+      "source_url": "https://ntrs.nasa.gov/citations/20250002675"
+     },
+     {
+      "label": "Saffire VI-3",
+      "material_short": "Cast PMMA",
+      "o2_percent": 30.3,
+      "outcome_short": "Burned",
+      "pressure_psia": 7.92,
+      "sample_id": "VI-3",
+      "source_id": "20250002675",
+      "source_url": "https://ntrs.nasa.gov/citations/20250002675"
+     },
+     {
+      "label": "Saffire VI-4",
+      "material_short": "Cast PMMA",
+      "o2_percent": 28.8,
+      "outcome_short": "Burned",
+      "pressure_psia": 8.01,
+      "sample_id": "VI-4",
+      "source_id": "20250002675",
+      "source_url": "https://ntrs.nasa.gov/citations/20250002675"
+     }
+    ]
+   },
+   "sources": [
+    {
+     "label": "NTRS 20210011521",
+     "url": "https://ntrs.nasa.gov/citations/20210011521"
+    },
+    {
+     "label": "NTRS 20250002675",
+     "url": "https://ntrs.nasa.gov/citations/20250002675"
+    }
+   ],
+   "text": "9 Saffire IV-VI solid tests in Cygnus are published on NTRS but are not in PSI. 6 of them ran above the 22.2% O2 where PSI solids stop, at 25.4-31.0% O2 and 7.85-10.53 psia (V-2, V-3, V-4, VI-2, VI-3, VI-4). VI-1 (Nomex fabric, 31.9% O2, did not ignite) has no stated pressure.",
+   "title": "NASA's most habitat-relevant solid fire tests are not in PSI"
   }
  ]
 }

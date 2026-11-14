@@ -92,6 +92,24 @@ class AskTest(unittest.TestCase):
         self.assertGreater(len(self.ask.CORPUS), 0)
         self.assertEqual(self.ask.MODEL, "claude-opus-5-5")
 
+    def test_outside_psi_document_citation_maps_and_context_validates(self):
+        corpus = self.ask.CORPUS
+        index = len(corpus) - 1
+        self.assertEqual(corpus[index]["psi_id"], "NTRS-SAFFIRE-IV-VI")
+        self.assertEqual(self.ask.psi_id_for(index, corpus), "NTRS-SAFFIRE-IV-VI")
+        self.assertEqual(self.ask.psi_id_for(0, corpus), corpus[0]["psi_id"])
+        response = SimpleNamespace(content=[text_block("Saffire VI-2 burned at 31.0 percent O2.", [citation(index, "Saffire VI-2 (NTRS 20250002675)", corpus[index]["title"])])],
+                                   stop_reason="end_turn", model="m")
+        answer, citations = self.ask.parse_response(response, corpus)
+        self.assertEqual(citations[0]["psi_id"], "NTRS-SAFFIRE-IV-VI")
+        self.assertEqual(citations[0]["title"], corpus[index]["title"])
+        sentence, error = self.ask.validate_context({"context": {"page": "investigation", "psi_id": corpus[0]["psi_id"]}}, corpus)
+        self.assertIsNone(error)
+        sentence, error = self.ask.validate_context({"context": {"page": "home"}}, corpus)
+        self.assertIsNone(error)
+        sentence, error = self.ask.validate_context({"context": {"page": "investigation", "psi_id": "PSI-9999"}}, corpus)
+        self.assertIsNotNone(error)
+
     def test_validate_question(self):
         v = self.ask.validate_question
         self.assertEqual(v({"question": "  hello  "}), ("hello", None))
