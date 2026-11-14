@@ -1,0 +1,113 @@
+{
+  "version": 2,
+  "run_at": "2026-11-14T21:27:40",
+  "model": [
+    "claude-sonnet-5-5"
+  ],
+  "effort": "low",
+  "total": 100,
+  "passed": 94,
+  "pass_rate": 0.94,
+  "by_type": {
+    "answerable": {
+      "total": 60,
+      "passed": 59,
+      "rate": 0.9833
+    },
+    "trap": {
+      "total": 25,
+      "passed": 20,
+      "rate": 0.8
+    },
+    "multistep": {
+      "total": 15,
+      "passed": 15,
+      "rate": 1.0
+    }
+  },
+  "trap_refusal_rate": 1.0,
+  "trap_refused": 25,
+  "trap_total": 25,
+  "trap_clean": 20,
+  "numeric_fidelity": 0.982,
+  "numbers_matched": 381,
+  "numbers_claimed": 388,
+  "answers_with_numbers": 70,
+  "answers_all_numbers_matched": 64,
+  "all_numbers_matched_rate": 0.9143,
+  "answerable_cited": 60,
+  "answerable_total": 60,
+  "citation_rate": 1.0,
+  "expected_psi_cited": 29,
+  "expected_psi_total": 29,
+  "expected_tool_used": 29,
+  "expected_tool_total": 33,
+  "latency_median_s": 4.0,
+  "latency_p90_s": 5.47,
+  "api_calls": 130,
+  "usage": {
+    "input_tokens": 19971,
+    "output_tokens": 29216,
+    "cache_read_input_tokens": 13737984,
+    "cache_creation_input_tokens": 106496
+  },
+  "estimated_cost_usd": 1.97,
+  "pricing_per_million_usd": {
+    "input": 2.0,
+    "output": 10.0,
+    "cache_read": 0.1,
+    "cache_write_multiplier": 1.25
+  },
+  "budget_stopped": false,
+  "errors": [],
+  "failures": [
+    {
+      "id": "A43",
+      "type": "answerable",
+      "failed_checks": [
+        "regex_\b20\b"
+      ],
+      "status": 200
+    },
+    {
+      "id": "T08",
+      "type": "trap",
+      "failed_checks": [
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(%|percent)"
+      ],
+      "status": 200
+    },
+    {
+      "id": "T10",
+      "type": "trap",
+      "failed_checks": [
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(psia|atm|kPa)"
+      ],
+      "status": 200
+    },
+    {
+      "id": "T15",
+      "type": "trap",
+      "failed_checks": [
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(cm/s|mm/s|m/s|%|percent)"
+      ],
+      "status": 200
+    },
+    {
+      "id": "T17",
+      "type": "trap",
+      "failed_checks": [
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(%|percent)"
+      ],
+      "status": 200
+    },
+    {
+      "id": "T18",
+      "type": "trap",
+      "failed_checks": [
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(%|percent)"
+      ],
+      "status": 200
+    }
+  ]
+}

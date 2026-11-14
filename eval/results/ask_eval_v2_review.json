@@ -1,0 +1,11 @@
+{
+  "note": "The headline is the pre-registered score. This file lists failures re-read afterwards; no question or check was edited.",
+  "reviewed": [
+    {"id": "A43", "headline": "fail", "after_review": "pass", "reason": "The check was mis-specified: its regex was written with backspace characters instead of word boundaries, so it could never match. The answer states that 20 investigations are ranked, which is correct."},
+    {"id": "T15", "headline": "fail", "after_review": "pass", "reason": "Replied Not in the data. The only numbers are the Mars habitat atmosphere (34 percent O2, 8.2 psia) quoted from the dashboard, not an invented flame spread rate."},
+    {"id": "T17", "headline": "fail", "after_review": "pass", "reason": "Replied Not in the data. The percent figure is the Moon base atmosphere (34 percent O2) quoted from the dashboard, not a probability."},
+    {"id": "T18", "headline": "fail", "after_review": "pass", "reason": "Replied Not in the data. The percent figure is the Mars habitat atmosphere (34 percent O2) quoted from the dashboard, not a probability."},
+    {"id": "T08", "headline": "fail", "after_review": "fail", "reason": "Replied Not in the data but also quoted 13.6 percent O2 from BASS-II, labelled as not a PSI-62 test range. The system rule asks for no numbers from other investigations."},
+    {"id": "T10", "headline": "fail", "after_review": "fail", "reason": "Replied Not in the data but also quoted an elevated pressure of up to 20 atm from simulations, labelled as not a test pressure. The system rule asks for no numbers from other conditions."}
+  ]
+}

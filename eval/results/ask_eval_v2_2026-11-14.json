@@ -1,0 +1,4778 @@
+{
+  "summary": {
+    "version": 2,
+    "run_at": "2026-11-14T21:27:40",
+    "model": [
+      "claude-sonnet-5-5"
+    ],
+    "effort": "low",
+    "total": 100,
+    "passed": 94,
+    "pass_rate": 0.94,
+    "by_type": {
+      "answerable": {
+        "total": 60,
+        "passed": 59,
+        "rate": 0.9833
+      },
+      "trap": {
+        "total": 25,
+        "passed": 20,
+        "rate": 0.8
+      },
+      "multistep": {
+        "total": 15,
+        "passed": 15,
+        "rate": 1.0
+      }
+    },
+    "trap_refusal_rate": 1.0,
+    "trap_refused": 25,
+    "trap_total": 25,
+    "trap_clean": 20,
+    "numeric_fidelity": 0.982,
+    "numbers_matched": 381,
+    "numbers_claimed": 388,
+    "answers_with_numbers": 70,
+    "answers_all_numbers_matched": 64,
+    "all_numbers_matched_rate": 0.9143,
+    "answerable_cited": 60,
+    "answerable_total": 60,
+    "citation_rate": 1.0,
+    "expected_psi_cited": 29,
+    "expected_psi_total": 29,
+    "expected_tool_used": 29,
+    "expected_tool_total": 33,
+    "latency_median_s": 4.0,
+    "latency_p90_s": 5.47,
+    "api_calls": 130,
+    "usage": {
+      "input_tokens": 19971,
+      "output_tokens": 29216,
+      "cache_read_input_tokens": 13737984,
+      "cache_creation_input_tokens": 106496
+    },
+    "estimated_cost_usd": 1.97,
+    "pricing_per_million_usd": {
+      "input": 2.0,
+      "output": 10.0,
+      "cache_read": 0.1,
+      "cache_write_multiplier": 1.25
+    },
+    "budget_stopped": false,
+    "errors": [],
+    "failures": [
+      {
+        "id": "A43",
+        "type": "answerable",
+        "failed_checks": [
+          "regex_\b20\b"
+        ],
+        "status": 200
+      },
+      {
+        "id": "T08",
+        "type": "trap",
+        "failed_checks": [
+          "forbidden_absent_\\d+(\\.\\d+)?\\s*(%|percent)"
+        ],
+        "status": 200
+      },
+      {
+        "id": "T10",
+        "type": "trap",
+        "failed_checks": [
+          "forbidden_absent_\\d+(\\.\\d+)?\\s*(psia|atm|kPa)"
+        ],
+        "status": 200
+      },
+      {
+        "id": "T15",
+        "type": "trap",
+        "failed_checks": [
+          "forbidden_absent_\\d+(\\.\\d+)?\\s*(cm/s|mm/s|m/s|%|percent)"
+        ],
+        "status": 200
+      },
+      {
+        "id": "T17",
+        "type": "trap",
+        "failed_checks": [
+          "forbidden_absent_\\d+(\\.\\d+)?\\s*(%|percent)"
+        ],
+        "status": 200
+      },
+      {
+        "id": "T18",
+        "type": "trap",
+        "failed_checks": [
+          "forbidden_absent_\\d+(\\.\\d+)?\\s*(%|percent)"
+        ],
+        "status": 200
+      }
+    ]
+  },
+  "records": [
+    {
+      "id": "A01",
+      "type": "answerable",
+      "question": "Who is the principal investigator of ACME Flame Design?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The principal investigator of ACME Flame Design (PSI-10) is Richard L. Axelbaum [1].\n\n- The platform is the ISS. [2]\n- The hardware is ACME and the Combustion Integrated Rack (CIR). [3]",
+      "citations": [
+        {
+          "psi_id": "PSI-10",
+          "cited_text": "Principal investigators: Richard L. Axelbaum"
+        },
+        {
+          "psi_id": "PSI-10",
+          "cited_text": "Platform: ISS"
+        },
+        {
+          "psi_id": "PSI-10",
+          "cited_text": "Hardware: Advanced Combustion via Microgravity Experiments (ACME), Combustion Integrated Rack (CIR), Reconfiguration of Combustion Integrated Rack (CIR)"
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 4.63,
+      "api_latency_s": 4.61,
+      "usage": {
+        "input_tokens": 24,
+        "output_tokens": 179,
+        "cache_read_input_tokens": 0,
+        "cache_creation_input_tokens": 106496
+      },
+      "cost_usd": 0.2681,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A02",
+      "type": "answerable",
+      "question": "What ambient oxygen range did the ACME Burning Rate Emulator test?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The ACME BRE (PSI-20) tested ambient O2 from 0.21 to 0.4 mole fraction (21 to 40%), across 18 rows [1].\n\n- Only three distinct values appear: 0.21, 0.34 and 0.4. [2]\n- O2 was held as ambient in every row. [3] Oxidizer-stream O2 is not recorded. [4]\n- Pressure is not recorded in the table. [5]",
+      "citations": [
+        {
+          "psi_id": "PSI-20",
+          "cited_text": "Ambient O2 tested (mole fraction): 0.21 to 0.4  (n=18, rows 1-18, PSI-20_Experimental table_ACME BRE.csv)."
+        },
+        {
+          "psi_id": "PSI-20",
+          "cited_text": "Oxygen (mole fraction): varied, 3 distinct values (0.21, 0.34, 0.4)."
+        },
+        {
+          "psi_id": "PSI-20",
+          "cited_text": "O2 basis (ambient or oxidizer stream): held constant at ambient."
+        },
+        {
+          "psi_id": "PSI-20",
+          "cited_text": "Oxidizer-stream O2 tested (mole fraction, a different quantity): not recorded."
+        },
+        {
+          "psi_id": "PSI-20",
+          "cited_text": "Pressure tested: not recorded."
+        }
+      ],
+      "citation_count": 5,
+      "number_check": {
+        "total": 6,
+        "matched": 6,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.37,
+      "api_latency_s": 3.37,
+      "usage": {
+        "input_tokens": 31,
+        "output_tokens": 273,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0134,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "regex_(\\b21\\b|0\\.21)": true,
+        "regex_(\\b40\\b|0\\.4\\b)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A03",
+      "type": "answerable",
+      "question": "Who led the ACME Coflow Laminar Diffusion Flame (CLD Flame) investigation?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Marshall B. Long [1] led the ACME CLD Flame investigation (PSI-21).\n\n- The platform was the ISS. [2]\n- The hardware was the Combustion Integrated Rack (CIR) and ACME. [3]",
+      "citations": [
+        {
+          "psi_id": "PSI-21",
+          "cited_text": "Principal investigators: Marshall B. Long"
+        },
+        {
+          "psi_id": "PSI-21",
+          "cited_text": "Platform: ISS"
+        },
+        {
+          "psi_id": "PSI-21",
+          "cited_text": "Hardware: Combustion Integrated Rack (CIR), ACME"
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 4.66,
+      "api_latency_s": 4.66,
+      "usage": {
+        "input_tokens": 40,
+        "output_tokens": 181,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0125,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A04",
+      "type": "answerable",
+      "question": "Which investigator led the ACME electric-field flames investigation?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Derek Dunn-Rankin led it. The principal investigator for PSI-22 (ACME E-FIELD Flames) is Derek Dunn-Rankin. [1]\n\n- It flew on the ISS, using the Combustion Integrated Rack (CIR) and ACME hardware. [2]",
+      "citations": [
+        {
+          "psi_id": "PSI-22",
+          "cited_text": "Principal investigators: Derek Dunn-Rankin"
+        },
+        {
+          "psi_id": "PSI-22",
+          "cited_text": "Platform: ISSHardware: Combustion Integrated Rack (CIR), ACME"
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 4.48,
+      "api_latency_s": 4.48,
+      "usage": {
+        "input_tokens": 25,
+        "output_tokens": 189,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0126,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A05",
+      "type": "answerable",
+      "question": "What oxygen range and pressure did ACME s-Flame test?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "PSI-23 tested ambient O2 of 0.21 to 0.3 mole fraction (21 to 30%) at a constant pressure of 1 atm.\n\n- Ambient O2 ran 0.21 to 0.3 mole fraction (n=18). [1] Only two distinct values were used, 0.21 and 0.3. [2]\n- Pressure was 1 to 1 atm (n=18). [3]\n- Oxidizer-stream O2 was not recorded. [4]",
+      "citations": [
+        {
+          "psi_id": "PSI-23",
+          "cited_text": "Ambient O2 tested (mole fraction): 0.21 to 0.3  (n=18, rows 1-18, PSI-23_Experimental table_ACME s-Flame.csv)."
+        },
+        {
+          "psi_id": "PSI-23",
+          "cited_text": "Oxygen (mole fraction): varied, 2 distinct values (0.21, 0.3)."
+        },
+        {
+          "psi_id": "PSI-23",
+          "cited_text": "Pressure tested: 1 to 1 atm (n=18, rows 1-18, PSI-23_Experimental table_ACME s-Flame.csv)."
+        },
+        {
+          "psi_id": "PSI-23",
+          "cited_text": "Oxidizer-stream O2 tested (mole fraction, a different quantity): not recorded."
+        }
+      ],
+      "citation_count": 4,
+      "number_check": {
+        "total": 6,
+        "matched": 6,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.4,
+      "api_latency_s": 3.4,
+      "usage": {
+        "input_tokens": 26,
+        "output_tokens": 269,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0134,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "regex_(\\b21\\b|0\\.21)": true,
+        "regex_(\\b30\\b|0\\.3\\b)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A06",
+      "type": "answerable",
+      "question": "What was the lowest ambient oxygen fraction tested in BASS-II?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The lowest ambient oxygen fraction tested in BASS-II was 0.136 (13.6% O2), as recorded in the unified conditions table.\n\n- Ambient O2 tested ranges from 0.136 to 0.222 (n=129 rows). [1]\n- The report says steady spreading was obtained at 13.6% oxygen in BASS-II, compared with a 1g blowoff for the 1/4\" rod at 16% oxygen. [2]\n- This is an ambient O2 value, not a MOC, LOI or extinction O2 value.",
+      "citations": [
+        {
+          "psi_id": "PSI-25",
+          "cited_text": "Ambient O2 tested (mole fraction): 0.136 to 0.222  (n=129, rows 1-129, PSI-25_Experimental table_BASS-II.csv)."
+        },
+        {
+          "psi_id": "PSI-25",
+          "cited_text": "Key result, verbatim from NTRS 20160000593 (Combustion of Solids in Microgravity: Results from the BASS-II Experiment): \"The 1g blowoff for the 1/4\" rod is at 16% oxygen, whereas we obtained steady spreading at 13.6% oxygen in BASS-II.\""
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 5,
+        "matched": 5,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.29,
+      "api_latency_s": 3.29,
+      "usage": {
+        "input_tokens": 30,
+        "output_tokens": 262,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0133,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A07",
+      "type": "answerable",
+      "question": "Who is the principal investigator of BASS (Burning and Suppression of Solids)?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The principal investigator of BASS is Paul Ferkul [1].\n\n- BASS ran on the ISS, using the Microgravity Science Glovebox. [2]\n- BASS-II is a separate investigation, and its record in the documents doesn't name a principal investigator.",
+      "citations": [
+        {
+          "psi_id": "PSI-26",
+          "cited_text": "Principal investigators: Paul Ferkul"
+        },
+        {
+          "psi_id": "PSI-26",
+          "cited_text": "Platform: ISSHardware: Microgravity Science Glovebox"
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.69,
+      "api_latency_s": 3.69,
+      "usage": {
+        "input_tokens": 33,
+        "output_tokens": 166,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0124,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A08",
+      "type": "answerable",
+      "question": "What pressure range did the Cool Flames Investigation (CFI) test?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "CFI's table rows span 0.5 to 5 atm. This is the pressure range tested in PSI-39. Pressure tested: 0.5 to 5 atm (n=87, rows 1-87) [1].\n\n- The table lists 7 distinct pressure values (0.5, 0.75, 1, 1.25, 2, 3). [2]\n- The objectives and the test-conditions text give different ranges from the table. The objectives cite 0.25 atm to 5 atm. [3] The test-conditions text says the chamber gas mixture ranges from 0.25 to 0.5 atm. [4]\n- Not covered: the ambient O2 values are separate. Ambient O2 ran from 0.17 to 0.21 mole fraction. [5]",
+      "citations": [
+        {
+          "psi_id": "PSI-39",
+          "cited_text": "Pressure tested: 0.5 to 5 atm (n=87, rows 1-87, PSI-39_Experimental table_CFI.csv)."
+        },
+        {
+          "psi_id": "PSI-39",
+          "cited_text": "Pressure (atm): varied, 7 distinct values (0.5, 0.75, 1, 1.25, 2, 3)."
+        },
+        {
+          "psi_id": "PSI-39",
+          "cited_text": "1) Examine the combustion behavior of n-dodecane and mixtures of n-dodecane/iso-dodecane at pressures ranging from 0.25 atm to 5 atm."
+        },
+        {
+          "psi_id": "PSI-39",
+          "cited_text": "Test conditions: The Combustion Integrated Rack (CIR) contains the Multi-User Droplet Combustion Apparatus (MDCA) which facilitates the controlled combustion of fuel droplets. A system of gas bottles and fuel syringes delivers the desired gas mixture to the combustion chamber ranging from 0.25 to 0."
+        },
+        {
+          "psi_id": "PSI-39",
+          "cited_text": "Ambient O2 tested (mole fraction): 0.17 to 0.21  (n=87, rows 1-87, PSI-39_Experimental table_CFI.csv)."
+        }
+      ],
+      "citation_count": 5,
+      "number_check": {
+        "total": 13,
+        "matched": 13,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.67,
+      "api_latency_s": 3.66,
+      "usage": {
+        "input_tokens": 29,
+        "output_tokens": 366,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0144,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "regex_0\\.5\\b": true,
+        "regex_\\b5\\b": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A09",
+      "type": "answerable",
+      "question": "What aerosol and instrument were used in DAFT?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "DAFT used Arizona Road Dust as the aerosol and a modified TSI P-Trak particle counter as the instrument.\n\n- **Aerosol:** Arizona Red Dust (ARD) was chosen as an aerosol standard due to its ease of dispersion, and it was aerosolized with GN2 to create particle samples held in 15-liter Mylar bags. [1]\n- **Instrument:** The TSI P-Trak was modified for microgravity by redesigning the condenser tube to use capillary forces to recycle isopropyl alcohol, and by removing the mercury switch that detects instrument orientation. [2]\n- **Comparison:** The modified P-Trak's particle counts were compared with a DustTrak CNC designed to work in microgravity. [3]",
+      "citations": [
+        {
+          "psi_id": "PSI-47",
+          "cited_text": "2) Aerosol Generation: Arizona Red Dust (ARD) was chosen as an aerosol standard due to its ease of dispersion. The ARD was aerosolized with GN2 to create particle samples. The aerosol was contained within 15-liter Mylar bags."
+        },
+        {
+          "psi_id": "PSI-47",
+          "cited_text": "1) Modification of Instrumentation: TSI P-Trak was modified for use in microgravity by redesigning the condenser tube to use capillary forces for recycling isopropyl alcohol and removing the mercury switch responsible for detecting instrument orientation."
+        },
+        {
+          "psi_id": "PSI-47",
+          "cited_text": "3) On-Orbit Testing: The modified P-Trak gathered data from counting aerosol particles and these data were compared to the DustTrak CNC specifically designed to work in microgravity."
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 1,
+        "matched": 1,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 4.3,
+      "api_latency_s": 4.3,
+      "usage": {
+        "input_tokens": 22,
+        "output_tokens": 347,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0142,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A10",
+      "type": "answerable",
+      "question": "What does investigation PSI-60 study?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "PSI-60 is a ground investigation that derives soot temperature and soot volume fraction from SPICE data. It uses computation and experiment together to do this.\n\n- It sought to understand what drives the large discrepancy between soot formation in 1g and 0g flames. [1]\n- It analyzed over 1600 raw DSLR images and used advanced soot models to study soot formation, oxidation, radiative re-absorption and aggregate growth. [2]\n- Color-ratio pyrometry gave the soot temperature fields. Simulations covered Yale and ACME burner configurations under normal and microgravity conditions. [3]\n\nThe investigation has no rows in the unified test table, so there are no test conditions to report. It has no rows in the unified conditions table. [4]",
+      "citations": [
+        {
+          "psi_id": "PSI-60",
+          "cited_text": "Objectives: This ground investigation  sought to increase understanding of the issues that control the large discrepancy between soot formation in 1g and in 0g flames. The objective of this investigation was to integrate computational and experimental methods to derive temperature distributions and "
+        },
+        {
+          "psi_id": "PSI-60",
+          "cited_text": "By analyzing over 1600 raw DSLR images and incorporating advanced soot models, the study sought to improve understanding of soot formation, oxidation, radiative re-absorption, and aggregate growth in heavily sooting flames."
+        },
+        {
+          "psi_id": "PSI-60",
+          "cited_text": "Approach: The approach  was to combine image processing, experimental diagnostics, and detailed soot modeling. Raw Nikon NEF images were decoded into three color channels and analyzed using color-ratio pyrometry to extract soot temperature fields. Absolute light calibration from SPICE was then used "
+        },
+        {
+          "psi_id": "PSI-60",
+          "cited_text": "This investigation has no rows in the unified conditions table."
+        }
+      ],
+      "citation_count": 4,
+      "number_check": {
+        "total": 1,
+        "matched": 1,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 4.64,
+      "api_latency_s": 4.64,
+      "usage": {
+        "input_tokens": 18,
+        "output_tokens": 361,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0143,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A11",
+      "type": "answerable",
+      "question": "What does investigation PSI-62 model?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "PSI-62 models concurrent flame spread in microgravity. It does this with unsteady flamelet generated manifold (UFGM) techniques. Its objective was to develop and validate new flamelet generated manifold (FGM) modeling techniques for concurrent flame spread in microgravity. [1]\n\n- The method was tested on BASS geometries: flat sheets, spheres, rod-shaped PMMA samples, and wax cylinders. [2]\n- BASS and BASS-II imagery was post-processed with two-color tomography, giving 3D soot and temperature fields to compare with model predictions. [3]\n- The model was judged on flame geometry, temperature distribution, soot volume fraction and flame spread rate. It put special emphasis on reproducing the \"Goldilocks\" flammability zone. [4]",
+      "citations": [
+        {
+          "psi_id": "PSI-62",
+          "cited_text": "Objectives: The objective of this research was to develop and validate new flamelet generated manifold (FGM) modeling techniques for concurrent flame spread in microgravity. Concurrent flame spread presented one of the greatest modeling challenges in combustion science due to the intricate coupling "
+        },
+        {
+          "psi_id": "PSI-62",
+          "cited_text": "Within this framework, the unsteady FGM method was implemented and tested on various BASS geometries, including flat sheets, spheres, and rod-shaped polymethyl methacrylate (PMMA) samples, as well as wax cylinders."
+        },
+        {
+          "psi_id": "PSI-62",
+          "cited_text": "Experimental imagery found in PSI from the BASS and BASS-II investigations was post-processed using newly developed two-color tomography methods with DSLR cameras, enabling 3D reconstructions of soot and temperature fields for direct comparison to model predictions."
+        },
+        {
+          "psi_id": "PSI-62",
+          "cited_text": "The evaluation metrics included flame geometry, temperature distribution, soot volume fraction, and flame spread rate, with special emphasis on reproducing the \"Goldilocks\" flammability zone reported by Olson and Ferkul."
+        }
+      ],
+      "citation_count": 4,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 4.22,
+      "api_latency_s": 4.21,
+      "usage": {
+        "input_tokens": 18,
+        "output_tokens": 374,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0144,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A12",
+      "type": "answerable",
+      "question": "What oxygen range did FLEX-2 test?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "FLEX-2 (PSI-68) recorded ambient O2 of 0.17 to 0.3 mole fraction (17 to 30%) in its 8 table rows. Ambient O2 tested (mole fraction): 0.17 to 0.3 (n=8) [1].\n\n- The planned chamber range was wider: O2 concentration between 0.1 to 0.4 mole fraction with the diluent gas making up the balance [2].\n- The O2 basis is ambient [3]. Oxidizer-stream O2 is not recorded [4].\n- The table does not record pressure for these rows.",
+      "citations": [
+        {
+          "psi_id": "PSI-68",
+          "cited_text": "Ambient O2 tested (mole fraction): 0.17 to 0.3  (n=8, rows 1-8, PSI-68_Experimental table_Flex2.csv)."
+        },
+        {
+          "psi_id": "PSI-68",
+          "cited_text": "Approach: The chamber was filled with the appropriate atmosphere, which was varied in pressure between 0.5 atm to 3.0 atm and O2 concentration between 0.1 to 0.4 mole fraction with the diluent gas making up the balance. A settling time of approximately 2 minutes  elapsed prior to initiating the test"
+        },
+        {
+          "psi_id": "PSI-68",
+          "cited_text": "O2 basis (ambient or oxidizer stream): held constant at ambient."
+        },
+        {
+          "psi_id": "PSI-68",
+          "cited_text": "Oxidizer-stream O2 tested (mole fraction, a different quantity): not recorded."
+        }
+      ],
+      "citation_count": 4,
+      "number_check": {
+        "total": 7,
+        "matched": 7,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 4.03,
+      "api_latency_s": 3.99,
+      "usage": {
+        "input_tokens": 21,
+        "output_tokens": 312,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0138,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "regex_(\\b17\\b|0\\.17)": true,
+        "regex_(\\b30\\b|0\\.3\\b)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A13",
+      "type": "answerable",
+      "question": "What pressure range did FLEX test?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "FLEX (PSI-69) tested 0.6925 to 3.0525 atm [1].\n\n- That range covers 273 of the 274 table rows. The remaining row has no pressure recorded.\n- The planned LOI procedure called for a test pressure of 0.5 to 1.5 atm [2]. The table's recorded range is wider than that.\n- Pressure is the ambient chamber pressure. All of this data is microgravity.",
+      "citations": [
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Pressure tested: 0.6925 to 3.0525 atm (n=273, rows 1-274, PSI-69_Experimental table_FLEX.csv)."
+        },
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "1. Select the test pressure (0.5  1.5 atm) for the LOI tests."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 6,
+        "matched": 6,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 4.11,
+      "api_latency_s": 4.11,
+      "usage": {
+        "input_tokens": 17,
+        "output_tokens": 211,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0128,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "regex_0\\.69": true,
+        "regex_3\\.05": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A14",
+      "type": "answerable",
+      "question": "What platform and airflow speed did SAFFIRE-I use?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "SAFFIRE-I flew on the Cygnus resupply vehicle at an air flow velocity of 20 cm/s.\n\n- The experiment was performed on Orbital Science's Cygnus resupply vehicle after it deberthed from the ISS. [1]\n- Saffire-I was conducted at an air flow velocity of 20 cm/s. [2]\n- Flow direction varied between concurrent and opposed. [3]",
+      "citations": [
+        {
+          "psi_id": "PSI-98",
+          "cited_text": "Approach: The Saffire-1 experiments was performed on the Orbital Science's Cygnus resupply vehicle after it deberthed from the ISS. The sample material for Saffire-I is a composite fabric called Sibal consisting of cotton on a fiberglass substrate (75% cotton, 25% fiberglass by weight)."
+        },
+        {
+          "psi_id": "PSI-98",
+          "cited_text": "Air is drawn through the flow duct by fans located at the top of the duct with flow straighteners at the bottom of the experiment module. Saffire-I was conducted at an air flow velocity of 20 cm/s. Once the sample was ignited flame images were captured using two cameras."
+        },
+        {
+          "psi_id": "PSI-98",
+          "cited_text": "Flow direction: varied, 2 distinct values (concurrent, opposed)."
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 1,
+        "matched": 1,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.0,
+      "api_latency_s": 2.99,
+      "usage": {
+        "input_tokens": 26,
+        "output_tokens": 247,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0132,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "regex_Cygnus": true,
+        "regex_\\b20\\b": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A15",
+      "type": "answerable",
+      "question": "How many rows does SAFFIRE-II have in the unified table and what ambient oxygen range does it cover?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "SAFFIRE-II (PSI-99) has 15 rows in the unified table. Its ambient O2 range is 0.215 to 0.221 mole fraction (21.5 to 22.1%).\n\n- The unified table has 15 rows, and an outcome is recorded in 4 of them. [1]\n- The ambient O2 range comes from 9 rows (n=9). [2] The other 6 rows have no ambient O2 recorded.\n- Pressure is not recorded. [3]",
+      "citations": [
+        {
+          "psi_id": "PSI-99",
+          "cited_text": "Rows in the unified conditions table: 15 (outcome recorded in 4)."
+        },
+        {
+          "psi_id": "PSI-99",
+          "cited_text": "Ambient O2 tested (mole fraction): 0.215 to 0.221  (n=9, rows 1-9, PSI-99_Experimental table_SAFFIRE-2.csv)."
+        },
+        {
+          "psi_id": "PSI-99",
+          "cited_text": "Pressure tested: not recorded."
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 8,
+        "matched": 7,
+        "unmatched": [
+          "6"
+        ]
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 4.31,
+      "api_latency_s": 4.31,
+      "usage": {
+        "input_tokens": 40,
+        "output_tokens": 267,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0134,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "regex_\\b15\\b": true,
+        "regex_(21\\.5|0\\.215)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A16",
+      "type": "answerable",
+      "question": "What airflow speed did SAFFIRE-III use?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "SAFFIRE-III used an airflow velocity of 30 cm/s. The experiments were conducted at 30 cm/s, compared with 20 cm/s during Saffire I. [1]\n\n- The flow was either concurrent or opposed. [1]\n- The test table records a flow speed of 30 to 30 cm/s across its 2 rows. [2]",
+      "citations": [
+        {
+          "psi_id": "PSI-100",
+          "cited_text": "Approach: The Saffire-III experiments were performed on the Orbital Science's Cygnus resupply vehicle after it deberthed from the ISS. As a follow on to the Saffire 1 investigation, the Saffire III investigation also used SIBAL as the sample material. However, the experiments were conducted at a flo"
+        },
+        {
+          "psi_id": "PSI-100",
+          "cited_text": "Flow speed tested: 30 to 30 cm/s (n=2, rows 1-2, PSI-100_Experimental table_SAFFIRE-3.csv)."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 3,
+        "matched": 3,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 4.01,
+      "api_latency_s": 4.01,
+      "usage": {
+        "input_tokens": 23,
+        "output_tokens": 225,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0129,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "regex_\\b30\\b": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A17",
+      "type": "answerable",
+      "question": "What range of flow speeds did SAME-R test?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "SAME-R tested flow speeds from 0 to 8.1 cm/s. The range is 0 to 8.1 cm/s across 109 rows. [1]\n\n- The table lists 5 distinct values: 0, 1, 2, 8 and 8.1 cm/s. [2]\n- The test conditions were broadened to include no-flow during sample heating. [3]\n- The documents don't cover the flow direction. Flow direction is not recorded in the table. [4]",
+      "citations": [
+        {
+          "psi_id": "PSI-101",
+          "cited_text": "Flow speed tested: 0 to 8.1 cm/s (n=109, rows 1-109, PSI-101_Experimental table_SAME-R.csv)."
+        },
+        {
+          "psi_id": "PSI-101",
+          "cited_text": "Flow speed (cm/s): varied, 5 distinct values (0, 1, 2, 8, 8.1)."
+        },
+        {
+          "psi_id": "PSI-101",
+          "cited_text": "Pyrell, an intumescent fire-retardant foam by Foamex, was introduced to replace DBP samples, 2) test conditions were broadened including higher heating temperatures and no-flow during sample heating time, and 3) a new instrument, M-pass, developed in-house GRC, was used to replace one of the two Com"
+        },
+        {
+          "psi_id": "PSI-101",
+          "cited_text": "Flow direction: not recorded in the table."
+        }
+      ],
+      "citation_count": 4,
+      "number_check": {
+        "total": 8,
+        "matched": 8,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.02,
+      "api_latency_s": 3.02,
+      "usage": {
+        "input_tokens": 21,
+        "output_tokens": 255,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0132,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "regex_8\\.1": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A18",
+      "type": "answerable",
+      "question": "What range of flow speeds did the SAME investigation test?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "SAME tested flow speeds of 5 to 10 cm/s.\n\n- The table records flow speeds of 5 to 10 cm/s (n=4, rows 1-4). [1]\n- Only 2 distinct values appear, 5 and 10 cm/s. [2]\n- Not covered: the other 4 of the 8 rows have no recorded flow speed. The table has 8 rows in total. [3]",
+      "citations": [
+        {
+          "psi_id": "PSI-102",
+          "cited_text": "Flow speed tested: 5 to 10 cm/s (n=4, rows 1-4, PSI-102_Experimental table_SAME.csv)."
+        },
+        {
+          "psi_id": "PSI-102",
+          "cited_text": "Flow speed (cm/s): varied, 2 distinct values (5, 10)."
+        },
+        {
+          "psi_id": "PSI-102",
+          "cited_text": "Rows in the unified conditions table: 8 (outcome recorded in 0)."
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 7,
+        "matched": 7,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.49,
+      "api_latency_s": 3.49,
+      "usage": {
+        "input_tokens": 23,
+        "output_tokens": 218,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0129,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "regex_\\b5\\b": true,
+        "regex_\\b10\\b": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A19",
+      "type": "answerable",
+      "question": "Who is the principal investigator of SLICE?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The principal investigator of SLICE (Structure and Liftoff In Combustion Experiment, PSI-106) is Marshall Long [1].\n\n- The platform is the ISS. [2]\n- The investigation aims to better understand the structure and stability of laminar diffusion flames in microgravity. [3]",
+      "citations": [
+        {
+          "psi_id": "PSI-106",
+          "cited_text": "Principal investigators: Marshall Long"
+        },
+        {
+          "psi_id": "PSI-106",
+          "cited_text": "Platform: ISS"
+        },
+        {
+          "psi_id": "PSI-106",
+          "cited_text": "Objectives: Objective: The objective of this investigation is to better understand the structure and stability of laminar diffusion flames in microgravity."
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 2.76,
+      "api_latency_s": 2.75,
+      "usage": {
+        "input_tokens": 20,
+        "output_tokens": 191,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0126,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A20",
+      "type": "answerable",
+      "question": "What range of flow speeds did SPICE test?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "SPICE's tests covered flow speeds of 0.28 to 85.28 cm/s. That range comes from 444 of its rows. [1]\n\n- The stated co-flow velocities in the approach run from 5.4 cm/s to 65 cm/s. [2] That is narrower than the table range.\n- The table lists 62 distinct flow-speed values. [3]\n- Not covered: flow direction. It is not recorded in the table. [4]",
+      "citations": [
+        {
+          "psi_id": "PSI-107",
+          "cited_text": "Flow speed tested: 0.28 to 85.28 cm/s (n=444, rows 1-469, PSI-107_Experimental table_Spice.csv)."
+        },
+        {
+          "psi_id": "PSI-107",
+          "cited_text": "Each flame was ignited in a controlled co-flow air environment, with burner diameters of 0.41 mm, 0.76 mm, and 1.6 mm and co-flow velocities ranging from 5.4 cm/s to 65 cm/s. Fuel flow rates were adjusted to identify the smoke point, marked by the flame's transition to emitting soot. Data such as fl"
+        },
+        {
+          "psi_id": "PSI-107",
+          "cited_text": "Flow speed (cm/s): varied, 62 distinct values (0.3, 0.7, 4.4, 5.9, 6.3, 7.2)."
+        },
+        {
+          "psi_id": "PSI-107",
+          "cited_text": "Flow direction: not recorded in the table."
+        }
+      ],
+      "citation_count": 4,
+      "number_check": {
+        "total": 6,
+        "matched": 6,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.48,
+      "api_latency_s": 3.45,
+      "usage": {
+        "input_tokens": 20,
+        "output_tokens": 249,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0132,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "regex_0\\.28": true,
+        "regex_85\\.[23]": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A21",
+      "type": "answerable",
+      "question": "What is investigation PSI-115 about?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "PSI-115 is a ground-based numerical simulation study of how gravity affects smoke growth from pyrolysis. It used numerical simulation to explore the influence of gravity on pyrolysis smoke growth, to quantify the differences between microgravity and Earth-gravity smoke, and to identify the fluid dynamic mechanisms behind them. [1]\n\n- **Method:** It simulated the formation and growth of dibutyl-phthalate (DBP) particles using direct numerical simulation. The smoke originates from pyrolysis vapor expelled from a heated sample, in a geometry similar to the SAME experiments. [2]\n- **Hypothesis:** Without buoyancy, mixing and heat transfer are reduced. This alters the time-temperature history and particle trajectories, which changes the composition of the smoke. [3]\n- **Data and impact:** It has no rows in the unified conditions table. [4] The models are meant to lead to better smoke detection devices. [5]",
+      "citations": [
+        {
+          "psi_id": "PSI-115",
+          "cited_text": "Objectives: The objective of this investigation was to use numerical simulation to explore the influence of gravity on pyrolysis smoke growth from a fundamental perspective. The intention of this effort is to quantify the differences between microgravity and Earth gravity smoke, and to identify the "
+        },
+        {
+          "psi_id": "PSI-115",
+          "cited_text": "Approach: The formation and growth of dibutyl-phthalate (DBP) particles in Earth gravity and microgravity environments was simulated. Direct numerical simulation via a Navier-Stokes nodal approach was utlilized. The smoke originates from pyrolysis vapor expelled from a heated sample in a geometry si"
+        },
+        {
+          "psi_id": "PSI-115",
+          "cited_text": "Hypothesis: Without buoyancy, mixing and heat transfer are reduced, the time-temperature history of the combustion vapors (or particle precursors) and particle trajectories are significantly altered, changing the composition of the smoke. The chemical composition of the burning material also affects"
+        },
+        {
+          "psi_id": "PSI-115",
+          "cited_text": "This investigation has no rows in the unified conditions table."
+        },
+        {
+          "psi_id": "PSI-115",
+          "cited_text": "Research impact and Earth benefits (PSI record): Models and tools that characterize particles generated as smoke can be used to ascertain how temperature, gravity, and material properties affect the smoke produced. This would directly lead to better smoke detection devices and prevent fires that can"
+        }
+      ],
+      "citation_count": 5,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 5.24,
+      "api_latency_s": 5.24,
+      "usage": {
+        "input_tokens": 18,
+        "output_tokens": 446,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0151,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A22",
+      "type": "answerable",
+      "question": "What does investigation PSI-117 study?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "PSI-117 is a ground CFD study of how outside thermal and convective disturbances affect established droplet cool flames in microgravity.\n\n- **Objective:** It used FLEX flight data from PSI to quantify how externally imposed thermal and convective perturbations regulated the dynamics and fate of already established droplet cool flames. [1] It also mapped stability windows for ignition, sustained oscillation, transitions to hot ignition and warm-flame behavior, and extinction. [2]\n- **Method:** OpenFOAM was used to build a 3-D CFD model of n-alkane droplet cool flames in microgravity. [3] The model was checked against ISS FLEX measurements. Simulations then tested convection alone, imposed heat flux, and the two combined, on large (1-4 mm) and sub-millimeter (~0.5 mm) droplets. [4]\n- **Not covered:** It has no rows in the unified conditions table [5], so there are no test conditions to report.",
+      "citations": [
+        {
+          "psi_id": "PSI-117",
+          "cited_text": "Objectives: The objective of this ground investigation was to use flight data obtained from PSI through NASA's Flame Extinguishment Experiment (FLEX) to quantify how externally imposed thermal and convective perturbations regulated the dynamics and ultimate fate of already established droplet cool f"
+        },
+        {
+          "psi_id": "PSI-117",
+          "cited_text": "drift-induced convection. Focusing on both small and large droplets, the work mapped stability windows for ignition, sustained oscillation, transitions to hot ignition and warm-flame behavior, and extinction under microgravity. By leveraging and extending the FLEX data in the PSI, this study produce"
+        },
+        {
+          "psi_id": "PSI-117",
+          "cited_text": "Approach: OpenFOAM was used to develop a 3-D CFD model of n-alkane droplet cool flames in microgravity, coupling variable-density Navier-Stokes flow with low-temperature combustion chemistry, coupled heat and mass transfer, and radiation."
+        },
+        {
+          "psi_id": "PSI-117",
+          "cited_text": "Model fidelity was established against ISS FLEX measurements, after which controlled simulations examined three forcing modes (i) convection alone to mimic droplet drift, (ii) imposed heat flux, and (iii) combined convection plus heating applied to both large (1-4 mm) and sub-millimeter (~0.5 mm) dr"
+        },
+        {
+          "psi_id": "PSI-117",
+          "cited_text": "This investigation has no rows in the unified conditions table."
+        }
+      ],
+      "citation_count": 5,
+      "number_check": {
+        "total": 4,
+        "matched": 4,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.98,
+      "api_latency_s": 3.98,
+      "usage": {
+        "input_tokens": 18,
+        "output_tokens": 445,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0151,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A23",
+      "type": "answerable",
+      "question": "Who is the principal investigator of the PSI-142 cool flame counterflow study?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The principal investigator of PSI-142 is Yiguang Ju [1].\n\n- The platform is ground [2], and the hardware was Principal Investigator Laboratory Hardware [3].\n- The study used FLEX experimental data from the PSI system to run new simulations and ground-based experiments with ozone-sensitized counterflow flames [4].",
+      "citations": [
+        {
+          "psi_id": "PSI-142",
+          "cited_text": "Principal investigators: Yiguang Ju"
+        },
+        {
+          "psi_id": "PSI-142",
+          "cited_text": "Platform: ground"
+        },
+        {
+          "psi_id": "PSI-142",
+          "cited_text": "Hardware: Principal Investigator Laboratory Hardware"
+        },
+        {
+          "psi_id": "PSI-142",
+          "cited_text": "Objectives: By using the Flame Extinguishment (FLEX) experimental data from the Physical Sciences Informatics (PSI) system of combustion science, the purpose of this grant was to conduct new simulations and ground-based experiments using ozone-sensitized counterflow flames to:"
+        }
+      ],
+      "citation_count": 4,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.07,
+      "api_latency_s": 3.06,
+      "usage": {
+        "input_tokens": 32,
+        "output_tokens": 236,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0131,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A24",
+      "type": "answerable",
+      "question": "What ambient oxygen range did ACME CFI-G test?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "CFI-G's ambient O2 ran from 0.1797 to 0.3997 mole fraction, about 18.0 to 40.0 percent. This covers 179 rows from the normal-flame table. [1]\n\n- The inverse-flame rows are a separate quantity. Their oxidizer-stream O2 ran from 0.12 to 0.85. [2]\n- The challenge statement attributes the 85% oxygen figure to the oxygen-nitrogen mixture flowing from the spherical burner. [3] It is not an ambient value.",
+      "citations": [
+        {
+          "psi_id": "PSI-159",
+          "cited_text": "Ambient O2 tested (mole fraction): 0.1797 to 0.3997  (n=179, rows 1-179, PSI-159_Experimental table_CFI-G_Normal Flames.csv)."
+        },
+        {
+          "psi_id": "PSI-159",
+          "cited_text": "Oxidizer-stream O2 tested (mole fraction, a different quantity): 0.12 to 0.85  (n=154, rows 1-154, PSI-159_Experimental table_CFI-G_Inverse Flames.csv)."
+        },
+        {
+          "psi_id": "PSI-159",
+          "cited_text": "Challenge statement, verbatim: \"Microgravity tests with the highest oxygen concentrations were conducted as part of the ACME's Cool Flames Investigation with Gases (CFI-G). In those tests, the combustion chamber was filled with a mixture of nitrogen and a flammable gas (e.g., propane), while an oxyg"
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 8,
+        "matched": 8,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.35,
+      "api_latency_s": 3.34,
+      "usage": {
+        "input_tokens": 25,
+        "output_tokens": 271,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0134,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "regex_(0\\.1797|0\\.18|17\\.9|\\b18\\b)": true,
+        "regex_(0\\.3997|0\\.40?\\b|39\\.9|\\b40\\b)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A25",
+      "type": "answerable",
+      "question": "Which hardware ran BASS-II?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "BASS-II ran in the Microgravity Science Glovebox (MSG) on the ISS.\n\n- The hardware listed is the Microgravity Science Glovebox (MSG). [1]\n- Fuel samples were mounted inside a small wind tunnel that could impose airflow speeds up to 40 cm/s. The glovebox supplied power, imaging, and a level of containment. [2]\n- The hardware family is the Glovebox (MSG) flow duct. [3]",
+      "citations": [
+        {
+          "psi_id": "PSI-25",
+          "cited_text": "Hardware: Microgravity Science Glovebox (MSG)"
+        },
+        {
+          "psi_id": "PSI-25",
+          "cited_text": "Approach: To summarize, BASS-II's approach, microgravity combustion tests were performed aboard the International Space Station. Active crew support for real-time \"lab partner\" operations. The wind tunnel was installed in the Microgravity Science Glovebox which supplied power, imaging, and a level o"
+        },
+        {
+          "psi_id": "PSI-25",
+          "cited_text": "Hardware family: Glovebox (MSG) flow duct (challenge statement)"
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 1,
+        "matched": 1,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 4.51,
+      "api_latency_s": 4.51,
+      "usage": {
+        "input_tokens": 18,
+        "output_tokens": 242,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0131,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A26",
+      "type": "answerable",
+      "question": "Which hardware did FLEX use?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "FLEX (PSI-69) used the Combustion Integrated Rack (CIR)-Fluids and Combustion Facility (FCF) and the Multi-user Droplet Combustion Apparatus (MDCA) [1].\n\n- Its hardware family is the droplet apparatus (MDCA) in the CIR. [2]\n- It flew on the ISS [3].\n- FLEX-2 (PSI-68) used the CIR and the MDCA [4].",
+      "citations": [
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Hardware: Combustion Integrated Rack (CIR)-Fluids and Combustion Facility (FCF), Multi-user Droplet Combustion Appartatus (MDCA)"
+        },
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Hardware family: Droplet apparatus (MDCA) in the CIR (challenge statement)"
+        },
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Platform: ISS"
+        },
+        {
+          "psi_id": "PSI-68",
+          "cited_text": "Hardware: Combustion Integrated Rack (CIR), Multi-user Droplet Combustion Appartatus (MDCA)"
+        }
+      ],
+      "citation_count": 4,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.19,
+      "api_latency_s": 3.18,
+      "usage": {
+        "input_tokens": 17,
+        "output_tokens": 256,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0132,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A27",
+      "type": "answerable",
+      "question": "Which investigations used the Microgravity Science Glovebox?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Four investigations used the Microgravity Science Glovebox (MSG):\n\n- **PSI-25 BASS-II:** Hardware: Microgravity Science Glovebox (MSG) [1]. The wind tunnel was installed in the glovebox. [2]\n- **PSI-26 BASS:** Hardware: Microgravity Science Glovebox [3].\n- **PSI-107 SPICE:** Hardware: Microgravity Science Glovebox (MSG) [4].\n- **PSI-106 SLICE:** The record doesn't list MSG as hardware. Its hardware family is Glovebox (MSG) flow duct [5].\n\nSeparately, SAME (PSI-102) was run in the glovebox: the crew installed the near field hardware in the Glovebox [6]. Its hardware field lists only the Comparitive Soot Diagnostic Hardware.",
+      "citations": [
+        {
+          "psi_id": "PSI-25",
+          "cited_text": "Hardware: Microgravity Science Glovebox (MSG)"
+        },
+        {
+          "psi_id": "PSI-25",
+          "cited_text": "Approach: To summarize, BASS-II's approach, microgravity combustion tests were performed aboard the International Space Station. Active crew support for real-time \"lab partner\" operations. The wind tunnel was installed in the Microgravity Science Glovebox which supplied power, imaging, and a level o"
+        },
+        {
+          "psi_id": "PSI-26",
+          "cited_text": "Hardware: Microgravity Science Glovebox"
+        },
+        {
+          "psi_id": "PSI-107",
+          "cited_text": "Hardware: Microgravity Science Glovebox (MSG)"
+        },
+        {
+          "psi_id": "PSI-106",
+          "cited_text": "Hardware family: Glovebox (MSG) flow duct (challenge statement)"
+        },
+        {
+          "psi_id": "PSI-102",
+          "cited_text": "Approach: The crew installed the near field hardware in the Glovebox, attached the Far Field Box to the Glovebox, and positioned the video cameras. The operator then ran the self diagnostic procedures on the two smoke detectors and activated the video cameras, turned on the igniter for a predefined "
+        }
+      ],
+      "citation_count": 6,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.9,
+      "api_latency_s": 3.9,
+      "usage": {
+        "input_tokens": 25,
+        "output_tokens": 438,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0151,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A28",
+      "type": "answerable",
+      "question": "Which investigations flew on Cygnus?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Three investigations flew on Cygnus: SAFFIRE-I, SAFFIRE-II and SAFFIRE-III.\n\n- PSI-98 (SAFFIRE-I): it was performed on the Orbital Science's Cygnus resupply vehicle after it deberthed from the ISS [1]. The platform is listed as Cygnus. [2]\n- PSI-99 (SAFFIRE-II): it was also performed on Cygnus after it deberthed from the ISS [3]. The platform is listed as Cygnus. [4]\n- PSI-100 (SAFFIRE-III): it was performed on Cygnus after it deberthed from the ISS [5]. The platform is listed as Cygnus. [6]\n\nSaffire IV\u2013VI are published on NTRS but are not in the PSI repository and are not part of the unified PSI conditions table [7].",
+      "citations": [
+        {
+          "psi_id": "PSI-98",
+          "cited_text": "Approach: The Saffire-1 experiments was performed on the Orbital Science's Cygnus resupply vehicle after it deberthed from the ISS. The sample material for Saffire-I is a composite fabric called Sibal consisting of cotton on a fiberglass substrate (75% cotton, 25% fiberglass by weight)."
+        },
+        {
+          "psi_id": "PSI-98",
+          "cited_text": "Platform: Cygnus"
+        },
+        {
+          "psi_id": "PSI-99",
+          "cited_text": "Approach: The Saffire-II experiment was performed on the Orbital Science's Cygnus resupply vehicle after it deberthed from the ISS. As a follow on to the Saffire-I investigation, the Saffire-II investigation added more samples including SIBAL, silicone, structure PMMA, flat PMMA, and PMMA with Nomex"
+        },
+        {
+          "psi_id": "PSI-99",
+          "cited_text": "Platform: Cygnus"
+        },
+        {
+          "psi_id": "PSI-100",
+          "cited_text": "Approach: The Saffire-III experiments were performed on the Orbital Science's Cygnus resupply vehicle after it deberthed from the ISS. As a follow on to the Saffire 1 investigation, the Saffire III investigation also used SIBAL as the sample material. However, the experiments were conducted at a flo"
+        },
+        {
+          "psi_id": "PSI-100",
+          "cited_text": "Platform: Cygnus"
+        },
+        {
+          "psi_id": "NTRS-SAFFIRE-IV-VI",
+          "cited_text": "Saffire IV-VI solid flammability tests published by NASA on NTRS. These tests are not in the PSI repository and are not part of the unified PSI conditions table."
+        }
+      ],
+      "citation_count": 7,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 4.18,
+      "api_latency_s": 4.17,
+      "usage": {
+        "input_tokens": 19,
+        "output_tokens": 456,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0152,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "regex_SAFFIRE": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A29",
+      "type": "answerable",
+      "question": "Which investigations used the Combustion Integrated Rack?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Seven investigations list the Combustion Integrated Rack (CIR) as hardware:\n\n- PSI-10 (ACME/Flame Design) [1]\n- PSI-20 (ACME BRE) [2]\n- PSI-21 (ACME CLD Flame) [3]\n- PSI-22 (ACME E-FIELD Flames) [4]\n- PSI-23 (ACME s-Flame) [5]\n- PSI-39 (CFI) [6]\n- PSI-68 (FLEX-2) [7]\n- PSI-69 (FLEX) [8]\n- PSI-159 (ACME CFI-G) [9]\n\nThat is nine entries in the list above, not seven. Correcting the count: nine investigations used the CIR.\n\n- Six of them are ACME investigations, and the other three are droplet experiments that also used the Multi-User Droplet Combustion Apparatus (MDCA).\n- PSI-101 and PSI-102 list \"Comparitive Soot Diagnostic Hardware\" rather than the CIR.",
+      "citations": [
+        {
+          "psi_id": "PSI-10",
+          "cited_text": "Hardware: Advanced Combustion via Microgravity Experiments (ACME), Combustion Integrated Rack (CIR), Reconfiguration of Combustion Integrated Rack (CIR)"
+        },
+        {
+          "psi_id": "PSI-20",
+          "cited_text": "Hardware: Combustion Integrated Rack (CIR), ACME"
+        },
+        {
+          "psi_id": "PSI-21",
+          "cited_text": "Hardware: Combustion Integrated Rack (CIR), ACME"
+        },
+        {
+          "psi_id": "PSI-22",
+          "cited_text": "Hardware: Combustion Integrated Rack (CIR), ACME"
+        },
+        {
+          "psi_id": "PSI-23",
+          "cited_text": "Hardware: Combustion Integrated Rack (CIR), ACME"
+        },
+        {
+          "psi_id": "PSI-39",
+          "cited_text": "Hardware: Multi-User Droplet Combustion Apparatus (MDCA), Combustion Integrated Rack (CIR)"
+        },
+        {
+          "psi_id": "PSI-68",
+          "cited_text": "Hardware: Combustion Integrated Rack (CIR), Multi-user Droplet Combustion Appartatus (MDCA)"
+        },
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Hardware: Combustion Integrated Rack (CIR)-Fluids and Combustion Facility (FCF), Multi-user Droplet Combustion Appartatus (MDCA)"
+        },
+        {
+          "psi_id": "PSI-159",
+          "cited_text": "Hardware: ACME, Combustion Integrated Rack (CIR)"
+        }
+      ],
+      "citation_count": 9,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 4.57,
+      "api_latency_s": 4.57,
+      "usage": {
+        "input_tokens": 24,
+        "output_tokens": 539,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0161,
+      "checks": {
+        "not_refused": true,
+        "cites_expected_psi": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A30",
+      "type": "answerable",
+      "question": "What oxygen level and pressure define the Moon base habitat in the dashboard?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The Moon base habitat is defined as 34% O2 at 8.2 psia.\n\n- Oxygen is 34 percent, with a control box of 33.5-35 percent. [1]\n- Pressure is 8.2 psia (0.558 atm), with a control box of 8.1-8.3 psia. [1]\n- Flow is about 10 to 20 cm/s of HVAC flow. Gravity is one-sixth of Earth gravity. [2] All PSI test data are microgravity, so no lunar-gravity values exist in them.",
+      "citations": [
+        {
+          "psi_id": "DASHBOARD-RESULTS",
+          "cited_text": "Environment lunar (Lunar surface habitat): O2 34 percent O2 (control box 33.5-35 percent) (source: NASA/TM-2013-217377 (NTRS 20130013505), NASA/TP-2010-216134, NTRS 20220006612 (ICES-2022-45), NTRS 20210021181); pressure 8.2 psia (0.558 atm), control box 8.1-8.3 psia (source: NASA/TM-2013-217377 (NT"
+        },
+        {
+          "psi_id": "DASHBOARD-RESULTS",
+          "cited_text": "flow about 10 to 20 cm/s HVAC flow (source: NTRS 20210021181); gravity One-sixth of Earth gravity (about 0.16 g) (source: NASA Science, Moon facts, NTRS 20210021181)."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 9,
+        "matched": 9,
+        "unmatched": []
+      },
+      "tools_used": [
+        "habitat_profile"
+      ],
+      "expected_tool": "habitat_profile",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.48,
+      "api_latency_s": 5.47,
+      "usage": {
+        "input_tokens": 433,
+        "output_tokens": 327,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0254,
+      "checks": {
+        "not_refused": true,
+        "regex_\\b34\\b": true,
+        "regex_8\\.2": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A31",
+      "type": "answerable",
+      "question": "What is the nominal ISS cabin pressure in the dashboard?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The dashboard gives a nominal ISS cabin pressure of 14.7 psia, which is 1.000 atm.\n\n- The design band is 13.9-15.2 psia (source: NTRS 20260003925). [1]\n- Nominal O2 is 21 percent, up to 24.1 percent maximum allowable, with flow of 5.1 to 20.3 cm/s nominal. [1]",
+      "citations": [
+        {
+          "psi_id": "DASHBOARD-RESULTS",
+          "cited_text": "Environment iss (ISS / spacecraft cabin): O2 21 percent nominal, up to 24.1 percent maximum allowable (source: NTRS 20260003925, NASA/TP-2010-216134); pressure 14.7 psia nominal (1.000 atm), design band 13.9-15.2 psia (source: NTRS 20260003925); flow 5.1 to 20.3 cm/s nominal (10 to 40 ft/min) (sourc"
+        }
+      ],
+      "citation_count": 1,
+      "number_check": {
+        "total": 8,
+        "matched": 8,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": "habitat_profile",
+      "used_expected_tool": false,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 2.72,
+      "api_latency_s": 2.72,
+      "usage": {
+        "input_tokens": 27,
+        "output_tokens": 217,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0129,
+      "checks": {
+        "not_refused": true,
+        "regex_14\\.7": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A32",
+      "type": "answerable",
+      "question": "What cabin pressure and oxygen level does the dashboard use for Gateway?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The Gateway profile uses 10.2 psia and about 26 to 26.5 percent O2. Both are nominal values for a crewed Gateway-class station. [1]\n\n- **Pressure:** 10.2 psia nominal (0.694 atm), with a crewed range of 70\u2013101.3 kPa. [1]\n- **Oxygen:** This is ambient O2.\n- **Not specified:** Flow. [1] Gravity is free fall, since the station is in lunar orbit. [2]",
+      "citations": [
+        {
+          "psi_id": "DASHBOARD-RESULTS",
+          "cited_text": "Environment gateway (Gateway-class station): O2 about 26 to 26.5 percent O2 (nominal, crewed, 10.2 psia) (source: NTRS 20230009095, NTRS 20220006727 (ICES-2022-196), NTRS 20220006612 (ICES-2022-45)); pressure 10.2 psia nominal (0.694 atm); crewed range 70-101.3 kPa (source: NTRS 20240016087 (GP 1026"
+        },
+        {
+          "psi_id": "DASHBOARD-RESULTS",
+          "cited_text": "gravity Free fall (space station in lunar orbit) (source: NASA Gateway overview)."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 6,
+        "matched": 6,
+        "unmatched": []
+      },
+      "tools_used": [
+        "habitat_profile"
+      ],
+      "expected_tool": "habitat_profile",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.04,
+      "api_latency_s": 5.04,
+      "usage": {
+        "input_tokens": 401,
+        "output_tokens": 325,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0254,
+      "checks": {
+        "not_refused": true,
+        "regex_10\\.2": true,
+        "regex_\\b26": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A33",
+      "type": "answerable",
+      "question": "What gravity does the dashboard use for the Mars base habitat?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The Mars base habitat is defined at about one-third of Earth gravity, sourced to NASA, The Human Body in Space [1].\n\n- All PSI data is microgravity; no partial-gravity values exist or are implied. [2]\n- Results for Mars gravity can only be bracketed between 0 g and 1 g, so no Mars-gravity flammability limit can be given.",
+      "citations": [
+        {
+          "psi_id": "DASHBOARD-RESULTS",
+          "cited_text": "Environment mars (Mars surface habitat): O2 34 percent O2 (Exploration Atmosphere) (source: NASA/TP-2010-216134, NASA/TM-2013-217377 (NTRS 20130013505), NTRS 20220006612 (ICES-2022-45)); pressure 8.2 psia (0.558 atm) (source: NTRS 20230009095, NASA/TP-2010-216134); flow not specified; gravity About "
+        },
+        {
+          "psi_id": "DASHBOARD-RESULTS",
+          "cited_text": "Results computed by this dashboard from the PSI conditions table and NASA documents. All PSI data is microgravity; no partial-gravity values exist or are implied."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": "habitat_profile",
+      "used_expected_tool": false,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 4.94,
+      "api_latency_s": 4.93,
+      "usage": {
+        "input_tokens": 26,
+        "output_tokens": 439,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0151,
+      "checks": {
+        "not_refused": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A34",
+      "type": "answerable",
+      "question": "What atmosphere does the dashboard assume for the pressurized rover?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The dashboard defines the pressurized rover atmosphere as oxygen at 30 percent or more and pressure at 10.2 psia or less.\n\n- O2 is 30 percent or greater, a shared Moon base and rover atmosphere. Pressure is 10.2 psia or less (0.694 atm or less). Flow is not specified. [1]\n- Gravity is one-sixth of Earth gravity (about 0.16 g). [2] All PSI test data is microgravity, so no partial-gravity values exist.\n- This O2 is an ambient value, not an oxidizer-stream value.",
+      "citations": [
+        {
+          "psi_id": "DASHBOARD-RESULTS",
+          "cited_text": "Environment rover (Pressurized rover (lunar)): O2 30 percent O2 or greater (shared Moon base and rover atmosphere) (source: NASA Space Apps 2026 challenge statement, NASA/TM-2013-217377 (NTRS 20130013505)); pressure 10.2 psia or less (0.694 atm or less) (source: NASA Space Apps 2026 challenge statem"
+        },
+        {
+          "psi_id": "DASHBOARD-RESULTS",
+          "cited_text": "gravity One-sixth of Earth gravity (about 0.16 g) (source: NASA Science, Moon facts, NTRS 20210021181)."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 4,
+        "matched": 4,
+        "unmatched": []
+      },
+      "tools_used": [
+        "habitat_profile"
+      ],
+      "expected_tool": "habitat_profile",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 4.72,
+      "api_latency_s": 4.72,
+      "usage": {
+        "input_tokens": 382,
+        "output_tokens": 325,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0253,
+      "checks": {
+        "not_refused": true,
+        "regex_\\b30\\b": true,
+        "regex_10\\.2": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A35",
+      "type": "answerable",
+      "question": "What airflow range is nominal in the ISS cabin?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The nominal ISS cabin airflow is 5.1 to 20.3 cm/s (10 to 40 ft/min) [1].\n\n- The flow range comes from NR-NRCSD-S0003 and AIVC 2001 Raatschen, as cited in the data.\n- For comparison, Saffire-I was run at an air flow velocity of 20 cm/s [2], which is inside this range.",
+      "citations": [
+        {
+          "psi_id": "DASHBOARD-RESULTS",
+          "cited_text": "Environment iss (ISS / spacecraft cabin): O2 21 percent nominal, up to 24.1 percent maximum allowable (source: NTRS 20260003925, NASA/TP-2010-216134); pressure 14.7 psia nominal (1.000 atm), design band 13.9-15.2 psia (source: NTRS 20260003925); flow 5.1 to 20.3 cm/s nominal (10 to 40 ft/min) (sourc"
+        },
+        {
+          "psi_id": "PSI-98",
+          "cited_text": "Air is drawn through the flow duct by fans located at the top of the duct with flow straighteners at the bottom of the experiment module. Saffire-I was conducted at an air flow velocity of 20 cm/s. Once the sample was ignited flame images were captured using two cameras."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 5,
+        "matched": 5,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": "habitat_profile",
+      "used_expected_tool": false,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 2.84,
+      "api_latency_s": 2.84,
+      "usage": {
+        "input_tokens": 23,
+        "output_tokens": 220,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0129,
+      "checks": {
+        "not_refused": true,
+        "regex_5\\.1": true,
+        "regex_20\\.3": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A36",
+      "type": "answerable",
+      "question": "What airflow does the dashboard assume in the Moon base?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The dashboard assumes about 10 to 20 cm/s of HVAC flow in the Moon base, sourced to NTRS 20210021181 [1].\n\n- The Moon base window also uses 34 percent O2 and 8.2 psia (0.558 atm) [2].\n- The habitat's gravity is one-sixth of Earth gravity [1]. All PSI test data are microgravity, so the results can only be bracketed between 0 g and 1 g.",
+      "citations": [
+        {
+          "psi_id": "DASHBOARD-RESULTS",
+          "cited_text": "flow about 10 to 20 cm/s HVAC flow (source: NTRS 20210021181); gravity One-sixth of Earth gravity (about 0.16 g) (source: NASA Science, Moon facts, NTRS 20210021181)."
+        },
+        {
+          "psi_id": "DASHBOARD-RESULTS",
+          "cited_text": "Environment lunar (Lunar surface habitat): O2 34 percent O2 (control box 33.5-35 percent) (source: NASA/TM-2013-217377 (NTRS 20130013505), NASA/TP-2010-216134, NTRS 20220006612 (ICES-2022-45), NTRS 20210021181); pressure 8.2 psia (0.558 atm), control box 8.1-8.3 psia (source: NASA/TM-2013-217377 (NT"
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 5,
+        "matched": 5,
+        "unmatched": []
+      },
+      "tools_used": [
+        "habitat_profile"
+      ],
+      "expected_tool": "habitat_profile",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 4.66,
+      "api_latency_s": 4.66,
+      "usage": {
+        "input_tokens": 419,
+        "output_tokens": 303,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0252,
+      "checks": {
+        "not_refused": true,
+        "regex_\\b10\\b": true,
+        "regex_\\b20\\b": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A37",
+      "type": "answerable",
+      "question": "Which investigation ranks first for the Moon base?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "PSI-69 (FLEX, Flame Extinguishment Experiment) ranks first for the Moon base. Its default-weight lunar habitat relevance is rank 1 of 20, with a score of 0.603. [1]\n\n- FLEX maps the flammability limits of liquid fuels in microgravity and measures how well gaseous suppressants such as CO2, He and SF6 work. [2]\n- All PSI data is microgravity, so nothing here gives partial-gravity (lunar-g) values.",
+      "citations": [
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Habitat relevance, default weights, environment lunar: rank 1 of 20, score 0.603."
+        },
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Objectives: The FLEX (Flame Extinguishment Experiment) investigation aims to map the flammability limits of liquid fuels in microgravity environments, measure the effectiveness of various gaseous fire suppressants such as CO2, He, and SF6, and develop reliable predictive models for combustion limits"
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 3,
+        "matched": 3,
+        "unmatched": []
+      },
+      "tools_used": [
+        "rank_investigations"
+      ],
+      "expected_tool": "rank_investigations",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.26,
+      "api_latency_s": 5.25,
+      "usage": {
+        "input_tokens": 215,
+        "output_tokens": 323,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.025,
+      "checks": {
+        "not_refused": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A38",
+      "type": "answerable",
+      "question": "Which investigation ranks first for the ISS cabin?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "PSI-69 (FLEX) ranks first for the ISS cabin. It is rank 1 of 20 with a score of 0.769. [1]\n\n- Its condition component is 0.75 and its topic component is 0.78.\n- Second is PSI-99 (SAFFIRE-II) at 0.71. Its document gives rank 2 of 20, score 0.707. [2]\n- Third is PSI-25 (BASS-II) at 0.69.",
+      "citations": [
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Habitat relevance, default weights, environment iss: rank 1 of 20, score 0.769."
+        },
+        {
+          "psi_id": "PSI-99",
+          "cited_text": "Habitat relevance, default weights, environment iss: rank 2 of 20, score 0.707."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 9,
+        "matched": 9,
+        "unmatched": []
+      },
+      "tools_used": [
+        "rank_investigations"
+      ],
+      "expected_tool": "rank_investigations",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.24,
+      "api_latency_s": 5.22,
+      "usage": {
+        "input_tokens": 329,
+        "output_tokens": 307,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.025,
+      "checks": {
+        "not_refused": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A39",
+      "type": "answerable",
+      "question": "Which investigations rank second and third for the ISS cabin?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "For the ISS cabin, SAFFIRE-II (PSI-99) ranks second and BASS-II (PSI-25) ranks third.\n\n- SAFFIRE-II is rank 2 of 20, with a score of 0.707. [1]\n- BASS-II is rank 3 of 20, with a score of 0.686. [2]\n- FLEX (PSI-69) is first, with a score of 0.769. [3]",
+      "citations": [
+        {
+          "psi_id": "PSI-99",
+          "cited_text": "Habitat relevance, default weights, environment iss: rank 2 of 20, score 0.707."
+        },
+        {
+          "psi_id": "PSI-25",
+          "cited_text": "Habitat relevance, default weights, environment iss: rank 3 of 20, score 0.686."
+        },
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Habitat relevance, default weights, environment iss: rank 1 of 20, score 0.769."
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 6,
+        "matched": 6,
+        "unmatched": []
+      },
+      "tools_used": [
+        "rank_investigations"
+      ],
+      "expected_tool": "rank_investigations",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 4.5,
+      "api_latency_s": 4.5,
+      "usage": {
+        "input_tokens": 331,
+        "output_tokens": 310,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0251,
+      "checks": {
+        "not_refused": true,
+        "regex_SAFFIRE-II|PSI-99": true,
+        "regex_BASS-II|PSI-25": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A40",
+      "type": "answerable",
+      "question": "What is the top-ranked investigation for Gateway and its score?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "PSI-69 (FLEX, Flame Extinguishment Experiment) ranks first for Gateway, with a score of about 0.72. The record lists it at rank 1 of 20 for Gateway, score 0.718. [1]\n\n- The score splits into a condition component of 0.59 and a topic component of 0.78.\n- It uses liquid-droplet fuels [2] (methanol and heptane [3]).\n- Its primary fire-safety function is suppression. [4]",
+      "citations": [
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Habitat relevance, default weights, environment gateway: rank 1 of 20, score 0.718."
+        },
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Fuel class in the unified table: liquid_droplet."
+        },
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Fuels: Methanol (157 rows); Heptane (117 rows)"
+        },
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Primary fire-safety function: suppression."
+        }
+      ],
+      "citation_count": 4,
+      "number_check": {
+        "total": 6,
+        "matched": 6,
+        "unmatched": []
+      },
+      "tools_used": [
+        "rank_investigations"
+      ],
+      "expected_tool": "rank_investigations",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 4.9,
+      "api_latency_s": 4.9,
+      "usage": {
+        "input_tokens": 223,
+        "output_tokens": 343,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0252,
+      "checks": {
+        "not_refused": true,
+        "regex_FLEX|PSI-69": true,
+        "regex_0\\.72": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A41",
+      "type": "answerable",
+      "question": "Which are the top three investigations for the pressurized rover?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The top three investigations for the pressurized rover are PSI-69, PSI-10 and PSI-20.\n\n- Rank 1 is PSI-69 (FLEX), score 0.778. [1]\n- Rank 2 is PSI-10 (ACME/Flame Design), score 0.701. [2]\n- Rank 3 is PSI-20 (ACME BRE), score 0.615. [3]",
+      "citations": [
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Habitat relevance, default weights, environment rover: rank 1 of 20, score 0.778."
+        },
+        {
+          "psi_id": "PSI-10",
+          "cited_text": "Habitat relevance, default weights, environment rover: rank 2 of 20, score 0.701."
+        },
+        {
+          "psi_id": "PSI-20",
+          "cited_text": "Habitat relevance, default weights, environment rover: rank 3 of 20, score 0.615."
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 6,
+        "matched": 6,
+        "unmatched": []
+      },
+      "tools_used": [
+        "rank_investigations"
+      ],
+      "expected_tool": "rank_investigations",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.59,
+      "api_latency_s": 5.59,
+      "usage": {
+        "input_tokens": 331,
+        "output_tokens": 304,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.025,
+      "checks": {
+        "not_refused": true,
+        "regex_FLEX|PSI-69": true,
+        "regex_Flame Design|PSI-10": true,
+        "regex_BRE|PSI-20": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A42",
+      "type": "answerable",
+      "question": "Which investigation ranks second for the Mars base?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "PSI-20 (ACME BRE) ranks second for the Mars base, with a score of 0.615. Its habitat relevance for Mars is rank 2 of 20, score 0.615. [1]\n\n- Rank 1 is PSI-69 (FLEX), at 0.67.\n- Rank 3 is PSI-25 (BASS-II), at about 0.61, so it is close to BRE.",
+      "citations": [
+        {
+          "psi_id": "PSI-20",
+          "cited_text": "Habitat relevance, default weights, environment mars: rank 2 of 20, score 0.615."
+        }
+      ],
+      "citation_count": 1,
+      "number_check": {
+        "total": 7,
+        "matched": 7,
+        "unmatched": []
+      },
+      "tools_used": [
+        "rank_investigations"
+      ],
+      "expected_tool": "rank_investigations",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 4.26,
+      "api_latency_s": 4.26,
+      "usage": {
+        "input_tokens": 320,
+        "output_tokens": 272,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0247,
+      "checks": {
+        "not_refused": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A43",
+      "type": "answerable",
+      "question": "How many investigations does the dashboard rank for the Moon base?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The dashboard ranks 20 investigations for the Moon base. PSI-10 is ranked 7 of 20 for the lunar environment. [1] PSI-106 is ranked 20 of 20. [2]\n\n- The top 5 for the lunar habitat are PSI-69, PSI-99, PSI-98, PSI-20 and PSI-25. [3]\n- Some investigations in the documents have no rows in the unified conditions table. Examples are PSI-60, PSI-62, PSI-115 and PSI-117. They do not appear in the lunar rankings I was given, so I can't say whether the 20 includes them.",
+      "citations": [
+        {
+          "psi_id": "PSI-10",
+          "cited_text": "Habitat relevance, default weights, environment lunar: rank 7 of 20, score 0.531."
+        },
+        {
+          "psi_id": "PSI-106",
+          "cited_text": "Habitat relevance, default weights, environment lunar: rank 20 of 20, score 0.200."
+        },
+        {
+          "psi_id": "DASHBOARD-RESULTS",
+          "cited_text": "Default lunar habitat ranking, top 5 of 20: rank 1 PSI-69 (score 0.603); rank 2 PSI-99 (score 0.587); rank 3 PSI-98 (score 0.566); rank 4 PSI-20 (score 0.553); rank 5 PSI-25 (score 0.547)."
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 3,
+        "matched": 3,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": "rank_investigations",
+      "used_expected_tool": false,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.5,
+      "api_latency_s": 3.5,
+      "usage": {
+        "input_tokens": 25,
+        "output_tokens": 302,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0137,
+      "checks": {
+        "not_refused": true,
+        "regex_\b20\b": false
+      },
+      "passed": false
+    },
+    {
+      "id": "A44",
+      "type": "answerable",
+      "question": "Is the droplet extinction relationship supported for the ISS cabin?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Yes. The droplet extinction relationship is supported for the ISS cabin. It covers extinction diameter and burn time versus O2, diluent and pressure. Its status is \"Supported\" because 41 rows with a recorded response fall inside the ISS cabin window.\n\n- The FLEX investigation (PSI-69) recorded outcomes for extinction (186), disruption (61) and completion (27) [1]. These are the droplet outcomes behind this relationship.\n- All of this is microgravity data. It says nothing about partial gravity.",
+      "citations": [
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Outcomes recorded: extinction (186), disruption (61), completion (27)."
+        }
+      ],
+      "citation_count": 1,
+      "number_check": {
+        "total": 4,
+        "matched": 4,
+        "unmatched": []
+      },
+      "tools_used": [
+        "model_readiness"
+      ],
+      "expected_tool": "model_readiness",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.46,
+      "api_latency_s": 5.45,
+      "usage": {
+        "input_tokens": 436,
+        "output_tokens": 297,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0251,
+      "checks": {
+        "not_refused": true,
+        "regex_(?i)\\bsupported\\b": true,
+        "forbidden_absent_(?i)droplet[^.]{0,80}not supported": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A45",
+      "type": "answerable",
+      "question": "Which model relationship is not supported in any habitat?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The relationship \"any relationship at partial gravity (lunar 0.16 g, Mars 0.38 g)\" is not supported in any of the five habitats: ISS, Gateway, Moon base, rover and Mars base.\n\n- PSI holds no partial-gravity data, because all of it is microgravity.\n- Results can only be bracketed between 0 g and 1 g.\n- Partial gravity cannot be interpolated between 0 g and 1 g, because the flammability map has a low-flow quenching branch and a high-flow blowoff branch. [1]",
+      "citations": [
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "Does lunar gravity change flammability? Measured answer from Urban et al., NASA Glenn Research Center (https://ntrs.nasa.gov/api/citations/20250002114/downloads/ICES_2025-392-correctedcaptions.pdf). Partial gravity cannot be interpolated between 0 g and 1 g: the flammability map has a low-flow quenc"
+        }
+      ],
+      "citation_count": 1,
+      "number_check": {
+        "total": 2,
+        "matched": 2,
+        "unmatched": []
+      },
+      "tools_used": [
+        "model_readiness"
+      ],
+      "expected_tool": "model_readiness",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.61,
+      "api_latency_s": 5.6,
+      "usage": {
+        "input_tokens": 2086,
+        "output_tokens": 491,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0304,
+      "checks": {
+        "not_refused": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A46",
+      "type": "answerable",
+      "question": "Can smoke particle size be modelled for the Moon base?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Only partly. Smoke particle size versus flow and aging is rated \"Partly\" for the Moon base, because smoke rows exist but none records particle size.\n\n- The smoke experiments (SAME and SAME-R) covered flow speeds of 0 to 8.1 cm/s [1]. They did not record O2 or pressure.\n- Their hypothesis is that smokes produced in microgravity will have substantially larger droplet sizes than in normal gravity [2].\n- Not covered: lunar gravity (about 0.16 g). All PSI data is microgravity, so results can only be bracketed between 0 g and 1 g.",
+      "citations": [
+        {
+          "psi_id": "PSI-101",
+          "cited_text": "Flow speed tested: 0 to 8.1 cm/s (n=109, rows 1-109, PSI-101_Experimental table_SAME-R.csv)."
+        },
+        {
+          "psi_id": "PSI-102",
+          "cited_text": "In particular, it is hypothesized that liquid aerosol smokes produced in microgravity will exhibit substantially larger droplet sizes than under the same conditions in normal gravity (with a corresponding decrease in the particle number density for the same mass of smoke)."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 3,
+        "matched": 3,
+        "unmatched": []
+      },
+      "tools_used": [
+        "model_readiness"
+      ],
+      "expected_tool": "model_readiness",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.84,
+      "api_latency_s": 5.84,
+      "usage": {
+        "input_tokens": 495,
+        "output_tokens": 404,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0263,
+      "checks": {
+        "not_refused": true,
+        "regex_(?i)partly|partial": true,
+        "regex_(?i)particle size": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A47",
+      "type": "answerable",
+      "question": "Why is smoke particle size only partly supported for Gateway?",
+      "status": 200,
+      "attempts": 2,
+      "error": null,
+      "answer": "Smoke particle size is only partly supported for Gateway because no flow window is defined for it, so the smoke tests can't be matched to Gateway conditions.\n\n- The readiness check says the flow speed window is not specified by NASA sources for Gateway, so rows cannot be matched. The Gateway profile gives O2 of about 26 to 26.5 percent and 10.2 psia, but flow is not specified. [1]\n- The smoke data do record flow speed. SAME-R covers 0 to 8.1 cm/s. [2] SAME covers 5 to 10 cm/s. [3]\n- The smoke tests have no recorded O2 or pressure. SAME-R records neither ambient O2 nor pressure. [4] [5] SAME records neither. [6] [7] They can't be compared with Gateway's O2 and pressure either.",
+      "citations": [
+        {
+          "psi_id": "DASHBOARD-RESULTS",
+          "cited_text": "Environment gateway (Gateway-class station): O2 about 26 to 26.5 percent O2 (nominal, crewed, 10.2 psia) (source: NTRS 20230009095, NTRS 20220006727 (ICES-2022-196), NTRS 20220006612 (ICES-2022-45)); pressure 10.2 psia nominal (0.694 atm); crewed range 70-101.3 kPa (source: NTRS 20240016087 (GP 1026"
+        },
+        {
+          "psi_id": "PSI-101",
+          "cited_text": "Flow speed tested: 0 to 8.1 cm/s (n=109, rows 1-109, PSI-101_Experimental table_SAME-R.csv)."
+        },
+        {
+          "psi_id": "PSI-102",
+          "cited_text": "Flow speed tested: 5 to 10 cm/s (n=4, rows 1-4, PSI-102_Experimental table_SAME.csv)."
+        },
+        {
+          "psi_id": "PSI-101",
+          "cited_text": "Ambient O2 tested (mole fraction): not recorded."
+        },
+        {
+          "psi_id": "PSI-101",
+          "cited_text": "Pressure tested: not recorded."
+        },
+        {
+          "psi_id": "PSI-102",
+          "cited_text": "Ambient O2 tested (mole fraction): not recorded."
+        },
+        {
+          "psi_id": "PSI-102",
+          "cited_text": "Pressure tested: not recorded."
+        }
+      ],
+      "citation_count": 7,
+      "number_check": {
+        "total": 7,
+        "matched": 7,
+        "unmatched": []
+      },
+      "tools_used": [
+        "model_readiness"
+      ],
+      "expected_tool": "model_readiness",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 3,
+      "latency_s": 13.59,
+      "api_latency_s": 8.06,
+      "usage": {
+        "input_tokens": 466,
+        "output_tokens": 505,
+        "cache_read_input_tokens": 319488,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0379,
+      "checks": {
+        "not_refused": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A48",
+      "type": "answerable",
+      "question": "What is the worst-case oxygen allowance for lunar gravity in the lunar gravity check?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The worst-case allowance is 2.3 oxygen percentage points. The paper's conservative allowance is that a 1-g test margin may be read as up to 2.3 oxygen points smaller (worst case across these materials). [1]\n\n- It is a conservative 1-g to lunar-g delta, not a measured lunar-g limit. It extrapolates the 1-g forced-flow slope from 35 cm/s to zero flow. [1]\n- The paper states it directly: \"The worst-case delta for these materials can be seen to be 2.3%.\" [2] Polycarbonate sets that value, at 2.3 O2 points. [3]\n- The lunar-g velocity is not known, so no lunar-g flammability limit is stated for any material and nothing is interpolated. [4]",
+      "citations": [
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "Habitat reading: the paper's conservative allowance is that a 1-g test margin may be read as up to 2.3 oxygen points smaller (worst case across these materials). The allowance extrapolates the 1-g forced-flow slope from 35 cm/s to zero flow and is not a measured lunar-g limit."
+        },
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "Verbatim from Urban et al., ICES-2025-392, page 10 (https://ntrs.nasa.gov/api/citations/20250002114/downloads/ICES_2025-392-correctedcaptions.pdf): \"The worst-case delta for these materials can be seen to be 2.3%.\""
+        },
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "Polycarbonate: best-fit slope 0.0004, 95 percent slope 0.00065, delta 2.3 O2 points; lunar-g test: burned only at higher O2 than the 1-g data predicts."
+        },
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "The 35 cm/s 1-g buoyant velocity is a conservatively high estimate and the lunar-g velocity is not known, so no lunar-g flammability limit is stated for any material and nothing is interpolated."
+        }
+      ],
+      "citation_count": 4,
+      "number_check": {
+        "total": 4,
+        "matched": 4,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.96,
+      "api_latency_s": 3.96,
+      "usage": {
+        "input_tokens": 36,
+        "output_tokens": 387,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0146,
+      "checks": {
+        "not_refused": true,
+        "regex_2\\.3": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A49",
+      "type": "answerable",
+      "question": "In the lunar-g tests, did polycarbonate burn at lower or higher oxygen than the 1-g data predicts?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Polycarbonate burned only at higher oxygen than the 1-g data predicts. Polycarbonate's lunar-g test burned only at higher O2 than the 1-g data predicts. [1]\n\n- The conservative 1-g to lunar-g delta for polycarbonate is 2.3 O2 points. [1]\n- Nomex Velcro also burned only at higher oxygen. PMMA, P 213 and flaming Beefy-T burned at lower oxygen. [2]\n- No lunar-g flammability limit is stated for any material. The lunar-g velocity is not known, and nothing is interpolated. [3]",
+      "citations": [
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "Polycarbonate: best-fit slope 0.0004, 95 percent slope 0.00065, delta 2.3 O2 points; lunar-g test: burned only at higher O2 than the 1-g data predicts."
+        },
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "In the lunar-g tests themselves, PMMA, P 213 and flaming Beefy-T burned at lower oxygen, while polycarbonate and Nomex Velcro burned only at higher oxygen."
+        },
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "The 35 cm/s 1-g buoyant velocity is a conservatively high estimate and the lunar-g velocity is not known, so no lunar-g flammability limit is stated for any material and nothing is interpolated."
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 3,
+        "matched": 3,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.46,
+      "api_latency_s": 3.46,
+      "usage": {
+        "input_tokens": 45,
+        "output_tokens": 324,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.014,
+      "checks": {
+        "not_refused": true,
+        "regex_(?i)higher": true,
+        "regex_(?i)polycarbonate": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A50",
+      "type": "answerable",
+      "question": "Which materials burned at lower oxygen in the lunar-g tests?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "PMMA, P 213 and flaming Beefy-T burned at lower oxygen in the lunar-g tests than the 1-g data predicted.\n\n- In the lunar-g tests, PMMA, P 213 and flaming Beefy-T burned at lower oxygen, while polycarbonate and Nomex Velcro burned only at higher oxygen. [1]\n- For smoldering Beefy-T, the paper does not state the lunar-g test direction. [2]\n- Not covered: no lunar-g flammability limit is stated for any material. The lunar-g velocity is not known, and nothing is interpolated. [3]",
+      "citations": [
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "In the lunar-g tests themselves, PMMA, P 213 and flaming Beefy-T burned at lower oxygen, while polycarbonate and Nomex Velcro burned only at higher oxygen."
+        },
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "Beefy-T (smolder): best-fit slope 0.00034, 95 percent slope 0.0005, delta 1.8 O2 points; lunar-g test direction not stated in the paper."
+        },
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "The 35 cm/s 1-g buoyant velocity is a conservatively high estimate and the lunar-g velocity is not known, so no lunar-g flammability limit is stated for any material and nothing is interpolated."
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 2,
+        "matched": 2,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.42,
+      "api_latency_s": 3.41,
+      "usage": {
+        "input_tokens": 28,
+        "output_tokens": 311,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0138,
+      "checks": {
+        "not_refused": true,
+        "regex_PMMA": true,
+        "regex_P ?213": true,
+        "regex_Beefy": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A51",
+      "type": "answerable",
+      "question": "What oxygen delta did Nomex Velcro show in the lunar gravity check?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Nomex Velcro's conservative 1-g to lunar-g delta is 0.32 O2 points. Its best-fit slope is 1.6e-05 and its 95 percent slope is 9e-05, and in the lunar-g test it burned only at higher O2 than the 1-g data predicts. [1]\n\n- The delta is taken at the presumed 1-g buoyant velocity of 35 cm/s. [2]\n- No lunar-g flammability limit is stated for any material, and nothing is interpolated. [3]\n- The 0.32 value is an allowance extrapolated from 1-g data, not a measured lunar-g limit.",
+      "citations": [
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "Nomex Velcro: best-fit slope 1.6e-05, 95 percent slope 9e-05, delta 0.32 O2 points; lunar-g test: burned only at higher O2 than the 1-g data predicts."
+        },
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "Table 2, Flammability Compensation Factors: best-fit slope and 95 percent confidence interval slope of the oxygen limit against flow velocity (s/cm), and the conservative 1-g to lunar-g delta in oxygen percentage points at the presumed 1-g buoyant velocity of 35 cm/s."
+        },
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "The 35 cm/s 1-g buoyant velocity is a conservatively high estimate and the lunar-g velocity is not known, so no lunar-g flammability limit is stated for any material and nothing is interpolated."
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 5,
+        "matched": 5,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.3,
+      "api_latency_s": 3.3,
+      "usage": {
+        "input_tokens": 32,
+        "output_tokens": 310,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0138,
+      "checks": {
+        "not_refused": true,
+        "regex_0\\.32": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A52",
+      "type": "answerable",
+      "question": "What 1-g buoyant velocity did the lunar gravity study assume?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The study assumed a 1-g buoyant velocity of 35 cm/s. The conservative 1-g to lunar-g delta in oxygen percentage points is given at the presumed 1-g buoyant velocity of 35 cm/s. [1]\n\n- This 35 cm/s value is a conservatively high estimate, and the lunar-g velocity is not known. [2]\n- Because of this, no lunar-g flammability limit is stated for any material, and nothing is interpolated. [2]",
+      "citations": [
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "Table 2, Flammability Compensation Factors: best-fit slope and 95 percent confidence interval slope of the oxygen limit against flow velocity (s/cm), and the conservative 1-g to lunar-g delta in oxygen percentage points at the presumed 1-g buoyant velocity of 35 cm/s."
+        },
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "The 35 cm/s 1-g buoyant velocity is a conservatively high estimate and the lunar-g velocity is not known, so no lunar-g flammability limit is stated for any material and nothing is interpolated."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 2,
+        "matched": 2,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.41,
+      "api_latency_s": 3.41,
+      "usage": {
+        "input_tokens": 29,
+        "output_tokens": 259,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0133,
+      "checks": {
+        "not_refused": true,
+        "regex_\\b35\\b": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A53",
+      "type": "answerable",
+      "question": "When is the FM2 lunar-gravity flammability experiment planned to launch?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "FM2 is planned to launch in late 2026.\n\n- Flammability of Materials on the Moon (FM2) will burn samples in actual lunar gravity, with a planned launch in late 2026 (Ferkul, Kralik and Liao, LPSC 2026). [1]\n- The source paper says it \"will be performed, with a planned launch date of late 2026.\" [2]\n- The data gives no exact launch date and no FM2 results, so there are no lunar-gravity flammability limits to report.",
+      "citations": [
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "Flammability of Materials on the Moon (FM2) will burn samples in actual lunar gravity, planned launch late 2026 (Ferkul, Kralik and Liao, LPSC 2026)."
+        },
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "Verbatim from Ferkul, Kralik and Liao, LPSC 2026, NTRS 20260000646, page 1 (https://ntrs.nasa.gov/api/citations/20260000646/downloads/Ferkul-Lunar%20and%20Planetary%20Science%20Conference%202026.pdf): \"will be performed, with a planned launch date of late 2026.\""
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.22,
+      "api_latency_s": 3.21,
+      "usage": {
+        "input_tokens": 31,
+        "output_tokens": 252,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0132,
+      "checks": {
+        "not_refused": true,
+        "regex_2026": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A54",
+      "type": "answerable",
+      "question": "How does the data connect to fine-water-mist extinguishers?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Fine-water-mist extinguishers are a documented spinoff, but no PSI table is a water-mist test. The link to PSI is an inference.\n\n- Fine-water-mist extinguishers developed for use on the ISS have practical applications on Earth. [1]\n- The nearest PSI investigations are PSI-69 and PSI-68. FLEX and FLEX-2 measure how diluents extinguish burning droplets and are the nearest PSI suppression data. [2]\n- FLEX studied suppression through dilution of the chamber atmosphere with carbon dioxide and helium. [3] That is gas dilution, not water mist.\n\nNot covered: no water-mist droplet size, delivery rate or extinguishment data. Mist-specific microgravity tests would be needed.",
+      "citations": [
+        {
+          "psi_id": "EARTH-APPLICATIONS",
+          "cited_text": "Statement: Fine-water-mist extinguishers developed for use on the ISS have practical applications on Earth."
+        },
+        {
+          "psi_id": "EARTH-APPLICATIONS",
+          "cited_text": "Nearest PSI investigations (inference): PSI-69, PSI-68.Link to PSI: FLEX and FLEX-2 measure how diluents extinguish burning droplets and are the nearest PSI suppression data. No PSI table is a water-mist test, so this link is an inference."
+        },
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Supports suppression (challenge statement): Suppression was studied in the Flame Extinguishment Experiment (FLEX) through dilution of the chamber atmosphere with carbon dioxide and helium, both of which suppress fire."
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.76,
+      "api_latency_s": 3.75,
+      "usage": {
+        "input_tokens": 25,
+        "output_tokens": 358,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0143,
+      "checks": {
+        "not_refused": true,
+        "contains_any": true,
+        "regex_(?i)inference|no PSI table|not a water|nearest": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A55",
+      "type": "answerable",
+      "question": "What Earth spinoff came from the shuttle smoke detector?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "A 1970s smoke detector developed for the shuttle can tell smoke from dust. That gives fewer nuisance alarms, and it has industrial uses such as mining. [1]\n\n- The link to PSI is limited. The spinoff is historical, because the 1970s shuttle detector predates SAME, SAME-R, DAFT and DAFT-2. The only link to the PSI tables is instrument reuse. [2]\n- An instrument used for smoke detection in SAME and SAME-R was used to detect dust in DAFT and DAFT-2. [2]\n- The linked investigations are PSI-102, PSI-101 and PSI-47. [3]",
+      "citations": [
+        {
+          "psi_id": "EARTH-APPLICATIONS",
+          "cited_text": "Statement: A 1970s smoke detector developed for the shuttle discriminates smoke from dust, giving fewer nuisance alarms, with industrial uses such as mining."
+        },
+        {
+          "psi_id": "EARTH-APPLICATIONS",
+          "cited_text": "Link to PSI: Documented in the challenge statement: an instrument used for smoke detection in SAME and SAME-R was used to detect dust in DAFT and DAFT-2. The 1970s shuttle detector itself predates these investigations, so the spinoff is historical and the link to the PSI tables is the instrument reu"
+        },
+        {
+          "psi_id": "EARTH-APPLICATIONS",
+          "cited_text": "Linked PSI investigations: PSI-102, PSI-101, PSI-47."
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.88,
+      "api_latency_s": 3.87,
+      "usage": {
+        "input_tokens": 26,
+        "output_tokens": 329,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.014,
+      "checks": {
+        "not_refused": true,
+        "regex_(?i)dust": true,
+        "regex_(?i)nuisance|mining|fewer": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A56",
+      "type": "answerable",
+      "question": "How heavy is the NASA-developed firefighter air tank backpack and how long does its air last?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The backpack weighs only 20 pounds and gives a 30-minute air supply.\n\n- It was developed with NASA's Johnson Space Center by A-T-O Inc.'s Scott Aviation. It is 13 pounds lighter than conventional firefighting tanks. [1]\n- It is a 1970s adaptation of spacesuit technology. It is labelled as NASA spinoff technology, not a PSI combustion test. [2]",
+      "citations": [
+        {
+          "psi_id": "EARTH-APPLICATIONS",
+          "cited_text": "Verbatim from Fireman's Air Tanks (NASA Spinoff, originally published 1976, https://spinoff.nasa.gov/node/9582): \"Together with NASA's Johnson Space Center, A-T-O Inc.'s Scott Aviation has developed light-weight firefighter's air tanks. New backpack system weighs only 20 pounds for 30 minute air sup"
+        },
+        {
+          "psi_id": "EARTH-APPLICATIONS",
+          "cited_text": "Statement: A 1970s adaptation of spacesuit technology improved firefighter air tanks and breathing gear.Label: NASA spinoff technology, not a PSI combustion test."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 3,
+        "matched": 3,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.07,
+      "api_latency_s": 3.07,
+      "usage": {
+        "input_tokens": 35,
+        "output_tokens": 234,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0131,
+      "checks": {
+        "not_refused": true,
+        "regex_\\b20\\b": true,
+        "regex_\\b30\\b": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A57",
+      "type": "answerable",
+      "question": "What did spacesuit materials contribute to firefighter clothing?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Lightweight, fire-resistant, heat-protective materials first developed for astronauts' space suits were applied to firefighter clothing. NASA spacesuit technology improved firefighter clothing in a 1980s application. [1]\n\n- The quoted source describes applying these materials to the FIRES ensemble. The materials were originally developed for space suits or for spacecraft components that need thermal protection. [2]\n- The spinoff is documented as Project FIRES, 1982. [3]\n- It is a NASA spinoff, not a PSI combustion test, and no PSI investigation is linked to it. [4] [5]",
+      "citations": [
+        {
+          "psi_id": "EARTH-APPLICATIONS",
+          "cited_text": "Earth application: Firefighter protective clothing. Status: documented spinoff.Statement: A 1980s application of NASA spacesuit technology improved firefighter clothing."
+        },
+        {
+          "psi_id": "EARTH-APPLICATIONS",
+          "cited_text": "Verbatim from New Technology for the Fire Attire (NASA Spinoff, originally published 1982, https://spinoff.nasa.gov/node/9918): \"A major focus of the effort involves application to the FIRES ensemble of lightweight, fire-resistant, heat-protective materials originally developed for use in astronauts"
+        },
+        {
+          "psi_id": "EARTH-APPLICATIONS",
+          "cited_text": "Firefighter gear is covered here: NASA Spinoff documents firefighter air tanks and breathing gear (1976) and firefighter protective clothing (Project FIRES, 1982)."
+        },
+        {
+          "psi_id": "EARTH-APPLICATIONS",
+          "cited_text": "Label: NASA spinoff technology, not a PSI combustion test."
+        },
+        {
+          "psi_id": "EARTH-APPLICATIONS",
+          "cited_text": "Link to PSI: No PSI combustion investigation is linked: this is spacesuit materials history. Fabric flammability tests in the PSI tables (Saffire, BASS) address spacecraft materials, not firefighter clothing."
+        }
+      ],
+      "citation_count": 5,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 4.5,
+      "api_latency_s": 4.5,
+      "usage": {
+        "input_tokens": 26,
+        "output_tokens": 326,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.014,
+      "checks": {
+        "not_refused": true,
+        "contains_any": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A58",
+      "type": "answerable",
+      "question": "What oxygen level and pressure did Saffire VI-2 use?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Saffire VI-2 used 31.0% O2 at 54.1 kPa (7.85 psia). It burned SIBAL cloth at 31.0 percent O2 and 54.1 kPa (7.85 psia), with 20 cm/s concurrent flow. [1]\n\n- This test is outside PSI. Saffire IV-VI tests are not in the PSI repository and are not part of the unified PSI conditions table. [2]\n- The 31.0% is ambient O2. The sources don't give an oxidizer-stream O2 value.",
+      "citations": [
+        {
+          "psi_id": "NTRS-SAFFIRE-IV-VI",
+          "cited_text": "Saffire VI-2 (NTRS 20250002675): SIBAL cloth (75 pct cotton, 25 pct fiberglass), 50 cm long, 31.0 percent O2, 54.1 kPa (7.85 psia), 20 cm/s concurrent flow. Outcome: Burned. Spread rate 4.05 mm/s; peak heat release 3217 W and 580 kJ total by oxygen consumption, burn duration 112 s (a later paper giv"
+        },
+        {
+          "psi_id": "NTRS-SAFFIRE-IV-VI",
+          "cited_text": "Saffire IV-VI solid flammability tests published by NASA on NTRS. These tests are not in the PSI repository and are not part of the unified PSI conditions table."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 4,
+        "matched": 4,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.27,
+      "api_latency_s": 3.26,
+      "usage": {
+        "input_tokens": 27,
+        "output_tokens": 262,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0133,
+      "checks": {
+        "not_refused": true,
+        "regex_31": true,
+        "regex_54\\.1|7\\.85": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A59",
+      "type": "answerable",
+      "question": "What spread rate did Saffire IV-1 record?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Saffire IV-1 recorded a spread rate of 3.6 mm/s. It burned SIBAL cloth at 22.0 percent O2 and 20 cm/s concurrent flow, with steady spread over the sample. [1]\n\n- The average heat release was 3,150 W, with 409 kJ total, and the burn lasted 130 s. [1]\n- Saffire IV-VI are not in the PSI repository or the unified PSI conditions table. [2]",
+      "citations": [
+        {
+          "psi_id": "NTRS-SAFFIRE-IV-VI",
+          "cited_text": "Saffire IV-1 (NTRS 20210011521): SIBAL cloth (75 pct cotton, 25 pct fiberglass), 50 cm long, 22.0 percent O2, 100.0 kPa (14.50 psia), 20 cm/s concurrent flow. Outcome: Burned. Steady spread over the sample; spread rate 3.6 mm/s. Average heat release 3,150 W and 409 kJ total by fuel consumption calor"
+        },
+        {
+          "psi_id": "NTRS-SAFFIRE-IV-VI",
+          "cited_text": "Saffire IV-VI solid flammability tests published by NASA on NTRS. These tests are not in the PSI repository and are not part of the unified PSI conditions table."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 6,
+        "matched": 6,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.37,
+      "api_latency_s": 3.36,
+      "usage": {
+        "input_tokens": 22,
+        "output_tokens": 254,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0132,
+      "checks": {
+        "not_refused": true,
+        "regex_3\\.6": true
+      },
+      "passed": true
+    },
+    {
+      "id": "A60",
+      "type": "answerable",
+      "question": "Which Saffire VI sample did not ignite and at what oxygen level?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Saffire VI-1, a Nomex fabric sample, did not ignite at 31.9 percent O2.\n\n- Saffire VI-1 (NTRS 20250002675) used Nomex fabric at 31.9 percent O2, and the outcome was \"Did not ignite.\" [1] The extracted text gives no pressure for this test.\n- Saffire IV-VI tests are published on NTRS. They are not in the PSI repository or in the unified PSI conditions table. [2]\n- The other Saffire VI samples burned: SIBAL at 31.0 percent O2, 2-sided cast PMMA at 30.3 percent, and 1-sided cast PMMA at 28.8 percent. [3]",
+      "citations": [
+        {
+          "psi_id": "NTRS-SAFFIRE-IV-VI",
+          "cited_text": "Saffire VI-1 (NTRS 20250002675): Nomex fabric, 31.9 percent O2, pressure not stated in the extracted text. Outcome: Did not ignite."
+        },
+        {
+          "psi_id": "NTRS-SAFFIRE-IV-VI",
+          "cited_text": "Saffire IV-VI solid flammability tests published by NASA on NTRS. These tests are not in the PSI repository and are not part of the unified PSI conditions table."
+        },
+        {
+          "psi_id": "NTRS-SAFFIRE-IV-VI",
+          "cited_text": "Saffire VI-2 (NTRS 20250002675): SIBAL cloth (75 pct cotton, 25 pct fiberglass), 50 cm long, 31.0 percent O2, 54.1 kPa (7.85 psia), 20 cm/s concurrent flow. Outcome: Burned. Spread rate 4.05 mm/s; peak heat release 3217 W and 580 kJ total by oxygen consumption, burn duration 112 s (a later paper giv"
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 6,
+        "matched": 6,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 4.07,
+      "api_latency_s": 4.07,
+      "usage": {
+        "input_tokens": 29,
+        "output_tokens": 346,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0142,
+      "checks": {
+        "not_refused": true,
+        "regex_Nomex": true,
+        "regex_31\\.9": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T01",
+      "type": "trap",
+      "question": "What flame spread rate would PMMA have at Mars gravity of 0.38 g?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\n\nNo document gives a flame spread rate for PMMA at 0.38 g. All PSI data is microgravity, so results can only be bracketed between 0 g and 1 g and not interpolated to a partial-gravity value. Data needed: PMMA flame spread tests run at Mars gravity.",
+      "citations": [],
+      "citation_count": 0,
+      "number_check": {
+        "total": 1,
+        "matched": 1,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 2.76,
+      "api_latency_s": 2.75,
+      "usage": {
+        "input_tokens": 33,
+        "output_tokens": 148,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0122,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_(?<![0-9.])[0-9]+(\\.[0-9]+)?\\s*(cm/s|mm/s|m/s)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T02",
+      "type": "trap",
+      "question": "At what oxygen level does Nomex Velcro stop burning on the Moon at 0.16 g?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\n\nThe documents give no lunar-g extinction oxygen level for Nomex Velcro. The 35 cm/s 1-g buoyant velocity is a conservatively high estimate and the lunar-g velocity is not known, so no lunar-g flammability limit is stated for any material and nothing is interpolated. [1] All PSI data is microgravity, so results can only be bracketed between 0 g and 1 g.\n\n- What the tests did show: Nomex Velcro burned only at higher O2 than the 1-g data predicts [2].\n- The conservative 1-g to lunar-g delta is 0.32 O2 points [2]. It is an allowance, not a measured limit.\n- Data needed: lunar-g flame tests of Nomex Velcro with measured extinction O2. FM2 will burn samples in actual lunar gravity, planned launch late 2026. [3]",
+      "citations": [
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "The 35 cm/s 1-g buoyant velocity is a conservatively high estimate and the lunar-g velocity is not known, so no lunar-g flammability limit is stated for any material and nothing is interpolated."
+        },
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "Nomex Velcro: best-fit slope 1.6e-05, 95 percent slope 9e-05, delta 0.32 O2 points; lunar-g test: burned only at higher O2 than the 1-g data predicts."
+        },
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "Flammability of Materials on the Moon (FM2) will burn samples in actual lunar gravity, planned launch late 2026 (Ferkul, Kralik and Liao, LPSC 2026)."
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 3,
+        "matched": 3,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 5.19,
+      "api_latency_s": 5.19,
+      "usage": {
+        "input_tokens": 38,
+        "output_tokens": 413,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0149,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(%|percent)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T03",
+      "type": "trap",
+      "question": "What smoke particle size would form in a fire at Mars gravity?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\nNo document gives smoke particle sizes at Mars gravity. All PSI data is microgravity, and results can only be bracketed between 0 g and 1 g, so no partial-gravity number can be given. Data needed: smoke particle size measurements from tests at about one-third g.",
+      "citations": [],
+      "citation_count": 0,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 2.78,
+      "api_latency_s": 2.78,
+      "usage": {
+        "input_tokens": 26,
+        "output_tokens": 149,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0122,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(nm|um|micron|micrometer)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T04",
+      "type": "trap",
+      "question": "Interpolate the burning rate of a PMMA rod at 0.38 g between its 0 g and 1 g values.",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\n\nThe documents give no burning rate for a PMMA rod at 0 g or 1 g. Partial-gravity values can't be interpolated either, because all PSI data is microgravity. The flammability map also has a low-flow quenching branch and a high-flow blowoff branch (Partial gravity cannot be interpolated between 0 g and 1 g [1]).\n\nData needed:\n- Measured PMMA rod burning rates at 0 g and 1 g under the same O2, pressure and flow.\n- Burning tests in actual partial gravity. FM2 will burn samples in actual lunar gravity, planned launch late 2026 [2].",
+      "citations": [
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "Does lunar gravity change flammability? Measured answer from Urban et al., NASA Glenn Research Center (https://ntrs.nasa.gov/api/citations/20250002114/downloads/ICES_2025-392-correctedcaptions.pdf). Partial gravity cannot be interpolated between 0 g and 1 g: the flammability map has a low-flow quenc"
+        },
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "Flammability of Materials on the Moon (FM2) will burn samples in actual lunar gravity, planned launch late 2026 (Ferkul, Kralik and Liao, LPSC 2026)."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.59,
+      "api_latency_s": 3.58,
+      "usage": {
+        "input_tokens": 43,
+        "output_tokens": 306,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0138,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(mm/s|cm/s|g/s|mg/s)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T05",
+      "type": "trap",
+      "question": "What airflow speed did the ACME Burning Rate Emulator run at?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\n\nThe ACME BRE record (PSI-20) gives no airflow speed. Flow speed tested: not recorded. [1] The burner ran in a quiescent ambient, not a forced flow. The stated aim was to establish the burning conditions in a quiescent microgravity ambient [2].\n\n- What it did record: ambient O2 of 0.21 to 0.4 mole fraction [3] on 25 mm and 50 mm burners [4].\n- Data needed: the BRE fuel-flow or burner-exit velocity (cm/s) per test, and any ambient flow measurement.",
+      "citations": [
+        {
+          "psi_id": "PSI-20",
+          "cited_text": "Flow speed tested: not recorded."
+        },
+        {
+          "psi_id": "PSI-20",
+          "cited_text": "Objectives: The BRE flight program seeks to establish the burning conditions in a quiescent microgravity ambient in terms of material properties."
+        },
+        {
+          "psi_id": "PSI-20",
+          "cited_text": "Ambient O2 tested (mole fraction): 0.21 to 0.4  (n=18, rows 1-18, PSI-20_Experimental table_ACME BRE.csv)."
+        },
+        {
+          "psi_id": "PSI-20",
+          "cited_text": "Sample geometry: burner 25 mm (16 rows); burner 50 mm (2 rows)"
+        }
+      ],
+      "citation_count": 4,
+      "number_check": {
+        "total": 4,
+        "matched": 4,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.73,
+      "api_latency_s": 3.73,
+      "usage": {
+        "input_tokens": 29,
+        "output_tokens": 304,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0137,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(cm/s|mm/s|m/s)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T06",
+      "type": "trap",
+      "question": "What ambient pressure was used in the SAME-R experiment?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\nThe SAME-R table doesn't record ambient pressure, and no other document gives a SAME-R pressure. Pressure tested: not recorded. [1]\n\n- Only flow speed is recorded for SAME-R: 0 to 8.1 cm/s [2].\n- Data needed: the SAME-R flight report or test log with the chamber pressure for each test point.",
+      "citations": [
+        {
+          "psi_id": "PSI-101",
+          "cited_text": "Pressure tested: not recorded."
+        },
+        {
+          "psi_id": "PSI-101",
+          "cited_text": "Flow speed tested: 0 to 8.1 cm/s (n=109, rows 1-109, PSI-101_Experimental table_SAME-R.csv)."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 2,
+        "matched": 2,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.06,
+      "api_latency_s": 3.05,
+      "usage": {
+        "input_tokens": 25,
+        "output_tokens": 200,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0127,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(psia|atm|kPa)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T07",
+      "type": "trap",
+      "question": "What oxygen fraction was used in the DAFT dust measurements?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\n\nThe DAFT record (PSI-47) does not record an oxygen fraction. Neither ambient O2 nor oxidizer-stream O2 is recorded [1], and oxygen mole fraction is not recorded in the table [2].\n\n- What it does say: the aerosol was Arizona Road Dust (ARD Fine) combined with ISS GN2 [3]. The tests measured particle counting rather than combustion.\n- Data needed: the DAFT/DAFT-2 cabin or bag gas composition (O2 mole fraction) for the test points.",
+      "citations": [
+        {
+          "psi_id": "PSI-47",
+          "cited_text": "Ambient O2 tested (mole fraction): not recorded.Oxidizer-stream O2 tested (mole fraction, a different quantity): not recorded."
+        },
+        {
+          "psi_id": "PSI-47",
+          "cited_text": "Oxygen (mole fraction): not recorded in the table."
+        },
+        {
+          "psi_id": "PSI-47",
+          "cited_text": "Fuels: Arizona Road Dust (ARD Fine) in combination with ISS GN2 to create an aerosol for measurement purposes. (2 rows)"
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.64,
+      "api_latency_s": 3.64,
+      "usage": {
+        "input_tokens": 27,
+        "output_tokens": 291,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0136,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(%|percent)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T08",
+      "type": "trap",
+      "question": "What oxygen range did investigation PSI-62 test?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\n\nPSI-62 is a ground modeling study, and it has no rows in the unified conditions table [1], so it has no tested O2 range. The only O2 figure in its record comes from a BASS-II result it cites: flames ignited at a higher O2 survived to final O2 concentrations as low as 13.6 percent [2]. That is a BASS-II result, not a PSI-62 test range.\n\nTo answer, I would need a table of O2 conditions for PSI-62's own simulations or experiments.",
+      "citations": [
+        {
+          "psi_id": "PSI-62",
+          "cited_text": "This investigation has no rows in the unified conditions table."
+        },
+        {
+          "psi_id": "PSI-62",
+          "cited_text": "Key result, verbatim from NTRS 20210011385 (Burning and Suppression of Solids-II  (BASS-II) Summary Report): \"Despite this limiting O2 concentration for ignition, flames ignited at a higher O2 survived to final O2 concentrations as low as 13.6 percent O2, indicating that the high heat loss to the in"
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 1,
+        "matched": 1,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.15,
+      "api_latency_s": 3.15,
+      "usage": {
+        "input_tokens": 23,
+        "output_tokens": 253,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0132,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(%|percent)": false
+      },
+      "passed": false
+    },
+    {
+      "id": "T09",
+      "type": "trap",
+      "question": "What ambient pressure did investigation PSI-115 test?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\n\nPSI-115 is a ground numerical simulation of smoke growth. It has no rows in the unified conditions table [1], and it gives no ambient pressure. It only says that two cross-flow velocities were considered [2].\n\n- Data needed: the simulation's pressure setting from the PSI-115 final report.",
+      "citations": [
+        {
+          "psi_id": "PSI-115",
+          "cited_text": "This investigation has no rows in the unified conditions table."
+        },
+        {
+          "psi_id": "PSI-115",
+          "cited_text": "This study considered two cross-flow velocities of sufficiently low speed that buoyancy cannot be neglected in the presence of gravity. Simulations are presented to assess the dependence of particle size distributions on thermophoresis, particle settling, and flow geometry."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 2.84,
+      "api_latency_s": 2.83,
+      "usage": {
+        "input_tokens": 24,
+        "output_tokens": 187,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0126,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(psia|atm|kPa)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T10",
+      "type": "trap",
+      "question": "What ambient pressure did the PSI-142 cool flame counterflow tests use?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\n\nPSI-142 is a simulation and ground-based study. Its table does not record a pressure tested [1], and the ambient pressure field is not recorded in the table [2]. The only pressure the document gives is for DME/air simulations, which reached elevated pressure (up to 20 atm) [3]. That is a modeled range, not a counterflow test pressure.\n\nData needed: the ground-experiment test log or publication tables for the ozone-sensitized counterflow runs, with chamber pressure per run.",
+      "citations": [
+        {
+          "psi_id": "PSI-142",
+          "cited_text": "Pressure tested: not recorded."
+        },
+        {
+          "psi_id": "PSI-142",
+          "cited_text": "Pressure (atm): not recorded in the table."
+        },
+        {
+          "psi_id": "PSI-142",
+          "cited_text": "flame regimes and burning limits at elevated pressure (up to 20 atm) using DME/air mixtures."
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 1,
+        "matched": 1,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.21,
+      "api_latency_s": 3.21,
+      "usage": {
+        "input_tokens": 32,
+        "output_tokens": 266,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0134,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(psia|atm|kPa)": false
+      },
+      "passed": false
+    },
+    {
+      "id": "T11",
+      "type": "trap",
+      "question": "What did the SAFFIRE-VII mission find about Nomex flammability?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\n\nThe documents don't mention a SAFFIRE-VII mission. They cover only Saffire-I, -II, -III in PSI and Saffire IV-VI outside PSI, so quoting numbers from those would be a substitute.\n\nData needed: a SAFFIRE-VII test record or report with the Nomex sample, O2, pressure, flow and outcome.",
+      "citations": [],
+      "citation_count": 0,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 2.83,
+      "api_latency_s": 2.83,
+      "usage": {
+        "input_tokens": 30,
+        "output_tokens": 174,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0124,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(%|percent|mm/s|cm/s|kPa|atm)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T12",
+      "type": "trap",
+      "question": "Summarize the findings of investigation PSI-250.",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\n\nPSI-250 appears in none of the provided documents. I'd need that investigation's record, with its objectives, test conditions and key results, to summarize it.",
+      "citations": [],
+      "citation_count": 0,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 2.52,
+      "api_latency_s": 2.52,
+      "usage": {
+        "input_tokens": 22,
+        "output_tokens": 112,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0118,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(%|percent|mm/s|cm/s|kPa|atm)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T13",
+      "type": "trap",
+      "question": "What did the FLAMESCAN-2 experiment on the ISS conclude?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\n\nNo document covers an experiment called FLAMESCAN-2. The investigations in the data (ACME, BASS, FLEX, SAFFIRE, SAME, SPICE, SLICE and others) don't include it. To answer, I would need the PSI investigation record or the published report for FLAMESCAN-2, with its objectives and key results.",
+      "citations": [],
+      "citation_count": 0,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 4.79,
+      "api_latency_s": 4.79,
+      "usage": {
+        "input_tokens": 31,
+        "output_tokens": 171,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0124,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(%|percent|mm/s|cm/s|kPa|atm)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T14",
+      "type": "trap",
+      "question": "What was the result of the ACME Pool Fire Study?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\nNo document covers an ACME Pool Fire Study. The ACME investigations in the documents are Flame Design (PSI-10), BRE (PSI-20), CLD Flame (PSI-21), E-FIELD Flames (PSI-22), s-Flame (PSI-23) and CFI-G (PSI-159).\n\n- Data needed: the PSI record or report for the ACME Pool Fire Study. That would include its objectives, test conditions and results.",
+      "citations": [],
+      "citation_count": 0,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.05,
+      "api_latency_s": 3.05,
+      "usage": {
+        "input_tokens": 23,
+        "output_tokens": 204,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0127,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(%|percent|mm/s|cm/s|kPa|atm)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T15",
+      "type": "trap",
+      "question": "What flame spread rate will the planned 2030 Mars surface fire experiment measure?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\n\nNo document describes a planned 2030 Mars surface fire experiment. All PSI data is microgravity, and no partial-gravity values exist. The documents define only a Mars habitat atmosphere (34% O2, 8.2 psia), not a flame spread measurement.\n\nData needed: a mission or experiment description that gives its planned flame spread rate, material, atmosphere, and gravity level.",
+      "citations": [],
+      "citation_count": 0,
+      "number_check": {
+        "total": 2,
+        "matched": 2,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 2.91,
+      "api_latency_s": 2.91,
+      "usage": {
+        "input_tokens": 33,
+        "output_tokens": 193,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0126,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(cm/s|mm/s|m/s|%|percent)": false
+      },
+      "passed": false
+    },
+    {
+      "id": "T16",
+      "type": "trap",
+      "question": "What flame spread rates did the FM2 experiment measure on the Moon?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\n\nFM2 (Flammability of Materials on the Moon) hasn't flown yet, so it has no measured flame spread rates. It will burn samples in actual lunar gravity, with a planned launch in late 2026. [1]\n\nData needed: FM2 flight results, meaning flame spread rates from tests in actual lunar gravity.",
+      "citations": [
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "Flammability of Materials on the Moon (FM2) will burn samples in actual lunar gravity, planned launch late 2026 (Ferkul, Kralik and Liao, LPSC 2026)."
+        }
+      ],
+      "citation_count": 1,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.09,
+      "api_latency_s": 3.09,
+      "usage": {
+        "input_tokens": 29,
+        "output_tokens": 186,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0126,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(cm/s|mm/s|m/s)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T17",
+      "type": "trap",
+      "question": "What is the probability that a heptane droplet burns in the Moon base atmosphere?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\n\nNo document gives a probability of burning for heptane in the Moon base atmosphere. The data are microgravity test rows, and none of them is a probability or a lunar-gravity test. To answer, we would need repeated heptane droplet tests at about 34% ambient O2 and 8.2 psia, with burn or no-burn outcomes, in actual lunar gravity.",
+      "citations": [],
+      "citation_count": 0,
+      "number_check": {
+        "total": 2,
+        "matched": 2,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.15,
+      "api_latency_s": 3.15,
+      "usage": {
+        "input_tokens": 32,
+        "output_tokens": 174,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0125,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(%|percent)": false
+      },
+      "passed": false
+    },
+    {
+      "id": "T18",
+      "type": "trap",
+      "question": "What is the probability that a cotton jersey fire spreads in a Mars habitat?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\n\nThe documents give no probability of fire spread for any material in a Mars habitat. No PSI test used cotton jersey, and no data exists at Mars gravity. Cotton jersey appears only in an outside-PSI Saffire V-2 test, which is a different condition.\n\nData needed: cotton jersey flammability tests at the Mars habitat atmosphere (34% O2, 8.2 psia) with a measured spread outcome. Mars gravity could only be bracketed between 0 g and 1 g.",
+      "citations": [],
+      "citation_count": 0,
+      "number_check": {
+        "total": 2,
+        "matched": 2,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.41,
+      "api_latency_s": 3.41,
+      "usage": {
+        "input_tokens": 32,
+        "output_tokens": 222,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0129,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(%|percent)": false
+      },
+      "passed": false
+    },
+    {
+      "id": "T19",
+      "type": "trap",
+      "question": "What probability does the FLEX model give that a methanol droplet flame goes out on its own at ISS cabin conditions?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\n\nThe FLEX documents give no probability model. They record outcomes (extinction (186), disruption (61), completion (27) [1]) and an LOI result for methanol, not a self-extinguishment probability at ISS cabin conditions. Quoting a number from other conditions would be a substitute, so I haven't.\n\nData needed: a statistical or predictive model fitted to methanol droplet outcomes, evaluated at ISS cabin O2, pressure and flow.",
+      "citations": [
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Outcomes recorded: extinction (186), disruption (61), completion (27)."
+        }
+      ],
+      "citation_count": 1,
+      "number_check": {
+        "total": 3,
+        "matched": 3,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 4.06,
+      "api_latency_s": 4.05,
+      "usage": {
+        "input_tokens": 43,
+        "output_tokens": 219,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0129,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(%|percent)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T20",
+      "type": "trap",
+      "question": "What is the capital of Malaysia?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\n\nThe documents cover NASA PSI combustion investigations and say nothing about geography or the capital of Malaysia. To answer, I would need a geography or country-reference source.",
+      "citations": [],
+      "citation_count": 0,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 2.45,
+      "api_latency_s": 2.44,
+      "usage": {
+        "input_tokens": 17,
+        "output_tokens": 107,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0118,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_Kuala Lumpur|Putrajaya": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T21",
+      "type": "trap",
+      "question": "Which extinguisher should I buy for my kitchen?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\nThe documents cover microgravity combustion research. They don't recommend or compare household kitchen extinguishers.\n\n- The closest material is the fine-water-mist extinguisher spinoff. Fine-water-mist extinguishers developed for use on the ISS have practical applications on Earth. [1] No PSI table is a water-mist test, so this link is an inference. [2]\n- Data needed: a fire-protection standard or product test data for kitchen fires (grease and cooking-oil fires), including extinguisher ratings.",
+      "citations": [
+        {
+          "psi_id": "EARTH-APPLICATIONS",
+          "cited_text": "Statement: Fine-water-mist extinguishers developed for use on the ISS have practical applications on Earth."
+        },
+        {
+          "psi_id": "EARTH-APPLICATIONS",
+          "cited_text": "Link to PSI: FLEX and FLEX-2 measure how diluents extinguish burning droplets and are the nearest PSI suppression data. No PSI table is a water-mist test, so this link is an inference."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.56,
+      "api_latency_s": 3.55,
+      "usage": {
+        "input_tokens": 23,
+        "output_tokens": 259,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0133,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_(?i)\\byou should buy\\b|\\bI recommend\\b": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T22",
+      "type": "trap",
+      "question": "What is the thermal runaway onset temperature of a lithium-ion battery in microgravity?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\n\nNone of the investigations covers lithium-ion batteries or thermal runaway. They cover gas, liquid droplet, solid and smoke fuels.\n\nData needed: microgravity battery thermal-runaway tests that record cell chemistry, state of charge, heating method, and the cell surface temperature at onset.",
+      "citations": [],
+      "citation_count": 0,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 2.23,
+      "api_latency_s": 2.22,
+      "usage": {
+        "input_tokens": 35,
+        "output_tokens": 164,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0124,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(C|degrees|K)\\b": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T23",
+      "type": "trap",
+      "question": "How much did the BASS-II experiment cost?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data.\n\nThe documents describe BASS-II's objectives, hardware, test conditions and results. None of them gives a cost or budget for it.\n\n- Data needed: NASA program budget or cost records for BASS-II, such as mission cost reports or procurement and funding documents.",
+      "citations": [],
+      "citation_count": 0,
+      "number_check": {
+        "total": 0,
+        "matched": 0,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 2.99,
+      "api_latency_s": 2.98,
+      "usage": {
+        "input_tokens": 20,
+        "output_tokens": 129,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.012,
+      "checks": {
+        "contains_any": true,
+        "forbidden_absent_\\$\\s*\\d|\\d\\s*(USD|dollars|million)": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T24",
+      "type": "trap",
+      "question": "Is 26.5 percent oxygen at 10.2 psia safe for the Gateway crew?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data as a safety verdict. The data can't call any atmosphere safe, but it does define 26.5% O2 at 10.2 psia as Gateway's nominal condition and gives some related test results.\n\n- Gateway's nominal crewed atmosphere is about 26 to 26.5 percent O2 at 10.2 psia (0.694 atm). [1]\n- The ACME BRE objectives list 10.2 psia, 26.5 % oxygen as a NASA-considered atmosphere for human space missions. [2] BRE saw ongoing combustion without air flow in elevated-oxygen atmospheres, whereas flames at 21% oxygen self-extinguished in a short time. [3]\n- All PSI data is microgravity. Not covered: a safety threshold for crew, which would need a crew-exposure and fire-risk assessment for that atmosphere.",
+      "citations": [
+        {
+          "psi_id": "DASHBOARD-RESULTS",
+          "cited_text": "Environment gateway (Gateway-class station): O2 about 26 to 26.5 percent O2 (nominal, crewed, 10.2 psia) (source: NTRS 20230009095, NTRS 20220006727 (ICES-2022-196), NTRS 20220006612 (ICES-2022-45)); pressure 10.2 psia nominal (0.694 atm); crewed range 70-101.3 kPa (source: NTRS 20240016087 (GP 1026"
+        },
+        {
+          "psi_id": "PSI-20",
+          "cited_text": "1. Observe burning behavior in long-duration microgravity for CH4/N2 and C2H4/N2mixtures on porous circular burners of 25  and 50 mm diameter. Consider O2/N2 ambients with various pressures and ambient O2 concentrations and pressures. NASA - considered atmosphere for human space missions will be exa"
+        },
+        {
+          "psi_id": "PSI-20",
+          "cited_text": "The ongoing combustion without air flow was notably seen in elevated-oxygen atmospheres which are being considered for use in future spacecraft, whereas such flames in a normal atmosphere of 21% oxygen self-extinguished in a short time."
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 5,
+        "matched": 5,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 4.17,
+      "api_latency_s": 4.16,
+      "usage": {
+        "input_tokens": 37,
+        "output_tokens": 383,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0146,
+      "checks": {
+        "contains_any": true,
+        "forbidden_unnegated_(?i)\\bsafe\\b": true
+      },
+      "passed": true
+    },
+    {
+      "id": "T25",
+      "type": "trap",
+      "question": "Is polycarbonate fireproof on the Moon?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "Not in the data. No document states a lunar-gravity flammability limit for polycarbonate, and it can't be called fireproof. No test tells us it is safe either.\n\n- In the lunar-g test, polycarbonate burned only at higher O2 than the 1-g data predicts. [1] That test is a measured result, but it gives no limit.\n- The lunar-g velocity is not known, so no lunar-g flammability limit is stated for any material and nothing is interpolated. [2]\n- All PSI data is microgravity, so results can only be bracketed between 0 g and 1 g. Data needed: a measured polycarbonate oxygen limit in actual lunar gravity, such as the planned FM2 tests.",
+      "citations": [
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "Polycarbonate: best-fit slope 0.0004, 95 percent slope 0.00065, delta 2.3 O2 points; lunar-g test: burned only at higher O2 than the 1-g data predicts."
+        },
+        {
+          "psi_id": "LUNAR-GRAVITY",
+          "cited_text": "The 35 cm/s 1-g buoyant velocity is a conservatively high estimate and the lunar-g velocity is not known, so no lunar-g flammability limit is stated for any material and nothing is interpolated."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 1,
+        "matched": 1,
+        "unmatched": []
+      },
+      "tools_used": [],
+      "expected_tool": null,
+      "used_expected_tool": null,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 1,
+      "latency_s": 3.74,
+      "api_latency_s": 3.74,
+      "usage": {
+        "input_tokens": 23,
+        "output_tokens": 319,
+        "cache_read_input_tokens": 106496,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0139,
+      "checks": {
+        "contains_any": true,
+        "forbidden_unnegated_(?i)\\bfireproof\\b|\\bnon-?flammable\\b|\\bsafe\\b": true
+      },
+      "passed": true
+    },
+    {
+      "id": "M01",
+      "type": "multistep",
+      "question": "How many test rows are in the whole dataset?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The dataset has 2,009 test rows, spread across 20 investigations.\n\n- The largest contributors are SPICE with 469 rows, ACME CFI-G with 333, ACME/Flame Design with 327 and FLEX with 274.\n- Across all rows with a recorded O2 value, ambient and oxidizer-stream O2 together span 12 to 85 percent. These are separate quantities.",
+      "citations": [],
+      "citation_count": 0,
+      "number_check": {
+        "total": 8,
+        "matched": 8,
+        "unmatched": []
+      },
+      "tools_used": [
+        "find_tests"
+      ],
+      "expected_tool": "find_tests",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.18,
+      "api_latency_s": 5.18,
+      "usage": {
+        "input_tokens": 1024,
+        "output_tokens": 284,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0262,
+      "checks": {
+        "regex_2,?009": true
+      },
+      "passed": true
+    },
+    {
+      "id": "M02",
+      "type": "multistep",
+      "question": "How many solid-fuel test rows are there in the PSI table?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The PSI table has 272 solid-fuel test rows.\n\n- BASS-II (PSI-25): 129 rows. [1]\n- BASS (PSI-26): 122 rows. [2]\n- SAFFIRE-II: 15 rows. [3] SAFFIRE-I: 4 rows. [4] SAFFIRE-III: 2 rows. [5]\n\nAmbient O2 in these rows, where recorded, runs from 13.6% to 22.2%.",
+      "citations": [
+        {
+          "psi_id": "PSI-25",
+          "cited_text": "Rows in the unified conditions table: 129 (outcome recorded in 0)."
+        },
+        {
+          "psi_id": "PSI-26",
+          "cited_text": "Rows in the unified conditions table: 122 (outcome recorded in 0)."
+        },
+        {
+          "psi_id": "PSI-99",
+          "cited_text": "Rows in the unified conditions table: 15 (outcome recorded in 4)."
+        },
+        {
+          "psi_id": "PSI-98",
+          "cited_text": "Rows in the unified conditions table: 4 (outcome recorded in 0)."
+        },
+        {
+          "psi_id": "PSI-100",
+          "cited_text": "Rows in the unified conditions table: 2 (outcome recorded in 0)."
+        }
+      ],
+      "citation_count": 5,
+      "number_check": {
+        "total": 8,
+        "matched": 8,
+        "unmatched": []
+      },
+      "tools_used": [
+        "find_tests"
+      ],
+      "expected_tool": "find_tests",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.16,
+      "api_latency_s": 5.15,
+      "usage": {
+        "input_tokens": 874,
+        "output_tokens": 343,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0265,
+      "checks": {
+        "regex_\\b272\\b": true
+      },
+      "passed": true
+    },
+    {
+      "id": "M03",
+      "type": "multistep",
+      "question": "How many liquid-droplet test rows have ambient oxygen between 33.5 and 35 percent?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "9 liquid-droplet test rows have ambient O2 between 33.5 and 35 percent.\n\n- All 9 rows come from PSI-69 (FLEX). Every one is at 34 percent ambient O2.\n- The examples I checked are at about 10.4 psia and cover heptane and methanol. Their outcomes were disruption or completion.\n- None of the other liquid-droplet investigations (PSI-39, PSI-68) has rows in this range.",
+      "citations": [],
+      "citation_count": 0,
+      "number_check": {
+        "total": 5,
+        "matched": 5,
+        "unmatched": []
+      },
+      "tools_used": [
+        "find_tests"
+      ],
+      "expected_tool": "find_tests",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.02,
+      "api_latency_s": 5.01,
+      "usage": {
+        "input_tokens": 805,
+        "output_tokens": 324,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0261,
+      "checks": {
+        "regex_\\b9\\b|nine": true,
+        "regex_FLEX|PSI-69": true
+      },
+      "passed": true
+    },
+    {
+      "id": "M04",
+      "type": "multistep",
+      "question": "How many tests in total have ambient oxygen of 30 percent or more?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "303 of the 2,009 test rows have ambient O2 of 30% or more. The highest ambient O2 among them is 40%.\n\n- PSI-10 (ACME/Flame Design) has 131 rows and PSI-159 (ACME CFI-G) has 115.\n- PSI-69 (FLEX) has 24 rows, PSI-20 (ACME BRE) has 17, and PSI-23 (ACME s-Flame) and PSI-68 (FLEX-2) have 8 each.\n- This count covers ambient O2 only. Oxidizer-stream O2, which is a separate quantity, is not included.",
+      "citations": [],
+      "citation_count": 0,
+      "number_check": {
+        "total": 9,
+        "matched": 9,
+        "unmatched": []
+      },
+      "tools_used": [
+        "find_tests"
+      ],
+      "expected_tool": "find_tests",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.82,
+      "api_latency_s": 5.81,
+      "usage": {
+        "input_tokens": 908,
+        "output_tokens": 323,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0263,
+      "checks": {
+        "regex_\\b303\\b": true
+      },
+      "passed": true
+    },
+    {
+      "id": "M05",
+      "type": "multistep",
+      "question": "How many gas-fuel tests have ambient oxygen of at least 30 percent?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "271 gas-fuel tests have ambient O2 of 30 percent or more. The highest ambient O2 among them is 40 percent.\n\n- PSI-10 (ACME/Flame Design) has 131 of these tests.\n- PSI-159 (ACME CFI-G) has 115.\n- PSI-20 (ACME BRE) has 17, and PSI-23 (ACME s-Flame) has 8.\n- This count covers ambient O2 only. It leaves out oxidizer-stream O2, which is a separate quantity.",
+      "citations": [],
+      "citation_count": 0,
+      "number_check": {
+        "total": 7,
+        "matched": 7,
+        "unmatched": []
+      },
+      "tools_used": [
+        "find_tests"
+      ],
+      "expected_tool": "find_tests",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.1,
+      "api_latency_s": 5.09,
+      "usage": {
+        "input_tokens": 909,
+        "output_tokens": 349,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0266,
+      "checks": {
+        "regex_\\b271\\b": true
+      },
+      "passed": true
+    },
+    {
+      "id": "M06",
+      "type": "multistep",
+      "question": "How many solid-fuel tests in the PSI table have ambient oxygen of 30 percent or more?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "0 of the 137 solid-fuel tests in the PSI table have ambient O2 of 30 percent or more.\n\n- PSI solid-fuel tests stop at 22.2 percent ambient O2. [1] The highest value comes from PSI-25 (BASS-II), which tested ambient O2 from 0.136 to 0.222 mole fraction. [2]\n- Solid-fuel tests at 30 percent O2 or more exist only outside PSI. Saffire VI-3 (cast PMMA) burned at 30.3 percent O2 [3], and Saffire VI-2 (SIBAL) burned at 31.0 percent. [4] Neither is in the PSI table.",
+      "citations": [
+        {
+          "psi_id": "NTRS-SAFFIRE-IV-VI",
+          "cited_text": "For comparison, PSI solid-fuel tests stop at 22.2 percent ambient O2."
+        },
+        {
+          "psi_id": "PSI-25",
+          "cited_text": "Ambient O2 tested (mole fraction): 0.136 to 0.222  (n=129, rows 1-129, PSI-25_Experimental table_BASS-II.csv)."
+        },
+        {
+          "psi_id": "NTRS-SAFFIRE-IV-VI",
+          "cited_text": "Saffire VI-3 (NTRS 20250002675): Cast PMMA, 2-sided, 1 cm thick, 18 cm long, 30.3 percent O2, 54.6 kPa (7.92 psia), 20 cm/s concurrent flow. Outcome: Burned. Flame anchored at the leading edge; flame length growth 0.38 mm/s, max flame length 89.9 mm; peak heat release 3080 W and 1280 kJ total over 7"
+        },
+        {
+          "psi_id": "NTRS-SAFFIRE-IV-VI",
+          "cited_text": "Saffire VI-2 (NTRS 20250002675): SIBAL cloth (75 pct cotton, 25 pct fiberglass), 50 cm long, 31.0 percent O2, 54.1 kPa (7.85 psia), 20 cm/s concurrent flow. Outcome: Burned. Spread rate 4.05 mm/s; peak heat release 3217 W and 580 kJ total by oxygen consumption, burn duration 112 s (a later paper giv"
+        }
+      ],
+      "citation_count": 4,
+      "number_check": {
+        "total": 8,
+        "matched": 7,
+        "unmatched": [
+          "137"
+        ]
+      },
+      "tools_used": [
+        "find_tests"
+      ],
+      "expected_tool": "find_tests",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.41,
+      "api_latency_s": 5.41,
+      "usage": {
+        "input_tokens": 239,
+        "output_tokens": 432,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0261,
+      "checks": {
+        "regex_(?i)\\b(0|zero|none)\\b|\\bno\\b": true
+      },
+      "passed": true
+    },
+    {
+      "id": "M07",
+      "type": "multistep",
+      "question": "How many tests have ambient oxygen between 21 and 24.1 percent and pressure between 13.9 and 15.2 psia?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "**105 of 2,009 tests** have ambient O2 of 21\u201324.1% and pressure of 13.9\u201315.2 psia.\n\n- By investigation: PSI-69 (FLEX) has 43, PSI-39 (CFI) has 28, PSI-159 (ACME CFI-G) has 23, PSI-23 (ACME s-Flame) has 10, and PSI-10 (ACME/Flame Design) has 1.\n- All 105 are gas or liquid-droplet tests. 0 are solid-fuel tests, because the solid-fuel tables record no pressure.\n- The highest ambient O2 among the matches is 24.0%.",
+      "citations": [],
+      "citation_count": 0,
+      "number_check": {
+        "total": 13,
+        "matched": 13,
+        "unmatched": []
+      },
+      "tools_used": [
+        "find_tests"
+      ],
+      "expected_tool": "find_tests",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.7,
+      "api_latency_s": 5.7,
+      "usage": {
+        "input_tokens": 1004,
+        "output_tokens": 416,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0275,
+      "checks": {
+        "regex_\\b105\\b": true
+      },
+      "passed": true
+    },
+    {
+      "id": "M08",
+      "type": "multistep",
+      "question": "How many liquid-droplet tests ran at 10.2 psia or less?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "5 liquid-droplet tests ran at 10.2 psia or less, out of 361 liquid-droplet rows.\n\n- 3 are from PSI-39 (CFI), all at 7.35 psia and 21% ambient O2.\n- 2 are from PSI-69 (FLEX), both methanol. One is at 10.18 psia and 18% ambient O2. The other is recorded at 0.0 psia and 20% ambient O2, which looks like a placeholder value rather than a real pressure.\n- Across the 5 tests, ambient O2 ranges from 18% to 21%.",
+      "citations": [],
+      "citation_count": 0,
+      "number_check": {
+        "total": 11,
+        "matched": 10,
+        "unmatched": [
+          "361"
+        ]
+      },
+      "tools_used": [
+        "find_tests"
+      ],
+      "expected_tool": "find_tests",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.11,
+      "api_latency_s": 5.1,
+      "usage": {
+        "input_tokens": 824,
+        "output_tokens": 336,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0263,
+      "checks": {
+        "regex_\\b5\\b|five": true
+      },
+      "passed": true
+    },
+    {
+      "id": "M09",
+      "type": "multistep",
+      "question": "How many gas-fuel tests ran at 10.2 psia or less, and which investigation contributes most?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "92 gas-fuel tests ran at 10.2 psia or less. PSI-159 (ACME CFI-G) contributes the most, with 65 of them.\n\n- PSI-10 (ACME/Flame Design) supplies the other 27 tests.\n- Across these 92 tests, O2 runs from 15% to 85%. The two O2 bases are mixed: some values are ambient and some are oxidizer-stream.\n- The remaining gas-fuel investigations have no tests in this pressure range, or no recorded pressure.",
+      "citations": [],
+      "citation_count": 0,
+      "number_check": {
+        "total": 6,
+        "matched": 6,
+        "unmatched": []
+      },
+      "tools_used": [
+        "find_tests"
+      ],
+      "expected_tool": "find_tests",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.79,
+      "api_latency_s": 5.79,
+      "usage": {
+        "input_tokens": 861,
+        "output_tokens": 312,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0261,
+      "checks": {
+        "regex_\\b92\\b": true,
+        "regex_CFI-G|PSI-159": true
+      },
+      "passed": true
+    },
+    {
+      "id": "M10",
+      "type": "multistep",
+      "question": "For the Moon base, what is the nearest tested liquid-droplet condition?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The nearest tested liquid-droplet condition is from PSI-69 (FLEX), row 37 of PSI-69_Experimental table_FLEX.csv. 0 of 361 liquid-droplet rows fall inside the Moon base window.\n\n- The Moon base window is 33.5\u201335.0% ambient O2, 8.1\u20138.3 psia and 10\u201320 cm/s flow.\n- The nearest test is at 34.0% ambient O2, which is inside the O2 range, and 10.33 psia, which is about 2 psia above the pressure range. The fuels in PSI-69 are methanol and heptane. [1]\n- Flow speed was not recorded for PSI-69. [2] The flow window therefore can't be checked against this test.\n- All PSI data is microgravity. It can't give a lunar-gravity result.",
+      "citations": [
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Fuels: Methanol (157 rows); Heptane (117 rows)"
+        },
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Flow speed tested: not recorded."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 13,
+        "matched": 12,
+        "unmatched": [
+          "2 psia"
+        ]
+      },
+      "tools_used": [
+        "test_next"
+      ],
+      "expected_tool": "test_next",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.12,
+      "api_latency_s": 5.12,
+      "usage": {
+        "input_tokens": 541,
+        "output_tokens": 406,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0264,
+      "checks": {
+        "regex_\\b34\\b": true,
+        "regex_FLEX|PSI-69": true
+      },
+      "passed": true
+    },
+    {
+      "id": "M11",
+      "type": "multistep",
+      "question": "For the Moon base, how many solid-fuel PSI tests lie inside the window and what is the closest solid test?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "0 of 137 solid-fuel tests fall inside the Moon base window.\n\n- The window is 33.5\u201335 % ambient O2, 8.1\u20138.3 psia and 10\u201320 cm/s flow.\n- The closest solid test is PSI-25 (BASS-II), row 1. It was run at 22.2 % ambient O2, which is about 11 points below the window. PSI-25's ambient O2 range is 0.136 to 0.222 mole fraction. [1]\n- Pressure is not recorded in the PSI table for that test.\n- All of this is microgravity data. Nothing here gives a lunar-gravity result.",
+      "citations": [
+        {
+          "psi_id": "PSI-25",
+          "cited_text": "Ambient O2 tested (mole fraction): 0.136 to 0.222  (n=129, rows 1-129, PSI-25_Experimental table_BASS-II.csv)."
+        }
+      ],
+      "citation_count": 1,
+      "number_check": {
+        "total": 13,
+        "matched": 12,
+        "unmatched": [
+          "11"
+        ]
+      },
+      "tools_used": [
+        "test_next"
+      ],
+      "expected_tool": "test_next",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.63,
+      "api_latency_s": 5.62,
+      "usage": {
+        "input_tokens": 563,
+        "output_tokens": 327,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0257,
+      "checks": {
+        "regex_22\\.2": true,
+        "regex_BASS-II|PSI-25": true
+      },
+      "passed": true
+    },
+    {
+      "id": "M12",
+      "type": "multistep",
+      "question": "For Gateway, what is the nearest tested gas-fuel condition?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The nearest tested gas-fuel condition for Gateway is a PSI-10 (ACME/Flame Design) normal-flame test at 28.9% ambient O2 and 14.88 psia. It is row 166 of the Normal Flame file.\n\n- Gateway's window is 26.0\u201326.5% O2 and 9.91\u201310.49 psia. 0 of 398 gas-fuel tests fall inside it.\n- The test is 2.4 O2 points above the window. At 14.88 psia, its pressure is about 4.4 psia above the window.\n- PSI-10 ambient O2 spans 0.198 to 0.4 mole fraction [1]. Flow speed is not recorded for this investigation, so no flow comparison is possible. Gateway flow is also not specified.",
+      "citations": [
+        {
+          "psi_id": "PSI-10",
+          "cited_text": "Ambient O2 tested (mole fraction): 0.198 to 0.4  (n=207, rows 1-207, PSI-10_Experimental table_Flame Design_Normal Flame.csv)."
+        }
+      ],
+      "citation_count": 1,
+      "number_check": {
+        "total": 13,
+        "matched": 11,
+        "unmatched": [
+          "2.4",
+          "4.4 psia"
+        ]
+      },
+      "tools_used": [
+        "test_next"
+      ],
+      "expected_tool": "test_next",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.47,
+      "api_latency_s": 5.47,
+      "usage": {
+        "input_tokens": 529,
+        "output_tokens": 373,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0261,
+      "checks": {
+        "regex_28\\.9": true,
+        "regex_Flame Design|PSI-10": true
+      },
+      "passed": true
+    },
+    {
+      "id": "M13",
+      "type": "multistep",
+      "question": "For the ISS cabin, what is the nearest tested solid-fuel condition?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "The nearest tested solid-fuel condition is PSI-98 (SAFFIRE-I), row 2, at 21.5% ambient O2. No pressure is recorded for it. 0 of 137 solid-fuel tests fall fully inside the ISS cabin window.\n\n- The window is 21\u201324.1% O2, 13.9\u201315.2 psia and 5.1\u201320.3 cm/s flow.\n- SAFFIRE-I ambient O2 was 0.215 to 0.217, at a flow speed of 20 cm/s. [1] [2]\n- Because the PSI table has no pressure for that test, it can't be confirmed as inside the window. A NASA report puts it at 0.987 atm (100.0 kPa) [3].",
+      "citations": [
+        {
+          "psi_id": "PSI-98",
+          "cited_text": "Ambient O2 tested (mole fraction): 0.215 to 0.217  (n=2, rows 1-2, PSI-98_Experimental table_SAFFIRE-1.csv)."
+        },
+        {
+          "psi_id": "PSI-98",
+          "cited_text": "Flow speed tested: 20 to 20 cm/s (n=2, rows 1-2, PSI-98_Experimental table_SAFFIRE-1.csv)."
+        },
+        {
+          "psi_id": "DASHBOARD-RESULTS",
+          "cited_text": "Solid test pressure, PSI-98 Saffire-I (Cygnus): 0.987 atm (100.0 kPa). Quote from NTRS 20210011521 page 8: \"21 21 21 21 22 100 100 100 100 100\""
+        }
+      ],
+      "citation_count": 3,
+      "number_check": {
+        "total": 15,
+        "matched": 15,
+        "unmatched": []
+      },
+      "tools_used": [
+        "test_next"
+      ],
+      "expected_tool": "test_next",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 6.08,
+      "api_latency_s": 6.07,
+      "usage": {
+        "input_tokens": 546,
+        "output_tokens": 381,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0262,
+      "checks": {
+        "regex_21\\.5": true,
+        "regex_SAFFIRE-I|PSI-98": true
+      },
+      "passed": true
+    },
+    {
+      "id": "M14",
+      "type": "multistep",
+      "question": "How many FLEX rows have ambient oxygen between 21 and 24.1 percent?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "92 of the 274 FLEX rows have ambient O2 between 21 and 24.1 percent. The highest O2 value among those matches is 24.0 percent.\n\n- FLEX ambient O2 overall spans 0.12 to 0.34 mole fraction (n=274). [1]\n- This count uses ambient O2 only. Oxidizer-stream O2 is a separate quantity, and it is not recorded for FLEX [2].",
+      "citations": [
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Ambient O2 tested (mole fraction): 0.12 to 0.34  (n=274, rows 1-274, PSI-69_Experimental table_FLEX.csv)."
+        },
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Oxidizer-stream O2 tested (mole fraction, a different quantity): not recorded."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 7,
+        "matched": 7,
+        "unmatched": []
+      },
+      "tools_used": [
+        "find_tests"
+      ],
+      "expected_tool": "find_tests",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.18,
+      "api_latency_s": 5.18,
+      "usage": {
+        "input_tokens": 795,
+        "output_tokens": 343,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0263,
+      "checks": {
+        "regex_\\b92\\b": true
+      },
+      "passed": true
+    },
+    {
+      "id": "M15",
+      "type": "multistep",
+      "question": "How many FLEX rows have ambient oxygen of 15 percent or less?",
+      "status": 200,
+      "attempts": 1,
+      "error": null,
+      "answer": "48 of the 274 FLEX rows have ambient O2 of 15% or less. The FLEX table has 274 rows. [1]\n\n- Ambient O2 across the table runs from 0.12 to 0.34 mole fraction [2], so the 48 rows span 12% to 15%.\n- This count uses ambient O2 only. It is not LOI, and it is not oxidizer-stream O2.",
+      "citations": [
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Rows in the unified conditions table: 274 (outcome recorded in 274)."
+        },
+        {
+          "psi_id": "PSI-69",
+          "cited_text": "Ambient O2 tested (mole fraction): 0.12 to 0.34  (n=274, rows 1-274, PSI-69_Experimental table_FLEX.csv)."
+        }
+      ],
+      "citation_count": 2,
+      "number_check": {
+        "total": 6,
+        "matched": 6,
+        "unmatched": []
+      },
+      "tools_used": [
+        "find_tests"
+      ],
+      "expected_tool": "find_tests",
+      "used_expected_tool": true,
+      "model": "claude-sonnet-5-5",
+      "api_calls": 2,
+      "latency_s": 5.19,
+      "api_latency_s": 5.19,
+      "usage": {
+        "input_tokens": 757,
+        "output_tokens": 297,
+        "cache_read_input_tokens": 212992,
+        "cache_creation_input_tokens": 0
+      },
+      "cost_usd": 0.0258,
+      "checks": {
+        "regex_\\b48\\b": true
+      },
+      "passed": true
+    }
+  ]
+}
