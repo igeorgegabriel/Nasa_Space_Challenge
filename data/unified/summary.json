@@ -1,0 +1,197 @@
+{
+ "total_rows": 2009,
+ "counts_by_investigation": {
+  "PSI-10": 327,
+  "PSI-100": 2,
+  "PSI-101": 109,
+  "PSI-102": 8,
+  "PSI-106": 12,
+  "PSI-107": 469,
+  "PSI-142": 8,
+  "PSI-159": 333,
+  "PSI-20": 18,
+  "PSI-21": 32,
+  "PSI-22": 32,
+  "PSI-23": 18,
+  "PSI-25": 129,
+  "PSI-26": 122,
+  "PSI-39": 87,
+  "PSI-47": 2,
+  "PSI-68": 8,
+  "PSI-69": 274,
+  "PSI-98": 4,
+  "PSI-99": 15
+ },
+ "investigation_names": {
+  "PSI-10": "ACME/Flame Design",
+  "PSI-20": "ACME BRE",
+  "PSI-21": "ACME CLD Flame",
+  "PSI-22": "ACME E-FIELD Flames",
+  "PSI-23": "ACME s-Flame",
+  "PSI-25": "BASS-II",
+  "PSI-26": "BASS",
+  "PSI-39": "CFI",
+  "PSI-47": "DAFT / DAFT-2",
+  "PSI-68": "FLEX-2",
+  "PSI-69": "FLEX",
+  "PSI-98": "SAFFIRE-I",
+  "PSI-99": "SAFFIRE-II",
+  "PSI-100": "SAFFIRE-III",
+  "PSI-101": "SAME-R",
+  "PSI-102": "SAME",
+  "PSI-106": "SLICE",
+  "PSI-107": "SPICE",
+  "PSI-142": "Quantitative Studies of Cool Flame Transitions at Radiation / Stretch Extinction Using Counterflow Flames",
+  "PSI-159": "ACME CFI-G"
+ },
+ "counts_by_fuel_class": {
+  "aerosol_dust": 2,
+  "gas": 1241,
+  "liquid_droplet": 369,
+  "smoke_sample": 117,
+  "solid": 272,
+  "unclassified": 8
+ },
+ "o2_overall": {
+  "rows": 2009,
+  "o2_known": 1194,
+  "o2_min": 0.12,
+  "o2_max": 0.85,
+  "bins": {
+   "lt_0.21": 377,
+   "0.21_to_lt_0.25": 284,
+   "0.25_to_lt_0.30": 24,
+   "ge_0.30": 509
+  }
+ },
+ "o2_by_fuel_class": {
+  "aerosol_dust": {
+   "rows": 2,
+   "o2_known": 0,
+   "o2_min": null,
+   "o2_max": null,
+   "bins": {
+    "lt_0.21": 0,
+    "0.21_to_lt_0.25": 0,
+    "0.25_to_lt_0.30": 0,
+    "ge_0.30": 0
+   }
+  },
+  "gas": {
+   "rows": 1241,
+   "o2_known": 685,
+   "o2_min": 0.12,
+   "o2_max": 0.85,
+   "bins": {
+    "lt_0.21": 99,
+    "0.21_to_lt_0.25": 91,
+    "0.25_to_lt_0.30": 18,
+    "ge_0.30": 477
+   }
+  },
+  "liquid_droplet": {
+   "rows": 369,
+   "o2_known": 369,
+   "o2_min": 0.12,
+   "o2_max": 0.34,
+   "bins": {
+    "lt_0.21": 176,
+    "0.21_to_lt_0.25": 155,
+    "0.25_to_lt_0.30": 6,
+    "ge_0.30": 32
+   }
+  },
+  "smoke_sample": {
+   "rows": 117,
+   "o2_known": 0,
+   "o2_min": null,
+   "o2_max": null,
+   "bins": {
+    "lt_0.21": 0,
+    "0.21_to_lt_0.25": 0,
+    "0.25_to_lt_0.30": 0,
+    "ge_0.30": 0
+   }
+  },
+  "solid": {
+   "rows": 272,
+   "o2_known": 140,
+   "o2_min": 0.136,
+   "o2_max": 0.222,
+   "bins": {
+    "lt_0.21": 102,
+    "0.21_to_lt_0.25": 38,
+    "0.25_to_lt_0.30": 0,
+    "ge_0.30": 0
+   }
+  },
+  "unclassified": {
+   "rows": 8,
+   "o2_known": 0,
+   "o2_min": null,
+   "o2_max": null,
+   "bins": {
+    "lt_0.21": 0,
+    "0.21_to_lt_0.25": 0,
+    "0.25_to_lt_0.30": 0,
+    "ge_0.30": 0
+   }
+  }
+ },
+ "rows_with_o2_and_outcome": 563,
+ "o2_ge_030": {
+  "total": 509,
+  "by_fuel_class": {
+   "gas": 477,
+   "liquid_droplet": 32
+  },
+  "by_investigation": {
+   "PSI-10": 222,
+   "PSI-159": 230,
+   "PSI-20": 17,
+   "PSI-23": 8,
+   "PSI-68": 8,
+   "PSI-69": 24
+  },
+  "by_o2_basis": {
+   "ambient": 303,
+   "oxidizer_stream": 206
+  },
+  "by_value_quality": {
+   "approximate": 4,
+   "exact": 476,
+   "summary_row": 29
+  },
+  "by_fuel_class_and_o2_basis": {
+   "gas": {
+    "oxidizer_stream": 206,
+    "ambient": 271
+   },
+   "liquid_droplet": {
+    "ambient": 32
+   }
+  },
+  "by_investigation_and_o2_basis": {
+   "PSI-10": {
+    "oxidizer_stream": 91,
+    "ambient": 131
+   },
+   "PSI-159": {
+    "oxidizer_stream": 115,
+    "ambient": 115
+   },
+   "PSI-20": {
+    "ambient": 17
+   },
+   "PSI-23": {
+    "ambient": 8
+   },
+   "PSI-68": {
+    "ambient": 8
+   },
+   "PSI-69": {
+    "ambient": 24
+   }
+  }
+ }
+}
