@@ -16,6 +16,7 @@ const NAV_ACTIVE = {
   compare: "investigations",
   earth: "investigations",
   equipment: "investigations",
+  gravity: "data",
   verification: "data",
   brief: "rank"
 };
@@ -1634,6 +1635,7 @@ function renderHome() {
     rv(0, "h2", { text: "Moon base air" }),
     el("div", { class: "bars" }, bandRow("Earth air", 21, 40, "earth", 1), bandRow("Moon base", moon, 40, "moon", 2)),
     rv(3, "p", { class: "story-line", text: "More oxygen means materials burn more easily." }),
+    rv(3, "p", { class: "story-sub" }, "Moon gravity can change the answer too. ", el("a", { href: "#/gravity", text: "See the lunar gravity check" })),
     rv(4, "p", { class: "story-sub", text: "Why so high? Spacesuits run on pure oxygen at 4.3 psi. Base air sits between suit and Earth to cut pre-breathing time." }),
     expander("Details", el("div", null,
       el("p", { class: "small", text: "Source, challenge statement: spacesuits hold 100% oxygen at 4.3 psi against 14.7 psi at sea level, and the Moon base and rovers are expected to sit between the spacesuit and Earth's atmosphere to reduce pre-breathing." }),
@@ -2246,6 +2248,130 @@ function renderEarth() {
     }))));
 }
 
+const GRAVITY_TAGS = {
+  more_flammable: { cls: "lower", label: "Lunar-g test: burned at lower O2" },
+  less_flammable: { cls: "higher", label: "Lunar-g test: burned only at higher O2" },
+  not_stated: { cls: "none", label: "Lunar-g test direction: not stated" }
+};
+
+const GRAVITY_AXIS_MAX = 2.5;
+
+function gravityQuote(q) {
+  return el("blockquote", { class: "quote" },
+    el("p", { text: "\"" + q.text + "\"" }),
+    el("cite", null, el("a", { href: q.url, text: q.source_title + (q.page ? ", page " + q.page : "") })));
+}
+
+function gravityChart(lg) {
+  const rows = lg.materials.slice().sort(function (a, b) { return b.delta_o2_points - a.delta_o2_points; });
+  const ticks = [0, 0.5, 1, 1.5, 2, 2.5];
+  const list = rows.map(function (m) {
+    const tag = GRAVITY_TAGS[m.direction];
+    const k = Math.min(1, m.delta_o2_points / GRAVITY_AXIS_MAX);
+    const svg = svgEl("svg", { class: "gv-svg", viewBox: "0 0 250 16", preserveAspectRatio: "none", "aria-hidden": "true" });
+    svg.appendChild(svgEl("rect", { x: 0, y: 0, width: 250, height: 16, class: "gv-track" }));
+    svg.appendChild(svgEl("rect", { x: 0, y: 0, width: fmt(k * 250, 2), height: 16, class: "gv-fill " + tag.cls }));
+    return el("li", { class: "gv-row" },
+      el("div", { class: "gv-name" }, el("strong", { text: m.name }), el("span", { class: "gv-tag " + tag.cls, text: tag.label })),
+      el("div", { class: "gv-bar" }, svg, el("span", { class: "gv-val", text: fmt(m.delta_o2_points, 2) })));
+  });
+  const axis = el("div", { class: "gv-axis", "aria-hidden": "true" }, ticks.map(function (t) {
+    return el("span", { style: "left:" + (t / GRAVITY_AXIS_MAX * 100) + "%", text: String(t) });
+  }));
+  return el("figure", { class: "gv-chart" },
+    el("ul", { class: "gv-rows" }, list),
+    el("div", { class: "gv-axis-row" }, el("span"), el("div", { class: "gv-axis-wrap" }, axis)),
+    el("figcaption", { class: "small muted", text: "Conservative allowance from the paper, in oxygen points (percentage points of O2). Colour marks what the lunar-g tests showed, not the size of the bar." }));
+}
+
+function gravityMap() {
+  const reduced = reduceMotion();
+  const svg = svgEl("svg", { class: "gm-svg", viewBox: "0 0 380 270", role: "img", "aria-label": "Concept drawing of a flammability map: oxygen needed against flow speed, with a quenching branch at low flow and a blowoff branch at high flow." });
+  function text(x, y, str, cls, anchor) {
+    const t = svgEl("text", { x: x, y: y, class: "gm-t " + (cls || ""), "text-anchor": anchor || "start" });
+    t.textContent = str;
+    svg.appendChild(t);
+    return t;
+  }
+  svg.appendChild(svgEl("path", { d: "M52 24 C 62 150, 92 202, 170 206 C 240 208, 312 172, 356 112 L 356 24 Z", class: "gm-zone" }));
+  svg.appendChild(svgEl("path", { d: "M52 24 C 62 150, 92 202, 170 206 C 240 208, 312 172, 356 112", class: "gm-curve" }));
+  svg.appendChild(svgEl("line", { x1: 52, y1: 232, x2: 360, y2: 232, class: "gm-axis" }));
+  svg.appendChild(svgEl("line", { x1: 52, y1: 232, x2: 52, y2: 18, class: "gm-axis" }));
+  text(206, 256, "Flow speed over the flame", "gm-axl", "middle");
+  text(0, 0, "Oxygen needed to burn", "gm-axl", "middle").setAttribute("transform", "translate(16 128) rotate(-90)");
+  text(236, 70, "Burns here", "gm-zl", "middle");
+  text(72, 40, "Quenching", "gm-br");
+  text(72, 54, "branch", "gm-br");
+  text(352, 78, "Blowoff", "gm-br", "end");
+  text(352, 92, "branch", "gm-br", "end");
+  svg.appendChild(svgEl("line", { x1: 262, y1: 128, x2: 262, y2: 232, class: "gm-mark" }));
+  text(262, 120, "1 g: about 35 cm/s", "gm-ml", "middle");
+  svg.appendChild(svgEl("rect", { x: 100, y: 162, width: 86, height: 70, class: "gm-unknown" }));
+  text(143, 142, "Lunar g: lower,", "gm-ml", "middle");
+  text(143, 155, "not known", "gm-ml", "middle");
+  svg.appendChild(svgEl("path", { d: "M248 184 L 158 184", class: "gm-arrow" }));
+  svg.appendChild(svgEl("path", { d: "M168 178 L 158 184 L 168 190", class: "gm-arrow" }));
+  const flame = svgEl("g", { class: "gm-flame" + (reduced ? " still" : "") });
+  flame.appendChild(svgEl("circle", { cx: 262, cy: 184, r: 7, class: "gm-dot" }));
+  svg.appendChild(flame);
+  return svg;
+}
+
+function gravityHabitat(lg) {
+  const lunar = envById("lunar");
+  const o2 = lunar ? envNumber(lunar) : null;
+  const worst = fmt(lg.paper.worst_case_delta_o2_points, 1);
+  return el("section", { class: "gv-habitat" },
+    el("p", { class: "gv-hab-big", text: o2 !== null ? "Moon base air: " + o2 + "% O2" : "Moon base air" }),
+    el("p", { class: "gv-hab-line", text: "For these materials, read a 1-g test margin as up to " + worst + " O2 points smaller." }),
+    el("p", { class: "small muted", text: "That is the paper's conservative allowance, not a measured lunar-g limit. Polycarbonate and Nomex Velcro went the other way in the lunar-g tests: they burned only at higher oxygen." }));
+}
+
+function gravityDetails(lg) {
+  const q = {};
+  lg.quotes.forEach(function (item) { q[item.id] = item; });
+  const table = plainTable(
+    ["Material", "Best-fit slope (s/cm)", "95% slope (s/cm)", "Allowance (O2 points)", "Lunar-g test"],
+    lg.materials.map(function (m) {
+      return [m.name, String(m.best_fit_slope_s_per_cm), String(m.ci95_slope_s_per_cm), fmt(m.delta_o2_points, 2), GRAVITY_TAGS[m.direction].label.replace("Lunar-g test: ", "").replace("Lunar-g test direction: ", "")];
+    }));
+  return expander("Details", el("div", null,
+    el("p", { class: "small" }, "Source: ", ntrsLink(lg.paper.url, lg.paper.authors + ", " + lg.paper.title), ". " + lg.paper.table + "."),
+    el("p", { class: "small", text: "How the allowance is built: the paper fits the oxygen limit against forced-flow speed in 1-g testing, takes the one-tailed 95 percent confidence slope, and extends it from the presumed 1-g buoyant speed of 35 cm/s to zero flow. The lunar-g speed is not known, so no lunar-g limit is given for any material and nothing here is interpolated." }),
+    table,
+    gravityQuote(q.worst_case),
+    gravityQuote(q.velocity_1g),
+    gravityQuote(q.velocity_unknown),
+    gravityQuote(q.lower_extinction),
+    gravityQuote(q.higher_extinction),
+    gravityQuote(q.conclusion),
+    el("h3", { text: "Cross-check: BASS-II" }),
+    el("p", { class: "small", text: "BASS-II on the space station reported steady spread at 13.6% O2 in microgravity, against a 1-g blowoff limit of 16% O2. That is a different configuration (a quarter-inch PMMA rod), so only rough agreement in size is claimed." }),
+    gravityQuote(q.bass_blowoff),
+    el("h3", { text: "Next data" }),
+    el("p", { class: "small", text: "NASA plans to burn samples in real lunar gravity on the Moon." }),
+    gravityQuote(q.fm2_plan),
+    el("p", { class: "small muted", text: "Quotes are copied word for word, including the paper's own typos, and machine-checked against saved copies of the source pages. " + lg.verification.checked + " of " + lg.verification.checked + " verified." })));
+}
+
+function renderGravity() {
+  const lg = state.data.lunar_g;
+  return setView(
+    pageHead("Moon gravity can change the answer", "NASA's conservative allowance: read a 1-g test margin as up to " + fmt(lg.paper.worst_case_delta_o2_points, 1) + " O2 points smaller. Measured at lunar gravity, some materials burned at lower oxygen, others only at higher."),
+    el("section", { class: "gv-block" },
+      el("h2", { text: "How much to allow" }),
+      gravityChart(lg)),
+    gravityHabitat(lg),
+    el("section", { class: "gv-block" },
+      el("h2", { text: "Why it is not a straight line" }),
+      el("p", { class: "data-cap", text: "Partial gravity cannot be read off between 0 g and 1 g. Flames can die at low flow or blow off at high flow." }),
+      el("figure", { class: "gm" },
+        gravityMap(),
+        el("figcaption", { class: "small muted", text: "Concept drawing from the paper's theory, not data. The lunar-g flow speed is not known." }))),
+    gravityDetails(lg),
+    el("p", { class: "small" }, el("a", { href: "#/data", text: "Back to Data" })));
+}
+
 const EQUIPMENT_FUNCTIONS = [
   ["prevention", "Prevention", "Prevention is achieved by controlling ignition sources and through material selection, which depends on understanding flammability limits."],
   ["detection", "Detection", "Fire detection was tested in microgravity through the Smoke and Aerosol Measurement Experiment studies (SAME and SAME-R)."],
@@ -2719,6 +2845,7 @@ function renderData(params) {
   };
   const extractor = extractorPanel(filterParams);
   const cards = [
+    dataCard(fmt(data.lunar_g.paper.worst_case_delta_o2_points, 1), "O2 points: the most a 1-g test margin may shrink in Moon gravity, per NASA's conservative allowance.", el("a", { class: "textlink", href: "#/gravity", text: "Lunar gravity check" })),
     dataCard(partly + " of " + lunarItems.length, "model relationships are at least partly supported for a Moon base.", link("readiness", "Details")),
     dataCard(data.conditions.length.toLocaleString("en-US"), "rows of test conditions, ready to download.",
       el("div", { class: "card-actions" },
@@ -2971,7 +3098,7 @@ function contextFromRoute(r, envId) {
   if (r.name === "investigations" || r.name === "investigation" || r.name === "compare" || r.name === "earth" || r.name === "equipment") {
     return { page: "investigations" };
   }
-  if (r.name === "data" || r.name === "verification") {
+  if (r.name === "data" || r.name === "verification" || r.name === "gravity") {
     return { page: "data" };
   }
   return { page: "home" };
@@ -3577,6 +3704,8 @@ function route() {
     renderCompare(r.params);
   } else if (r.name === "earth") {
     renderEarth();
+  } else if (r.name === "gravity") {
+    renderGravity();
   } else if (r.name === "equipment") {
     renderEquipment();
   } else if (r.name === "brief") {
@@ -3594,7 +3723,7 @@ function route() {
 }
 
 function init() {
-  const names = ["investigations", "conditions", "environments", "insights", "earth", "rank_reference", "model_readiness", "test_next", "verification", "outside_psi", "models"];
+  const names = ["investigations", "conditions", "environments", "insights", "earth", "rank_reference", "model_readiness", "test_next", "verification", "outside_psi", "models", "lunar_g"];
   Promise.all(names.map(loadJson)).then(function (loaded) {
     state.data = {
       investigations: loaded[0].investigations,
@@ -3607,7 +3736,8 @@ function init() {
       test_next: loaded[7],
       verification: loaded[8],
       outside_psi: loaded[9],
-      models: loaded[10]
+      models: loaded[10],
+      lunar_g: loaded[11]
     };
     state.weights = Object.assign({}, state.data.rank_reference.weights);
     parityCheck();

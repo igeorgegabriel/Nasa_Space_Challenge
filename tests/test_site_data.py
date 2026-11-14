@@ -451,11 +451,11 @@ class SiteDataTest(unittest.TestCase):
             self.assertTrue(insight["links"] or insight.get("sources"))
 
     def test_corpus_has_one_document_per_investigation(self):
-        self.assertEqual(len(self.corpus), len(self.investigations) + 3)
+        self.assertEqual(len(self.corpus), len(self.investigations) + 4)
         ids = [d["psi_id"] for d in self.corpus]
-        self.assertEqual(ids, [inv["psi_id"] for inv in self.investigations] + [outside_psi.CORPUS_ID, "DASHBOARD-RESULTS", build_site_data.EARTH_CORPUS_ID])
+        self.assertEqual(ids, [inv["psi_id"] for inv in self.investigations] + [build_site_data.LUNAR_G_CORPUS_ID, outside_psi.CORPUS_ID, "DASHBOARD-RESULTS", build_site_data.EARTH_CORPUS_ID])
         self.assertEqual(len(set(ids)), len(ids))
-        for doc in self.corpus[:-3]:
+        for doc in self.corpus[:-4]:
             self.assertTrue(doc["title"].startswith(doc["psi_id"] + " "))
             self.assertIn(" - ", doc["title"])
             self.assertGreater(len(doc["body"]), 100)
@@ -516,7 +516,7 @@ class SiteDataTest(unittest.TestCase):
         self.assertFalse(result["meta_present"])
         unified = read_json(os.path.join(UNIFIED, "investigations.json"))
         self.assertEqual({i["psi_id"] for i in result["investigations"]}, set(unified))
-        self.assertEqual(len(result["corpus"]["documents"]), len(unified) + 3)
+        self.assertEqual(len(result["corpus"]["documents"]), len(unified) + 4)
         for inv in result["investigations"]:
             self.assertFalse(inv["meta_present"])
             for entry in inv["functions"]:
@@ -801,6 +801,42 @@ class SiteDataTest(unittest.TestCase):
             self.assertTrue(apps[key]["quote"]["url"].startswith("https://spinoff.nasa.gov/node/"))
             self.assertIn(quotes[key]["quote"], doc["body"])
         self.assertIn("firefighter", doc["body"].lower())
+
+    def test_lunar_gravity_table_matches_paper(self):
+        lg = read_json(os.path.join(SITE, "lunar_g.json"))
+        got = {m["name"]: (m["best_fit_slope_s_per_cm"], m["ci95_slope_s_per_cm"], m["delta_o2_points"], m["direction"]) for m in lg["materials"]}
+        self.assertEqual(got, {
+            "PMMA": (0.00022, 0.00056, 1.9, "more_flammable"),
+            "Polycarbonate": (0.00040, 0.00065, 2.3, "less_flammable"),
+            "Nomex Velcro": (0.000016, 0.000090, 0.32, "less_flammable"),
+            "P 213": (0.00030, 0.00040, 1.4, "more_flammable"),
+            "Beefy-T (flaming)": (0.00017, 0.00023, 0.82, "more_flammable"),
+            "Beefy-T (smolder)": (0.00034, 0.00050, 1.8, "not_stated"),
+        })
+        self.assertEqual(lg["paper"]["worst_case_delta_o2_points"], 2.3)
+        self.assertEqual(max(m["delta_o2_points"] for m in lg["materials"]), 2.3)
+        for m in lg["materials"]:
+            self.assertAlmostEqual(m["ci95_slope_s_per_cm"] * 35 * 100, m["delta_o2_points"], delta=0.1)
+        with open(os.path.join(SITE, "lunar_g.json"), "rb") as handle:
+            handle.read().decode("ascii")
+
+    def test_lunar_gravity_quotes_verify_and_reach_corpus(self):
+        import verify_lunar_g
+        data = read_json(os.path.join(ROOT, "data", "lunar_g", "compensation.json"))
+        self.assertEqual(verify_lunar_g.verify(data), [])
+        bad = dict(data["quotes"][0])
+        bad["quote"] = bad["quote"] + " not in source"
+        self.assertTrue(verify_lunar_g.check(bad))
+        wrong_page = dict(data["quotes"][0])
+        wrong_page["page"] = 9
+        self.assertTrue(verify_lunar_g.check(wrong_page))
+        docs = {d["psi_id"]: d for d in self.corpus}
+        body = docs[build_site_data.LUNAR_G_CORPUS_ID]["body"]
+        cited = ("worst_case", "velocity_unknown", "lower_extinction", "higher_extinction", "conclusion", "bass_blowoff", "fm2_plan")
+        for q in data["quotes"]:
+            if q["id"] in cited:
+                self.assertIn(q["quote"], body)
+        self.assertIn("not a measured lunar-g limit", body)
 
     def test_outside_corpus_document_and_citation_mapping(self):
         doc = self.corpus[-3]
