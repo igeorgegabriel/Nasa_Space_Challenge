@@ -32,7 +32,7 @@ flowchart LR
   D --> R["Rank per habitat"]
   D --> G["Oxygen gap and<br/>what to test next"]
   D --> E["Equipment and<br/>Earth uses"]
-  U --> K["Ask the data<br/>Claude with 5 data tools<br/>cites the NASA sentence"]
+  U --> K["Ask the data<br/>Claude with 6 data tools<br/>cites the NASA sentence"]
   Q --> K
   K --> C["Every number in the answer<br/>checked against the data"]
 ```

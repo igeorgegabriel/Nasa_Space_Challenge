@@ -626,6 +626,16 @@ class AskToolsTest(unittest.TestCase):
         self.assertTrue(result["relationships"][0]["relationship"])
         self.assertLess(len(json.dumps(result)), 4096)
 
+    def test_flex_model_predicts_iss_and_refuses_moon(self):
+        iss = self.tools.flex_model("iss")
+        moon = self.tools.flex_model("lunar")
+        self.assertTrue(all("chance_flame_goes_out_on_its_own" in f for f in iss["fuels"]))
+        self.assertTrue(all("refusal" in f and "chance_flame_goes_out_on_its_own" not in f for f in moon["fuels"]))
+        self.assertGreater(iss["validation"]["auc"], 0.5)
+        self.assertLess(len(json.dumps(moon)), 4096)
+        step = self.tools.build_step("flex_model", {"habitat": "lunar"}, moon)
+        self.assertIn("no prediction", step["detail"])
+
     def test_habitat_profile(self):
         result = self.tools.habitat_profile("lunar")
         self.assertIn("8.2 psia", result["pressure"]["value"])

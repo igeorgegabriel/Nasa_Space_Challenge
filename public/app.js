@@ -3064,7 +3064,7 @@ function verificationFacts() {
     bits.push((v.outside_psi.checked - v.outside_psi.failed) + " of " + v.outside_psi.checked + " outside-PSI quotes verified.");
   }
   if (v.ask_eval) {
-    bits.push("Ask check: " + v.ask_eval.preregistered_passed + " of " + v.ask_eval.total + " passed on pre-registered checks.");
+    bits.push(v.ask_eval.v2 ? "Ask check: " + v.ask_eval.v2.passed + " of " + v.ask_eval.v2.total + " passed on pre-registered checks; " + Math.round(v.ask_eval.v2.numeric_fidelity * 1000) / 10 + "% of numbers matched the data." : "Ask check: " + v.ask_eval.preregistered_passed + " of " + v.ask_eval.total + " passed on pre-registered checks.");
   }
   return bits;
 }

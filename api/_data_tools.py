@@ -246,12 +246,40 @@ def habitat_profile(habitat):
     }
 
 
+def flex_model(habitat):
+    bad = check_habitat(habitat)
+    if bad:
+        return bad
+    model = load_json("models.json")["models"][0]
+    hab = next(h for h in model["habitats"] if h["id"] == habitat)
+    val = model["validation"]
+    fuels = []
+    for fuel, out in sorted(hab["fuels"].items()):
+        entry = {"fuel": fuel, "status": out["status"]}
+        if out.get("prediction"):
+            entry["chance_flame_goes_out_on_its_own"] = out["prediction"]
+        if out.get("refusal"):
+            entry["refusal"] = out["refusal"]
+        fuels.append(entry)
+    return {
+        "habitat": habitat,
+        "habitat_name": habitat_name(habitat),
+        "model": model["name"],
+        "target": model["target"],
+        "rows_used": model["rows_used"],
+        "validation": {"scheme": "held-out test days", "auc": val["auc"], "auc_ci95": val["auc_ci95"], "brier_skill": val["brier_skill"], "brier_skill_ci95": val["brier_skill_ci95"]},
+        "habitat_status": hab["status"],
+        "fuels": fuels,
+    }
+
+
 TOOL_FUNCTIONS = {
     "rank_investigations": rank_investigations,
     "find_tests": find_tests,
     "test_next": test_next,
     "model_readiness": model_readiness,
     "habitat_profile": habitat_profile,
+    "flex_model": flex_model,
 }
 
 
@@ -302,6 +330,11 @@ def tool_definitions():
         {
             "name": "habitat_profile",
             "description": "The atmosphere definition used for a habitat: O2, pressure, flow and gravity display strings with source labels, or 'not specified'.",
+            "input_schema": {"type": "object", "properties": {"habitat": habitat_property()}, "required": ["habitat"]},
+        },
+        {
+            "name": "flex_model",
+            "description": "The dashboard's FLEX droplet-flame model for a habitat: chance that a heptane or methanol droplet flame goes out on its own (radiative extinction), with 95 percent interval, validated on held-out test days; or the refusal and how far the habitat lies outside the tested range. Use for any prediction or 'what would happen in this habitat' question.",
             "input_schema": {"type": "object", "properties": {"habitat": habitat_property()}, "required": ["habitat"]},
         },
     ]
@@ -378,6 +411,12 @@ def build_step(name, tool_input, result):
     if name == "habitat_profile":
         detail = "O2 %s; pressure %s" % (result["o2"]["value"], result["pressure"]["value"])
         return {"tool": name, "label": "Read the %s atmosphere profile" % hname, "detail": detail}
+    if name == "flex_model":
+        parts = []
+        for entry in result["fuels"]:
+            pred = entry.get("chance_flame_goes_out_on_its_own")
+            parts.append("%s %s" % (entry["fuel"].lower(), "%.0f%%" % (pred["estimate"] * 100) if pred else "no prediction"))
+        return {"tool": name, "label": "Ran the FLEX model for %s" % hname, "detail": ", ".join(parts)}
     return None
 
 
@@ -394,6 +433,8 @@ def build_action(name, tool_input, result):
         return {"label": "Open the data extractor", "href": "#/data?at=extractor"}
     if name == "model_readiness":
         return {"label": "Open model readiness", "href": "#/data?at=readiness"}
+    if name == "flex_model":
+        return {"label": "Open the FLEX model", "href": "#/data?at=model"}
     return None
 
 
