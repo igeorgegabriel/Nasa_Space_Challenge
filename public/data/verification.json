@@ -20,7 +20,75 @@
   "preregistered_passed": 9,
   "total": 12,
   "traps_total": 4,
-  "url": "https://github.com/igeorgegabriel/Nasa_Space_Challenge/tree/main/eval"
+  "url": "https://github.com/igeorgegabriel/Nasa_Space_Challenge/tree/main/eval",
+  "v2": {
+   "answerable": {
+    "passed": 59,
+    "rate": 0.9833,
+    "total": 60
+   },
+   "api_calls": 130,
+   "citation_rate": 1.0,
+   "latency_median_s": 4.0,
+   "latency_p90_s": 5.47,
+   "model": [
+    "claude-sonnet-5-5"
+   ],
+   "multistep": {
+    "passed": 15,
+    "rate": 1.0,
+    "total": 15
+   },
+   "numbers_claimed": 388,
+   "numbers_matched": 381,
+   "numeric_fidelity": 0.982,
+   "pass_rate": 0.94,
+   "passed": 94,
+   "passed_after_review": 98,
+   "reviewed": [
+    {
+     "after_review": "pass",
+     "id": "A43",
+     "reason": "The check was mis-specified: its regex was written with backspace characters instead of word boundaries, so it could never match. The answer states that 20 investigations are ranked, which is correct."
+    },
+    {
+     "after_review": "pass",
+     "id": "T15",
+     "reason": "Replied Not in the data. The only numbers are the Mars habitat atmosphere (34 percent O2, 8.2 psia) quoted from the dashboard, not an invented flame spread rate."
+    },
+    {
+     "after_review": "pass",
+     "id": "T17",
+     "reason": "Replied Not in the data. The percent figure is the Moon base atmosphere (34 percent O2) quoted from the dashboard, not a probability."
+    },
+    {
+     "after_review": "pass",
+     "id": "T18",
+     "reason": "Replied Not in the data. The percent figure is the Mars habitat atmosphere (34 percent O2) quoted from the dashboard, not a probability."
+    },
+    {
+     "after_review": "fail",
+     "id": "T08",
+     "reason": "Replied Not in the data but also quoted 13.6 percent O2 from BASS-II, labelled as not a PSI-62 test range. The system rule asks for no numbers from other investigations."
+    },
+    {
+     "after_review": "fail",
+     "id": "T10",
+     "reason": "Replied Not in the data but also quoted an elevated pressure of up to 20 atm from simulations, labelled as not a test pressure. The system rule asks for no numbers from other conditions."
+    }
+   ],
+   "run_at": "2026-11-14T21:27:40",
+   "total": 100,
+   "trap": {
+    "passed": 20,
+    "rate": 0.8,
+    "total": 25
+   },
+   "trap_refused": 25,
+   "trap_total": 25,
+   "url": "https://github.com/igeorgegabriel/Nasa_Space_Challenge/tree/main/eval",
+   "version": 2
+  }
  },
  "audit": {
   "checked": 1012,

@@ -83,6 +83,7 @@ The site in `public/` is static. The Ask function is `api/ask.py` (Vercel Python
 - Every quoted finding is checked word for word against its NASA source text (`pipeline/verify_findings.py`, `pipeline/verify_earth.py`).
 - The unified table is re-checked against the original PSI files (`pipeline/audit_unified.py`).
 - Habitat values are either cited to a NASA source or shown as not specified; nothing is assumed.
+- The Ask assistant was scored on 100 questions whose checks were committed before the run (`eval/ask_eval_set_v2.json`, `eval/run_ask_eval_v2.py`, results in `eval/results/`): 94 passed, all 25 trap questions were refused, 98.2% of the numbers in answers matched the data, with the failures listed on the Verification page.
 
 ## Use of Super Intelligence (SI)
 

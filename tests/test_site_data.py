@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import sys
 import tempfile
 import unittest
@@ -864,6 +865,41 @@ class SiteDataTest(unittest.TestCase):
         self.assertEqual(ev["preregistered_passed"], 9)
         self.assertEqual([f["id"] for f in ev["checker_fixes"]], ["T1", "T2", "T3"])
         self.assertTrue(ev["url"].endswith("/tree/main/eval"))
+
+    def test_ask_eval_v2_block_and_question_checks(self):
+        ev = self.verification["ask_eval"]["v2"]
+        summary = read_json(os.path.join(ROOT, "eval", "results", "ask_eval_v2_summary.json"))
+        eval_set = read_json(os.path.join(ROOT, "eval", "ask_eval_set_v2.json"))
+        questions = eval_set["questions"]
+        self.assertTrue(eval_set["written_before_run"])
+        self.assertEqual(eval_set["version"], 2)
+        self.assertEqual(len(questions), 100)
+        self.assertEqual(ev["total"], len(questions))
+        self.assertEqual(ev["total"], summary["total"])
+        self.assertEqual(ev["passed"], summary["passed"])
+        self.assertEqual(ev["numeric_fidelity"], summary["numeric_fidelity"])
+        self.assertEqual(ev["trap_total"], sum(1 for q in questions if q["type"] == "trap"))
+        self.assertGreaterEqual(ev["passed_after_review"], ev["passed"])
+        self.assertTrue(ev["url"].endswith("/tree/main/eval"))
+        ids = [q["id"] for q in questions]
+        self.assertEqual(len(ids), len(set(ids)))
+        broken = []
+        for q in questions:
+            self.assertIn(q["type"], ("answerable", "trap", "multistep"))
+            self.assertTrue(q["question"].strip())
+            self.assertTrue(q["basis"].strip())
+            has_check = q.get("must_contain_any") or q.get("must_contain_all_regex") or q.get("must_cite_psi")
+            self.assertTrue(has_check, q["id"])
+            if q["type"] == "trap":
+                self.assertEqual(q["must_contain_any"], ["Not in the data"], q["id"])
+                self.assertTrue(q.get("forbidden_patterns") or q.get("forbidden_unnegated"), q["id"])
+            for pattern in q.get("must_contain_all_regex", []) + q.get("forbidden_patterns", []) + q.get("forbidden_unnegated", []):
+                re.compile(pattern)
+                if chr(8) in pattern:
+                    broken.append(q["id"])
+        reviewed = [r["id"] for r in ev["reviewed"]]
+        self.assertEqual(broken, ["A43"])
+        self.assertIn("A43", reviewed)
 
 
 if __name__ == "__main__":

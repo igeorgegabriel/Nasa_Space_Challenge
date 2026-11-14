@@ -39,6 +39,9 @@ PSI_REPO_URL = "https://github.com/igeorgegabriel/Nasa_Space_Challenge"
 EVAL_SUMMARY_PATH = os.path.join(ROOT, "eval", "results", "ask_eval_summary.json")
 EVAL_SET_PATH = os.path.join(ROOT, "eval", "ask_eval_set.json")
 EVAL_URL = PSI_REPO_URL + "/tree/main/eval"
+EVAL_V2_SUMMARY_PATH = os.path.join(ROOT, "eval", "results", "ask_eval_v2_summary.json")
+EVAL_V2_REVIEW_PATH = os.path.join(ROOT, "eval", "results", "ask_eval_v2_review.json")
+EVAL_V2_SET_PATH = os.path.join(ROOT, "eval", "ask_eval_set_v2.json")
 
 PSIA_TO_ATM = 6894.757293168 / 101325.0
 COUNTABLE_QUALITY = ("exact", "approximate")
@@ -1999,6 +2002,40 @@ def build_outside_verification():
     return {"checked": data.get("checked", 0), "failed": data.get("failed", 0), "errors": data.get("errors", [])}
 
 
+def build_ask_eval_v2():
+    summary = read_json_file(EVAL_V2_SUMMARY_PATH)
+    eval_set = read_json_file(EVAL_V2_SET_PATH)
+    review = read_json_file(EVAL_V2_REVIEW_PATH) or {}
+    if not isinstance(summary, dict) or not isinstance(eval_set, dict):
+        return None
+    reviewed = review.get("reviewed") or []
+    upgraded = [r for r in reviewed if r.get("headline") == "fail" and r.get("after_review") == "pass"]
+    by_type = summary.get("by_type") or {}
+    return {
+        "version": summary.get("version", 2),
+        "run_at": summary.get("run_at"),
+        "model": summary.get("model"),
+        "total": summary.get("total", 0),
+        "passed": summary.get("passed", 0),
+        "pass_rate": summary.get("pass_rate"),
+        "answerable": by_type.get("answerable"),
+        "trap": by_type.get("trap"),
+        "multistep": by_type.get("multistep"),
+        "trap_refused": summary.get("trap_refused", 0),
+        "trap_total": summary.get("trap_total", 0),
+        "numeric_fidelity": summary.get("numeric_fidelity"),
+        "numbers_matched": summary.get("numbers_matched", 0),
+        "numbers_claimed": summary.get("numbers_claimed", 0),
+        "citation_rate": summary.get("citation_rate"),
+        "latency_median_s": summary.get("latency_median_s"),
+        "latency_p90_s": summary.get("latency_p90_s"),
+        "api_calls": summary.get("api_calls"),
+        "passed_after_review": summary.get("passed", 0) + len(upgraded),
+        "reviewed": [{"id": r.get("id"), "after_review": r.get("after_review"), "reason": r.get("reason")} for r in reviewed],
+        "url": EVAL_URL,
+    }
+
+
 def build_ask_eval():
     summary = read_json_file(EVAL_SUMMARY_PATH)
     eval_set = read_json_file(EVAL_SET_PATH)
@@ -2010,6 +2047,7 @@ def build_ask_eval():
     initial_failed = [f for f in fixes if not f.get("initial_passed")]
     total = summary.get("total", len(questions))
     return {
+        "v2": build_ask_eval_v2(),
         "total": total,
         "answerable_total": len(answerable),
         "answerable_passed": summary.get("answerable_passed", 0),

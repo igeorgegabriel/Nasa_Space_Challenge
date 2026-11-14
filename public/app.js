@@ -2908,7 +2908,11 @@ function renderVerification() {
     list.push(checkDrawer("outside-psi-quotes", "Outside-PSI quotes: " + (v.outside_psi.checked - v.outside_psi.failed) + " of " + v.outside_psi.checked + " verified", outsideVerificationBlock(v.outside_psi)));
   }
   if (v.ask_eval) {
-    list.push(checkDrawer("ask-accuracy", "Ask accuracy: " + v.ask_eval.preregistered_passed + " of " + v.ask_eval.total + " passed on pre-registered checks", askEvalBlock(v.ask_eval)));
+    const evalV2 = v.ask_eval.v2;
+    const askTitle = evalV2 ?
+      "Ask accuracy: " + evalV2.passed + " of " + evalV2.total + " passed on checks fixed before the run" :
+      "Ask accuracy: " + v.ask_eval.preregistered_passed + " of " + v.ask_eval.total + " passed on pre-registered checks";
+    list.push(checkDrawer("ask-accuracy", askTitle, askEvalBlock(v.ask_eval)));
   }
   return setView(
     pageHead("How we checked it", "Every row and every quote is matched to its NASA source."),
@@ -2925,9 +2929,32 @@ function outsideVerificationBlock(o) {
     el("p", null, el("a", { href: REPO_URL + "/tree/main/data/outside_psi", target: "_blank", rel: "noopener", text: "data/outside_psi on GitHub" })));
 }
 
+function askEvalV2Block(b) {
+  const pct = function (x) { return x === null || x === undefined ? "n/a" : Math.round(x * 1000) / 10 + "%"; };
+  const group = function (g) { return g.passed + " of " + g.total; };
+  const rows = [
+    ["Pass rate on pre-registered checks", b.passed + " of " + b.total + " (" + pct(b.pass_rate) + ")"],
+    ["Answerable questions correct and cited", group(b.answerable)],
+    ["Multi-step questions needing a data tool", group(b.multistep)],
+    ["Trap questions refused with Not in the data", b.trap_refused + " of " + b.trap_total],
+    ["Trap answers with no invented number", group(b.trap)],
+    ["Numeric fidelity", b.numbers_matched + " of " + b.numbers_claimed + " numbers matched (" + pct(b.numeric_fidelity) + ")"],
+    ["Citation rate on answerable questions", pct(b.citation_rate)],
+    ["Latency, median and 90th percentile", b.latency_median_s + " s and " + b.latency_p90_s + " s"]
+  ];
+  return el("div", null,
+    el("p", { text: b.passed + " of " + b.total + " questions passed checks written and committed before the run; all " + b.trap_total + " trap questions were refused." }),
+    plainTable(["Measure", "Result"], rows),
+    el("p", { class: "small", text: "Re-read afterwards, " + b.passed_after_review + " of " + b.total + " would pass. The headline stays at the pre-registered score; nothing was edited after the run." }),
+    el("ul", null, b.reviewed.map(function (r) { return el("li", { text: r.id + " (" + r.after_review + "): " + r.reason }); })),
+    el("p", null, el("a", { href: b.url, target: "_blank", rel: "noopener", text: "v2 question set, checks and raw answers on GitHub" })));
+}
+
 function askEvalBlock(a) {
   const failedCount = a.checker_fixes.length;
   return el("div", null,
+    a.v2 ? askEvalV2Block(a.v2) : null,
+    a.v2 ? el("p", { class: "small", text: "Earlier 12-question check:" }) : null,
     el("p", { text: a.preregistered_passed + " of " + a.total + " passed on checks fixed before the run: " + a.answerable_passed + " of " +
       a.answerable_total + " answerable questions correct and cited." }),
     el("p", { text: failedCount + " trap answers failed the original checks; on review each replied 'Not in the data' without inventing a value, and the checks were then loosened (listed)." }),
