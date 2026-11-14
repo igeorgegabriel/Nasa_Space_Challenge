@@ -23,22 +23,33 @@ flowchart LR
   P["NASA PSI<br/>24 investigations<br/>22 test tables"] --> U["Unified table<br/>2,009 tests, each linked<br/>to its file and row"]
   U --> A["Audit vs original files<br/>1,012 of 1,012 pass"]
   N["NASA reports (NTRS)<br/>and Spinoff pages"] --> Q["Quotes checked<br/>word for word"]
+  U --> F["FLEX model<br/>tested on held-out days<br/>refuses outside its data"]
+  Q --> L["Lunar gravity check<br/>NASA GRC 2025 allowance"]
   U --> D["Dashboard"]
   Q --> D
+  F --> D
+  L --> D
   D --> R["Rank per habitat"]
   D --> G["Oxygen gap and<br/>what to test next"]
-  D --> M["Model readiness<br/>and downloads"]
   D --> E["Equipment and<br/>Earth uses"]
   U --> K["Ask the data<br/>Claude with 5 data tools<br/>cites the NASA sentence"]
   Q --> K
+  K --> C["Every number in the answer<br/>checked against the data"]
 ```
+
+## What sets it apart
+
+- **It knows where the evidence stops.** The model refuses habitats outside the tested range and says by how much. Moon base air is 0.14 atm below any FLEX test.
+- **Gravity, not just oxygen.** The lunar gravity check uses NASA Glenn's 2025 lunar-g tests: a 1-g margin can shrink by up to 2.3 O2 points, and some materials went the other way.
+- **Checked, not just cited.** Each Ask answer shows how many of its numbers match NASA data or the cited NASA sentence. Quotes on every page are machine-checked against saved source text.
 
 ## Challenge objectives
 
 | Objective | Where in the dashboard |
 |---|---|
 | Identify investigations most relevant to crew habitats | Rank: five habitats, re-weightable score, rank stability per row |
-| Extract data for predictive modelling | Data: where a model can be trusted (oxygen x pressure map), model readiness per habitat, CSV/JSON downloads |
+| Extract data for predictive modelling | Data: a FLEX droplet model tested on held-out test days (AUC 0.85, Brier skill +0.35) that predicts for ISS air and refuses Moon air; where a model can be trusted (oxygen x pressure map); model readiness per habitat; CSV/JSON downloads |
+| Partial gravity (lunar habitat) | Data > Lunar gravity check: NASA GRC allowance per material (up to 2.3 O2 points), measured lunar-g direction, quenching vs blowoff |
 | Research for next-generation fire safety equipment | Investigations > Equipment: prevention, detection, suppression |
 | Earth applications | Investigations > On Earth: water mist, smoke detection, firefighter air tanks and clothing (NASA Spinoff, quoted) |
 
@@ -60,6 +71,7 @@ py -3.12 pipeline/build_site_data.py
 py -3.12 pipeline/verify_findings.py
 py -3.12 pipeline/audit_unified.py
 py -3.12 pipeline/verify_earth.py
+py -3.12 pipeline/verify_lunar_g.py
 py -3.12 pipeline/build_models.py
 py -3.12 -m unittest discover -s tests
 ```
