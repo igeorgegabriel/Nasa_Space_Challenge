@@ -16,7 +16,7 @@ MAX_QUESTION_CHARS = 1000
 MAX_BODY_BYTES = 16384
 MAX_HISTORY_TURNS = 3
 MAX_HISTORY_ANSWER_CHARS = 1500
-CONTEXT_PAGES = ("home", "rank", "investigations", "investigation", "data")
+CONTEXT_PAGES = ("home", "rank", "investigations", "investigation", "equipment", "data")
 NOT_IN_DATA = "Not in the data."
 RATE_LIMIT_QUESTIONS = 10
 RATE_LIMIT_WINDOW_SECONDS = 600
@@ -281,6 +281,7 @@ def validate_context(payload, corpus=None):
         "rank": "The user is viewing the habitat ranking page of the dashboard.",
         "investigations": "The user is viewing the list of investigations in the dashboard.",
         "investigation": "The user is viewing an investigation page in the dashboard.",
+        "equipment": "The user is viewing the fire-safety equipment page of the dashboard.",
         "data": "The user is viewing the data and models page of the dashboard.",
     }
     return sentences[page], None

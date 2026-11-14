@@ -85,7 +85,7 @@
  },
  "present": true,
  "quotes": {
-  "checked": 38,
+  "checked": 39,
   "failed": 0,
   "items": [
    {
@@ -279,14 +279,21 @@
    },
    {
     "psi_id": "PSI-99",
-    "quote": "2-1 80 W 9.2 s Insignificant ~ 0 n/a ~ Complete Acceleratory",
+    "quote": "Concurrent flame spread (with the wind) was shown to be more sensitive to the flow duct dimension than previously anticipated.",
     "source": "NTRS 20180005168",
     "url": "https://ntrs.nasa.gov/citations/20180005168",
     "verified": true
    },
    {
     "psi_id": "PSI-99",
-    "quote": "Concurrent flame spread (with the wind) was shown to be more sensitive to the flow duct dimension than previously anticipated.",
+    "quote": "2-1 80 W 9.2 s Insignificant ~ 0 n/a ~ Complete Acceleratory",
+    "source": "NTRS 20180005168",
+    "url": "https://ntrs.nasa.gov/citations/20180005168",
+    "verified": true
+   },
+   {
+    "psi_id": "PSI-100",
+    "quote": "The flame speed is proportional to the air flow velocity",
     "source": "NTRS 20180005168",
     "url": "https://ntrs.nasa.gov/citations/20180005168",
     "verified": true
@@ -362,6 +369,6 @@
    "PSI-142",
    "PSI-60"
   ],
-  "verified": 38
+  "verified": 39
  }
 }

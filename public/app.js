@@ -15,6 +15,7 @@ const NAV_ACTIVE = {
   investigation: "investigations",
   compare: "investigations",
   earth: "investigations",
+  equipment: "investigations",
   verification: "data",
   brief: "rank"
 };
@@ -1159,9 +1160,10 @@ function renderHome() {
     el("div", { class: "tiles" },
       tile("#/rank", "Rank experiments for a habitat", 0),
       tile("#/investigations", "Browse the " + data.investigations.length + " investigations", 1),
-      tile("#/data?at=extractor", "Download the data", 2)),
-    rv(3, "p", { class: "ask-link" }, el("button", { type: "button", class: "textlink", text: "Ask the data", onclick: function () { openAskPanel(true); } })),
-    rv(4, "div", { class: "who" },
+      tile("#/equipment", "Research for fire-safety equipment", 2),
+      tile("#/data?at=extractor", "Download the data", 3)),
+    rv(4, "p", { class: "ask-link" }, el("button", { type: "button", class: "textlink", text: "Ask the data", onclick: function () { openAskPanel(true); } })),
+    rv(5, "div", { class: "who" },
       el("h2", { text: "Who we are" }),
       el("p", { class: "who-name" }, el("strong", { text: "Kenyalang Blue Flame" }), " - Bintulu, Sarawak, Malaysia."),
       TEAM_WHY ? el("blockquote", { id: "team-why", class: "team-why", text: TEAM_WHY }) : null,
@@ -1475,7 +1477,7 @@ function renderInvestigations(params) {
 
   const view = setView(
     pageHead("What has NASA tested?", "Browse the " + state.data.investigations.length + " PSI combustion investigations."),
-    subNav([["#/investigations", "All investigations", "investigations"], ["#/compare", "Compare", "compare"], ["#/earth", "On Earth", "earth"]], "investigations"),
+    subNav([["#/investigations", "All investigations", "investigations"], ["#/compare", "Compare", "compare"], ["#/equipment", "Equipment", "equipment"], ["#/earth", "On Earth", "earth"]], "investigations"),
     el("div", { class: "filters" },
       select("Fuel class", fuelOptions, "fuel", function (o) { return FUEL_LABELS[o]; }),
       select("Function", FUNCTION_ORDER, "fn"),
@@ -1686,7 +1688,7 @@ function renderCompare(params) {
   }
   return setView(
     pageHead("How do two investigations differ?", "Pick two to four. Shaded rows are identical across your picks."),
-    subNav([["#/investigations", "All investigations", "investigations"], ["#/compare", "Compare", "compare"], ["#/earth", "On Earth", "earth"]], "compare"),
+    subNav([["#/investigations", "All investigations", "investigations"], ["#/compare", "Compare", "compare"], ["#/equipment", "Equipment", "equipment"], ["#/earth", "On Earth", "earth"]], "compare"),
     expander("Choose investigations", boxes, selected.length < 2),
     table
   );
@@ -1710,11 +1712,71 @@ function renderEarth() {
   const records = state.data.investigations.filter(function (inv) { return inv.earth_benefits; });
   return setView(
     pageHead("Where does this research help on Earth?", "Terrestrial uses named in the challenge resources."),
-    subNav([["#/investigations", "All investigations", "investigations"], ["#/compare", "Compare", "compare"], ["#/earth", "On Earth", "earth"]], "earth"),
+    subNav([["#/investigations", "All investigations", "investigations"], ["#/compare", "Compare", "compare"], ["#/equipment", "Equipment", "equipment"], ["#/earth", "On Earth", "earth"]], "earth"),
     el("div", { class: "cards" }, apps),
     expander("Earth benefits stated in the PSI records (" + records.length + ")", el("ul", null, records.map(function (inv) {
       return el("li", null, invLink(inv), ": " + clipText(inv.earth_benefits, 360));
     }))));
+}
+
+const EQUIPMENT_FUNCTIONS = [
+  ["prevention", "Prevention", "Prevention is achieved by controlling ignition sources and through material selection, which depends on understanding flammability limits."],
+  ["detection", "Detection", "Fire detection was tested in microgravity through the Smoke and Aerosol Measurement Experiment studies (SAME and SAME-R)."],
+  ["suppression", "Suppression", "Suppression was studied in the Flame Extinguishment Experiment (FLEX) through dilution of the chamber atmosphere with carbon dioxide and helium, both of which suppress fire."]
+];
+
+function equipmentQuote(text) {
+  const flat = String(text || "").replace(/\s+/g, " ").trim();
+  if (flat.length <= 140) {
+    return flat;
+  }
+  return flat.slice(0, flat.slice(0, 140).lastIndexOf(" ")) + " ...";
+}
+
+function equipmentRank(a, b) {
+  const ak = a.key_findings.length ? 1 : 0;
+  const bk = b.key_findings.length ? 1 : 0;
+  return bk - ak || b.row_count - a.row_count;
+}
+
+function equipmentOrder(fn) {
+  const weight = function (inv) {
+    const hit = inv.functions.filter(function (x) { return x.function === fn; })[0];
+    if (!hit) {
+      return [2, 1, 0];
+    }
+    return [hit.source === "challenge statement" ? 0 : 1, inv.key_findings.length ? 0 : 1, -(hit.score || 0)];
+  };
+  return function (a, b) {
+    const wa = weight(a), wb = weight(b);
+    return wa[0] - wb[0] || wa[1] - wb[1] || wa[2] - wb[2] || equipmentRank(a, b);
+  };
+}
+
+function renderEquipment() {
+  const all = state.data.investigations;
+  const cards = EQUIPMENT_FUNCTIONS.map(function (f) {
+    const list = all.filter(function (inv) { return inv.primary_function === f[0]; }).sort(equipmentOrder(f[0]));
+    const shown = list.slice(0, 4);
+    return el("article", { class: "eq-card" },
+      el("h2", { text: f[1] }),
+      el("blockquote", { class: "eq-informs" }, el("p", { text: f[2] }), el("footer", { text: "Challenge statement" })),
+      el("ul", { class: "eq-list" }, shown.map(function (inv) {
+        const kf = inv.key_findings.length ? inv.key_findings[0] : null;
+        return el("li", null,
+          el("strong", null, invLink(inv)),
+          kf ? el("p", { class: "eq-quote", text: equipmentQuote(kf.quote) }) : null,
+          kf ? el("span", { class: "eq-src", text: kf.source }) : null);
+      })),
+      el("p", { class: "eq-all" }, el("a", { href: "#/investigations?fn=" + f[0], text: list.length > shown.length ? "All " + list.length + " " + f[0] + " investigations" : "See them in the list" })));
+  });
+  const basic = all.filter(function (inv) { return inv.primary_function === "fundamental"; }).length;
+  return setView(
+    pageHead("Research for fire-safety equipment", "NASA's spacecraft fire safety work is focused on prevention, detection, and suppression."),
+    subNav([["#/investigations", "All investigations", "investigations"], ["#/compare", "Compare", "compare"], ["#/equipment", "Equipment", "equipment"], ["#/earth", "On Earth", "earth"]], "equipment"),
+    el("div", { class: "eq-wrap" },
+      el("div", { class: "eq-grid" }, cards),
+      el("p", { class: "eq-foot muted" }, el("a", { href: "#/investigations?fn=fundamental", text: basic + " more investigations study the flame physics behind all three." }))));
 }
 
 function numOrNull(v) {
@@ -2358,7 +2420,10 @@ function contextFromRoute(r, envId) {
   if (r.name === "rank") {
     return { page: "rank", habitat: envId };
   }
-  if (r.name === "investigations" || r.name === "investigation" || r.name === "compare" || r.name === "earth") {
+  if (r.name === "equipment") {
+    return { page: "equipment" };
+  }
+  if (r.name === "investigations" || r.name === "investigation" || r.name === "compare" || r.name === "earth" || r.name === "equipment") {
     return { page: "investigations" };
   }
   if (r.name === "data" || r.name === "verification") {
@@ -2379,6 +2444,9 @@ function contextLabel(ctx) {
   }
   if (ctx.page === "rank") {
     return "Rank: " + envById(ctx.habitat).name;
+  }
+  if (ctx.page === "equipment") {
+    return "Equipment";
   }
   if (ctx.page === "investigations") {
     return "Investigations";
@@ -2890,6 +2958,8 @@ function route() {
     renderCompare(r.params);
   } else if (r.name === "earth") {
     renderEarth();
+  } else if (r.name === "equipment") {
+    renderEquipment();
   } else if (r.name === "brief") {
     renderBrief(r.params);
   } else {

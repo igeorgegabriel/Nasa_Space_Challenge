@@ -1,7 +1,7 @@
 {
  "totals": {
-  "findings": 38,
-  "passed": 38,
+  "findings": 39,
+  "passed": 39,
   "failed": 0,
   "investigations_without_finding": 5
  },
@@ -203,15 +203,22 @@
   },
   {
    "psi_id": "PSI-99",
-   "finding_id": "PSI-99-F1",
+   "finding_id": "PSI-99-F2",
    "source_text_file": "data/findings/sources/PSI-99_20180005168.txt",
    "result": "pass",
    "problems": []
   },
   {
    "psi_id": "PSI-99",
-   "finding_id": "PSI-99-F2",
+   "finding_id": "PSI-99-F1",
    "source_text_file": "data/findings/sources/PSI-99_20180005168.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-100",
+   "finding_id": "PSI-100-F2",
+   "source_text_file": "data/findings/sources/PSI-100_20180005168.txt",
    "result": "pass",
    "problems": []
   },

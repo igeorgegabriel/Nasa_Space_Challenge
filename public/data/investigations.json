@@ -5878,13 +5878,13 @@
    "images": [],
    "key_findings": [
     {
-     "quote": "2-1 80 W 9.2 s Insignificant ~ 0 n/a ~ Complete Acceleratory",
+     "quote": "Concurrent flame spread (with the wind) was shown to be more sensitive to the flow duct dimension than previously anticipated.",
      "source": "NTRS 20180005168",
      "source_label": "Saffire: A Novel Approach to Study of Spacecraft Fire Safety Using Un-Manned Spacecraft",
      "url": "https://ntrs.nasa.gov/citations/20180005168"
     },
     {
-     "quote": "Concurrent flame spread (with the wind) was shown to be more sensitive to the flow duct dimension than previously anticipated.",
+     "quote": "2-1 80 W 9.2 s Insignificant ~ 0 n/a ~ Complete Acceleratory",
      "source": "NTRS 20180005168",
      "source_label": "Saffire: A Novel Approach to Study of Spacecraft Fire Safety Using Un-Manned Spacecraft",
      "url": "https://ntrs.nasa.gov/citations/20180005168"
@@ -6199,6 +6199,12 @@
    "hypothesis": "This investigation hypothesizes that due to large differences between fire behavior in normal and reduced gravity, the use of terrestrial fires and fire standards to design spacecraft fire safety systems presents an inherent risk to the vehicle because of the significant level of uncertainty. While this approach has been successful thus far, the uncertainty and risk will increase as exploration missions venture further from earth with considerably longer transit times for a safe return. There is a significant lack of microgravity data available for spacecraft designers on which to base their fire safety designs and procedures. To address this knowledge gap, this investigation proposed to conduct large-scale fire safety experiments in an expendable spacecraft without risk to a crew.",
    "images": [],
    "key_findings": [
+    {
+     "quote": "The flame speed is proportional to the air flow velocity",
+     "source": "NTRS 20180005168",
+     "source_label": "Saffire: A Novel Approach to Study of Spacecraft Fire Safety Using Un-Manned Spacecraft",
+     "url": "https://ntrs.nasa.gov/citations/20180005168"
+    },
     {
      "quote": "3-1 182 W 8 s 300 s ~ 84 cm 2.3 mm/s Complete Acceleratory",
      "source": "NTRS 20180005168",

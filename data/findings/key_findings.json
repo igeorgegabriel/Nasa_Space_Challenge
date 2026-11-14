@@ -412,6 +412,21 @@
   "source_note": "Abstract describes the 94 x 40.6 cm fabric test, the Saffire-I sample size"
  },
  {
+  "finding_id": "PSI-99-F2",
+  "psi_id": "PSI-99",
+  "finding_short": "Concurrent spread was more sensitive to flow duct size than previously expected.",
+  "finding_short_is_paraphrase": true,
+  "quote": "Concurrent flame spread (with the wind) was shown to be more sensitive to the flow duct dimension than previously anticipated.",
+  "source_type": "ntrs_pdf",
+  "source_id": "NTRS 20180005168",
+  "source_title": "Saffire: A Novel Approach to Study of Spacecraft Fire Safety Using Un-Manned Spacecraft",
+  "source_url": "https://ntrs.nasa.gov/citations/20180005168",
+  "page": 18,
+  "source_text_file": "data/findings/sources/PSI-99_20180005168.txt",
+  "relevance_tag": "prevention",
+  "source_pdf_url": "https://ntrs.nasa.gov/api/citations/20180005168/downloads/20180005168.pdf"
+ },
+ {
   "finding_id": "PSI-99-F1",
   "psi_id": "PSI-99",
   "finding_short": "Saffire-II sample 2-1 gave an insignificant burn in microgravity but burned completely in normal gravity.",
@@ -428,19 +443,20 @@
   "source_note": "Row of the Saffire-I-III results table; sample ids follow the table in the same document"
  },
  {
-  "finding_id": "PSI-99-F2",
-  "psi_id": "PSI-99",
-  "finding_short": "Concurrent spread was more sensitive to flow duct size than previously expected.",
+  "finding_id": "PSI-100-F2",
+  "psi_id": "PSI-100",
+  "finding_short": "Saffire-I and -III: flame spread speed scaled with the air flow (20 vs 25 cm/s).",
   "finding_short_is_paraphrase": true,
-  "quote": "Concurrent flame spread (with the wind) was shown to be more sensitive to the flow duct dimension than previously anticipated.",
+  "quote": "The flame speed is proportional to the air flow velocity",
   "source_type": "ntrs_pdf",
   "source_id": "NTRS 20180005168",
   "source_title": "Saffire: A Novel Approach to Study of Spacecraft Fire Safety Using Un-Manned Spacecraft",
   "source_url": "https://ntrs.nasa.gov/citations/20180005168",
-  "page": 18,
-  "source_text_file": "data/findings/sources/PSI-99_20180005168.txt",
+  "page": 16,
+  "source_text_file": "data/findings/sources/PSI-100_20180005168.txt",
   "relevance_tag": "prevention",
-  "source_pdf_url": "https://ntrs.nasa.gov/api/citations/20180005168/downloads/20180005168.pdf"
+  "source_pdf_url": "https://ntrs.nasa.gov/api/citations/20180005168/downloads/20180005168.pdf",
+  "source_note": "Row of the Saffire-I-III results table"
  },
  {
   "finding_id": "PSI-100-F1",
