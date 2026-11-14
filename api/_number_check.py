@@ -85,6 +85,14 @@ def is_gravity_bound(item):
     return item["unit"] == "g" and item["decimals"] == 0 and item["value"] in GRAVITY_BOUNDS
 
 
+CONFIDENCE_RE = re.compile(r"\s*(?:percent\s+)?(?:confidence|CI\b|interval|credible)", re.I)
+CONFIDENCE_LEVELS = (90.0, 95.0, 99.0)
+
+
+def is_confidence_level(item, text):
+    return item["unit"] == "percent" and item["value"] in CONFIDENCE_LEVELS and bool(CONFIDENCE_RE.match(text[item["end"]:item["end"] + 24]))
+
+
 def claim_label(item):
     return item["text"] + UNIT_LABELS.get(item["unit"], "")
 
@@ -92,8 +100,9 @@ def claim_label(item):
 def extract_claims(answer):
     claims = []
     seen = set()
-    for item in scan_numbers(clean_text(answer or "")):
-        if is_year(item) or is_gravity_bound(item):
+    text = clean_text(answer or "")
+    for item in scan_numbers(text):
+        if is_year(item) or is_gravity_bound(item) or is_confidence_level(item, text):
             continue
         label = claim_label(item)
         if label in seen:

@@ -777,6 +777,12 @@ class NumberCheckTest(unittest.TestCase):
         cls.nc = cls.ask.NUMBER_CHECK
         cls.tools = cls.ask.DATA_TOOLS
 
+    def test_confidence_level_is_not_a_claim(self):
+        labels = [c["label"] for c in self.nc.extract_claims("34% for heptane (95% interval 21 to 47%); 95% CI 0.2 to 0.4")]
+        self.assertNotIn("95%", labels)
+        self.assertIn("34%", labels)
+        self.assertIn("95%", [c["label"] for c in self.nc.extract_claims("95% of tests burned")])
+
     def check(self, answer, texts=(), results=()):
         return self.nc.check_answer(answer, tool_results=results, texts=texts)
 
