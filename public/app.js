@@ -1180,116 +1180,6 @@ function svgEl(tagName, attrs) {
   return node;
 }
 
-function countTo(node, from, to, ms) {
-  if (reduceMotion() || from === to) {
-    node.textContent = String(to);
-    return;
-  }
-  const start = performance.now();
-  function step(now) {
-    const u = Math.min(1, (now - start) / ms);
-    node.textContent = String(Math.round(from + (to - from) * u));
-    if (u < 1) {
-      requestAnimationFrame(step);
-    }
-  }
-  node.textContent = String(from);
-  requestAnimationFrame(step);
-}
-
-const OXR = { pad: 4, span: 92, max: 40 };
-
-function oxrX(v) {
-  return OXR.pad + (v / OXR.max) * OXR.span;
-}
-
-function oxrValues(fuelClass) {
-  const seen = {};
-  state.data.conditions.forEach(function (r) {
-    if (r.fuel_class === fuelClass && r.o2_basis === "ambient" && typeof r.o2_frac === "number" &&
-      (r.value_quality === "exact" || r.value_quality === "approximate")) {
-      seen[(r.o2_frac * 100).toFixed(1)] = true;
-    }
-  });
-  return Object.keys(seen).map(Number).sort(function (a, b) { return a - b; });
-}
-
-function scenarioRuler() {
-  const band = el("div", { class: "oxr-band" });
-  const svg = svgEl("svg", { class: "oxr-svg", "aria-hidden": "true", focusable: "false" });
-  const marks = svgEl("g");
-  const gapGroup = svgEl("g");
-  const defs = svgEl("defs");
-  const marker = svgEl("marker", { id: "oxr-arrow", viewBox: "0 0 8 8", refX: "7", refY: "4", markerWidth: "8", markerHeight: "8", orient: "auto", markerUnits: "userSpaceOnUse" });
-  marker.appendChild(svgEl("path", { d: "M0 0 L8 4 L0 8 Z", fill: "#ff8a50" }));
-  defs.appendChild(marker);
-  svg.appendChild(defs);
-  svg.appendChild(svgEl("line", { class: "oxr-axis", x1: oxrX(0) + "%", x2: oxrX(OXR.max) + "%", y1: "72%", y2: "72%" }));
-  for (let v = 0; v <= OXR.max; v += 5) {
-    const major = v % 10 === 0;
-    svg.appendChild(svgEl("line", { class: "oxr-tick", x1: oxrX(v) + "%", x2: oxrX(v) + "%", y1: "72%", y2: (major ? 80 : 77) + "%" }));
-    if (major) {
-      const label = svgEl("text", { class: "oxr-lab", x: oxrX(v) + "%", y: "97%", "text-anchor": "middle" });
-      label.textContent = v + "%";
-      svg.appendChild(label);
-    }
-  }
-  svg.appendChild(marks);
-  svg.appendChild(gapGroup);
-  const wrap = el("div", { class: "oxr", role: "img" }, band, svg);
-  const legend = el("p", { class: "oxr-legend", text: "dot = PSI test - diamond = flight outside PSI (solids) - band = habitat air" });
-  let lastFuel = null;
-
-  function update(entry, block) {
-    const win = block.windows.o2;
-    const lo = win.min * 100;
-    const hi = win.max * 100;
-    const fuel = entry.fuel_class;
-    const values = oxrValues(fuel);
-    const flights = fuel === "solid" ? state.data.outside_psi.tests.map(function (t) { return t.o2_percent; }) : [];
-    band.style.left = oxrX(lo) + "%";
-    band.style.width = (oxrX(hi) - oxrX(lo)) + "%";
-    if (fuel !== lastFuel) {
-      lastFuel = fuel;
-      clear(marks);
-      const n = values.length;
-      values.forEach(function (v, i) {
-        const dot = svgEl("circle", { class: "oxr-dot", cx: oxrX(v) + "%", cy: "62%", r: "3.2" });
-        dot.style.setProperty("--d", Math.round(120 + 900 * (i / Math.max(1, n))) + "ms");
-        marks.appendChild(dot);
-      });
-      const diamonds = {};
-      flights.forEach(function (v) { diamonds[v.toFixed(1)] = true; });
-      Object.keys(diamonds).forEach(function (k, i) {
-        const holder = svgEl("svg", { x: oxrX(Number(k)) + "%", y: "42%", width: "1", height: "1", overflow: "visible" });
-        const d = svgEl("path", { class: "oxr-dia", d: "M0 -5 L5 0 L0 5 L-5 0 Z" });
-        d.style.setProperty("--d", Math.round(700 + i * 90) + "ms");
-        holder.appendChild(d);
-        marks.appendChild(holder);
-      });
-    }
-    clear(gapGroup);
-    const tested = values.concat(flights);
-    const top = tested.length ? Math.max.apply(null, tested) : null;
-    const inside = tested.some(function (v) { return v >= lo - 1e-9 && v <= hi + 1e-9; });
-    let note = "";
-    if (inside) {
-      note = entry.inside > 0 ? "Tested inside" : "Tested at this O2";
-    } else if (top !== null && top < lo) {
-      note = fmt(lo - top, 1) + " points never tested";
-      gapGroup.appendChild(svgEl("line", { class: "oxr-gapline", x1: oxrX(top) + "%", x2: oxrX(lo) + "%", y1: "26%", y2: "26%", "marker-end": "url(#oxr-arrow)" }));
-    }
-    if (note) {
-      const text = svgEl("text", { class: "oxr-note", x: (inside ? oxrX((lo + hi) / 2) : oxrX(lo)) + "%", y: "14%", "text-anchor": inside ? "middle" : "end" });
-      text.textContent = note;
-      gapGroup.appendChild(text);
-    }
-    wrap.setAttribute("aria-label", "Oxygen ruler, 0 to 40 percent. " + values.length + " tested levels. Habitat air " + fmt(lo, 1) + " to " + fmt(hi, 1) + " percent. " + note);
-  }
-  return { nodes: [wrap, legend], update: update };
-}
-
-
 function scenarioQuestion(entry, hab) {
   const fuel = (NEXT_LABELS[entry.fuel_class] || FUEL_LABELS[entry.fuel_class]).toLowerCase() + " fuel in " + hab + " air";
   if (entry.inside > 0) {
@@ -1298,17 +1188,60 @@ function scenarioQuestion(entry, hab) {
   return "Why has NASA not tested " + fuel + ", and what is the closest test?";
 }
 
-function scenarioNearest(entry) {
+function scMark(kind) {
+  const svg = svgEl("svg", { class: "sc-glyph", viewBox: "0 0 12 12", width: "14", height: "14", "aria-hidden": "true", focusable: "false" });
+  const d = kind === "ok" ? "M2.5 6.5 L5 9 L9.5 3.5" : (kind === "no" ? "M3 3 L9 9 M9 3 L3 9" : "M3 6 L9 6");
+  svg.appendChild(svgEl("path", { d: d }));
+  return el("span", { class: "sc-mark " + kind, "aria-hidden": "true" }, svg);
+}
+
+function scRow(kind, name, kids, srcText) {
+  const label = kind === "ok" ? "matches" : (kind === "no" ? "does not match" : "not recorded");
+  return el("li", { class: "sc-row " + kind },
+    scMark(kind),
+    el("div", { class: "sc-row-body" },
+      el("p", { class: "sc-row-line" },
+        el("strong", { class: "sc-cond", text: name }),
+        el("span", { class: "sc-sr", text: " (" + label + ") " }),
+        kids),
+      srcText ? el("p", { class: "sc-src", text: srcText }) : null));
+}
+
+function scenarioRows(entry, block) {
+  const win = block.windows;
   const n = entry.nearest;
+  const inv = n ? invById(n.psi_id) : null;
+  const rows = [];
+  const o2Here = dashSpan(win.o2.min * 100, win.o2.max * 100, 1, "%");
   if (!n) {
-    return el("p", { class: "sc-line", text: "Nearest PSI test: none with an O2 value recorded." });
+    rows.push(scRow("no", "Oxygen", o2Here + " here - no NASA test with an O2 value recorded", null));
+  } else {
+    rows.push(scRow(n.o2_gap === 0 ? "ok" : "no", "Oxygen",
+      [o2Here + " here - closest NASA test " + percent(n.o2_frac) + "% (", inv ? invLink(inv) : n.psi_id, ")"],
+      n.psi_id + " table, row " + n.source_row));
   }
-  const inv = invById(n.psi_id);
-  const pressure = n.pressure_atm === null || n.pressure_atm === undefined ? "" : ", " + fmt(psia(n.pressure_atm), 1) + " psia";
-  return el("p", { class: "sc-line" },
-    "Nearest PSI test: " + percent(n.o2_frac) + "% O2" + pressure + " - ",
-    inv ? invLink(inv) : n.psi_id,
-    el("span", { class: "sc-src", text: " (" + n.source_file + " row " + n.source_row + ")" }));
+  if (!win.pressure_atm) {
+    rows.push(scRow("na", "Pressure", "not specified for this habitat", null));
+  } else {
+    const here = dashSpan(psia(win.pressure_atm.min), psia(win.pressure_atm.max), 1, "psia");
+    if (!n || n.pressure_atm === null || n.pressure_atm === undefined) {
+      rows.push(scRow("na", "Pressure", here + " here - not recorded in that test", null));
+    } else {
+      rows.push(scRow(n.pressure_gap_atm === 0 ? "ok" : "no", "Pressure", here + " here - closest test " + fmt(psia(n.pressure_atm), 1) + " psia", null));
+    }
+  }
+  if (!win.flow_cm_s) {
+    rows.push(scRow("na", "Airflow", "not specified for this habitat", null));
+  } else {
+    const here = dashSpan(win.flow_cm_s.min, win.flow_cm_s.max, 1, "cm/s");
+    if (!n || n.flow_cm_s === null || n.flow_cm_s === undefined) {
+      rows.push(scRow("na", "Airflow", here + " here - not recorded in that test", null));
+    } else {
+      const within = n.flow_cm_s >= win.flow_cm_s.min && n.flow_cm_s <= win.flow_cm_s.max;
+      rows.push(scRow(within ? "ok" : "no", "Airflow", here + " here - closest test " + fmt(n.flow_cm_s, 1) + " cm/s", null));
+    }
+  }
+  return rows;
 }
 
 function scenarioFlight(entry) {
@@ -1317,8 +1250,9 @@ function scenarioFlight(entry) {
     return null;
   }
   const pressure = o.pressure_psia === null || o.pressure_psia === undefined ? "" : ", " + fmt(o.pressure_psia, 2) + " psia";
-  return el("p", { class: "sc-line" },
-    "Nearest flight outside PSI: " + o.label + " at " + percent(o.o2_frac) + "% O2" + pressure + " - ",
+  const did = /not/i.test(o.outcome_short) ? "did not ignite" : "burned";
+  return el("p", { class: "sc-outside" },
+    "Outside PSI: " + o.label + " " + did + " " + o.material_short + " at " + percent(o.o2_frac) + "% O2" + pressure + " - ",
     ntrsLink(o.source_url, "NTRS " + o.source_id));
 }
 
@@ -1326,8 +1260,6 @@ function scenarioCard() {
   const habRow = el("div", { class: "pills sc-seg", role: "group", "aria-label": "Habitat" });
   const fuelRow = el("div", { class: "pills sc-seg", role: "group", "aria-label": "Fuel type" });
   const result = el("div", { class: "sc-result", "aria-live": "polite" });
-  const ruler = scenarioRuler();
-  let shown = null;
   function pill(key, label, on, pick) {
     return el("button", { type: "button", class: "pill" + (on ? " active" : ""), "aria-pressed": on ? "true" : "false", "data-key": key, text: label, onclick: function () {
       pick();
@@ -1354,18 +1286,25 @@ function scenarioCard() {
     block.classes.forEach(function (c) {
       fuelRow.appendChild(pill("fuel-" + c.fuel_class, NEXT_LABELS[c.fuel_class] || FUEL_LABELS[c.fuel_class], c.fuel_class === scenario.fuel, function () { scenario.fuel = c.fuel_class; }));
     });
-    const numNode = el("p", { class: "sc-num" + (entry.inside === 0 ? " zero" : ""), text: String(entry.inside) });
-    if (shown !== null) {
-      countTo(numNode, shown, entry.inside, 400);
-    }
-    shown = entry.inside;
-    ruler.update(entry, block);
+    const fuelName = NEXT_LABELS[entry.fuel_class] || FUEL_LABELS[entry.fuel_class];
+    const rows = scenarioRows(entry, block);
+    const kinds = rows.map(function (r) { return r.className.replace("sc-row ", ""); });
+    const names = ["Oxygen", "pressure", "airflow"];
+    const matched = names.filter(function (n, i) { return kinds[i] === "ok"; });
+    const missing = names.filter(function (n, i) { return kinds[i] === "na"; });
+    const partly = entry.inside === 0 && kinds.indexOf("no") < 0 && matched.length > 0;
+    const listText = function (list) { return list.length > 1 ? list.slice(0, -1).join(", ") + " and " + list[list.length - 1] : list[0]; };
+    const capital = function (t) { return t.charAt(0).toUpperCase() + t.slice(1); };
+    const word = entry.inside > 0 ? "Tested" : (partly ? "Partly tested" : "Not tested");
+    const sub = entry.inside > 0 ? entry.inside + (entry.inside === 1 ? " NASA test matches this air" : " NASA tests match this air") :
+      (partly ? capital(listText(matched).toLowerCase()) + (matched.length > 1 ? " match" : " matches") + "; " + listText(missing.map(function (m) { return m.toLowerCase(); })) + " not recorded." : "No NASA test matches all three conditions.");
     appendKids(result, [
-      numNode,
-      el("p", { class: "sc-label", text: (entry.inside === 1 ? "NASA test" : "NASA tests") + " inside " + hab + " air" }),
-      scenarioNearest(entry),
+      el("p", { class: "sc-for", text: hab + " air - " + fuelName + " fuel" }),
+      el("div", { class: "sc-verdict" },
+        el("p", { class: "sc-word", text: word }),
+        el("p", { class: "sc-sub", text: sub })),
+      el("ul", { class: "sc-rows" }, rows),
       scenarioFlight(entry),
-      el("p", { class: "sc-win", text: "Window: " + testNextConditions(block.windows) }),
       el("p", { class: "sc-actions" },
         el("button", { type: "button", class: "btn", text: "Ask why", onclick: function () {
           openAskPanel(false);
@@ -1381,7 +1320,7 @@ function scenarioCard() {
     }
   }
   draw(null);
-  return [habRow, fuelRow, el("div", { class: "sc-ruler" }, ruler.nodes), result];
+  return [habRow, fuelRow, result];
 }
 
 const TOUR_QUESTION = "How many solid-fuel tests were run inside Moon base oxygen levels?";
@@ -1398,7 +1337,7 @@ const TOUR_STEPS = [
   },
   {
     hash: "#/home", scroll: "#s-next", ring: ".scenario",
-    text: function () { return "Pick a habitat and a fuel. See the closest NASA test, with its source row."; }
+    text: function () { return "Pick a habitat and a fuel. See which conditions NASA has tested, and which it has not."; }
   },
   {
     hash: "#/rank?habitat=lunar", scroll: null, ring: ".rank-cards",
