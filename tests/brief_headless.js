@@ -121,6 +121,8 @@ async function main() {
   ws.close();
   chrome.kill();
   server.close();
+  await new Promise(function (r) { setTimeout(r, 800); });
+  try { fs.rmSync(profile, { recursive: true, force: true }); } catch (e) { }
   process.exit(0);
 }
 
