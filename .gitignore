@@ -8,3 +8,5 @@ venv/
 .DS_Store
 Thumbs.db
 data/raw/
+data/investigations/raw/
+data/investigations/raw_ntrs/
