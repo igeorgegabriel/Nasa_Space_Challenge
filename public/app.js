@@ -13,7 +13,8 @@ const NAV_ACTIVE = {
   investigation: "investigations",
   compare: "investigations",
   earth: "investigations",
-  verification: "data"
+  verification: "data",
+  brief: "rank"
 };
 
 const PSIA_PER_ATM = 14.6959;
@@ -879,18 +880,16 @@ function envSourcesTable(env) {
   ]);
 }
 
-function renderTestNext(env) {
-  const block = state.data.test_next.environments[env.id];
-  const holder = el("section", { class: "test-next", id: "test-next" });
-  if (!block) {
-    return holder;
-  }
-  const win = block.windows;
-  const conditions = "O2 " + dashSpan(win.o2.min * 100, win.o2.max * 100, 1, "%") + ", " +
+function testNextConditions(win) {
+  return "O2 " + dashSpan(win.o2.min * 100, win.o2.max * 100, 1, "%") + ", " +
     dashSpan(psia(win.pressure_atm.min), psia(win.pressure_atm.max), 1, "psia") +
     (win.flow_cm_s ? ", " + dashSpan(win.flow_cm_s.min, win.flow_cm_s.max, 1, "cm/s") : "");
+}
+
+function testNextRows(block, plain) {
+  const win = block.windows;
   let priority = 0;
-  const rows = block.classes.map(function (entry) {
+  return block.classes.map(function (entry) {
     let nearest = "No ambient O2 value recorded for this fuel class.";
     if (entry.nearest) {
       const n = entry.nearest;
@@ -898,13 +897,23 @@ function renderTestNext(env) {
       const o2 = "O2 " + percent(n.o2_frac) + "%" + (n.o2_gap > 0 ? " (" + fmt(n.o2_gap * 100, 1) + " points " + dir + ")" : " (inside)");
       const pr = n.pressure_atm === null ? "pressure not recorded" : fmt(psia(n.pressure_atm), 1) + " psia";
       const inv = invById(n.psi_id);
-      nearest = el("span", null, o2 + ", " + pr + ". ", inv ? invLink(inv, n.psi_id) : n.psi_id, ", row " + n.source_row);
+      nearest = el("span", null, o2 + ", " + pr + ". ", inv && !plain ? invLink(inv, n.psi_id) : n.psi_id, ", row " + n.source_row);
     }
     const inside = el("span", null, String(entry.inside),
       entry.o2_window_no_pressure_rows > 0 ? el("span", { class: "src", text: entry.o2_window_no_pressure_rows + " more match O2 but record no pressure" }) : null);
     const label = entry.inside === 0 ? String(++priority) : "-";
     return [label, FUEL_LABELS[entry.fuel_class], inside, nearest];
   });
+}
+
+function renderTestNext(env) {
+  const block = state.data.test_next.environments[env.id];
+  const holder = el("section", { class: "test-next", id: "test-next" });
+  if (!block) {
+    return holder;
+  }
+  const conditions = testNextConditions(block.windows);
+  const rows = testNextRows(block, false);
   holder.appendChild(el("h2", { text: "What NASA should test next for " + env.name }));
   holder.appendChild(el("p", { class: "lede", text: block.zero_count > 0 ?
     "Conditions this habitat will run at that PSI has never tested." :
@@ -914,7 +923,69 @@ function renderTestNext(env) {
   holder.appendChild(expander("How this table is computed", el("div", null,
     el("p", { text: "A test counts as inside when its ambient O2, its pressure and, where NASA specifies one, its flow speed all lie in the window above. Rows of quality exact or approximate only. A row with no recorded pressure cannot count as inside." }),
     el("p", { text: "Nearest tested condition is the row of that fuel class whose O2 is closest to the window, then pressure, then flow. Priority runs solid, liquid droplet, gas among classes with zero tests." }))));
+  holder.appendChild(el("p", null, el("a", { class: "btn", href: "#/brief?habitat=" + encodeURIComponent(env.id), text: "Printable test brief" })));
   return holder;
+}
+
+function briefSources(block, refList) {
+  if (block.not_specified) {
+    return el("span", { class: "small" }, NOT_SPECIFIED + (block.note ? ". " + block.note : "."));
+  }
+  const marks = [];
+  (block.sources || []).slice(0, 1).forEach(function (src) {
+    const url = src.url || "";
+    const key = url || src.ref;
+    let idx = refList.findIndex(function (r) { return r.key === key; });
+    if (idx < 0) {
+      refList.push({ key: key, label: url ? src.ref : (src.title || src.ref), url: url });
+      idx = refList.length - 1;
+    }
+    if (marks.indexOf(idx + 1) < 0) {
+      marks.push(idx + 1);
+    }
+  });
+  return el("span", null, marks.map(function (n) { return "[" + n + "]"; }).join(""));
+}
+
+function briefDate() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function renderBrief(params) {
+  const env = envById(params.habitat || "");
+  const back = el("a", { class: "brief-back", href: "#/rank", text: "Back" });
+  if (!env || !state.data.test_next.environments[env.id]) {
+    setView(el("h1", { text: "Test request brief" }), el("p", { text: "No habitat selected." }), el("p", null, back));
+    return;
+  }
+  state.envId = env.id;
+  const block = state.data.test_next.environments[env.id];
+  const invCount = state.data.investigations.length;
+  const rowCount = state.data.investigations.reduce(function (sum, inv) { return sum + inv.row_count; }, 0);
+  const refList = [];
+  const windowRows = [
+    ["Oxygen", env.o2.not_specified ? NOT_SPECIFIED : env.o2.display, briefSources(env.o2, refList)],
+    ["Total pressure", env.pressure_atm.not_specified ? NOT_SPECIFIED : env.pressure_atm.display, briefSources(env.pressure_atm, refList)],
+    ["Cabin flow speed", env.flow_cm_s.not_specified ? NOT_SPECIFIED : env.flow_cm_s.display, briefSources(env.flow_cm_s, refList)],
+    ["Gravity", env.gravity.display, briefSources(env.gravity, refList)]
+  ];
+  const view = setView(el("article", { class: "brief" },
+    el("div", { class: "brief-actions" },
+      back,
+      el("button", { type: "button", id: "brief-print", text: "Print / Save as PDF", onclick: function () { window.print(); } })),
+    el("h1", { text: "Fire-safety test request: " + env.name }),
+    el("p", { class: "brief-purpose", text: "These conditions are planned for " + env.name + " but have never been tested in NASA's PSI combustion data." }),
+    plainTable(["Priority", "Fuel class", "Tests inside the window", "Nearest tested condition"], testNextRows(block, true)),
+    el("h2", { text: "Habitat atmosphere" }),
+    plainTable(["Quantity", "Value", "Source"], windowRows),
+    el("p", { class: "brief-basis", text: "Basis: NASA PSI combustion data, " + invCount + " investigations, " + rowCount.toLocaleString("en-US") + " test rows. Generated " + briefDate() + " from https://flame-in-freefall-three.vercel.app" }),
+    el("p", { class: "brief-limits", text: "Counts cover PSI only; NASA tests published outside PSI are not counted." }),
+    el("h2", { text: "References" }),
+    el("ol", { class: "brief-refs" }, refList.map(function (r, i) {
+      return el("li", { value: i + 1, text: "[" + (i + 1) + "] " + r.label + (r.url ? " - " + r.url : "") });
+    }))));
+  document.title = "Fire-safety test request: " + env.name;
+  return view;
 }
 
 function renderRank() {
@@ -2192,6 +2263,7 @@ function route() {
   }
   buildNav(NAV_ACTIVE[r.name] || r.name);
   document.title = "Flame in Freefall";
+  document.body.classList.toggle("brief-page", r.name === "brief");
   if (r.name === "investigation") {
     renderInvestigation(r.arg);
   } else if (r.name === "investigations") {
@@ -2206,6 +2278,8 @@ function route() {
     renderCompare(r.params);
   } else if (r.name === "earth") {
     renderEarth();
+  } else if (r.name === "brief") {
+    renderBrief(r.params);
   } else {
     renderHome();
   }
