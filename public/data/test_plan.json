@@ -1,0 +1,708 @@
+{
+ "gaps": [
+  {
+   "fuel_class": "solid",
+   "habitat": "gateway",
+   "test": "T04"
+  },
+  {
+   "fuel_class": "solid",
+   "habitat": "iss",
+   "test": "T05"
+  },
+  {
+   "fuel_class": "solid",
+   "habitat": "lunar",
+   "test": "T01"
+  },
+  {
+   "fuel_class": "solid",
+   "habitat": "mars",
+   "test": "T01"
+  },
+  {
+   "fuel_class": "solid",
+   "habitat": "rover",
+   "test": "T01"
+  },
+  {
+   "fuel_class": "liquid_droplet",
+   "habitat": "gateway",
+   "test": "T07"
+  },
+  {
+   "fuel_class": "liquid_droplet",
+   "habitat": "iss",
+   "test": "T06"
+  },
+  {
+   "fuel_class": "liquid_droplet",
+   "habitat": "lunar",
+   "test": "T02"
+  },
+  {
+   "fuel_class": "liquid_droplet",
+   "habitat": "mars",
+   "test": "T02"
+  },
+  {
+   "fuel_class": "liquid_droplet",
+   "habitat": "rover",
+   "test": "T02"
+  },
+  {
+   "fuel_class": "gas",
+   "habitat": "gateway",
+   "test": "T08"
+  },
+  {
+   "fuel_class": "gas",
+   "habitat": "iss",
+   "test": "T09"
+  },
+  {
+   "fuel_class": "gas",
+   "habitat": "lunar",
+   "test": "T03"
+  },
+  {
+   "fuel_class": "gas",
+   "habitat": "mars",
+   "test": "T03"
+  },
+  {
+   "fuel_class": "gas",
+   "habitat": "rover",
+   "test": "T03"
+  }
+ ],
+ "headline": {
+  "closed": 15,
+  "gaps": 15,
+  "tests": 9,
+  "text": "9 tests would close 15 of 15 habitat gaps"
+ },
+ "method": [
+  "A gap is a habitat and fuel class with no PSI test inside the habitat window (the count in test_next.json is 0).",
+  "Candidate tests are the habitat windows and every overlap of them; a planned test is a box that lies inside the windows it covers.",
+  "Greedy cover per fuel class: pick the box that covers the most uncovered habitats; ties go to the box furthest from any existing PSI test.",
+  "Distance is derived: sqrt(O2 gap in percentage points squared + pressure gap in psia squared) from the box centre to the nearest PSI row of that fuel class with a recorded pressure; where the class has no recorded pressure at all (solid fuels) it is the O2 gap alone.",
+  "Gravity is not part of the cover: a microgravity facility matches the free-fall habitats only."
+ ],
+ "tests": [
+  {
+   "flow_cm_s": {
+    "max": 20.0,
+    "min": 10.0
+   },
+   "flow_note": null,
+   "fuel_class": "solid",
+   "gravity": {
+    "levels": {
+     "lunar": "One-sixth of Earth gravity (about 0.16 g)",
+     "mars": "About one-third of Earth gravity",
+     "rover": "One-sixth of Earth gravity (about 0.16 g)"
+    },
+    "micro": [],
+    "note": "Moon and Mars gravity cannot be reproduced on the ISS; a microgravity run covers the air only.",
+    "partial": [
+     "lunar",
+     "mars",
+     "rover"
+    ]
+   },
+   "habitat_names": [
+    "Lunar surface habitat",
+    "Mars surface habitat",
+    "Pressurized rover (lunar)"
+   ],
+   "habitats": [
+    "lunar",
+    "mars",
+    "rover"
+   ],
+   "id": "T01",
+   "nearest": {
+    "distance": 12.05,
+    "flow_cm_s": null,
+    "investigation": "BASS-II",
+    "o2_frac": 0.222,
+    "o2_gap_points": 12.05,
+    "pressure_atm": null,
+    "pressure_gap_psia": null,
+    "psi_id": "PSI-25",
+    "source_file": "PSI-25_Experimental table_BASS-II.csv",
+    "source_row": 1
+   },
+   "o2": {
+    "max": 0.35,
+    "min": 0.335
+   },
+   "point": {
+    "flow_cm_s": 15.0,
+    "o2": 0.3425,
+    "pressure_atm": 0.558
+   },
+   "pressure_atm": {
+    "max": 0.565,
+    "min": 0.551
+   },
+   "rank": 1,
+   "source_refs": [
+    "NASA/TM-2013-217377 (NTRS 20130013505)",
+    "NASA/TP-2010-216134",
+    "NTRS 20220006612 (ICES-2022-45)",
+    "NTRS 20210021181",
+    "NTRS 20150021491",
+    "NTRS 20220000245",
+    "NTRS 20230009095",
+    "NASA Space Apps 2026 challenge statement"
+   ]
+  },
+  {
+   "flow_cm_s": {
+    "max": 20.0,
+    "min": 10.0
+   },
+   "flow_note": null,
+   "fuel_class": "liquid_droplet",
+   "gravity": {
+    "levels": {
+     "lunar": "One-sixth of Earth gravity (about 0.16 g)",
+     "mars": "About one-third of Earth gravity",
+     "rover": "One-sixth of Earth gravity (about 0.16 g)"
+    },
+    "micro": [],
+    "note": "Moon and Mars gravity cannot be reproduced on the ISS; a microgravity run covers the air only.",
+    "partial": [
+     "lunar",
+     "mars",
+     "rover"
+    ]
+   },
+   "habitat_names": [
+    "Lunar surface habitat",
+    "Mars surface habitat",
+    "Pressurized rover (lunar)"
+   ],
+   "habitats": [
+    "lunar",
+    "mars",
+    "rover"
+   ],
+   "id": "T02",
+   "nearest": {
+    "distance": 2.146,
+    "flow_cm_s": null,
+    "investigation": "FLEX",
+    "o2_frac": 0.34,
+    "o2_gap_points": 0.25,
+    "pressure_atm": 0.703026,
+    "pressure_gap_psia": 2.131,
+    "psi_id": "PSI-69",
+    "source_file": "PSI-69_Experimental table_FLEX.csv",
+    "source_row": 37
+   },
+   "o2": {
+    "max": 0.35,
+    "min": 0.335
+   },
+   "point": {
+    "flow_cm_s": 15.0,
+    "o2": 0.3425,
+    "pressure_atm": 0.558
+   },
+   "pressure_atm": {
+    "max": 0.565,
+    "min": 0.551
+   },
+   "rank": 2,
+   "source_refs": [
+    "NASA/TM-2013-217377 (NTRS 20130013505)",
+    "NASA/TP-2010-216134",
+    "NTRS 20220006612 (ICES-2022-45)",
+    "NTRS 20210021181",
+    "NTRS 20150021491",
+    "NTRS 20220000245",
+    "NTRS 20230009095",
+    "NASA Space Apps 2026 challenge statement"
+   ]
+  },
+  {
+   "flow_cm_s": {
+    "max": 20.0,
+    "min": 10.0
+   },
+   "flow_note": null,
+   "fuel_class": "gas",
+   "gravity": {
+    "levels": {
+     "lunar": "One-sixth of Earth gravity (about 0.16 g)",
+     "mars": "About one-third of Earth gravity",
+     "rover": "One-sixth of Earth gravity (about 0.16 g)"
+    },
+    "micro": [],
+    "note": "Moon and Mars gravity cannot be reproduced on the ISS; a microgravity run covers the air only.",
+    "partial": [
+     "lunar",
+     "mars",
+     "rover"
+    ]
+   },
+   "habitat_names": [
+    "Lunar surface habitat",
+    "Mars surface habitat",
+    "Pressurized rover (lunar)"
+   ],
+   "habitats": [
+    "lunar",
+    "mars",
+    "rover"
+   ],
+   "id": "T03",
+   "nearest": {
+    "distance": 0.869,
+    "flow_cm_s": null,
+    "investigation": "ACME CFI-G",
+    "o2_frac": 0.340808,
+    "o2_gap_points": 0.169,
+    "pressure_atm": 0.500025,
+    "pressure_gap_psia": 0.852,
+    "psi_id": "PSI-159",
+    "source_file": "PSI-159_Experimental table_CFI-G_Normal Flames.csv",
+    "source_row": 128
+   },
+   "o2": {
+    "max": 0.35,
+    "min": 0.335
+   },
+   "point": {
+    "flow_cm_s": 15.0,
+    "o2": 0.3425,
+    "pressure_atm": 0.558
+   },
+   "pressure_atm": {
+    "max": 0.565,
+    "min": 0.551
+   },
+   "rank": 3,
+   "source_refs": [
+    "NASA/TM-2013-217377 (NTRS 20130013505)",
+    "NASA/TP-2010-216134",
+    "NTRS 20220006612 (ICES-2022-45)",
+    "NTRS 20210021181",
+    "NTRS 20150021491",
+    "NTRS 20220000245",
+    "NTRS 20230009095",
+    "NASA Space Apps 2026 challenge statement"
+   ]
+  },
+  {
+   "flow_cm_s": null,
+   "flow_note": "not specified by NASA sources",
+   "fuel_class": "solid",
+   "gravity": {
+    "levels": {
+     "gateway": "Free fall (space station in lunar orbit)"
+    },
+    "micro": [
+     "gateway"
+    ],
+    "note": "A microgravity facility such as the ISS reproduces this gravity.",
+    "partial": []
+   },
+   "habitat_names": [
+    "Gateway-class station"
+   ],
+   "habitats": [
+    "gateway"
+   ],
+   "id": "T04",
+   "nearest": {
+    "distance": 4.05,
+    "flow_cm_s": null,
+    "investigation": "BASS-II",
+    "o2_frac": 0.222,
+    "o2_gap_points": 4.05,
+    "pressure_atm": null,
+    "pressure_gap_psia": null,
+    "psi_id": "PSI-25",
+    "source_file": "PSI-25_Experimental table_BASS-II.csv",
+    "source_row": 1
+   },
+   "o2": {
+    "max": 0.265,
+    "min": 0.26
+   },
+   "point": {
+    "flow_cm_s": null,
+    "o2": 0.2625,
+    "pressure_atm": 0.694
+   },
+   "pressure_atm": {
+    "max": 0.714,
+    "min": 0.674
+   },
+   "rank": 4,
+   "source_refs": [
+    "NTRS 20230009095",
+    "NTRS 20220006727 (ICES-2022-196)",
+    "NTRS 20220006612 (ICES-2022-45)",
+    "NTRS 20240016087 (GP 10265)"
+   ]
+  },
+  {
+   "flow_cm_s": {
+    "max": 20.3,
+    "min": 5.1
+   },
+   "flow_note": null,
+   "fuel_class": "solid",
+   "gravity": {
+    "levels": {
+     "iss": "0 g (free fall)"
+    },
+    "micro": [
+     "iss"
+    ],
+    "note": "A microgravity facility such as the ISS reproduces this gravity.",
+    "partial": []
+   },
+   "habitat_names": [
+    "ISS / spacecraft cabin"
+   ],
+   "habitats": [
+    "iss"
+   ],
+   "id": "T05",
+   "nearest": {
+    "distance": 0.35,
+    "flow_cm_s": null,
+    "investigation": "BASS-II",
+    "o2_frac": 0.222,
+    "o2_gap_points": 0.35,
+    "pressure_atm": null,
+    "pressure_gap_psia": null,
+    "psi_id": "PSI-25",
+    "source_file": "PSI-25_Experimental table_BASS-II.csv",
+    "source_row": 1
+   },
+   "o2": {
+    "max": 0.241,
+    "min": 0.21
+   },
+   "point": {
+    "flow_cm_s": 12.7,
+    "o2": 0.2255,
+    "pressure_atm": 0.99
+   },
+   "pressure_atm": {
+    "max": 1.034,
+    "min": 0.946
+   },
+   "rank": 5,
+   "source_refs": [
+    "NTRS 20260003925",
+    "NASA/TP-2010-216134",
+    "NR-NRCSD-S0003",
+    "AIVC 2001 Raatschen"
+   ]
+  },
+  {
+   "flow_cm_s": {
+    "max": 20.3,
+    "min": 5.1
+   },
+   "flow_note": null,
+   "fuel_class": "liquid_droplet",
+   "gravity": {
+    "levels": {
+     "iss": "0 g (free fall)"
+    },
+    "micro": [
+     "iss"
+    ],
+    "note": "A microgravity facility such as the ISS reproduces this gravity.",
+    "partial": []
+   },
+   "habitat_names": [
+    "ISS / spacecraft cabin"
+   ],
+   "habitats": [
+    "iss"
+   ],
+   "id": "T06",
+   "nearest": {
+    "distance": 1.467,
+    "flow_cm_s": null,
+    "investigation": "FLEX",
+    "o2_frac": 0.24,
+    "o2_gap_points": 1.45,
+    "pressure_atm": 1.005132,
+    "pressure_gap_psia": 0.222,
+    "psi_id": "PSI-69",
+    "source_file": "PSI-69_Experimental table_FLEX.csv",
+    "source_row": 131
+   },
+   "o2": {
+    "max": 0.241,
+    "min": 0.21
+   },
+   "point": {
+    "flow_cm_s": 12.7,
+    "o2": 0.2255,
+    "pressure_atm": 0.99
+   },
+   "pressure_atm": {
+    "max": 1.034,
+    "min": 0.946
+   },
+   "rank": 6,
+   "source_refs": [
+    "NTRS 20260003925",
+    "NASA/TP-2010-216134",
+    "NR-NRCSD-S0003",
+    "AIVC 2001 Raatschen"
+   ]
+  },
+  {
+   "flow_cm_s": null,
+   "flow_note": "not specified by NASA sources",
+   "fuel_class": "liquid_droplet",
+   "gravity": {
+    "levels": {
+     "gateway": "Free fall (space station in lunar orbit)"
+    },
+    "micro": [
+     "gateway"
+    ],
+    "note": "A microgravity facility such as the ISS reproduces this gravity.",
+    "partial": []
+   },
+   "habitat_names": [
+    "Gateway-class station"
+   ],
+   "habitats": [
+    "gateway"
+   ],
+   "id": "T07",
+   "nearest": {
+    "distance": 1.262,
+    "flow_cm_s": null,
+    "investigation": "FLEX",
+    "o2_frac": 0.25,
+    "o2_gap_points": 1.25,
+    "pressure_atm": 0.705658,
+    "pressure_gap_psia": 0.171,
+    "psi_id": "PSI-69",
+    "source_file": "PSI-69_Experimental table_FLEX.csv",
+    "source_row": 92
+   },
+   "o2": {
+    "max": 0.265,
+    "min": 0.26
+   },
+   "point": {
+    "flow_cm_s": null,
+    "o2": 0.2625,
+    "pressure_atm": 0.694
+   },
+   "pressure_atm": {
+    "max": 0.714,
+    "min": 0.674
+   },
+   "rank": 7,
+   "source_refs": [
+    "NTRS 20230009095",
+    "NTRS 20220006727 (ICES-2022-196)",
+    "NTRS 20220006612 (ICES-2022-45)",
+    "NTRS 20240016087 (GP 10265)"
+   ]
+  },
+  {
+   "flow_cm_s": null,
+   "flow_note": "not specified by NASA sources",
+   "fuel_class": "gas",
+   "gravity": {
+    "levels": {
+     "gateway": "Free fall (space station in lunar orbit)"
+    },
+    "micro": [
+     "gateway"
+    ],
+    "note": "A microgravity facility such as the ISS reproduces this gravity.",
+    "partial": []
+   },
+   "habitat_names": [
+    "Gateway-class station"
+   ],
+   "habitats": [
+    "gateway"
+   ],
+   "id": "T08",
+   "nearest": {
+    "distance": 5.319,
+    "flow_cm_s": null,
+    "investigation": "ACME CFI-G",
+    "o2_frac": 0.2341,
+    "o2_gap_points": 2.84,
+    "pressure_atm": 1.000049,
+    "pressure_gap_psia": 4.498,
+    "psi_id": "PSI-159",
+    "source_file": "PSI-159_Experimental table_CFI-G_Normal Flames.csv",
+    "source_row": 25
+   },
+   "o2": {
+    "max": 0.265,
+    "min": 0.26
+   },
+   "point": {
+    "flow_cm_s": null,
+    "o2": 0.2625,
+    "pressure_atm": 0.694
+   },
+   "pressure_atm": {
+    "max": 0.714,
+    "min": 0.674
+   },
+   "rank": 8,
+   "source_refs": [
+    "NTRS 20230009095",
+    "NTRS 20220006727 (ICES-2022-196)",
+    "NTRS 20220006612 (ICES-2022-45)",
+    "NTRS 20240016087 (GP 10265)"
+   ]
+  },
+  {
+   "flow_cm_s": {
+    "max": 20.3,
+    "min": 5.1
+   },
+   "flow_note": null,
+   "fuel_class": "gas",
+   "gravity": {
+    "levels": {
+     "iss": "0 g (free fall)"
+    },
+    "micro": [
+     "iss"
+    ],
+    "note": "A microgravity facility such as the ISS reproduces this gravity.",
+    "partial": []
+   },
+   "habitat_names": [
+    "ISS / spacecraft cabin"
+   ],
+   "habitats": [
+    "iss"
+   ],
+   "id": "T09",
+   "nearest": {
+    "distance": 0.789,
+    "flow_cm_s": null,
+    "investigation": "ACME CFI-G",
+    "o2_frac": 0.233255,
+    "o2_gap_points": 0.775,
+    "pressure_atm": 1.000049,
+    "pressure_gap_psia": 0.148,
+    "psi_id": "PSI-159",
+    "source_file": "PSI-159_Experimental table_CFI-G_Normal Flames.csv",
+    "source_row": 27
+   },
+   "o2": {
+    "max": 0.241,
+    "min": 0.21
+   },
+   "point": {
+    "flow_cm_s": 12.7,
+    "o2": 0.2255,
+    "pressure_atm": 0.99
+   },
+   "pressure_atm": {
+    "max": 1.034,
+    "min": 0.946
+   },
+   "rank": 9,
+   "source_refs": [
+    "NTRS 20260003925",
+    "NASA/TP-2010-216134",
+    "NR-NRCSD-S0003",
+    "AIVC 2001 Raatschen"
+   ]
+  }
+ ],
+ "unplanned": [],
+ "windows": {
+  "gateway": {
+   "flow_cm_s": null,
+   "gravity": "Free fall (space station in lunar orbit)",
+   "name": "Gateway-class station",
+   "o2": {
+    "max": 0.265,
+    "min": 0.26
+   },
+   "pressure_atm": {
+    "max": 0.714,
+    "min": 0.674
+   }
+  },
+  "iss": {
+   "flow_cm_s": {
+    "max": 20.3,
+    "min": 5.1
+   },
+   "gravity": "0 g (free fall)",
+   "name": "ISS / spacecraft cabin",
+   "o2": {
+    "max": 0.241,
+    "min": 0.21
+   },
+   "pressure_atm": {
+    "max": 1.034,
+    "min": 0.946
+   }
+  },
+  "lunar": {
+   "flow_cm_s": {
+    "max": 20.0,
+    "min": 10.0
+   },
+   "gravity": "One-sixth of Earth gravity (about 0.16 g)",
+   "name": "Lunar surface habitat",
+   "o2": {
+    "max": 0.35,
+    "min": 0.335
+   },
+   "pressure_atm": {
+    "max": 0.565,
+    "min": 0.551
+   }
+  },
+  "mars": {
+   "flow_cm_s": null,
+   "gravity": "About one-third of Earth gravity",
+   "name": "Mars surface habitat",
+   "o2": {
+    "max": 0.35,
+    "min": 0.335
+   },
+   "pressure_atm": {
+    "max": 0.565,
+    "min": 0.551
+   }
+  },
+  "rover": {
+   "flow_cm_s": null,
+   "gravity": "One-sixth of Earth gravity (about 0.16 g)",
+   "name": "Pressurized rover (lunar)",
+   "o2": {
+    "max": 0.35,
+    "min": 0.3
+   },
+   "pressure_atm": {
+    "max": 0.6941,
+    "min": 0.551
+   }
+  }
+ }
+}

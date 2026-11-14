@@ -1557,6 +1557,263 @@ function testNextSection(env) {
     plainTable(TEST_NEXT_HEADERS, testNextRows(block, false)),
     el("p", { class: "small", text: "A test counts as inside when its ambient O2, its pressure and, where NASA specifies one, its flow speed all lie in the window. Rows of quality exact or approximate only. A row with no recorded pressure cannot count as inside." }),
     el("p", { class: "small", text: "Nearest tested condition is the row of that fuel class whose O2 is closest to the window, then pressure, then flow. Nearest NASA test outside PSI is shown for solids only and is never counted." }))));
+  holder.appendChild(planSection());
+  return holder;
+}
+
+const PLAN_COL = { solid: "#e06d34", liquid_droplet: "#5b95e8", gas: "#9fb0d6" };
+const PLAN_ENV_COL = ["#f2c14e", "#7fd1b9", "#c792ea", "#82aaff", "#ff8a80"];
+const PLAN_SHORT = { iss: "ISS", gateway: "Gateway", lunar: "Moon base", mars: "Mars base", rover: "Rover" };
+const PLAN_X = [12, 42];
+const PLAN_Y = [3.4, 50];
+const PLAN_DUR = 700;
+const CLASS_ORDER_PLAN = ["solid", "liquid_droplet", "gas"];
+const planUi = { fuel: "solid", played: false, node: null, pills: null, list: null, note: null, legend: null };
+
+function planRange(block, scale, digits, unit) {
+  return block ? dashSpan(block.min * scale, block.max * scale, digits, unit) : null;
+}
+
+function planWhere(t) {
+  const parts = [planRange(t.o2, 100, 1, "%"), planRange(t.pressure_atm, PSIA_PER_ATM, 1, "psia")];
+  parts.push(t.flow_cm_s ? planRange(t.flow_cm_s, 1, 1, "cm/s") : "flow " + NOT_SPECIFIED);
+  return parts.join(", ");
+}
+
+function planNearText(t) {
+  const n = t.nearest;
+  if (!n) {
+    return "No PSI test of this fuel class has an O2 value.";
+  }
+  const o2 = fmt(n.o2_frac * 100, 1) + "% O2";
+  const p = n.pressure_atm === null ? "pressure not recorded" : fmt(psia(n.pressure_atm), 1) + " psia";
+  const away = n.pressure_gap_psia === null ? fmt(n.o2_gap_points, 1) + " O2 points away" : fmt(n.o2_gap_points, 1) + " O2 points and " + fmt(n.pressure_gap_psia, 1) + " psia away";
+  return "Nearest PSI test: " + n.psi_id + " " + (n.investigation || "") + ", row " + n.source_row + ", " + o2 + ", " + p + " (" + away + ").";
+}
+
+function planHover(t) {
+  const lines = [
+    "Test " + t.rank + " | " + (NEXT_LABELS[t.fuel_class] || t.fuel_class),
+    planWhere(t),
+    "Closes: " + t.habitat_names.join(", "),
+    planNearText(t),
+    t.gravity.note
+  ];
+  return lines.map(function (l) { return plotWrap(l, 56); }).join("<br>");
+}
+
+function planIsCountable(r, fc) {
+  return r.fuel_class === fc && r.o2_basis === "ambient" && (r.value_quality === "exact" || r.value_quality === "approximate") && r.o2_frac !== null && r.o2_frac !== undefined;
+}
+
+function planRows(fc) {
+  return state.data.conditions.filter(function (r) {
+    return planIsCountable(r, fc) && r.pressure_atm && r.pressure_atm > 0;
+  });
+}
+
+function planLaneRows(fc) {
+  return state.data.conditions.filter(function (r) {
+    return planIsCountable(r, fc) && !(r.pressure_atm && r.pressure_atm > 0);
+  });
+}
+
+function planClassTotal(fc) {
+  return state.data.conditions.filter(function (r) { return planIsCountable(r, fc); }).length;
+}
+
+function planTraces(fc, t) {
+  const plan = state.data.test_plan;
+  const rows = planRows(fc);
+  const lane = planLaneRows(fc);
+  const grow = function (full) { return Math.round(full * gapEaseOut(gapClamp(t)) * 100) / 100; };
+  const traces = [{
+    type: "scatter", mode: "markers", name: "PSI tests (" + rows.length + ")",
+    x: rows.map(function (r) { return r.o2_frac * 100; }),
+    y: rows.map(function (r) { return psia(r.pressure_atm); }),
+    text: rows.map(function (r) { return airRowHover(r, "", r.pressure_atm); }),
+    hovertemplate: "%{text}<extra></extra>",
+    marker: { color: PLAN_COL[fc], size: grow(6), opacity: 0.35, line: { width: 0 } }
+  }, {
+    type: "scatter", mode: "markers", name: "No pressure (" + lane.length + ")",
+    x: lane.map(function (r) { return r.o2_frac * 100; }),
+    y: lane.map(function (r, i) { return AIR_LANE_Y * (1 + 0.06 * (((i * 7) % 11) - 5) / 5); }),
+    text: lane.map(function (r) { return airRowHover(r, "", null); }),
+    hovertemplate: "%{text}<extra></extra>",
+    marker: { color: PLAN_COL[fc], size: grow(6), opacity: 0.5, line: { width: 0 } }
+  }];
+  Object.keys(plan.windows).forEach(function (id, i) {
+    const w = plan.windows[id];
+    const x0 = w.o2.min * 100;
+    const x1 = w.o2.max * 100;
+    const y0 = psia(w.pressure_atm.min);
+    const y1 = psia(w.pressure_atm.max);
+    const col = PLAN_ENV_COL[i % PLAN_ENV_COL.length];
+    const flow = w.flow_cm_s ? ", flow " + dashSpan(w.flow_cm_s.min, w.flow_cm_s.max, 1, "cm/s") : ", flow not specified";
+    traces.push({
+      type: "scatter", mode: "lines", name: PLAN_SHORT[id] || w.name,
+      x: [x0, x1, x1, x0, x0], y: [y0, y0, y1, y1, y0],
+      fill: "toself", fillcolor: plotRgba(col, 0.1), hoveron: "fills+points",
+      line: { color: col, width: 2 },
+      text: plotEscape(w.name) + "<br>O2 " + dashSpan(x0, x1, 1, "%") + ", " + dashSpan(y0, y1, 1, "psia") + flow + "<br>" + plotEscape(w.gravity),
+      hovertemplate: "%{text}<extra></extra>"
+    });
+  });
+  const tests = plan.tests.filter(function (x) { return x.fuel_class === fc; });
+  traces.push({
+    type: "scatter", mode: "markers+text", name: "Planned test",
+    x: tests.map(function (x) { return x.point.o2 * 100; }),
+    y: tests.map(function (x) { return psia(x.point.pressure_atm); }),
+    text: tests.map(function (x) { return String(x.rank); }),
+    textposition: "middle center", textfont: { color: "#0b1020", size: 11, family: PLOT_FONT },
+    hovertext: tests.map(planHover),
+    hovertemplate: "%{hovertext}<extra></extra>",
+    marker: { symbol: "circle", color: "#ffffff", size: grow(20), line: { color: PLAN_COL[fc], width: 3 } }
+  });
+  return traces;
+}
+
+function planLayout() {
+  const small = window.innerWidth < 640;
+  const fs = small ? 11 : 12;
+  const ticks = [4, 6, 8, 10, 15, 25, 45];
+  return Object.assign(plotBase(PLOT_DARK), {
+    height: small ? 400 : 440,
+    margin: { l: small ? 42 : 52, r: 12, t: 12, b: small ? 46 : 52, pad: 0, autoexpand: false },
+    dragmode: false,
+    hoverdistance: 14,
+    xaxis: {
+      range: PLAN_X, fixedrange: true, zeroline: false, showgrid: true, gridcolor: PLOT_DARK.grid, showline: true, linecolor: PLOT_DARK.axis, ticks: "",
+      tickvals: [15, 20, 25, 30, 35, 40], tickfont: { size: fs, color: PLOT_DARK.muted },
+      title: { text: "Oxygen (percent)", font: { size: fs, color: PLOT_DARK.muted }, standoff: 8 }
+    },
+    yaxis: {
+      type: "log", range: [Math.log10(PLAN_Y[0]), Math.log10(PLAN_Y[1])], fixedrange: true, zeroline: false, showgrid: true, gridcolor: PLOT_DARK.grid, showline: true, linecolor: PLOT_DARK.axis, ticks: "",
+      tickvals: ticks, ticktext: ticks.map(String), tickfont: { size: fs, color: PLOT_DARK.muted },
+      title: { text: "Pressure (psia)", font: { size: fs, color: PLOT_DARK.muted }, standoff: 6 }
+    },
+    showlegend: false
+  });
+}
+
+function planLegend(fc) {
+  const chip = function (kind, color, label) {
+    return el("span", { class: "plan-key" }, el("span", { class: "plan-sw " + kind, style: kind === "box" ? "border-color:" + color : "background:" + color + (kind === "ring" ? ";border-color:" + PLAN_COL[fc] : "") }), label);
+  };
+  const items = [
+    chip("dot", PLAN_COL[fc], "PSI tests (" + planRows(fc).length + ")"),
+    chip("dot faint", PLAN_COL[fc], "No pressure recorded (" + planLaneRows(fc).length + ")")
+  ];
+  Object.keys(state.data.test_plan.windows).forEach(function (id, i) {
+    items.push(chip("box", PLAN_ENV_COL[i % PLAN_ENV_COL.length], PLAN_SHORT[id] || state.data.test_plan.windows[id].name));
+  });
+  items.push(chip("ring", "#ffffff", "Planned test"));
+  clear(planUi.legend);
+  items.forEach(function (it) { planUi.legend.appendChild(it); });
+}
+
+function planDraw() {
+  const node = planUi.node;
+  if (!node || !document.body.contains(node)) {
+    return;
+  }
+  const fc = planUi.fuel;
+  const play = !planUi.played && !reduceMotion();
+  planLegend(fc);
+  planUi.note.textContent = planClassTotal(fc) + " " + (NEXT_LABELS[fc] || fc).toLowerCase() + " PSI rows have an O2 value; " + planRows(fc).length + " also record a pressure. The rest sit in the bottom lane.";
+  window.Plotly.react(node, planTraces(fc, play ? 0 : 1), planLayout(), plotConfig()).then(function () {
+    planUi.played = true;
+    if (!play) {
+      return;
+    }
+    const last = node.data.length - 1;
+    plotRun(PLAN_DUR, function (t) {
+      const k = gapEaseOut(gapClamp(t));
+      return window.Plotly.restyle(node, { "marker.size": [Math.round(6 * k * 100) / 100, Math.round(6 * k * 100) / 100, Math.round(20 * k * 100) / 100] }, [0, 1, last]);
+    });
+  });
+}
+
+function planSelect(fc) {
+  planUi.fuel = fc;
+  Array.prototype.forEach.call(planUi.pills.children, function (b) {
+    b.classList.toggle("active", b.getAttribute("data-key") === fc);
+    b.setAttribute("aria-pressed", b.getAttribute("data-key") === fc ? "true" : "false");
+  });
+  Array.prototype.forEach.call(planUi.list.children, function (li) {
+    li.classList.toggle("on", li.getAttribute("data-fuel") === fc);
+  });
+  planDraw();
+}
+
+const PLAN_COLUMNS = [
+  "rank", "fuel_class", "o2_min_percent", "o2_max_percent", "pressure_min_psia", "pressure_max_psia", "pressure_min_atm", "pressure_max_atm",
+  "flow_min_cm_s", "flow_max_cm_s", "flow_note", "habitats_closed", "habitat_ids", "gravity_note",
+  "nearest_psi_id", "nearest_investigation", "nearest_source_file", "nearest_source_row", "nearest_o2_percent", "nearest_pressure_psia",
+  "nearest_o2_gap_points", "nearest_pressure_gap_psia", "nearest_distance", "source_ids"
+];
+
+function planCsvRow(t) {
+  const n = t.nearest || {};
+  const blank = function (v) { return v === null || v === undefined ? "" : v; };
+  const rnd = function (v, d) { return v === null || v === undefined ? "" : Number(v.toFixed(d)); };
+  return [
+    t.rank, t.fuel_class, rnd(t.o2.min * 100, 2), rnd(t.o2.max * 100, 2), rnd(psia(t.pressure_atm.min), 2), rnd(psia(t.pressure_atm.max), 2), t.pressure_atm.min, t.pressure_atm.max,
+    t.flow_cm_s ? t.flow_cm_s.min : "", t.flow_cm_s ? t.flow_cm_s.max : "", blank(t.flow_note), t.habitat_names.join("; "), t.habitats.join("; "), t.gravity.note,
+    blank(n.psi_id), blank(n.investigation), blank(n.source_file), blank(n.source_row), n.o2_frac === undefined ? "" : rnd(n.o2_frac * 100, 2),
+    n.pressure_atm === null || n.pressure_atm === undefined ? "" : rnd(psia(n.pressure_atm), 2), blank(n.o2_gap_points),
+    blank(n.pressure_gap_psia), blank(n.distance), t.source_refs.join("; ")
+  ];
+}
+
+function planCsvText() {
+  const plan = state.data.test_plan;
+  const lines = [
+    "# Derived test matrix: " + plan.headline.text + ". Boxes are overlaps of NASA habitat windows (environments.json); the nearest test is a PSI row of the unified table.",
+    "# Distance is derived: sqrt(O2 gap in points squared + pressure gap in psia squared); the O2 gap alone where the fuel class records no pressure.",
+    PLAN_COLUMNS.join(",")
+  ];
+  plan.tests.forEach(function (t) {
+    lines.push(planCsvRow(t).map(csvCell).join(","));
+  });
+  return lines.join("\r\n") + "\r\n";
+}
+
+function planSection() {
+  const plan = state.data.test_plan;
+  const holder = el("div", { class: "plan", id: "test-plan" });
+  holder.appendChild(el("h3", { text: "Fly these tests first" }));
+  holder.appendChild(el("p", { class: "plan-head", id: "plan-head", text: plan.headline.text }));
+  const list = el("ol", { class: "plan-list" }, plan.tests.map(function (t) {
+    return el("li", { class: "plan-item" + (t.fuel_class === planUi.fuel ? " on" : ""), "data-fuel": t.fuel_class, "data-id": t.id },
+      el("button", { type: "button", class: "plan-pick", onclick: function () { planSelect(t.fuel_class); } },
+        el("span", { class: "plan-rank", text: String(t.rank) }),
+        el("span", { class: "plan-body" },
+          el("span", { class: "plan-what" }, el("strong", { text: NEXT_LABELS[t.fuel_class] || t.fuel_class }), " " + t.habitat_names.join(", ")),
+          el("span", { class: "plan-where", text: planWhere(t) }),
+          el("span", { class: "plan-near", text: planNearText(t) }))));
+  }));
+  const pills = el("div", { class: "pills plan-pills", role: "group", "aria-label": "Fuel class" }, CLASS_ORDER_PLAN.map(function (fc) {
+    return el("button", { type: "button", class: "pill" + (fc === planUi.fuel ? " active" : ""), "data-key": fc, "aria-pressed": fc === planUi.fuel ? "true" : "false", text: NEXT_LABELS[fc], onclick: function () { planSelect(fc); } });
+  }));
+  const node = el("div", { class: "plan-plot", role: "img", "aria-label": "Oxygen and pressure of existing PSI tests, habitat windows and planned tests" });
+  const note = el("p", { class: "small muted plan-note" });
+  const legend = el("div", { class: "plan-legend" });
+  planUi.legend = legend;
+  planUi.node = node;
+  planUi.pills = pills;
+  planUi.list = list;
+  planUi.note = note;
+  holder.appendChild(el("div", { class: "plan-grid" },
+    el("div", { class: "plan-side" }, list),
+    el("div", { class: "plan-viz" }, pills, legend, node, note)));
+  holder.appendChild(el("p", { class: "cta" }, el("button", { type: "button", class: "btn", id: "plan-csv", text: "Download test matrix (CSV)", onclick: function () { download("flame_in_freefall_test_matrix.csv", planCsvText(), "text/csv"); } })));
+  holder.appendChild(expander("How this is derived", el("div", null,
+    plan.method.map(function (m) { return el("p", { class: "small", text: m }); }),
+    plainTable(["Test", "Habitat", "Gravity", "Sources"], plan.tests.map(function (t) {
+      return [t.rank + " " + (NEXT_LABELS[t.fuel_class] || t.fuel_class), t.habitat_names.join(", "), t.gravity.note, t.source_refs.join(", ")];
+    })))));
+  plotWhenVisible(node, planDraw);
   return holder;
 }
 
@@ -3545,6 +3802,8 @@ function filterFromParams(p) {
     fmin: numOrNull(p.fmin),
     fmax: numOrNull(p.fmax),
     outcome: p.outcome === "1",
+    file: p.file || null,
+    row: numOrNull(p.row),
     env: p.env || state.envId
   };
 }
@@ -3576,6 +3835,12 @@ function applyFilter(rows, f) {
     if (f.basis.length && f.basis.indexOf(r.o2_basis) < 0) {
       return false;
     }
+    if (f.file && r.source_file !== f.file) {
+      return false;
+    }
+    if (f.row !== null && f.row !== undefined && r.source_row !== f.row) {
+      return false;
+    }
     if (f.quality.length && f.quality.indexOf(r.value_quality) < 0) {
       return false;
     }
@@ -3604,6 +3869,8 @@ function filterSummary(f) {
   if (f.o2min !== null || f.o2max !== null) { parts.push("o2_frac " + fmt(f.o2min) + " to " + fmt(f.o2max)); }
   if (f.pmin !== null || f.pmax !== null) { parts.push("pressure_atm " + fmt(f.pmin) + " to " + fmt(f.pmax)); }
   if (f.fmin !== null || f.fmax !== null) { parts.push("flow_cm_s " + fmt(f.fmin) + " to " + fmt(f.fmax)); }
+  if (f.file) { parts.push("source_file = " + f.file); }
+  if (f.row !== null && f.row !== undefined) { parts.push("source_row = " + f.row); }
   if (f.outcome) { parts.push("outcome present"); }
   return parts.length ? parts.join("; ") : "none (all rows)";
 }
@@ -3776,7 +4043,7 @@ function extractorPanel(params) {
   }
 
   const invOptions = data.investigations.filter(function (i) { return i.row_count > 0; }).map(function (i) { return i.psi_id; });
-  const controls = el("details", { class: "filters-box", open: params.inv || params.fuel || params.o2min || params.pmin || params.fmin || params.basis ? true : null },
+  const controls = el("details", { class: "filters-box", open: params.inv || params.row || params.fuel || params.o2min || params.pmin || params.fmin || params.basis ? true : null },
     el("summary", null, "Filters: ", filterSummaryNode),
     el("div", { class: "exp-body" },
       checkGroup("Fuel class", Object.keys(FUEL_LABELS), f.fuel, function (v) { f.fuel = v; update(); }, function (o) { return FUEL_LABELS[o]; }),
@@ -3889,6 +4156,63 @@ function verificationFacts() {
   return bits;
 }
 
+const HEALTH_LABELS = {
+  duplicate_row: "Identical to an earlier row",
+  o2_scale_mismatch: "O2 on the wrong scale",
+  o2_out_of_bounds: "O2 out of bounds",
+  pressure_out_of_bounds: "Pressure out of bounds",
+  negative_flow: "Negative flow",
+  non_numeric_token: "Text where a number is expected"
+};
+const HEALTH_SHOW = 12;
+
+function healthLabel(rule) {
+  return HEALTH_LABELS[rule] || rule;
+}
+
+function healthRowLink(it) {
+  return el("a", { href: "#/data?" + qs({ inv: it.psi_id, file: it.source_file, row: it.source_row, at: "extractor" }), text: it.source_file + ", row " + it.source_row });
+}
+
+function healthPanel() {
+  const h = state.data.data_health;
+  const rules = Object.keys(h.rules).filter(function (k) { return h.rules[k].count > 0; });
+  const view = { rule: "all", all: false };
+  const pills = el("div", { class: "pills health-pills", role: "group", "aria-label": "Rule" });
+  const tableHolder = el("div");
+  function shown() {
+    return h.items.filter(function (it) { return view.rule === "all" || it.rule === view.rule; });
+  }
+  function draw() {
+    Array.prototype.forEach.call(pills.children, function (b) {
+      b.classList.toggle("active", b.getAttribute("data-key") === view.rule);
+      b.setAttribute("aria-pressed", b.getAttribute("data-key") === view.rule ? "true" : "false");
+    });
+    clear(tableHolder);
+    const items = shown();
+    const rows = (view.all ? items : items.slice(0, HEALTH_SHOW)).map(function (it) {
+      return [healthRowLink(it), it.column, it.raw_value, healthLabel(it.rule), it.why];
+    });
+    tableHolder.appendChild(plainTable(["File and row", "Column", "Value", "Rule", "Why flagged"], rows));
+    if (items.length > HEALTH_SHOW) {
+      tableHolder.appendChild(el("button", { type: "button", class: "textlink", id: "health-more", text: view.all ? "Show fewer" : "Show all " + items.length, onclick: function () { view.all = !view.all; draw(); } }));
+    }
+  }
+  function pill(key, label) {
+    return el("button", { type: "button", class: "pill", "data-key": key, "aria-pressed": "false", text: label, onclick: function () { view.rule = key; view.all = false; draw(); } });
+  }
+  pills.appendChild(pill("all", "All (" + h.items.length + ")"));
+  rules.forEach(function (k) {
+    pills.appendChild(pill(k, healthLabel(k) + " (" + h.rules[k].count + ")"));
+  });
+  draw();
+  return el("div", { id: "health-panel" },
+    el("p", { text: "Flagged by a rule, not confirmed errors. Nothing here guesses a corrected value." }),
+    pills,
+    tableHolder,
+    el("p", { class: "small muted", text: h.summary.rows_scanned.toLocaleString("en-US") + " rows in " + h.summary.tables_scanned + " tables scanned. " + Object.keys(h.rules).map(function (k) { return healthLabel(k) + ": " + h.rules[k].description; }).join(" ") }));
+}
+
 function dataCard(num, line, extra) {
   return el("article", { class: "dcard" },
     el("p", { class: "dcard-num", text: num }),
@@ -3953,7 +4277,8 @@ function renderData(params) {
     drawer("extractor", "Filter and download", extractor),
     bits ? drawer("verification", "How we checked it", el("div", null, el("ul", null, bits.map(function (b) { return el("li", { text: b }); })),
       el("p", null, el("a", { class: "btn", href: "#/verification", text: "Open the full verification" })))) : null,
-    drawer("insights", "What the numbers say", insightsPanel())
+    drawer("insights", "What the numbers say", insightsPanel()),
+    state.data.data_health.items.length ? drawer("health", "For PSI curators: " + state.data.data_health.summary.flagged_rows + " rows to review", healthPanel()) : null
   ];
   const view = setView(
     pageHead("Data and models", "What the data can support, and how to use it."),
@@ -4843,7 +5168,7 @@ function route() {
 }
 
 function init() {
-  const names = ["investigations", "conditions", "environments", "insights", "earth", "rank_reference", "model_readiness", "test_next", "verification", "outside_psi", "models", "lunar_g"];
+  const names = ["investigations", "conditions", "environments", "insights", "earth", "rank_reference", "model_readiness", "test_next", "verification", "outside_psi", "models", "lunar_g", "test_plan", "data_health"];
   Promise.all(names.map(loadJson)).then(function (loaded) {
     state.data = {
       investigations: loaded[0].investigations,
@@ -4857,7 +5182,9 @@ function init() {
       verification: loaded[8],
       outside_psi: loaded[9],
       models: loaded[10],
-      lunar_g: loaded[11]
+      lunar_g: loaded[11],
+      test_plan: loaded[12],
+      data_health: loaded[13]
     };
     state.weights = Object.assign({}, state.data.rank_reference.weights);
     parityCheck();

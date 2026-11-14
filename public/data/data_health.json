@@ -1,0 +1,687 @@
+{
+ "summary": {
+  "tables_scanned": 22,
+  "rows_scanned": 2009,
+  "flagged_items": 65,
+  "flagged_rows": 65
+ },
+ "rules": {
+  "duplicate_row": {
+   "description": "Every cell of the row is identical to an earlier row of the same table.",
+   "count": 43
+  },
+  "o2_scale_mismatch": {
+   "description": "An oxygen value is written on the other scale from its column: above 1 in a mole-fraction column, or above 100 in a percent column.",
+   "count": 2
+  },
+  "o2_out_of_bounds": {
+   "description": "An oxygen value is below 0 or still above 1 after unit handling, and the scale rule does not explain it.",
+   "count": 0
+  },
+  "pressure_out_of_bounds": {
+   "description": "Total pressure after conversion to atm is below 0.3 atm or above 5.0 atm.",
+   "count": 1
+  },
+  "negative_flow": {
+   "description": "Air flow speed is negative.",
+   "count": 8
+  },
+  "non_numeric_token": {
+   "description": "A column the build reads as a number holds text with no number in it, so the build leaves that value empty.",
+   "count": 11
+  }
+ },
+ "note": "Flagged by a rule, not confirmed errors. Nothing here guesses a corrected value.",
+ "items": [
+  {
+   "rule": "non_numeric_token",
+   "psi_id": "PSI-10",
+   "source_file": "PSI-10_Experimental table_Flame Design_Inverse Flame.csv",
+   "source_row": 30,
+   "column": "XO2",
+   "raw_value": "RAMP",
+   "why": "The cell holds text with no number, so the build reads no value for this row.",
+   "row_id": "U00030"
+  },
+  {
+   "rule": "non_numeric_token",
+   "psi_id": "PSI-10",
+   "source_file": "PSI-10_Experimental table_Flame Design_Inverse Flame.csv",
+   "source_row": 31,
+   "column": "XO2",
+   "raw_value": "RAMP",
+   "why": "The cell holds text with no number, so the build reads no value for this row.",
+   "row_id": "U00031"
+  },
+  {
+   "rule": "non_numeric_token",
+   "psi_id": "PSI-10",
+   "source_file": "PSI-10_Experimental table_Flame Design_Inverse Flame.csv",
+   "source_row": 32,
+   "column": "XO2",
+   "raw_value": "RAMP",
+   "why": "The cell holds text with no number, so the build reads no value for this row.",
+   "row_id": "U00032"
+  },
+  {
+   "rule": "non_numeric_token",
+   "psi_id": "PSI-10",
+   "source_file": "PSI-10_Experimental table_Flame Design_Inverse Flame.csv",
+   "source_row": 76,
+   "column": "XO2",
+   "raw_value": "RAMP",
+   "why": "The cell holds text with no number, so the build reads no value for this row.",
+   "row_id": "U00076"
+  },
+  {
+   "rule": "non_numeric_token",
+   "psi_id": "PSI-10",
+   "source_file": "PSI-10_Experimental table_Flame Design_Inverse Flame.csv",
+   "source_row": 77,
+   "column": "XO2",
+   "raw_value": "RAMP",
+   "why": "The cell holds text with no number, so the build reads no value for this row.",
+   "row_id": "U00077"
+  },
+  {
+   "rule": "non_numeric_token",
+   "psi_id": "PSI-10",
+   "source_file": "PSI-10_Experimental table_Flame Design_Inverse Flame.csv",
+   "source_row": 86,
+   "column": "XO2",
+   "raw_value": "RAMP",
+   "why": "The cell holds text with no number, so the build reads no value for this row.",
+   "row_id": "U00086"
+  },
+  {
+   "rule": "non_numeric_token",
+   "psi_id": "PSI-10",
+   "source_file": "PSI-10_Experimental table_Flame Design_Inverse Flame.csv",
+   "source_row": 87,
+   "column": "XO2",
+   "raw_value": "RAMP",
+   "why": "The cell holds text with no number, so the build reads no value for this row.",
+   "row_id": "U00087"
+  },
+  {
+   "rule": "non_numeric_token",
+   "psi_id": "PSI-10",
+   "source_file": "PSI-10_Experimental table_Flame Design_Inverse Flame.csv",
+   "source_row": 88,
+   "column": "XO2",
+   "raw_value": "LOW O2",
+   "why": "The cell holds text with no number, so the build reads no value for this row.",
+   "row_id": "U00088"
+  },
+  {
+   "rule": "non_numeric_token",
+   "psi_id": "PSI-10",
+   "source_file": "PSI-10_Experimental table_Flame Design_Inverse Flame.csv",
+   "source_row": 89,
+   "column": "XO2",
+   "raw_value": "LOW O2",
+   "why": "The cell holds text with no number, so the build reads no value for this row.",
+   "row_id": "U00089"
+  },
+  {
+   "rule": "non_numeric_token",
+   "psi_id": "PSI-10",
+   "source_file": "PSI-10_Experimental table_Flame Design_Inverse Flame.csv",
+   "source_row": 93,
+   "column": "XO2",
+   "raw_value": "RAMP",
+   "why": "The cell holds text with no number, so the build reads no value for this row.",
+   "row_id": "U00093"
+  },
+  {
+   "rule": "non_numeric_token",
+   "psi_id": "PSI-10",
+   "source_file": "PSI-10_Experimental table_Flame Design_Inverse Flame.csv",
+   "source_row": 103,
+   "column": "XO2",
+   "raw_value": "RAMP",
+   "why": "The cell holds text with no number, so the build reads no value for this row.",
+   "row_id": "U00103"
+  },
+  {
+   "rule": "o2_scale_mismatch",
+   "psi_id": "PSI-20",
+   "source_file": "PSI-20_Experimental table_ACME BRE.csv",
+   "source_row": 5,
+   "column": "Oxygen Conc (percent)",
+   "raw_value": "3400%",
+   "why": "3400% is above 100 percent; it reads like a percent value multiplied by 100 (34 percent).",
+   "row_id": "U00332"
+  },
+  {
+   "rule": "o2_scale_mismatch",
+   "psi_id": "PSI-20",
+   "source_file": "PSI-20_Experimental table_ACME BRE.csv",
+   "source_row": 8,
+   "column": "Oxygen Conc (percent)",
+   "raw_value": "2100%",
+   "why": "2100% is above 100 percent; it reads like a percent value multiplied by 100 (21 percent).",
+   "row_id": "U00335"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-22",
+   "source_file": "PSI-22_Experimental table_ACME E-FIELD Flames.csv",
+   "source_row": 29,
+   "column": "all columns",
+   "raw_value": "same as row 25",
+   "why": "Every cell matches row 25 of the same table.",
+   "row_id": "U00406"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-39",
+   "source_file": "PSI-39_Experimental table_CFI.csv",
+   "source_row": 80,
+   "column": "all columns",
+   "raw_value": "same as row 23",
+   "why": "Every cell matches row 23 of the same table.",
+   "row_id": "U00758"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-39",
+   "source_file": "PSI-39_Experimental table_CFI.csv",
+   "source_row": 81,
+   "column": "all columns",
+   "raw_value": "same as row 24",
+   "why": "Every cell matches row 24 of the same table.",
+   "row_id": "U00759"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-39",
+   "source_file": "PSI-39_Experimental table_CFI.csv",
+   "source_row": 82,
+   "column": "all columns",
+   "raw_value": "same as row 25",
+   "why": "Every cell matches row 25 of the same table.",
+   "row_id": "U00760"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-39",
+   "source_file": "PSI-39_Experimental table_CFI.csv",
+   "source_row": 83,
+   "column": "all columns",
+   "raw_value": "same as row 26",
+   "why": "Every cell matches row 26 of the same table.",
+   "row_id": "U00761"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-39",
+   "source_file": "PSI-39_Experimental table_CFI.csv",
+   "source_row": 84,
+   "column": "all columns",
+   "raw_value": "same as row 27",
+   "why": "Every cell matches row 27 of the same table.",
+   "row_id": "U00762"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-39",
+   "source_file": "PSI-39_Experimental table_CFI.csv",
+   "source_row": 85,
+   "column": "all columns",
+   "raw_value": "same as row 28",
+   "why": "Every cell matches row 28 of the same table.",
+   "row_id": "U00763"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-39",
+   "source_file": "PSI-39_Experimental table_CFI.csv",
+   "source_row": 86,
+   "column": "all columns",
+   "raw_value": "same as row 29",
+   "why": "Every cell matches row 29 of the same table.",
+   "row_id": "U00764"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-39",
+   "source_file": "PSI-39_Experimental table_CFI.csv",
+   "source_row": 87,
+   "column": "all columns",
+   "raw_value": "same as row 30",
+   "why": "Every cell matches row 30 of the same table.",
+   "row_id": "U00765"
+  },
+  {
+   "rule": "pressure_out_of_bounds",
+   "psi_id": "PSI-69",
+   "source_file": "PSI-69_Experimental table_FLEX.csv",
+   "source_row": 114,
+   "column": "Ambient pressure; mmHg",
+   "raw_value": "0",
+   "why": "Recorded pressure 0 is 0 atm, below the 0.3 atm floor that build_models.py already uses to leave such rows out of the models.",
+   "row_id": "U00889"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 2,
+   "column": "all columns",
+   "raw_value": "same as row 1",
+   "why": "Every cell matches row 1 of the same table.",
+   "row_id": "U01201"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 6,
+   "column": "all columns",
+   "raw_value": "same as row 5",
+   "why": "Every cell matches row 5 of the same table.",
+   "row_id": "U01205"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 9,
+   "column": "all columns",
+   "raw_value": "same as row 8",
+   "why": "Every cell matches row 8 of the same table.",
+   "row_id": "U01208"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 11,
+   "column": "all columns",
+   "raw_value": "same as row 10",
+   "why": "Every cell matches row 10 of the same table.",
+   "row_id": "U01210"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 13,
+   "column": "all columns",
+   "raw_value": "same as row 12",
+   "why": "Every cell matches row 12 of the same table.",
+   "row_id": "U01212"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 102,
+   "column": "all columns",
+   "raw_value": "same as row 101",
+   "why": "Every cell matches row 101 of the same table.",
+   "row_id": "U01301"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 124,
+   "column": "all columns",
+   "raw_value": "same as row 122",
+   "why": "Every cell matches row 122 of the same table.",
+   "row_id": "U01323"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 130,
+   "column": "all columns",
+   "raw_value": "same as row 128",
+   "why": "Every cell matches row 128 of the same table.",
+   "row_id": "U01329"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 131,
+   "column": "all columns",
+   "raw_value": "same as row 128",
+   "why": "Every cell matches row 128 of the same table.",
+   "row_id": "U01330"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 145,
+   "column": "all columns",
+   "raw_value": "same as row 141",
+   "why": "Every cell matches row 141 of the same table.",
+   "row_id": "U01344"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 147,
+   "column": "all columns",
+   "raw_value": "same as row 143",
+   "why": "Every cell matches row 143 of the same table.",
+   "row_id": "U01346"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 152,
+   "column": "all columns",
+   "raw_value": "same as row 149",
+   "why": "Every cell matches row 149 of the same table.",
+   "row_id": "U01351"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 154,
+   "column": "all columns",
+   "raw_value": "same as row 150",
+   "why": "Every cell matches row 150 of the same table.",
+   "row_id": "U01353"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 158,
+   "column": "all columns",
+   "raw_value": "same as row 155",
+   "why": "Every cell matches row 155 of the same table.",
+   "row_id": "U01357"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 159,
+   "column": "all columns",
+   "raw_value": "same as row 156",
+   "why": "Every cell matches row 156 of the same table.",
+   "row_id": "U01358"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 164,
+   "column": "all columns",
+   "raw_value": "same as row 161",
+   "why": "Every cell matches row 161 of the same table.",
+   "row_id": "U01363"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 166,
+   "column": "all columns",
+   "raw_value": "same as row 163",
+   "why": "Every cell matches row 163 of the same table.",
+   "row_id": "U01365"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 171,
+   "column": "all columns",
+   "raw_value": "same as row 168",
+   "why": "Every cell matches row 168 of the same table.",
+   "row_id": "U01370"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 172,
+   "column": "all columns",
+   "raw_value": "same as row 169",
+   "why": "Every cell matches row 169 of the same table.",
+   "row_id": "U01371"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 173,
+   "column": "all columns",
+   "raw_value": "same as row 170",
+   "why": "Every cell matches row 170 of the same table.",
+   "row_id": "U01372"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 183,
+   "column": "all columns",
+   "raw_value": "same as row 181",
+   "why": "Every cell matches row 181 of the same table.",
+   "row_id": "U01382"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 184,
+   "column": "all columns",
+   "raw_value": "same as row 182",
+   "why": "Every cell matches row 182 of the same table.",
+   "row_id": "U01383"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 191,
+   "column": "all columns",
+   "raw_value": "same as row 190",
+   "why": "Every cell matches row 190 of the same table.",
+   "row_id": "U01390"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 215,
+   "column": "all columns",
+   "raw_value": "same as row 214",
+   "why": "Every cell matches row 214 of the same table.",
+   "row_id": "U01414"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 221,
+   "column": "all columns",
+   "raw_value": "same as row 219",
+   "why": "Every cell matches row 219 of the same table.",
+   "row_id": "U01420"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 230,
+   "column": "all columns",
+   "raw_value": "same as row 228",
+   "why": "Every cell matches row 228 of the same table.",
+   "row_id": "U01429"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 231,
+   "column": "all columns",
+   "raw_value": "same as row 229",
+   "why": "Every cell matches row 229 of the same table.",
+   "row_id": "U01430"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 234,
+   "column": "all columns",
+   "raw_value": "same as row 233",
+   "why": "Every cell matches row 233 of the same table.",
+   "row_id": "U01433"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 235,
+   "column": "all columns",
+   "raw_value": "same as row 233",
+   "why": "Every cell matches row 233 of the same table.",
+   "row_id": "U01434"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 240,
+   "column": "all columns",
+   "raw_value": "same as row 239",
+   "why": "Every cell matches row 239 of the same table.",
+   "row_id": "U01439"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 241,
+   "column": "all columns",
+   "raw_value": "same as row 239",
+   "why": "Every cell matches row 239 of the same table.",
+   "row_id": "U01440"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 252,
+   "column": "all columns",
+   "raw_value": "same as row 250",
+   "why": "Every cell matches row 250 of the same table.",
+   "row_id": "U01451"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 266,
+   "column": "all columns",
+   "raw_value": "same as row 265",
+   "why": "Every cell matches row 265 of the same table.",
+   "row_id": "U01465"
+  },
+  {
+   "rule": "negative_flow",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 295,
+   "column": "Air Rate (cm/s)",
+   "raw_value": "-0.28",
+   "why": "Air flow -0.28 is negative and the table states no sign convention, so its direction is unclear.",
+   "row_id": "U01494"
+  },
+  {
+   "rule": "negative_flow",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 297,
+   "column": "Air Rate (cm/s)",
+   "raw_value": "-0.28",
+   "why": "Air flow -0.28 is negative and the table states no sign convention, so its direction is unclear.",
+   "row_id": "U01496"
+  },
+  {
+   "rule": "negative_flow",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 298,
+   "column": "Air Rate (cm/s)",
+   "raw_value": "-0.28",
+   "why": "Air flow -0.28 is negative and the table states no sign convention, so its direction is unclear.",
+   "row_id": "U01497"
+  },
+  {
+   "rule": "negative_flow",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 299,
+   "column": "Air Rate (cm/s)",
+   "raw_value": "-0.28",
+   "why": "Air flow -0.28 is negative and the table states no sign convention, so its direction is unclear.",
+   "row_id": "U01498"
+  },
+  {
+   "rule": "negative_flow",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 300,
+   "column": "Air Rate (cm/s)",
+   "raw_value": "-0.28",
+   "why": "Air flow -0.28 is negative and the table states no sign convention, so its direction is unclear.",
+   "row_id": "U01499"
+  },
+  {
+   "rule": "duplicate_row",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 335,
+   "column": "all columns",
+   "raw_value": "same as row 329",
+   "why": "Every cell matches row 329 of the same table.",
+   "row_id": "U01534"
+  },
+  {
+   "rule": "negative_flow",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 336,
+   "column": "Air Rate (cm/s)",
+   "raw_value": "-5.92",
+   "why": "Air flow -5.92 is negative and the table states no sign convention, so its direction is unclear.",
+   "row_id": "U01535"
+  },
+  {
+   "rule": "negative_flow",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 337,
+   "column": "Air Rate (cm/s)",
+   "raw_value": "-5.92",
+   "why": "Air flow -5.92 is negative and the table states no sign convention, so its direction is unclear.",
+   "row_id": "U01536"
+  },
+  {
+   "rule": "negative_flow",
+   "psi_id": "PSI-107",
+   "source_file": "PSI-107_Experimental table_Spice.csv",
+   "source_row": 338,
+   "column": "Air Rate (cm/s)",
+   "raw_value": "-5.92",
+   "why": "Air flow -5.92 is negative and the table states no sign convention, so its direction is unclear.",
+   "row_id": "U01537"
+  }
+ ]
+}

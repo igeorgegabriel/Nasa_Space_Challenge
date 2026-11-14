@@ -11,6 +11,7 @@ sys.path.insert(0, HERE)
 
 import outside_psi
 import scoring
+import test_plan
 import verify_lunar_g
 from build_unified import to_ascii
 
@@ -2127,6 +2128,9 @@ def build():
         env_id: data["ranking"] for env_id, data in reference["variants"]["default"].items()
     }
     test_next = build_test_next(rows, environments, outside)
+    plan = test_plan.build_test_plan(
+        [r for r in countable(rows) if r.get("o2_basis") == "ambient" and r.get("o2_frac") is not None],
+        environments, test_next)
     earth = build_earth()
     lunar = build_lunar_g()
     corpus = build_corpus(investigations, default_rankings, outside, outside["summary"]["psi_solid_max_o2"], environments, test_next, earth, lunar)
@@ -2140,6 +2144,7 @@ def build():
         "model_readiness": build_model_readiness(rows, environments),
         "rank_reference": reference,
         "test_next": test_next,
+        "test_plan": plan,
         "outside_psi": outside,
         "verification": build_verification(verification_summary, verification_items),
         "images": images,
@@ -2159,6 +2164,7 @@ def main():
     dump(os.path.join(SITE_DATA_DIR, "model_readiness.json"), result["model_readiness"])
     dump(os.path.join(SITE_DATA_DIR, "rank_reference.json"), result["rank_reference"])
     dump(os.path.join(SITE_DATA_DIR, "test_next.json"), result["test_next"])
+    dump(os.path.join(SITE_DATA_DIR, "test_plan.json"), result["test_plan"])
     dump(os.path.join(SITE_DATA_DIR, "outside_psi.json"), ascii_deep(result["outside_psi"]))
     dump(os.path.join(SITE_DATA_DIR, "verification.json"), result["verification"])
     publish_images(result["images"])
