@@ -362,7 +362,7 @@ async function main() {
   assert.strictEqual(await js("document.querySelectorAll('video.hero-video').length"), 1, "hero video");
   assert.deepStrictEqual(JSON.parse(await js("JSON.stringify(Array.from(document.querySelectorAll('video.hero-video source')).map(function (n) { return n.getAttribute('type'); }))")), ["video/webm", "video/mp4"]);
   assert.strictEqual(await js("document.querySelector('video.hero-video').getAttribute('poster')"), "video/iss_flame_poster.jpg");
-  assert.strictEqual(await js("document.querySelector('.hero .credit').textContent"), "Real flame on the ISS: NASA BASS-II flight footage (PSI-25)");
+  assert.strictEqual(await js("document.querySelector('.hero .credit').textContent"), "Real flame on the ISS: acrylic rod, NASA BASS-II flight test, Feb 2014 (PSI-25)");
   assert.ok(await js("document.querySelectorAll('.oxr .oxr-dot').length") > 0, "ruler dots");
   assert.ok((await js("document.querySelector('.oxr-note').textContent")).indexOf("never tested") > 0, "gap label");
   assert.strictEqual(await js("document.querySelectorAll('.oxr-dia').length") > 0, true, "flight diamonds for solids");
