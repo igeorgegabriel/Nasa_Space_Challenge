@@ -1,0 +1,306 @@
+{
+ "totals": {
+  "findings": 38,
+  "passed": 38,
+  "failed": 0,
+  "investigations_without_finding": 5
+ },
+ "results": [
+  {
+   "psi_id": "PSI-10",
+   "finding_id": "PSI-10-F1",
+   "source_text_file": "data/findings/sources/PSI-10_20220007191.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-10",
+   "finding_id": "PSI-10-F2",
+   "source_text_file": "data/findings/sources/PSI-10_20220007191.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-10",
+   "finding_id": "PSI-10-F3",
+   "source_text_file": "data/findings/sources/PSI-10_20050195844.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-20",
+   "finding_id": "PSI-20-F1",
+   "source_text_file": "data/findings/sources/PSI-20_20220007191.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-20",
+   "finding_id": "PSI-20-F2",
+   "source_text_file": "data/findings/sources/PSI-20_20220007191.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-20",
+   "finding_id": "PSI-20-F3",
+   "source_text_file": "data/findings/sources/PSI-20_20220007191.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-21",
+   "finding_id": "PSI-21-F1",
+   "source_text_file": "data/findings/sources/PSI-21_20220007191.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-21",
+   "finding_id": "PSI-21-F2",
+   "source_text_file": "data/findings/sources/PSI-21_20220007191.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-22",
+   "finding_id": "PSI-22-F1",
+   "source_text_file": "data/findings/sources/PSI-22_20220007191.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-22",
+   "finding_id": "PSI-22-F2",
+   "source_text_file": "data/findings/sources/PSI-22_20220007191.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-23",
+   "finding_id": "PSI-23-F1",
+   "source_text_file": "data/findings/sources/PSI-23_20220007191.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-23",
+   "finding_id": "PSI-23-F2",
+   "source_text_file": "data/findings/sources/PSI-23_20220007191.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-25",
+   "finding_id": "PSI-25-F1",
+   "source_text_file": "data/findings/sources/PSI-25_20160000593.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-25",
+   "finding_id": "PSI-25-F2",
+   "source_text_file": "data/findings/sources/PSI-25_20160000593.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-25",
+   "finding_id": "PSI-25-F3",
+   "source_text_file": "data/findings/sources/PSI-25_20210011385.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-26",
+   "finding_id": "PSI-26-F1",
+   "source_text_file": "data/findings/sources/PSI-26_20140011099.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-26",
+   "finding_id": "PSI-26-F2",
+   "source_text_file": "data/findings/sources/PSI-26_20140011099.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-39",
+   "finding_id": "PSI-39-F1",
+   "source_text_file": "data/findings/sources/PSI-39_20140006750.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-47",
+   "finding_id": "PSI-47-F1",
+   "source_text_file": "data/findings/sources/PSI-47_20070031686.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-60",
+   "finding_id": null,
+   "result": "no_finding",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-62",
+   "finding_id": "PSI-62-F1",
+   "source_text_file": "data/findings/sources/PSI-62_20210011385.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-68",
+   "finding_id": "PSI-68-F1",
+   "source_text_file": "data/findings/sources/PSI-68_20140006750.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-69",
+   "finding_id": "PSI-69-F1",
+   "source_text_file": "data/findings/sources/PSI-69_20130014061.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-69",
+   "finding_id": "PSI-69-F2",
+   "source_text_file": "data/findings/sources/PSI-69_20120016855.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-69",
+   "finding_id": "PSI-69-F3",
+   "source_text_file": "data/findings/sources/PSI-69_20150023456.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-98",
+   "finding_id": "PSI-98-F1",
+   "source_text_file": "data/findings/sources/PSI-98_20180005168.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-98",
+   "finding_id": "PSI-98-F2",
+   "source_text_file": "data/findings/sources/PSI-98_20180005168.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-98",
+   "finding_id": "PSI-98-F3",
+   "source_text_file": "data/findings/sources/PSI-98_20170008805.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-99",
+   "finding_id": "PSI-99-F1",
+   "source_text_file": "data/findings/sources/PSI-99_20180005168.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-99",
+   "finding_id": "PSI-99-F2",
+   "source_text_file": "data/findings/sources/PSI-99_20180005168.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-100",
+   "finding_id": "PSI-100-F1",
+   "source_text_file": "data/findings/sources/PSI-100_20180005168.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-101",
+   "finding_id": "PSI-101-F1",
+   "source_text_file": "data/findings/sources/PSI-101_20130000422.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-101",
+   "finding_id": "PSI-101-F2",
+   "source_text_file": "data/findings/sources/PSI-101_20150010172.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-101",
+   "finding_id": "PSI-101-F3",
+   "source_text_file": "data/findings/sources/PSI-101_20150010172.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-102",
+   "finding_id": "PSI-102-F1",
+   "source_text_file": "data/findings/sources/PSI-102_20130000422.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-102",
+   "finding_id": "PSI-102-F2",
+   "source_text_file": "data/findings/sources/PSI-102_20130000422.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-106",
+   "finding_id": "PSI-106-F1",
+   "source_text_file": "data/findings/sources/PSI-106_20140017780.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-106",
+   "finding_id": "PSI-106-F2",
+   "source_text_file": "data/findings/sources/PSI-106_20150002322.txt",
+   "result": "pass",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-107",
+   "finding_id": null,
+   "result": "no_finding",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-115",
+   "finding_id": null,
+   "result": "no_finding",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-117",
+   "finding_id": null,
+   "result": "no_finding",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-142",
+   "finding_id": null,
+   "result": "no_finding",
+   "problems": []
+  },
+  {
+   "psi_id": "PSI-159",
+   "finding_id": "PSI-159-F1",
+   "source_text_file": "data/findings/sources/PSI-159_20220007191.txt",
+   "result": "pass",
+   "problems": []
+  }
+ ]
+}

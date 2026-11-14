@@ -1,0 +1,79 @@
+[
+ {
+  "bytes": 101074,
+  "credit": "NASA / PSI PSI-10",
+  "file": "data/images/PSI-10/flame_design_in_space_flame.jpg",
+  "height": 804,
+  "license": "not stated on the PSI investigation record",
+  "original_name": "Flame Design_In Space flame.jpg",
+  "psi_id": "PSI-10",
+  "psi_path": "psi-data/PSI-10/Representative Image(s)/PSI-10_Representative Image(s)_Flame Design_In Space flame.jpg",
+  "width": 1094
+ },
+ {
+  "bytes": 53236,
+  "credit": "NASA / PSI PSI-10",
+  "file": "data/images/PSI-10/flame_design_flame_stages.jpg",
+  "height": 575,
+  "license": "not stated on the PSI investigation record",
+  "original_name": "Flame Design_Flame Stages.jpg",
+  "psi_id": "PSI-10",
+  "psi_path": "psi-data/PSI-10/Representative Image(s)/PSI-10_Representative Image(s)_Flame Design_Flame Stages.jpg",
+  "width": 574
+ },
+ {
+  "bytes": 17735,
+  "credit": "NASA / PSI PSI-22",
+  "file": "data/images/PSI-22/e_field_flames_blue_2.jpg",
+  "height": 564,
+  "license": "CC0-1.0",
+  "original_name": "E-Field flames blue 2.jpg",
+  "psi_id": "PSI-22",
+  "psi_path": "psi-data/PSI-22/Representative Image(s)/PSI-22_Representative Image(s)_E-Field flames blue 2.jpg",
+  "width": 686
+ },
+ {
+  "bytes": 8503,
+  "credit": "NASA / PSI PSI-22",
+  "file": "data/images/PSI-22/e_field_flames.jpg",
+  "height": 564,
+  "license": "CC0-1.0",
+  "original_name": "E-Field Flames.jpg",
+  "psi_id": "PSI-22",
+  "psi_path": "psi-data/PSI-22/Representative Image(s)/PSI-22_Representative Image(s)_E-Field Flames.jpg",
+  "width": 686
+ },
+ {
+  "bytes": 17622,
+  "credit": "NASA / PSI PSI-22",
+  "file": "data/images/PSI-22/e_field_flames_blue.jpg",
+  "height": 564,
+  "license": "CC0-1.0",
+  "original_name": "E-Field Flames blue.jpg",
+  "psi_id": "PSI-22",
+  "psi_path": "psi-data/PSI-22/Representative Image(s)/PSI-22_Representative Image(s)_E-Field Flames blue.jpg",
+  "width": 564
+ },
+ {
+  "bytes": 23499,
+  "credit": "NASA / PSI PSI-25",
+  "file": "data/images/PSI-25/bass_ii_flame_testing.jpg",
+  "height": 797,
+  "license": "CC0-1.0",
+  "original_name": "BASS-II_flame testing.jpg",
+  "psi_id": "PSI-25",
+  "psi_path": "psi-data/PSI-25/Representative Image(s)/PSI-25_Representative Image(s)_BASS-II_flame testing.jpg",
+  "width": 1200
+ },
+ {
+  "bytes": 10520,
+  "credit": "NASA / PSI PSI-159",
+  "file": "data/images/PSI-159/cfi_g_observation_of_non_premixed_quasi_steady_spherical_cool_flames_on_porous_burners.jpg",
+  "height": 364,
+  "license": "CC0-1.0",
+  "original_name": "CFI-G_Observation of non-premixed quasi-steady spherical cool flames on porous burners.jpg",
+  "psi_id": "PSI-159",
+  "psi_path": "psi-data/PSI-159/Representative Image(s)/PSI-159_Representative Image(s)_CFI-G_Observation of non-premixed quasi-steady spherical cool flames on porous burners.jpg",
+  "width": 364
+ }
+]
