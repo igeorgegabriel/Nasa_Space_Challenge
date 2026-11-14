@@ -8,17 +8,39 @@ Team: Kenyalang Blue Flame (Bintulu, Malaysia)
 
 Live dashboard: https://flame-in-freefall-three.vercel.app
 
+## The finding
 
+A Moon base is planned to run at about 34% oxygen. Across 2,009 NASA combustion tests in the PSI database, solid materials were never tested above 22.2% oxygen. The newest flights reached about 31%, and they are not in PSI yet. The dashboard shows that gap for five crewed habitats and what NASA should test to close it.
 
-## What it does
+![Home screen: verdict computed from NASA PSI data](docs/img/hero.jpg)
 
-A web dashboard over the 24 combustion investigations in NASA's Physical Sciences Informatics (PSI) repository:
+![Solid-material tests in PSI stop at 22.2% oxygen; the Moon base is at 34%](docs/img/oxygen_gap.jpg)
 
-- Summarizes every investigation: objective, fuels, tested conditions, what varied, publications, NASA flame photos, and key findings quoted word for word from NASA reports.
-- Ranks investigations for five crewed environments (ISS, Gateway, Moon base, pressurized rover, Mars base) with a visible, re-weightable score.
-- Shows where NASA has and has not tested (Oxygen Gap Map) and lists, per habitat, the conditions still untested.
-- Shows which predictive models the data supports, with model-ready CSV/JSON downloads.
-- Ask the data: an assistant panel that answers only from the PSI and NTRS documents, with citations.
+## How it works
+
+```mermaid
+flowchart LR
+  P["NASA PSI<br/>24 investigations<br/>22 test tables"] --> U["Unified table<br/>2,009 tests, each linked<br/>to its file and row"]
+  U --> A["Audit vs original files<br/>1,012 of 1,012 pass"]
+  N["NASA reports (NTRS)<br/>and Spinoff pages"] --> Q["Quotes checked<br/>word for word"]
+  U --> D["Dashboard"]
+  Q --> D
+  D --> R["Rank per habitat"]
+  D --> G["Oxygen gap and<br/>what to test next"]
+  D --> M["Model readiness<br/>and downloads"]
+  D --> E["Equipment and<br/>Earth uses"]
+  U --> K["Ask the data<br/>Claude with 5 data tools<br/>cites the NASA sentence"]
+  Q --> K
+```
+
+## Challenge objectives
+
+| Objective | Where in the dashboard |
+|---|---|
+| Identify investigations most relevant to crew habitats | Rank: five habitats, re-weightable score, rank stability per row |
+| Extract data for predictive modelling | Data: where a model can be trusted (oxygen x pressure map), model readiness per habitat, CSV/JSON downloads |
+| Research for next-generation fire safety equipment | Investigations > Equipment: prevention, detection, suppression |
+| Earth applications | Investigations > On Earth: water mist, smoke detection, firefighter air tanks and clothing (NASA Spinoff, quoted) |
 
 ## Data
 
@@ -37,6 +59,7 @@ py -3.12 pipeline/build_unified.py
 py -3.12 pipeline/build_site_data.py
 py -3.12 pipeline/verify_findings.py
 py -3.12 pipeline/audit_unified.py
+py -3.12 pipeline/verify_earth.py
 py -3.12 -m unittest discover -s tests
 ```
 
@@ -44,7 +67,7 @@ The site in `public/` is static. The Ask function is `api/ask.py` (Vercel Python
 
 ## Verification
 
-- Every quoted finding is checked word for word against its NASA source text (`pipeline/verify_findings.py`).
+- Every quoted finding is checked word for word against its NASA source text (`pipeline/verify_findings.py`, `pipeline/verify_earth.py`).
 - The unified table is re-checked against the original PSI files (`pipeline/audit_unified.py`).
 - Habitat values are either cited to a NASA source or shown as not specified; nothing is assumed.
 
