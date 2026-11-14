@@ -200,14 +200,14 @@ button.secondary { padding: 0.45rem 1rem; border: 1.5px solid currentColor; bord
 
 .pill {
   padding: 0.7rem 1.4rem;
-  border: 1.5px solid rgba(255, 255, 255, 0.35);
+  border: 1.5px solid color-mix(in srgb, var(--fg) 32%, transparent);
   border-radius: 999px;
   background: transparent;
-  color: #fff;
+  color: var(--fg);
   font-size: 1.02rem;
 }
 
-.pill:hover { border-color: var(--fire-soft); }
+.pill:hover { border-color: var(--fire); }
 
 .pill.active { background: var(--fire); border-color: var(--fire); color: var(--navy); font-weight: 600; }
 
