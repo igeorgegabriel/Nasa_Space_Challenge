@@ -273,7 +273,7 @@ class AskTest(unittest.TestCase):
         self.assertEqual(body["answer"], "Yes. [1]")
         self.assertEqual(body["citations"][0]["psi_id"], "PSI-25")
         self.assertEqual(body["model"], "claude-sonnet-5-5")
-        self.assertEqual(set(body), {"answer", "citations", "model", "steps", "actions", "followups"})
+        self.assertEqual(set(body), {"answer", "citations", "model", "number_check", "steps", "actions", "followups"})
 
     def test_refusal_is_polite(self):
         response = SimpleNamespace(content=[], stop_reason="refusal", model="m")
@@ -758,6 +758,105 @@ class AskToolsTest(unittest.TestCase):
         self.assertIn("FOLLOWUPS:", self.ask.SYSTEM)
         self.assertIn("data tools", self.ask.SYSTEM)
         self.assertIn("Not in the data.", self.ask.SYSTEM)
+
+
+class NumberCheckTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.ask, cls.fake = load_ask()
+        cls.nc = cls.ask.NUMBER_CHECK
+        cls.tools = cls.ask.DATA_TOOLS
+
+    def check(self, answer, texts=(), results=()):
+        return self.nc.check_answer(answer, tool_results=results, texts=texts)
+
+    def labels(self, answer):
+        return [c["label"] for c in self.nc.extract_claims(answer)]
+
+    def test_markers_list_numbers_ids_and_years_are_ignored(self):
+        answer = "1. PSI-25 and DAFT-2 ran in 2019 [1] [2]\n- 2. 3/4\" rod, 12 rows [3]"
+        self.assertEqual(self.labels(answer), ["12"])
+
+    def test_gravity_bounds_are_ignored_but_other_gravity_is_checked(self):
+        self.assertEqual(self.labels("Bracketed between 0 g and 1 g, not 0.16 g."), ["0.16 g"])
+
+    def test_percent_and_fraction_are_equivalent(self):
+        self.assertEqual(self.check("Peak was 22.2% O2.", ["ambient O2 0.136 to 0.222"])["unmatched"], [])
+        self.assertEqual(self.check("Peak was 0.222 here.", ["tested at 22.2 percent O2"])["unmatched"], [])
+        self.assertEqual(self.check("Peak was 0.223 here.", ["tested at 22.2 percent O2"])["unmatched"], ["0.223"])
+
+    def test_rounding_to_shown_precision(self):
+        ok = self.check("About 22% and 0.56 atm.", ["O2 0.2216", "pressure 0.558 atm"])
+        self.assertEqual((ok["total"], ok["matched"]), (2, 2))
+        bad = self.check("About 23%.", ["O2 0.2216"])
+        self.assertEqual(bad["unmatched"], ["23%"])
+
+    def test_counts_must_match_exactly(self):
+        self.assertEqual(self.check("There were 41 rows.", ["rows 41.4 per cent"])["unmatched"], ["41"])
+        self.assertEqual(self.check("There were 41 rows.", ["137 rows, 41 inside"])["unmatched"], [])
+
+    def test_pressure_unit_conversion(self):
+        refs = ["pressure 8.2 psia (0.558 atm)"]
+        self.assertEqual(self.check("Held at 56.5 kPa.", refs)["unmatched"], [])
+        self.assertEqual(self.check("Held at 0.558 atm and 8.2 psia.", refs)["unmatched"], [])
+        self.assertEqual(self.check("Held at 9.0 psia.", refs)["unmatched"], ["9.0 psia"])
+        self.assertEqual(self.check("Held at 0.558 atm.", [], [{"pressure_psia": 8.2}])["unmatched"], [])
+
+    def test_range_unit_propagates_back(self):
+        claims = self.nc.extract_claims("Window 8.1-8.3 psia and 33.5 to 35%.")
+        self.assertEqual([(c["label"], c["unit"]) for c in claims], [("8.1 psia", "psia"), ("8.3 psia", "psia"), ("33.5%", "percent"), ("35%", "percent")])
+
+    def test_tool_outputs_are_a_source(self):
+        result = self.tools.run_tool("rank_investigations", {"habitat": "lunar", "top_n": 3})
+        top = result["ranking"][0]
+        answer = "Rank 1 is %s with score %.2f." % (top["investigation"], top["score"])
+        self.assertEqual(self.check(answer, [], [result])["unmatched"], [])
+        self.assertEqual(self.check("Rank 1 scored 0.99.", [], [result])["unmatched"], ["0.99"])
+
+    def test_reports_unmatched_and_totals(self):
+        check = self.check("Found 5 tests, 41% were hot [1].", ["5 tests ran"])
+        self.assertEqual(check, {"total": 2, "matched": 1, "unmatched": ["41%"]})
+
+    def test_duplicate_numbers_count_once(self):
+        self.assertEqual(self.check("12 rows, then 12 rows again.", ["12"])["total"], 1)
+
+    def test_no_numbers_gives_zero_total(self):
+        self.assertEqual(self.check("Not in the data.")["total"], 0)
+
+    def test_live_answer_carries_number_check(self):
+        corpus = [{"psi_id": "PSI-25", "title": "PSI-25 BASS-II - Burning", "body": "a"}]
+        response = SimpleNamespace(
+            content=[text_block("Tested at 22.2% O2 and 41% more.", [citation(0, "ambient O2 0.222")])], stop_reason="end_turn", model="m")
+        status, body = self.ask.answer_question("q", client=StubClient(response), corpus=corpus, use_cache=False)
+        self.assertEqual(body["number_check"], {"total": 2, "matched": 1, "unmatched": ["41%"]})
+
+    def test_live_check_uses_tool_log(self):
+        result = self.tools.run_tool("test_next", {"habitat": "lunar"})
+        solid = next(c for c in result["fuel_classes"] if c["fuel_class"] == "solid")
+        answer = "%s tests sit inside the window." % solid["tests_inside_window"]
+        check = self.nc.check_live(answer, [], [("test_next", {"habitat": "lunar"}, result)], self.tools)
+        self.assertEqual(check["unmatched"], [])
+
+    def test_cached_answer_computes_check_when_missing(self):
+        cache = {"hello": {"question": "hello", "answer": "It ran at 22.2% O2 [1]", "citations": [{"n": 1, "cited_text": "O2 0.222"}]}}
+        hit = self.ask.cached_answer("Hello?", cache=cache)
+        self.assertEqual(hit["number_check"], {"total": 1, "matched": 1, "unmatched": []})
+
+    def test_cached_answer_prefers_stored_check(self):
+        stored = {"total": 3, "matched": 3, "unmatched": []}
+        cache = {"hello": {"question": "hello", "answer": "A", "citations": [], "number_check": stored}}
+        self.assertEqual(self.ask.cached_answer("Hello?", cache=cache)["number_check"], stored)
+
+    def test_shipped_cache_entries_carry_valid_number_check(self):
+        cache = self.ask.load_ask_cache()
+        self.assertGreater(len(cache), 0)
+        for key, entry in cache.items():
+            check = entry.get("number_check")
+            self.assertIsInstance(check, dict, key)
+            self.assertEqual(set(check), {"total", "matched", "unmatched"}, key)
+            self.assertEqual(check["total"] - check["matched"], len(check["unmatched"]), key)
+            steps = [s for s in entry.get("steps") or [] if isinstance(s, dict)]
+            self.assertEqual(check, self.ask.cached_number_check(entry, steps), key)
 
 
 if __name__ == "__main__":

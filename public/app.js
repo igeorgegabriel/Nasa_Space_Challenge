@@ -84,6 +84,7 @@ const ASK_MAX_STORED_TURNS = 20;
 const ASK_INTRO = "Ask about NASA's 24 combustion investigations. Numbers are checked against the data; quotes link to NASA sources.";
 const ASK_DISCLOSURE = "AI answers (Claude) from NASA PSI and NTRS data only.";
 const ASK_MAX_STEPS = 8;
+const ASK_MAX_UNMATCHED = 12;
 const ASK_MAX_ACTIONS = 2;
 const ASK_MAX_FOLLOWUPS = 2;
 const ASK_INPUT_MAX_PX = 120;
@@ -3053,6 +3054,16 @@ function cleanAskSteps(list) {
   });
 }
 
+function cleanNumberCheck(value) {
+  if (!value || typeof value !== "object" || !Number.isInteger(value.total) || !Number.isInteger(value.matched) || value.total < 0 || value.matched < 0 || value.matched > value.total) {
+    return null;
+  }
+  const unmatched = (Array.isArray(value.unmatched) ? value.unmatched : []).filter(function (u) {
+    return typeof u === "string" && u.trim();
+  }).slice(0, ASK_MAX_UNMATCHED);
+  return { total: value.total, matched: value.matched, unmatched: unmatched };
+}
+
 function cleanAskActions(list) {
   return (Array.isArray(list) ? list : []).filter(function (a) {
     return a && typeof a.label === "string" && a.label.trim() && typeof a.href === "string" && a.href.indexOf("#/") === 0;
@@ -3080,6 +3091,7 @@ function saveAskState() {
       answer: t.answer || null,
       citations: t.citations || [],
       steps: cleanAskSteps(t.steps),
+      numberCheck: cleanNumberCheck(t.numberCheck),
       actions: cleanAskActions(t.actions),
       followups: cleanAskFollowups(t.followups),
       error: t.error || null
@@ -3112,6 +3124,7 @@ function loadAskState() {
         answer: typeof t.answer === "string" ? t.answer : null,
         citations: Array.isArray(t.citations) ? t.citations : [],
         steps: cleanAskSteps(t.steps),
+        numberCheck: cleanNumberCheck(t.numberCheck),
         actions: cleanAskActions(t.actions),
         followups: cleanAskFollowups(t.followups),
         error: typeof t.error === "string" ? t.error : null,
@@ -3150,12 +3163,31 @@ function playSteps(turn, items) {
   });
 }
 
-function askStepsView(steps, open, turn) {
+function numberCheckLine(check) {
+  if (!check || !check.total) {
+    return null;
+  }
+  const missing = check.total - check.matched;
+  if (!missing) {
+    return el("p", { class: "ask-numcheck" }, stepTick(), "Numbers checked: " + check.matched + " of " + check.total + " match the NASA data");
+  }
+  const shown = check.unmatched.slice(0, 3).join(", ");
+  const more = check.unmatched.length > 3 ? " and " + (check.unmatched.length - 3) + " more" : "";
+  return el("p", { class: "ask-numcheck warn" }, check.matched + " of " + check.total + " numbers match; " + missing + " not found in the sources" + (shown ? ": " + shown + more : ""));
+}
+
+function askStepsView(steps, open, turn, check) {
   const items = steps.map(function (s) {
     return el("li", null, stepTick(), el("span", { class: "ask-step-label", text: s.label }), s.detail ? el("span", { class: "ask-step-detail", text: s.detail }) : null);
   });
+  const unmatched = check && check.unmatched.length ? check.unmatched : [];
+  if (unmatched.length) {
+    items.push(el("li", { class: "ask-step-warn" },
+      el("span", { class: "ask-step-label", text: "Not found in the cited text or data tools" }),
+      el("span", { class: "ask-step-detail", text: unmatched.join(", ") })));
+  }
   const details = el("details", { class: "ask-steps", open: open ? true : null },
-    el("summary", { text: "How I checked (" + steps.length + ")" }),
+    el("summary", { text: "How I checked (" + items.length + ")" }),
     el("ul", { class: "ask-steps-list" }, items));
   if (open) {
     playSteps(turn, items);
@@ -3183,10 +3215,11 @@ function askTurnView(turn, index) {
     kids.push(el("div", { class: "ask-a" },
       turn.answer.indexOf("Not in the data.") >= 0 ? el("p", null, tag("Not in the data")) : null,
       answerView(turn.answer, citations, scope),
+      numberCheckLine(turn.numberCheck),
       actions.length ? el("div", { class: "ask-actions" }, actions.map(function (a) {
         return el("a", { class: "ask-action", href: a.href, text: a.label });
       })) : null,
-      steps.length ? askStepsView(steps, turn.openSteps === true, turn) : null,
+      steps.length || (turn.numberCheck && turn.numberCheck.unmatched.length) ? askStepsView(steps, turn.openSteps === true, turn, turn.numberCheck) : null,
       citations.length ? el("details", { class: "ask-sources" },
         el("summary", { text: "Sources (" + citations.length + ")" }),
         el("div", { class: "ask-cites" }, citationList(citations, scope))) : null));
@@ -3372,7 +3405,7 @@ function sendAsk(text, fromChip, openSteps) {
   if (hit) {
     askPanel.thread.push({
       question: question, pending: false, answer: hit.answer, citations: hit.citations || [],
-      steps: cleanAskSteps(hit.steps), actions: cleanAskActions(hit.actions), followups: cleanAskFollowups(hit.followups), error: null,
+      steps: cleanAskSteps(hit.steps), numberCheck: cleanNumberCheck(hit.number_check), actions: cleanAskActions(hit.actions), followups: cleanAskFollowups(hit.followups), error: null,
       openSteps: openSteps === true
     });
     clearAskInput();
@@ -3424,6 +3457,7 @@ function sendAsk(text, fromChip, openSteps) {
       turn.answer = result.json.answer;
       turn.citations = result.json.citations || [];
       turn.steps = cleanAskSteps(result.json.steps);
+      turn.numberCheck = cleanNumberCheck(result.json.number_check);
       turn.actions = cleanAskActions(result.json.actions);
       turn.followups = cleanAskFollowups(result.json.followups);
     }

@@ -30,7 +30,33 @@ QUESTIONS = [
 ]
 
 
+def add_number_checks(cache, force=False):
+    for entry in cache.values():
+        if "number_check" in entry and not force:
+            continue
+        steps = [s for s in entry.get("steps") or [] if isinstance(s, dict)]
+        entry["number_check"] = ask.cached_number_check(entry, steps)
+    return cache
+
+
+def write_cache(cache):
+    with open(OUT, "w", encoding="utf-8") as handle:
+        json.dump(cache, handle, indent=1, ensure_ascii=True)
+
+
+def checks_only():
+    with open(OUT, "r", encoding="utf-8") as handle:
+        cache = json.load(handle)
+    write_cache(add_number_checks(cache, True))
+    for key, entry in cache.items():
+        check = entry["number_check"]
+        print("%d/%d" % (check["matched"], check["total"]), key, check["unmatched"])
+
+
 def main():
+    if "--checks-only" in sys.argv:
+        checks_only()
+        return
     extra = [q for q in sys.argv[1:] if not q.startswith("--")]
     questions = QUESTIONS + extra
     cache = {}
@@ -51,12 +77,12 @@ def main():
             "answer": body["answer"],
             "citations": body["citations"],
             "model": body["model"],
+            "number_check": body["number_check"],
             "generated_at": datetime.datetime.now().isoformat(timespec="seconds"),
         }
         print("ok", question, len(body["citations"]), flush=True)
         time.sleep(1)
-    with open(OUT, "w", encoding="utf-8") as handle:
-        json.dump(cache, handle, indent=1, ensure_ascii=True)
+    write_cache(add_number_checks(cache))
 
 
 if __name__ == "__main__":
