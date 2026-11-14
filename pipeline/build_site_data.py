@@ -1143,6 +1143,8 @@ def build_corpus(investigations, rankings):
         pubs = [p for p in pubs if p.strip()]
         if pubs:
             lines.append("Publications: " + "; ".join(pubs))
+        for finding in inv.get("key_findings") or []:
+            lines.append("Key result, verbatim from %s (%s): \"%s\"" % (finding.get("source", ""), finding.get("source_label", ""), finding.get("quote", "")))
         if inv["earth_benefits"]:
             lines.append("Research impact and Earth benefits (PSI record): %s" % inv["earth_benefits"])
         if inv["doi"]:
