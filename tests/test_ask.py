@@ -262,7 +262,7 @@ class AskTest(unittest.TestCase):
         self.assertEqual(body["answer"], "Yes. [1]")
         self.assertEqual(body["citations"][0]["psi_id"], "PSI-25")
         self.assertEqual(body["model"], "claude-sonnet-5-5")
-        self.assertEqual(set(body), {"answer", "citations", "model"})
+        self.assertEqual(set(body), {"answer", "citations", "model", "steps", "actions", "followups"})
 
     def test_refusal_is_polite(self):
         response = SimpleNamespace(content=[], stop_reason="refusal", model="m")
@@ -473,7 +473,7 @@ class AskTest(unittest.TestCase):
         original = self.ask.answer_question
         seen = {}
 
-        def fake(question, client=None, corpus=None, context_sentence=None, history=None):
+        def fake(question, client=None, corpus=None, context_sentence=None, history=None, **kwargs):
             seen["context"] = context_sentence
             seen["history"] = history
             return 200, {"answer": "ok", "citations": [], "model": "m"}
@@ -518,6 +518,235 @@ class AskTest(unittest.TestCase):
             self.ask.answer_question = original
             self.ask.RATE_LIMITER = original_limiter
 
+
+
+class SequenceMessages:
+    def __init__(self, responses):
+        self.responses = list(responses)
+        self.calls = []
+
+    def create(self, **kwargs):
+        self.calls.append(dict(kwargs, messages=list(kwargs["messages"])))
+        return self.responses.pop(0)
+
+
+class SequenceClient:
+    def __init__(self, responses):
+        self.beta = SimpleNamespace(messages=SequenceMessages(responses))
+
+
+def tool_use(tool_id, name, tool_input):
+    return SimpleNamespace(type="tool_use", id=tool_id, name=name, input=tool_input)
+
+
+def load_json_file(name):
+    with open(os.path.join(ROOT, "public", "data", name), "r", encoding="utf-8") as handle:
+        return json.load(handle)
+
+
+class AskToolsTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.ask, cls.fake = load_ask()
+        cls.tools = cls.ask.DATA_TOOLS
+
+    def test_rank_matches_site_reference(self):
+        result = self.tools.rank_investigations("lunar", 3)
+        reference = load_json_file("rank_reference.json")["variants"]["default"]["lunar"]["ranking"]
+        self.assertEqual(len(result["ranking"]), 3)
+        self.assertEqual(result["ranking"][0]["psi_id"], reference[0]["psi_id"])
+        self.assertEqual(result["ranking"][0]["rank"], 1)
+        self.assertEqual(result["ranking"][0]["score"], round(reference[0]["score"], 2))
+        self.assertEqual(result["total_ranked"], len(reference))
+        self.assertLess(len(json.dumps(result)), 4096)
+
+    def test_find_tests_filters(self):
+        none = self.tools.find_tests(fuel_class="solid", o2_min_pct=33.5)
+        self.assertEqual(none["matched"], 0)
+        self.assertEqual(none["rows_searched"], 2009)
+        hit = self.tools.find_tests(fuel_class="solid", o2_min_pct=22.2, o2_max_pct=22.2)
+        self.assertGreaterEqual(hit["matched"], 1)
+        self.assertEqual(hit["o2_max_pct"], 22.2)
+        self.assertEqual(hit["o2_min_pct"], 22.2)
+        self.assertTrue(hit["examples"])
+        self.assertIn("source_file", hit["examples"][0])
+        self.assertLess(len(json.dumps(hit)), 4096)
+
+    def test_find_tests_missing_values_do_not_match(self):
+        everything = self.tools.find_tests()
+        self.assertEqual(everything["matched"], 2009)
+        rows = load_json_file("conditions.json")
+        ambient = self.tools.find_tests(o2_min_pct=0)
+        stream = self.tools.find_tests(o2_min_pct=0, o2_basis="oxidizer_stream")
+        self.assertEqual(ambient["matched"], sum(1 for r in rows if r.get("o2_frac") is not None and r["o2_basis"] == "ambient"))
+        self.assertEqual(stream["matched"], sum(1 for r in rows if r.get("o2_frac") is not None and r["o2_basis"] == "oxidizer_stream"))
+        with_pressure = self.tools.find_tests(pressure_min_psia=0)
+        self.assertEqual(with_pressure["matched"], sum(1 for r in rows if r.get("pressure_atm") is not None))
+
+    def test_find_tests_psia_conversion(self):
+        rows = load_json_file("conditions.json")
+        target = next(r for r in rows if r.get("pressure_atm"))
+        psia = target["pressure_atm"] * 14.696
+        result = self.tools.find_tests(pressure_min_psia=psia, pressure_max_psia=psia)
+        self.assertGreaterEqual(result["matched"], 1)
+
+    def test_find_tests_validation(self):
+        self.assertIn("error", self.tools.find_tests(fuel_class="plasma"))
+        self.assertIn("error", self.tools.find_tests(psi_id="PSI-99999"))
+        self.assertIn("error", self.tools.find_tests(o2_min_pct="high"))
+        self.assertIn("error", self.tools.find_tests(o2_basis="x"))
+
+    def test_test_next(self):
+        result = self.tools.test_next("lunar")
+        reference = load_json_file("test_next.json")["environments"]["lunar"]
+        self.assertEqual(len(result["fuel_classes"]), len(reference["classes"]))
+        solid = next(c for c in result["fuel_classes"] if c["fuel_class"] == "solid")
+        self.assertEqual(solid["tests_inside_window"], 0)
+        self.assertTrue(solid["nearest_tested"]["psi_id"].startswith("PSI-"))
+        self.assertTrue(solid["nearest_tested"]["source_file"])
+        self.assertEqual(result["window"]["o2_pct"], [33.5, 35.0])
+        self.assertLess(len(json.dumps(result)), 4096)
+
+    def test_model_readiness(self):
+        result = self.tools.model_readiness("lunar")
+        reference = load_json_file("model_readiness.json")["environments"]["lunar"]["items"]
+        self.assertEqual(len(result["relationships"]), len(reference))
+        self.assertEqual(result["relationships"][0]["status"], reference[0]["status"])
+        self.assertTrue(result["relationships"][0]["relationship"])
+        self.assertLess(len(json.dumps(result)), 4096)
+
+    def test_habitat_profile(self):
+        result = self.tools.habitat_profile("lunar")
+        self.assertIn("8.2 psia", result["pressure"]["value"])
+        self.assertTrue(result["o2"]["sources"])
+        self.assertLess(len(json.dumps(result)), 4096)
+        for habitat in self.tools.HABITATS:
+            profile = self.tools.habitat_profile(habitat)
+            for key in ("o2", "pressure", "flow", "gravity"):
+                self.assertTrue(profile[key]["value"])
+
+    def test_invalid_habitat_is_error_not_crash(self):
+        for name in ("rank_investigations", "test_next", "model_readiness", "habitat_profile"):
+            self.assertIn("error", self.tools.run_tool(name, {"habitat": "venus"}))
+        self.assertIn("error", self.tools.run_tool("rank_investigations", {}))
+        self.assertIn("error", self.tools.run_tool("nope", {}))
+        self.assertIn("error", self.tools.run_tool("find_tests", "x"))
+
+    def test_tool_definitions(self):
+        definitions = self.tools.tool_definitions()
+        self.assertEqual({d["name"] for d in definitions}, set(self.tools.TOOL_FUNCTIONS))
+        find = next(d for d in definitions if d["name"] == "find_tests")
+        enum = find["input_schema"]["properties"]["fuel_class"]["enum"]
+        self.assertIn("solid", enum)
+        self.assertIn("liquid_droplet", enum)
+        nxt = next(d for d in definitions if d["name"] == "test_next")
+        self.assertEqual(nxt["input_schema"]["properties"]["habitat"]["enum"], list(self.tools.HABITATS))
+
+    def test_split_followups(self):
+        split = self.ask.split_followups
+        text, follow = split("Answer here. [1]\nFOLLOWUPS: What is next? | Where else? [2]")
+        self.assertEqual(text, "Answer here. [1] [2]")
+        self.assertEqual(follow, ["What is next?", "Where else?"])
+        text, follow = split("Answer.\n**FOLLOWUPS:** one | two | three")
+        self.assertEqual(text, "Answer.")
+        self.assertEqual(follow, ["one", "two"])
+        text, follow = split("Answer.\nFOLLOWUPS:")
+        self.assertEqual(text, "Answer.")
+        self.assertEqual(follow, [])
+        text, follow = split("Answer only.")
+        self.assertEqual(text, "Answer only.")
+        self.assertEqual(follow, [])
+
+    def test_steps_and_actions(self):
+        log = [
+            ("rank_investigations", {"habitat": "lunar"}, self.tools.rank_investigations("lunar")),
+            ("find_tests", {"fuel_class": "solid", "o2_min_pct": 33.5, "o2_max_pct": 35}, self.tools.find_tests(fuel_class="solid", o2_min_pct=33.5, o2_max_pct=35)),
+            ("test_next", {"habitat": "lunar"}, self.tools.test_next("lunar")),
+            ("model_readiness", {"habitat": "lunar"}, self.tools.model_readiness("lunar")),
+            ("habitat_profile", {"habitat": "venus"}, {"error": "x"}),
+        ]
+        steps, actions = self.tools.build_steps_and_actions(log)
+        self.assertEqual([s["tool"] for s in steps], ["rank_investigations", "find_tests", "test_next", "model_readiness"])
+        self.assertTrue(steps[0]["label"].startswith("Ranked "))
+        self.assertTrue(steps[0]["label"].endswith("for Moon base"))
+        self.assertEqual(steps[1]["label"], "Searched 2,009 test rows")
+        self.assertEqual(steps[1]["detail"], "solid, ambient O2 33.5 to 35%: 0 matches")
+        self.assertEqual(actions, [
+            {"label": "Open the Moon base ranking", "href": "#/rank?habitat=lunar"},
+            {"label": "Open the data extractor", "href": "#/data?at=extractor"},
+        ])
+
+    def test_actions_psi_and_context(self):
+        result = self.tools.find_tests(psi_id="PSI-69")
+        _, actions = self.tools.build_steps_and_actions([("find_tests", {"psi_id": "PSI-69"}, result)])
+        self.assertEqual(actions[0]["href"], "#/data?inv=PSI-69&at=extractor")
+        self.assertEqual(actions[0]["label"], "Open FLEX rows")
+        _, actions = self.tools.build_steps_and_actions([], "PSI-69", {"PSI-69"})
+        self.assertEqual(actions, [{"label": "Open FLEX", "href": "#/investigation/PSI-69"}])
+        _, actions = self.tools.build_steps_and_actions([], "PSI-69", {"PSI-25"})
+        self.assertEqual(actions, [])
+
+    def test_agent_loop_runs_tools_then_answers(self):
+        first = SimpleNamespace(
+            content=[text_block("thinking"), tool_use("t1", "rank_investigations", {"habitat": "lunar", "top_n": 2}), tool_use("t2", "habitat_profile", {"habitat": "venus"})],
+            stop_reason="tool_use", model="m")
+        final = SimpleNamespace(
+            content=[text_block("FLEX leads.\nFOLLOWUPS: What next? | Why FLEX?", [citation(0, "t")])],
+            stop_reason="end_turn", model="m")
+        client = SequenceClient([first, final])
+        corpus = [{"psi_id": "PSI-69", "title": "PSI-69 FLEX - Droplets", "body": "a"}]
+        status, body = self.ask.answer_question("q", client=client, corpus=corpus, context_psi_id="PSI-69", use_cache=False)
+        self.assertEqual(status, 200)
+        calls = client.beta.messages.calls
+        self.assertEqual(len(calls), 2)
+        self.assertTrue(calls[0]["tools"])
+        self.assertNotIn("tool_choice", calls[0])
+        self.assertEqual(calls[0]["messages"][0]["content"][0]["type"], "document")
+        follow = calls[1]["messages"]
+        self.assertEqual(follow[-2]["role"], "assistant")
+        results = follow[-1]["content"]
+        self.assertEqual([r["tool_use_id"] for r in results], ["t1", "t2"])
+        self.assertNotIn("is_error", results[0])
+        self.assertTrue(results[1]["is_error"])
+        self.assertEqual(body["answer"], "FLEX leads. [1]")
+        self.assertEqual(body["followups"], ["What next?", "Why FLEX?"])
+        self.assertEqual([s["tool"] for s in body["steps"]], ["rank_investigations"])
+        self.assertEqual([a["href"] for a in body["actions"]], ["#/rank?habitat=lunar", "#/investigation/PSI-69"])
+
+    def test_agent_loop_caps_rounds(self):
+        def looping():
+            return SimpleNamespace(content=[tool_use("t", "habitat_profile", {"habitat": "mars"})], stop_reason="tool_use", model="m")
+        final = SimpleNamespace(content=[text_block("Done.")], stop_reason="end_turn", model="m")
+        client = SequenceClient([looping() for _ in range(self.ask.MAX_TOOL_ROUNDS)] + [final])
+        status, body = self.ask.answer_question("q", client=client, use_cache=False)
+        calls = client.beta.messages.calls
+        self.assertEqual(len(calls), self.ask.MAX_TOOL_ROUNDS + 1)
+        self.assertEqual(calls[-1]["tool_choice"], {"type": "none"})
+        self.assertEqual(body["answer"], "Done.")
+        self.assertEqual(len(body["steps"]), self.ask.MAX_TOOL_ROUNDS)
+        self.assertEqual(len(body["actions"]), 1)
+
+    def test_agent_loop_time_budget_forces_final(self):
+        final = SimpleNamespace(content=[text_block("Late.")], stop_reason="end_turn", model="m")
+        client = SequenceClient([final])
+        original = self.ask.TOOL_TIME_BUDGET_SECONDS
+        self.ask.TOOL_TIME_BUDGET_SECONDS = -1
+        try:
+            status, body = self.ask.answer_question("q", client=client, use_cache=False)
+        finally:
+            self.ask.TOOL_TIME_BUDGET_SECONDS = original
+        self.assertEqual(client.beta.messages.calls[0]["tool_choice"], {"type": "none"})
+        self.assertEqual(body["answer"], "Late.")
+
+    def test_cached_answer_has_empty_agent_fields(self):
+        cache = {"hello": {"question": "hello", "answer": "A", "citations": []}}
+        hit = self.ask.cached_answer("Hello?", cache=cache)
+        self.assertEqual((hit["steps"], hit["actions"], hit["followups"]), ([], [], []))
+
+    def test_system_mentions_tools_and_followups(self):
+        self.assertIn("FOLLOWUPS:", self.ask.SYSTEM)
+        self.assertIn("data tools", self.ask.SYSTEM)
+        self.assertIn("Not in the data.", self.ask.SYSTEM)
 
 
 if __name__ == "__main__":

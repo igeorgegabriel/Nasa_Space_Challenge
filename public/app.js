@@ -80,7 +80,12 @@ const ASK_NARROW_PX = 900;
 const ASK_HISTORY_TURNS = 3;
 const ASK_ANSWER_SEND_CHARS = 1500;
 const ASK_MAX_STORED_TURNS = 20;
-const ASK_DISCLOSURE = "Answers by an SI model (Claude) from NASA PSI and NTRS documents only, with citations. Says 'Not in the data' when it is not.";
+const ASK_INTRO = "Ask about NASA's 24 combustion investigations. Numbers are checked against the data; quotes link to NASA sources.";
+const ASK_DISCLOSURE = "AI answers (Claude) from NASA PSI and NTRS data only.";
+const ASK_MAX_STEPS = 8;
+const ASK_MAX_ACTIONS = 2;
+const ASK_MAX_FOLLOWUPS = 2;
+const ASK_INPUT_MAX_PX = 120;
 
 const ASK_SUGGESTIONS = {
   home: [
@@ -106,6 +111,7 @@ const askPanel = {
   useContext: true,
   busy: false,
   generation: 0,
+  timer: null,
   thread: [],
   nodes: {}
 };
@@ -2337,6 +2343,7 @@ function answerView(answer, citations, scope) {
     e.preventDefault();
     const target = document.getElementById("cite-" + scope + "-" + n);
     if (target) {
+      openAncestors(target);
       target.scrollIntoView({ block: "nearest" });
       target.focus();
     }
@@ -2428,6 +2435,28 @@ function askStorage() {
   }
 }
 
+function cleanAskSteps(list) {
+  return (Array.isArray(list) ? list : []).filter(function (s) {
+    return s && typeof s.label === "string" && s.label.trim();
+  }).slice(0, ASK_MAX_STEPS).map(function (s) {
+    return { tool: typeof s.tool === "string" ? s.tool : "", label: s.label, detail: typeof s.detail === "string" ? s.detail : "" };
+  });
+}
+
+function cleanAskActions(list) {
+  return (Array.isArray(list) ? list : []).filter(function (a) {
+    return a && typeof a.label === "string" && a.label.trim() && typeof a.href === "string" && a.href.indexOf("#/") === 0;
+  }).slice(0, ASK_MAX_ACTIONS).map(function (a) {
+    return { label: a.label, href: a.href };
+  });
+}
+
+function cleanAskFollowups(list) {
+  return (Array.isArray(list) ? list : []).filter(function (q) {
+    return typeof q === "string" && q.trim();
+  }).slice(0, ASK_MAX_FOLLOWUPS);
+}
+
 function saveAskState() {
   const storage = askStorage();
   if (!storage) {
@@ -2436,7 +2465,15 @@ function saveAskState() {
   const thread = askPanel.thread.filter(function (t) {
     return !t.pending;
   }).slice(-ASK_MAX_STORED_TURNS).map(function (t) {
-    return { question: t.question, answer: t.answer || null, citations: t.citations || [], error: t.error || null };
+    return {
+      question: t.question,
+      answer: t.answer || null,
+      citations: t.citations || [],
+      steps: cleanAskSteps(t.steps),
+      actions: cleanAskActions(t.actions),
+      followups: cleanAskFollowups(t.followups),
+      error: t.error || null
+    };
   });
   try {
     storage.setItem(ASK_STORAGE_KEY, JSON.stringify({ open: askPanel.open, useContext: askPanel.useContext, thread: thread }));
@@ -2464,6 +2501,9 @@ function loadAskState() {
         question: t.question,
         answer: typeof t.answer === "string" ? t.answer : null,
         citations: Array.isArray(t.citations) ? t.citations : [],
+        steps: cleanAskSteps(t.steps),
+        actions: cleanAskActions(t.actions),
+        followups: cleanAskFollowups(t.followups),
         error: typeof t.error === "string" ? t.error : null
       };
     });
@@ -2472,32 +2512,92 @@ function loadAskState() {
   }
 }
 
+function elapsedText(turn) {
+  return Math.max(0, Math.floor((Date.now() - (turn.startedAt || Date.now())) / 1000)) + " s";
+}
+
+function askStepsView(steps) {
+  return el("details", { class: "ask-steps" },
+    el("summary", { text: "How I checked (" + steps.length + ")" }),
+    el("ul", { class: "ask-steps-list" }, steps.map(function (s) {
+      return el("li", null, el("span", { class: "ask-step-label", text: s.label }), s.detail ? el("span", { class: "ask-step-detail", text: s.detail }) : null);
+    })));
+}
+
 function askTurnView(turn, index) {
   const scope = "t" + index;
   const kids = [el("div", { class: "ask-q", text: turn.question })];
   if (turn.pending) {
-    kids.push(el("p", { class: "ask-status muted", text: "Searching NASA documents..." }));
+    kids.push(el("p", { class: "ask-status muted" }, "Checking the data and NASA documents ", el("span", { class: "ask-elapsed", text: elapsedText(turn) })));
   } else if (turn.error) {
     kids.push(el("p", { class: "ask-error", role: "alert", text: turn.error }));
   } else {
     const citations = turn.citations || [];
+    const steps = turn.steps || [];
+    const actions = turn.actions || [];
     kids.push(el("div", { class: "ask-a" },
       turn.answer.indexOf("Not in the data.") >= 0 ? el("p", null, tag("Not in the data")) : null,
       answerView(turn.answer, citations, scope),
-      citations.length ? el("div", { class: "ask-cites" }, el("p", { class: "small muted", text: "Citations" }), citationList(citations, scope)) : null));
+      actions.length ? el("div", { class: "ask-actions" }, actions.map(function (a) {
+        return el("a", { class: "ask-action", href: a.href, text: a.label });
+      })) : null,
+      steps.length ? askStepsView(steps) : null,
+      citations.length ? el("details", { class: "ask-sources" },
+        el("summary", { text: "Sources (" + citations.length + ")" }),
+        el("div", { class: "ask-cites" }, citationList(citations, scope))) : null));
   }
   return el("div", { class: "ask-turn" }, kids);
+}
+
+function askRows(questions) {
+  return el("div", { class: "ask-suggest", id: "ask-suggest" }, questions.map(function (q) {
+    return el("button", { type: "button", class: "ask-suggest-row", onclick: function () { sendAsk(q, true); } },
+      el("span", { class: "ask-arrow", "aria-hidden": "true", text: "->" }),
+      el("span", { class: "ask-row-text", text: q }));
+  }));
+}
+
+function renderAskMore() {
+  const box = askPanel.nodes.more;
+  if (!box) {
+    return;
+  }
+  clear(box);
+  if (!state.data) {
+    return;
+  }
+  const ctx = contextFromRoute(parseHash(), state.envId);
+  const turns = askPanel.thread;
+  if (!turns.length) {
+    box.appendChild(el("p", { class: "ask-intro", text: ASK_INTRO }));
+    box.appendChild(askRows(suggestionsFor(ctx)));
+    return;
+  }
+  const last = turns[turns.length - 1];
+  if (last.pending || last.error || !last.answer) {
+    return;
+  }
+  let list = cleanAskFollowups(last.followups);
+  if (!list.length) {
+    const asked = {};
+    turns.forEach(function (t) { asked[normalizeQuestion(t.question)] = true; });
+    list = suggestionsFor(ctx).filter(function (q) { return !asked[normalizeQuestion(q)]; }).slice(0, ASK_MAX_FOLLOWUPS);
+  }
+  if (!list.length) {
+    return;
+  }
+  box.appendChild(el("p", { class: "ask-more-title", text: "Follow up" }));
+  box.appendChild(askRows(list));
 }
 
 function renderAskThread() {
   const holder = askPanel.nodes.thread;
   clear(holder);
-  if (!askPanel.thread.length) {
-    holder.appendChild(el("p", { class: "muted small", text: "Ask a question about the NASA combustion data." }));
-  }
   askPanel.thread.forEach(function (turn, index) {
     holder.appendChild(askTurnView(turn, index));
   });
+  holder.appendChild(askPanel.nodes.more);
+  renderAskMore();
   const turns = holder.querySelectorAll(".ask-turn");
   holder.scrollTop = turns.length ? turns[turns.length - 1].offsetTop - 4 : 0;
   askPanel.nodes.send.disabled = askPanel.busy;
@@ -2527,17 +2627,34 @@ function cachedAnswer(question) {
   return hit && typeof hit.answer === "string" && hit.answer ? hit : null;
 }
 
+function renderAskContext() {
+  const box = askPanel.nodes.context;
+  clear(box);
+  if (!state.data) {
+    return;
+  }
+  const ctx = contextFromRoute(parseHash(), state.envId);
+  if (askPanel.useContext) {
+    box.appendChild(el("span", { class: "ask-context-pill" },
+      el("span", { class: "ask-context-label", text: "Using this page: " + contextLabel(ctx) }),
+      el("button", { type: "button", class: "ask-context-x", "aria-label": "Stop using this page", text: "x", onclick: function () { setAskContext(false); } })));
+  } else {
+    box.appendChild(el("button", { type: "button", class: "ask-context-on", text: "Use this page", onclick: function () { setAskContext(true); } }));
+  }
+}
+
+function setAskContext(on) {
+  askPanel.useContext = on;
+  saveAskState();
+  renderAskContext();
+}
+
 function refreshAskPanel() {
   if (!askPanel.built || !state.data) {
     return;
   }
-  const ctx = contextFromRoute(parseHash(), state.envId);
-  askPanel.nodes.context.textContent = askPanel.useContext ? "Looking at: " + contextLabel(ctx) : "Page context is off.";
-  const box = askPanel.nodes.suggestions;
-  clear(box);
-  suggestionsFor(ctx).forEach(function (q) {
-    box.appendChild(el("button", { type: "button", class: "suggest secondary", text: q, onclick: function () { sendAsk(q, true); } }));
-  });
+  renderAskContext();
+  renderAskMore();
 }
 
 function setAskOpen(open, focus) {
@@ -2563,10 +2680,29 @@ function closeAskPanel(focus) {
   }
 }
 
+function stopAskTimer() {
+  if (askPanel.timer) {
+    clearInterval(askPanel.timer);
+    askPanel.timer = null;
+  }
+}
+
+function resizeAskInput() {
+  const input = askPanel.nodes.input;
+  input.style.height = "auto";
+  input.style.height = Math.min(input.scrollHeight, ASK_INPUT_MAX_PX) + "px";
+}
+
+function clearAskInput() {
+  askPanel.nodes.input.value = "";
+  resizeAskInput();
+}
+
 function newAskConversation() {
   askPanel.generation += 1;
   askPanel.busy = false;
   askPanel.thread = [];
+  stopAskTimer();
   saveAskState();
   renderAskThread();
   askPanel.nodes.input.focus();
@@ -2588,22 +2724,33 @@ function sendAsk(text, fromChip) {
   const body = askRequestBody(question, ctx, askPanel.useContext, askPanel.thread);
   const hit = fromChip === true ? cachedAnswer(question) : null;
   if (hit) {
-    askPanel.thread.push({ question: question, pending: false, answer: hit.answer, citations: hit.citations || [], error: null });
-    askPanel.nodes.input.value = "";
+    askPanel.thread.push({
+      question: question, pending: false, answer: hit.answer, citations: hit.citations || [],
+      steps: cleanAskSteps(hit.steps), actions: cleanAskActions(hit.actions), followups: cleanAskFollowups(hit.followups), error: null
+    });
+    clearAskInput();
     saveAskState();
     renderAskThread();
     return;
   }
-  const turn = { question: question, pending: true, answer: null, citations: [], error: null };
+  const turn = { question: question, pending: true, startedAt: Date.now(), answer: null, citations: [], steps: [], actions: [], followups: [], error: null };
   const generation = askPanel.generation;
   askPanel.thread.push(turn);
   askPanel.busy = true;
-  askPanel.nodes.input.value = "";
+  clearAskInput();
   renderAskThread();
+  stopAskTimer();
+  askPanel.timer = setInterval(function () {
+    const node = askPanel.nodes.thread.querySelector(".ask-elapsed");
+    if (node) {
+      node.textContent = elapsedText(turn);
+    }
+  }, 1000);
   function finish() {
     if (generation !== askPanel.generation) {
       return;
     }
+    stopAskTimer();
     turn.pending = false;
     askPanel.busy = false;
     saveAskState();
@@ -2629,6 +2776,9 @@ function sendAsk(text, fromChip) {
     } else {
       turn.answer = result.json.answer;
       turn.citations = result.json.citations || [];
+      turn.steps = cleanAskSteps(result.json.steps);
+      turn.actions = cleanAskActions(result.json.actions);
+      turn.followups = cleanAskFollowups(result.json.followups);
     }
     finish();
   }).catch(function () {
@@ -2640,19 +2790,14 @@ function sendAsk(text, fromChip) {
 function buildAskPanel() {
   const node = document.getElementById("ask-panel");
   const toggle = document.getElementById("ask-open");
-  const context = el("p", { class: "ask-context", id: "ask-context" });
-  const checkbox = el("input", { type: "checkbox", id: "ask-use-context", checked: askPanel.useContext });
+  const context = el("div", { class: "ask-context", id: "ask-context" });
   const thread = el("div", { class: "ask-thread", id: "ask-thread", "aria-live": "polite" });
-  const suggestions = el("div", { class: "ask-suggest", id: "ask-suggest" });
-  const input = el("textarea", { id: "ask-input", maxlength: "1000", rows: "2", placeholder: "Ask about the NASA data", "aria-label": "Your question" });
-  const send = el("button", { type: "button", id: "ask-send", text: "Send" });
-  askPanel.nodes = { toggle: toggle, context: context, thread: thread, suggestions: suggestions, input: input, send: send };
-  checkbox.addEventListener("change", function () {
-    askPanel.useContext = checkbox.checked;
-    saveAskState();
-    refreshAskPanel();
-  });
+  const more = el("div", { class: "ask-more", id: "ask-more" });
+  const input = el("textarea", { id: "ask-input", maxlength: "1000", rows: "1", placeholder: "Ask about the NASA data", "aria-label": "Your question" });
+  const send = el("button", { type: "button", id: "ask-send", "aria-label": "Send", text: "->" });
+  askPanel.nodes = { toggle: toggle, context: context, thread: thread, more: more, input: input, send: send };
   send.addEventListener("click", function () { sendAsk(input.value); });
+  input.addEventListener("input", resizeAskInput);
   input.addEventListener("keydown", function (e) {
     if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
       e.preventDefault();
@@ -2663,7 +2808,7 @@ function buildAskPanel() {
   toggle.hidden = false;
   node.addEventListener("click", function (e) {
     const link = e.target && e.target.closest ? e.target.closest("a") : null;
-    if (link && thread.contains(link) && window.innerWidth < ASK_NARROW_PX) {
+    if (link && window.innerWidth < ASK_NARROW_PX) {
       closeAskPanel(false);
     }
   });
@@ -2676,16 +2821,15 @@ function buildAskPanel() {
     el("div", { class: "ask-head" },
       el("h2", { text: "Ask the data" }),
       el("span", { class: "ask-head-buttons" },
-        el("button", { type: "button", class: "secondary small-button", text: "New conversation", onclick: newAskConversation }),
-        el("button", { type: "button", class: "secondary small-button", text: "Close", onclick: function () { closeAskPanel(true); } }))),
+        el("button", { type: "button", class: "ask-text-btn", text: "New", "aria-label": "New conversation", onclick: newAskConversation }),
+        el("button", { type: "button", class: "ask-text-btn", text: "Close", "aria-label": "Close Ask panel", onclick: function () { closeAskPanel(true); } }))),
     context,
-    el("label", { class: "ask-check small" }, checkbox, " Use this page as context"),
     thread,
-    suggestions,
     el("div", { class: "ask-input-row" }, input, send),
-    el("p", { class: "ask-disclosure small muted", text: ASK_DISCLOSURE })
+    el("p", { class: "ask-disclosure small muted" }, ASK_DISCLOSURE + " ", el("a", { href: "#/verification", text: "How we checked" }))
   ]);
   askPanel.built = true;
+  renderAskContext();
   renderAskThread();
   document.body.classList.toggle("ask-open", askPanel.open);
   toggle.setAttribute("aria-expanded", askPanel.open ? "true" : "false");

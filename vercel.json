@@ -6,7 +6,7 @@
   "functions": {
     "api/ask.py": {
       "maxDuration": 60,
-      "includeFiles": "{api/context/**,public/data/environments.json,public/data/ask_cache.json}"
+      "includeFiles": "{api/context/**,api/_data_tools.py,public/data/environments.json,public/data/ask_cache.json,public/data/rank_reference.json,public/data/conditions.json,public/data/test_next.json,public/data/model_readiness.json,public/data/investigations.json}"
     }
   }
 }

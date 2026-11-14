@@ -69,6 +69,12 @@ const MOCK_ANSWER = {
     { n: 1, psi_id: "PSI-25", title: "PSI-25 BASS-II", cited_text: "Rows in the BASS-II table record ambient O2 up to 0.222." },
     { n: 2, psi_id: "PSI-26", title: "PSI-26 BASS", cited_text: "BASS tested cotton-fiberglass fabric at ambient O2 between 0.17 and 0.21." }
   ],
+  steps: [
+    { tool: "rank", label: "Read the ranking table", detail: "24 investigations, lunar weights" },
+    { tool: "psi", label: "Matched ambient O2 rows", detail: "BASS-II 0.222, BASS 0.209" }
+  ],
+  actions: [{ label: "Open the lunar ranking", href: "#/rank?habitat=lunar" }],
+  followups: ["What did BASS find?", "Which rows exceed 0.21?"],
   model: "mock"
 };
 
@@ -167,28 +173,32 @@ async function main() {
   assert.strictEqual(await js("getComputedStyle(document.getElementById('ask-panel')).position"), "fixed");
   assert.ok(geo.panel.right >= 1365, "drawer is not on the right edge");
   assert.strictEqual(await js("document.getElementById('ask-open').getAttribute('aria-expanded')"), "true");
-  assert.strictEqual(await js("document.getElementById('ask-use-context').checked"), true);
+  assert.strictEqual(await js("document.querySelectorAll('#ask-use-context').length"), 0);
+  assert.strictEqual(await js("document.querySelectorAll('.ask-context-x').length"), 1);
+  assert.strictEqual(await js("document.querySelectorAll('.ask-intro').length"), 1);
   assert.strictEqual(await js("document.querySelector('#ask-panel h2').textContent"), "Ask the data");
-  assert.ok((await js("document.querySelector('.ask-disclosure').textContent")).indexOf("Says 'Not in the data' when it is not.") > 0);
+  assert.ok((await js("document.querySelector('.ask-disclosure').textContent")).indexOf("AI answers (Claude) from NASA PSI and NTRS data only.") === 0);
+  assert.strictEqual(await js("document.querySelector('.ask-disclosure a').getAttribute('href')"), "#/verification");
+  assert.strictEqual(await js("document.getElementById('ask-input').rows"), 1);
   await shot("home_panel_1366");
 
   const routes = [
-    ["#/home", "Looking at: Home"],
-    ["#/rank", "Looking at: Rank: Lunar surface habitat"],
-    ["#/investigations", "Looking at: Investigations"],
-    ["#/investigation/PSI-25", "Looking at: BASS-II (PSI-25)"],
-    ["#/data", "Looking at: Data & Models"],
-    ["#/verification", "Looking at: Data & Models"],
-    ["#/compare?ids=PSI-25,PSI-69", "Looking at: Investigations"],
-    ["#/earth", "Looking at: Investigations"]
+    ["#/home", "Using this page: Home"],
+    ["#/rank", "Using this page: Rank: Lunar surface habitat"],
+    ["#/investigations", "Using this page: Investigations"],
+    ["#/investigation/PSI-25", "Using this page: BASS-II (PSI-25)"],
+    ["#/data", "Using this page: Data & Models"],
+    ["#/verification", "Using this page: Data & Models"],
+    ["#/compare?ids=PSI-25,PSI-69", "Using this page: Investigations"],
+    ["#/earth", "Using this page: Investigations"]
   ];
   const suggestionSets = {};
   for (const [hash, expected] of routes) {
     await go(hash);
     assert.ok(await js("document.body.classList.contains('ask-open')"), "panel closed on " + hash);
     assert.strictEqual(await js("getComputedStyle(document.getElementById('ask-panel')).display"), "flex", hash);
-    assert.strictEqual(await js("document.getElementById('ask-context').textContent"), expected, hash);
-    const sug = JSON.parse(await js("JSON.stringify(Array.from(document.querySelectorAll('#ask-suggest button')).map(b => b.textContent))"));
+    assert.strictEqual(await js("document.querySelector('.ask-context-label').textContent"), expected, hash);
+    const sug = JSON.parse(await js("JSON.stringify(Array.from(document.querySelectorAll('#ask-suggest .ask-row-text')).map(b => b.textContent))"));
     assert.strictEqual(sug.length, 3, hash);
     suggestionSets[hash] = sug.join("|");
   }
@@ -201,12 +211,12 @@ async function main() {
   await go("#/rank");
   await js("document.querySelector('.seg-btn[data-env=\"mars\"]').click()");
   await sleep(300);
-  assert.strictEqual(await js("document.getElementById('ask-context').textContent"), "Looking at: Rank: Mars surface habitat");
+  assert.strictEqual(await js("document.querySelector('.ask-context-label').textContent"), "Using this page: Rank: Mars surface habitat");
   await js("document.querySelector('.seg-btn[data-env=\"lunar\"]').click()");
   await sleep(300);
 
   await go("#/investigation/PSI-25");
-  await js("document.querySelector('#ask-suggest button').click()");
+  await js("document.querySelector('#ask-suggest .ask-suggest-row').click()");
   await waitFor("document.querySelectorAll('.ask-turn .ask-a').length === 1", "first answer");
   let asks = mock.asks;
   assert.deepStrictEqual(asks[0].context, { page: "investigation", psi_id: "PSI-25" });
@@ -214,6 +224,17 @@ async function main() {
   assert.strictEqual(await js("document.querySelectorAll('.ask-a .cite-link').length"), 3);
   assert.strictEqual(await js("document.querySelectorAll('.ask-cites li').length"), 2);
   assert.strictEqual(await js("document.querySelectorAll('.ask-a table').length"), 1);
+  assert.strictEqual(await js("document.querySelectorAll('.ask-intro').length"), 0, "intro must hide once there are turns");
+  assert.strictEqual(await js("document.querySelectorAll('.ask-more-title').length"), 1);
+  assert.deepStrictEqual(JSON.parse(await js("JSON.stringify(Array.from(document.querySelectorAll('#ask-suggest .ask-row-text')).map(b => b.textContent))")), ["What did BASS find?", "Which rows exceed 0.21?"]);
+  assert.strictEqual(await js("document.querySelectorAll('.ask-steps li').length"), 2);
+  assert.strictEqual(await js("document.querySelector('.ask-steps summary').textContent"), "How I checked (2)");
+  assert.strictEqual(await js("document.querySelector('.ask-sources summary').textContent"), "Sources (2)");
+  assert.strictEqual(await js("document.querySelector('.ask-sources').open"), false);
+  assert.strictEqual(await js("document.querySelector('.ask-action').getAttribute('href')"), "#/rank?habitat=lunar");
+  await js("document.querySelector('.ask-a .cite-link').click()");
+  assert.strictEqual(await js("document.querySelector('.ask-sources').open"), true, "marker click must open sources");
+  await js("document.querySelector('.ask-sources').open = false");
   await shot("investigation_panel_1366");
 
   await go("#/rank");
@@ -227,7 +248,8 @@ async function main() {
   assert.strictEqual(asks[1].history[0].question, asks[0].question);
   await shot("rank_panel_1366");
 
-  await js("document.getElementById('ask-use-context').click()");
+  await js("document.querySelector('.ask-context-x').click()");
+  assert.strictEqual(await js("document.querySelectorAll('.ask-context-on').length"), 1);
   await js("document.getElementById('ask-input').value = 'line one'");
   await js("document.getElementById('ask-input').dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', shiftKey: true, bubbles: true, cancelable: true }))");
   await sleep(300);
@@ -237,7 +259,8 @@ async function main() {
   asks = mock.asks;
   assert.strictEqual(asks[2].context, undefined);
   assert.strictEqual(asks[2].history.length, 2);
-  await js("document.getElementById('ask-use-context').click()");
+  await js("document.querySelector('.ask-context-on').click()");
+  assert.strictEqual(await js("document.querySelectorAll('.ask-context-x').length"), 1);
 
   mock.mode = "limit";
   await js("document.getElementById('ask-input').value = 'too many'");
@@ -252,7 +275,7 @@ async function main() {
   assert.strictEqual(asks[asks.length - 1].history.length, 3);
 
   await go("#/home");
-  await js("document.querySelector('.ask-cites a').click()");
+  await js("document.querySelector('.ask-sources').open = true; document.querySelector('.ask-cites a').click()");
   await sleep(500);
   assert.ok((await js("location.hash")).indexOf("#/investigation/PSI-") === 0, "citation did not navigate");
   assert.ok(await js("document.body.classList.contains('ask-open')"), "panel closed after citation click");
@@ -280,29 +303,29 @@ async function main() {
   await sleep(700);
   assert.strictEqual(await js("location.hash"), "#/home");
   assert.ok(await js("document.body.classList.contains('ask-open')"), "#/ask did not open panel");
-  assert.strictEqual(await js("document.getElementById('ask-context').textContent"), "Looking at: Home");
+  assert.strictEqual(await js("document.querySelector('.ask-context-label').textContent"), "Using this page: Home");
 
-  await js("Array.from(document.querySelectorAll('.ask-head button')).find(b => b.textContent === 'Close').click()");
+  await js("Array.from(document.querySelectorAll('.ask-head button')).find(b => b.getAttribute('aria-label') === 'Close Ask panel').click()");
   await sleep(200);
   assert.strictEqual(await js("document.body.classList.contains('ask-open')"), false, "close button");
   await js("document.getElementById('ask-open').click()");
-  await js("Array.from(document.querySelectorAll('#ask-panel button')).find(b => b.textContent === 'New conversation').click()");
+  await js("Array.from(document.querySelectorAll('#ask-panel button')).find(b => b.getAttribute('aria-label') === 'New conversation').click()");
   await sleep(200);
   assert.strictEqual(await js("document.querySelectorAll('.ask-turn').length"), 0, "new conversation did not clear");
 
   const asksBefore = mock.asks.length;
   await go("#/home");
-  await js("document.querySelector('#ask-suggest button').click()");
+  await js("document.querySelector('#ask-suggest .ask-suggest-row').click()");
   await waitFor("document.querySelectorAll('.ask-turn .ask-a').length === 1", "cached answer");
   assert.strictEqual(mock.asks.length, asksBefore, "cached chip must not call the API");
   assert.ok((await js("document.querySelector('.ask-a').textContent")).indexOf("Cached: PSI solid tests") === 0, "cached text");
-  await js("Array.from(document.querySelectorAll('#ask-panel button')).find(b => b.textContent === 'New conversation').click()");
+  await js("Array.from(document.querySelectorAll('#ask-panel button')).find(b => b.getAttribute('aria-label') === 'New conversation').click()");
   await sleep(200);
 
   await go("#/investigation/PSI-25");
-  await js("document.querySelector('#ask-suggest button').click()");
+  await js("document.querySelector('#ask-suggest .ask-suggest-row').click()");
   await waitFor("document.querySelectorAll('.ask-turn .ask-a').length === 1", "answer for mobile shot");
-  await js("Array.from(document.querySelectorAll('.ask-head button')).find(b => b.textContent === 'Close').click()");
+  await js("Array.from(document.querySelectorAll('.ask-head button')).find(b => b.getAttribute('aria-label') === 'Close Ask panel').click()");
   await sleep(200);
 
   await viewport(390, 844, true);
@@ -313,12 +336,12 @@ async function main() {
   assert.ok(mob.width >= 389 && mob.height >= 843, "mobile panel is not full screen: " + JSON.stringify(mob));
   assert.strictEqual(await js("getComputedStyle(document.getElementById('ask-panel')).position"), "fixed");
   await shot("investigation_panel_390");
-  await js("document.querySelector('.ask-cites a').click()");
+  await js("document.querySelector('.ask-sources').open = true; document.querySelector('.ask-cites a').click()");
   await sleep(400);
   assert.strictEqual(await js("document.body.classList.contains('ask-open')"), false, "mobile panel should close after citation navigation");
   await js("document.getElementById('ask-open').click()");
   await sleep(200);
-  await js("Array.from(document.querySelectorAll('.ask-head button')).find(b => b.textContent === 'Close').click()");
+  await js("Array.from(document.querySelectorAll('.ask-head button')).find(b => b.getAttribute('aria-label') === 'Close Ask panel').click()");
   await sleep(200);
   assert.strictEqual(await js("document.body.classList.contains('ask-open')"), false);
 

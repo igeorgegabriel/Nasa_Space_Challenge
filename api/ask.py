@@ -1,3 +1,4 @@
+import importlib.util
 import json
 import os
 import re
@@ -42,8 +43,33 @@ BREVITY = (
     "Do not add preamble or a closing summary."
 )
 
+TOOLS_NOTE = (
+    " You also have data tools that read the same JSON the website shows. "
+    "Use them for any count, ranking, window, test-next or readiness number instead of estimating; use the documents for findings and quotes. "
+    "The tool results are the website's own data. "
+    "Never mention tools, tool names or classification in the answer; write as a person reporting what the data shows, for example \"0 of 137 solid-fuel tests fall inside the window\". "
+    "End every answer with one final line exactly \"FOLLOWUPS: <question 1> | <question 2>\" giving two short follow-up questions (each under 70 characters) that this data can answer."
+)
+
 SYSTEM_LEGACY = SYSTEM
-SYSTEM = SYSTEM_LEGACY + BREVITY
+SYSTEM = SYSTEM_LEGACY + BREVITY + TOOLS_NOTE
+
+MAX_TOOL_ROUNDS = 4
+TOOL_TIME_BUDGET_SECONDS = 40
+MAX_FOLLOWUP_CHARS = 120
+
+def load_data_tools():
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_data_tools.py")
+    spec = importlib.util.spec_from_file_location("ask_data_tools", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+DATA_TOOLS = load_data_tools()
+
+FOLLOWUPS_RE = re.compile(r"(?im)^[ \t>*_#-]*FOLLOWUPS[ \t]*[*_]*[ \t]*:?[ \t]*[*_]*(.*)$")
+CITE_TAIL_RE = re.compile(r"(\s*\[\d+\])+\s*$")
 
 CACHE_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "public", "data", "ask_cache.json")
 
@@ -76,7 +102,28 @@ def cached_answer(question, history=None, cache=None):
         "citations": entry.get("citations", []),
         "model": entry.get("model", MODEL),
         "cached": True,
+        "steps": [],
+        "actions": [],
+        "followups": [],
     }
+
+
+def split_followups(answer):
+    match = FOLLOWUPS_RE.search(answer)
+    if not match:
+        return answer, []
+    raw = match.group(1)
+    markers = CITE_TAIL_RE.search(raw)
+    tail = CITE_TAIL_RE.sub("", raw).strip().strip("*_").strip()
+    followups = []
+    for part in tail.split("|"):
+        part = part.strip().strip("*_\"'").strip()
+        if part and len(part) <= MAX_FOLLOWUP_CHARS:
+            followups.append(part)
+    cleaned = (answer[:match.start()] + answer[match.end():]).strip()
+    if markers and cleaned:
+        cleaned = cleaned + " " + markers.group(0).strip()
+    return cleaned, followups[:2]
 
 
 def request_options(model, effort):
@@ -311,40 +358,97 @@ def make_client():
     return anthropic.Anthropic()
 
 
-def answer_question(question, client=None, corpus=None, context_sentence=None, history=None, model=None, effort=None, system=None, use_cache=True):
+def call_model(client, model, effort, system, messages, tools, force_final):
+    kwargs = dict(
+        max_tokens=MAX_TOKENS,
+        system=system,
+        **request_options(model, effort),
+        messages=messages,
+    )
+    if tools:
+        kwargs["tools"] = tools
+        if force_final:
+            kwargs["tool_choice"] = {"type": "none"}
+    try:
+        return client.beta.messages.create(**kwargs), None
+    except anthropic.RateLimitError:
+        return None, (429, {"error": "The Ask service is busy. Wait a minute and try again."})
+    except anthropic.APIConnectionError:
+        return None, (503, {"error": "Could not reach the model service. Try again shortly."})
+    except anthropic.APIStatusError as exc:
+        return None, (502, {"error": "The model service returned an error (status %s)." % field(exc, "status_code", "unknown")})
+
+
+def execute_tool_blocks(response, messages, log):
+    results = []
+    for block in field(response, "content", []) or []:
+        if field(block, "type") != "tool_use":
+            continue
+        name = field(block, "name")
+        tool_input = field(block, "input", {}) or {}
+        result = DATA_TOOLS.run_tool(name, tool_input)
+        log.append((name, tool_input, result))
+        entry = {
+            "type": "tool_result",
+            "tool_use_id": field(block, "id"),
+            "content": json.dumps(result, separators=(",", ":")),
+        }
+        if isinstance(result, dict) and "error" in result:
+            entry["is_error"] = True
+        results.append(entry)
+    messages.append({"role": "assistant", "content": field(response, "content", [])})
+    messages.append({"role": "user", "content": results})
+
+
+def answer_question(question, client=None, corpus=None, context_sentence=None, history=None, model=None, effort=None, system=None, use_cache=True, context_psi_id=None, use_tools=True):
     if use_cache:
         hit = cached_answer(question, history)
         if hit:
             return 200, hit
+    started = time.time()
     model = model or MODEL
     effort = effort or EFFORT
     try:
         client = client or make_client()
     except anthropic.AnthropicError:
         return 500, {"error": "The Ask service is not configured on this deployment."}
-    try:
-        response = client.beta.messages.create(
-            max_tokens=MAX_TOKENS,
-            system=system or SYSTEM,
-            **request_options(model, effort),
-            messages=build_messages(question, history, context_sentence, corpus),
-        )
-    except anthropic.RateLimitError:
-        return 429, {"error": "The Ask service is busy. Wait a minute and try again."}
-    except anthropic.APIConnectionError:
-        return 503, {"error": "Could not reach the model service. Try again shortly."}
-    except anthropic.APIStatusError as exc:
-        return 502, {"error": "The model service returned an error (status %s)." % field(exc, "status_code", "unknown")}
+    messages = build_messages(question, history, context_sentence, corpus)
+    tools = DATA_TOOLS.tool_definitions() if use_tools else None
+    log = []
+    rounds = 0
+    while True:
+        force_final = rounds >= MAX_TOOL_ROUNDS or time.time() - started > TOOL_TIME_BUDGET_SECONDS
+        response, failure = call_model(client, model, effort, system or SYSTEM, messages, tools, force_final)
+        if failure:
+            return failure
+        if field(response, "stop_reason") == "tool_use" and tools and not force_final:
+            execute_tool_blocks(response, messages, log)
+            rounds += 1
+            continue
+        break
     if field(response, "stop_reason") == "refusal":
         return 200, {
             "answer": "The model declined to answer this question. Try rephrasing it as a question about the loaded PSI investigations.",
             "citations": [],
             "model": field(response, "model", model),
+            "steps": [],
+            "actions": [],
+            "followups": [],
         }
     answer, citations = parse_response(response, corpus)
+    answer, followups = split_followups(answer)
     if not answer:
         answer = NOT_IN_DATA
-    return 200, {"answer": answer, "citations": citations, "model": field(response, "model", model)}
+    cited = {c["psi_id"] for c in citations if c.get("psi_id")}
+    steps, actions = DATA_TOOLS.build_steps_and_actions(log, context_psi_id, cited)
+    return 200, {
+        "answer": answer,
+        "citations": citations,
+        "model": field(response, "model", model),
+        "steps": steps,
+        "actions": actions,
+        "followups": followups,
+    }
 
 
 class handler(BaseHTTPRequestHandler):
@@ -389,7 +493,9 @@ class handler(BaseHTTPRequestHandler):
         if not allowed:
             self.send_json(429, {"error": RATE_LIMIT_MESSAGE}, {"Retry-After": str(retry_after)})
             return
-        status, body = answer_question(question, context_sentence=context_sentence, history=history)
+        context = payload.get("context")
+        context_psi_id = context.get("psi_id") if isinstance(context, dict) else None
+        status, body = answer_question(question, context_sentence=context_sentence, history=history, context_psi_id=context_psi_id)
         self.send_json(status, body)
 
     def do_GET(self):
