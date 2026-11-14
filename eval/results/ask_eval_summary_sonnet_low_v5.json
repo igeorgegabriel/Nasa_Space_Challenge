@@ -1,0 +1,20 @@
+{
+  "run_at": "2026-11-14T13:53:39",
+  "model": [
+    "claude-sonnet-5-5"
+  ],
+  "total": 12,
+  "passed": 11,
+  "answerable_passed": 8,
+  "traps_refused": 3,
+  "failures": [
+    {
+      "id": "T4",
+      "failed_checks": [
+        "forbidden_absent_\\d+(\\.\\d+)?\\s*(cm/s|mm/s|m/s|%|percent)"
+      ],
+      "status": 200
+    }
+  ],
+  "checker_fixes": []
+}

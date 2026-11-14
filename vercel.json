@@ -6,7 +6,7 @@
   "functions": {
     "api/ask.py": {
       "maxDuration": 60,
-      "includeFiles": "{api/context/**,public/data/environments.json}"
+      "includeFiles": "{api/context/**,public/data/environments.json,public/data/ask_cache.json}"
     }
   }
 }
