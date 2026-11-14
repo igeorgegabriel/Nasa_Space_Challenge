@@ -1734,7 +1734,7 @@ function planDraw() {
   const sourced = planSourcedCount(fc);
   const recorded = planRows(fc).length - sourced;
   const laneCount = planLaneRows(fc).length;
-  planUi.note.textContent = planClassTotal(fc) + " " + (NEXT_LABELS[fc] || fc).toLowerCase() + " PSI rows have an O2 value." +
+  planUi.note.textContent = planClassTotal(fc) + " " + (NEXT_LABELS[fc] || fc).toLowerCase() + " PSI rows have a single O2 value." +
     (recorded ? " " + recorded + " record a pressure in PSI." : "") +
     (sourced ? " " + sourced + " are plotted at the pressure NASA reports state." : "") +
     (laneCount ? " " + laneCount + " sit in the bottom lane." : "");
@@ -2403,7 +2403,7 @@ function airVerdict() {
     const r = ev.nearest.pt.r;
     const inv = invById(r.psi_id);
     near = el("p", { class: "air-near" },
-      "Closest with a recorded pressure: ", inv ? invLabel(inv) : r.psi_id, " at " + fmt(ev.nearest.o2, 1) + "% O2, " + fmt(ev.nearest.p, 1) + " psia. ",
+      "Closest with a known pressure: ", inv ? invLabel(inv) : r.psi_id, " at " + fmt(ev.nearest.o2, 1) + "% O2, " + fmt(ev.nearest.p, 1) + " psia" + (sourcedPressure(r) ? " (from a NASA report)" : "") + ". ",
       el("a", { href: "#/data?" + qs({ inv: r.psi_id, at: "extractor" }), text: r.source_file + ", row " + r.source_row }));
   }
   return el("div", { class: "air-verdict" },
@@ -2891,8 +2891,8 @@ function heroStats() {
     [data.investigations.length.toLocaleString("en-US"), "investigations"],
     [rows.toLocaleString("en-US"), "test rows"]
   ];
-  if (v.present && v.quotes) {
-    items.push([v.quotes.verified.toLocaleString("en-US"), "quotes verified"]);
+  if (v.present && (v.quotes_total || v.quotes)) {
+    items.push([(v.quotes_total || v.quotes.verified).toLocaleString("en-US"), "quotes verified"]);
   }
   if (v.present && v.audit) {
     items.push([v.audit.passed.toLocaleString("en-US") + " of " + v.audit.checked.toLocaleString("en-US"), "audit checks passed"]);
@@ -3042,7 +3042,9 @@ function testNextRows(block, plain) {
       const n = entry.nearest;
       const dir = n.o2_frac < win.o2.min ? "below" : n.o2_frac > win.o2.max ? "above" : "inside";
       const o2 = "O2 " + percent(n.o2_frac) + "%" + (n.o2_gap > 0 ? " (" + fmt(n.o2_gap * 100, 1) + " points " + dir + ")" : " (inside)");
-      const pr = n.pressure_atm === null ? "pressure not recorded" : fmt(psia(n.pressure_atm), 1) + " psia";
+      const reported = n.pressure_atm === null ? state.data.outside_psi.solid_pressures[n.psi_id] : null;
+      const pr = n.pressure_atm !== null ? fmt(psia(n.pressure_atm), 1) + " psia" :
+        reported ? "pressure not in PSI, " + fmt(psia(reported.pressure_atm), 1) + " psia in the NASA report" : "pressure not recorded";
       const inv = invById(n.psi_id);
       nearest = el("span", null, o2 + ", " + pr + ". ", inv && !plain ? invLink(inv, n.psi_id) : n.psi_id, ", row " + n.source_row);
     }
@@ -3867,7 +3869,7 @@ function gravityDetails(lg) {
     el("h3", { text: "Next data" }),
     el("p", { class: "small", text: "NASA plans to burn samples in real lunar gravity on the Moon." }),
     gravityQuote(q.fm2_plan),
-    el("p", { class: "small muted", text: "Quotes are copied word for word, including the paper's own typos, and machine-checked against saved copies of the source pages. " + lg.verification.checked + " of " + lg.verification.checked + " verified." })));
+    el("p", { class: "small muted", text: "Quotes are copied word for word, including the paper's own typos, and machine-checked against saved copies of the source pages. " + lg.verification.checked + " of " + lg.verification.checked + " verified." + partialVerifiedText() })));
 }
 
 function renderGravity() {
@@ -4492,6 +4494,17 @@ function renderVerification() {
   if (v.outside_psi) {
     list.push(checkDrawer("outside-psi-quotes", "Outside-PSI quotes: " + (v.outside_psi.checked - v.outside_psi.failed) + " of " + v.outside_psi.checked + " verified", outsideVerificationBlock(v.outside_psi)));
   }
+  if (v.lunar_g) {
+    list.push(checkDrawer("lunar-g-quotes", "Lunar gravity quotes: " + (v.lunar_g.checked - v.lunar_g.failed) + " of " + v.lunar_g.checked + " verified",
+      simpleVerificationBlock(v.lunar_g, "pipeline/verify_lunar_g.py", "data/lunar_g", "Every quote behind the lunar gravity check was matched to its saved source text")));
+  }
+  if (v.earth) {
+    list.push(checkDrawer("earth-quotes", "Earth-use quotes: " + (v.earth.checked - v.earth.failed) + " of " + v.earth.checked + " verified",
+      simpleVerificationBlock(v.earth, "pipeline/verify_earth.py", "data/earth", "Every quote behind the Earth uses was matched to its saved source text")));
+  }
+  if (v.partial_g) {
+    list.push(checkDrawer("partial-g-sources", "Partial-gravity sources: " + (v.partial_g.quotes - v.partial_g.failed) + " quotes and " + v.partial_g.fields + " numbers verified", partialVerificationBlock(v.partial_g)));
+  }
   if (v.ask_eval) {
     const evalV2 = v.ask_eval.v2;
     const askTitle = evalV2 ?
@@ -4502,8 +4515,32 @@ function renderVerification() {
   return setView(
     pageHead("How we checked it", "Every row and every quote is matched to its NASA source."),
     el("p", { class: "small" }, el("a", { href: "#/data", text: "Back to Data" })),
+    v.quotes_total ? el("p", { text: v.quotes_total.toLocaleString("en-US") + " quotes checked word for word against saved NASA source text." }) : null,
+    state.data.data_health.items.length ? el("p", { class: "small" }, "Data health: " + state.data.data_health.summary.flagged_rows + " PSI rows flagged for curator review. ", el("a", { href: "#/data?at=health", text: "See the rows" })) : null,
     el("div", { class: "drawer-list" }, list)
   );
+}
+
+function partialVerifiedText() {
+  const pv = state.data.verification.partial_g;
+  if (!pv) {
+    return "";
+  }
+  return " The measured chart rests on " + pv.quotes + " more quotes and " + pv.fields + " numbers from " + pv.sources + " NASA sources, all verified.";
+}
+
+function simpleVerificationBlock(o, script, dir, what) {
+  return el("div", null,
+    el("p", { text: what + (o.failed ? ", except " + o.failed + " that failed." : ".") }),
+    el("p", { class: "small", text: script + " writes its result to " + dir + "/verification.json." }),
+    el("p", null, el("a", { href: REPO_URL + "/tree/main/" + dir, target: "_blank", rel: "noopener", text: dir + " on GitHub" })));
+}
+
+function partialVerificationBlock(p) {
+  return el("div", null,
+    el("p", { text: p.points + " points from " + p.sources + " NASA sources; " + p.quotes + " quotes and " + p.fields + " numbers were matched to saved source text" + (p.failed ? ", except " + p.failed + " that failed." : ".") }),
+    el("p", { class: "small", text: "pipeline/verify_partial_g.py reads data/partial_g/partial_g.json and writes data/partial_g/verification.json." }),
+    el("p", null, el("a", { href: REPO_URL + "/tree/main/data/partial_g", target: "_blank", rel: "noopener", text: "data/partial_g on GitHub" })));
 }
 
 function outsideVerificationBlock(o) {
@@ -5847,7 +5884,7 @@ function modelPanel() {
     const pub = b.published;
     const cite = pub.url ? el("a", { href: pub.url, text: pub.source }) : pub.source;
     return [f, fmt(b.lowest_o2_with_flame_any_diluent * 100, 0) + "%", b.lowest_o2_completion === null ? "none" : fmt(b.lowest_o2_completion * 100, 0) + "%",
-      el("span", null, pub.value_text + ", ", cite, pub.verified_in_repo ? "" : "*")];
+      el("span", null, pub.value_text, pub.source ? ", " : "", cite)];
   });
   const dil = bundle.diluents;
   const dilRows = dil.table.map(function (t) {
@@ -5879,7 +5916,6 @@ function modelPanel() {
     el("h3", { text: "Limiting oxygen, reproduced from the rows" }),
     el("p", { text: lim.what_the_rows_show }),
     plainTable(["Fuel", "Lowest O2 with a flame in the rows", "Lowest O2 where the fuel burned out", "Published limit"], limRows),
-    el("p", { class: "small muted", text: "* Quoted from our research notes, not checked against the source text in this project." }),
     el("h3", { text: "Diluent comparison from the rows" }),
     plainTable(["Fuel", "Diluent", "Tests", "O2 range", "Went out on its own", "At 15 to 25% O2"], dilRows),
     el("p", { class: "small muted", text: dil.note })), false, "model-details");

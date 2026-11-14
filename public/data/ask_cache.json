@@ -1,38 +1,50 @@
 {
  "is there any partial gravity data": {
-  "answer": "No. All PSI data is microgravity; no partial-gravity values exist or are implied. [1]\n\n- Results can only be bracketed between 0 g and 1 g, so no lunar or Mars gravity numbers can be given.\n- The dashboard lists the lunar habitat as one-sixth of Earth gravity (about 0.16 g) [2] and Mars as about one-third of Earth gravity [3]. These are habitat environment definitions, not measured data.\n- Partial-gravity flammability or extinction data would require tests run at those gravity levels, which are not in the data.",
+  "question": "Is there any partial-gravity data?",
+  "answer": "Yes, but only from NASA sources outside PSI. All PSI data is microgravity. PSI holds no partial-gravity values. [1]\n\n- **Measured points:** There are 24 measured partial-gravity flammability points from 7 NASA sources. Tests differ in pressure, flow and limit definitions, so the values are never combined or interpolated. [2]\n- **Largest lunar drop:** For Mylar G (5 mil film) at 10.2 psia, ULOI* fell from 21.2 to 15.6 percent O2 between 1 g and lunar gravity, a drop of 5.6 O2 points (Olson and Ferkul 2012). [3]\n- **Martian gravity:** Mylar G at 0.38 g, 10.2 psia, had ULOI* of 18.0 percent O2 and MOC* of 17.0 percent O2, measured in the Glenn centrifuge drop rig. [4]\n- **Not covered:** No lunar-g flammability limit is stated for any material, because the lunar-g velocity is not known. [5]",
   "citations": [
    {
-    "cited_text": "All PSI data is microgravity; no partial-gravity values exist or are implied.\n",
     "n": 1,
     "psi_id": "DASHBOARD-RESULTS",
-    "title": "Dashboard results - habitat windows, test-next and solid test pressures"
+    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
+    "cited_text": "Results computed by this dashboard from the PSI conditions table and NASA documents. All PSI data is microgravity; PSI holds no partial-gravity values. Measured lunar and Martian gravity points from NASA reports outside PSI are in the Partial gravity document."
    },
    {
-    "cited_text": "Environment lunar (Lunar surface habitat): O2 34 percent O2 (control box 33.5-35 percent) (source: NASA/TM-2013-217377 (NTRS 20130013505), NASA/TP-2010-216134, NTRS 20220006612 (ICES-2022-45), NTRS 20210021181); pressure 8.2 psia (0.558 atm), control box 8.1-8.3 psia (source: NASA/TM-2013-217377 (NTRS 20130013505), NTRS 20150021491, NTRS 20210021181, NTRS 20220000245); flow about 10 to 20 cm/s HVAC flow (source: NTRS 20210021181); gravity One-sixth of Earth gravity (about 0.16 g) (source: NASA Science, Moon facts, NTRS 20210021181).\n",
     "n": 2,
-    "psi_id": "DASHBOARD-RESULTS",
-    "title": "Dashboard results - habitat windows, test-next and solid test pressures"
+    "psi_id": "PARTIAL-GRAVITY",
+    "title": "Partial gravity - measured lunar, Martian and microgravity flammability points from 7 NASA sources",
+    "cited_text": "Partial-gravity flammability: 24 measured points from 7 NASA sources (Olson and Ferkul 2012, LUCI 2025, Schechter 2025, Ferkul 2026, Zayac 2024, Urban 2025, Sacksteder 2003). Every number below was checked word for word against its source page. Tests differ in pressure, flow and limit definitions, so the values are never combined or interpolated."
    },
    {
-    "cited_text": "Environment mars (Mars surface habitat): O2 34 percent O2 (Exploration Atmosphere) (source: NASA/TP-2010-216134, NASA/TM-2013-217377 (NTRS 20130013505), NTRS 20220006612 (ICES-2022-45)); pressure 8.2 psia (0.558 atm) (source: NTRS 20230009095, NASA/TP-2010-216134); flow not specified; gravity About one-third of Earth gravity (source: NASA, The Human Body in Space).\n",
     "n": 3,
-    "psi_id": "DASHBOARD-RESULTS",
-    "title": "Dashboard results - habitat windows, test-next and solid test pressures"
+    "psi_id": "PARTIAL-GRAVITY",
+    "title": "Partial gravity - measured lunar, Martian and microgravity flammability points from 7 NASA sources",
+    "cited_text": "Largest measured 1 g to lunar ULOI* drop: Mylar G (5 mil film), 21.2 to 15.6 percent O2 = 5.6 O2 points at 10.2 psia (Olson and Ferkul 2012, NTRS 20130010991, page 6). NASA Glenn's 2025 allowance for 6 materials is up to 2.3 O2 points, so that allowance is not a maximum."
+   },
+   {
+    "n": 4,
+    "psi_id": "PARTIAL-GRAVITY",
+    "title": "Partial gravity - measured lunar, Martian and microgravity flammability points from 7 NASA sources",
+    "cited_text": "Olson and Ferkul 2012, Mylar G (5 mil film) (NTRS 20130010991, page 6, https://ntrs.nasa.gov/citations/20130010991): Martian gravity, 0.38 g Earth (Glenn centrifuge drop rig, 5.18 s); ULOI* = 18.0 percent O2; MOC* = 17.0 percent O2; total pressure = 10.2 psia; thickness = 5 mil; gravity g = 0.38 g; o2 margin vs 1g = -3.1 percent O2 (paper's delta O2 %). Quote: \"Martian ULOI* 18.0 22.0 19.9\""
+   },
+   {
+    "n": 5,
+    "psi_id": "LUNAR-GRAVITY",
+    "title": "Lunar gravity check - measured 1-g to lunar-g flammability deltas",
+    "cited_text": "The 35 cm/s 1-g buoyant velocity is a conservatively high estimate and the lunar-g velocity is not known, so no lunar-g flammability limit is stated for any material and nothing is interpolated."
    }
   ],
-  "generated_at": "2026-11-14T13:46:21",
   "model": "claude-sonnet-5-5",
-  "question": "Is there any partial-gravity data?",
   "number_check": {
-   "total": 1,
-   "matched": 1,
+   "total": 10,
+   "matched": 10,
    "unmatched": []
-  }
+  },
+  "generated_at": "2026-11-15T07:16:53"
  },
  "what did bass ii find": {
   "question": "What did BASS-II find?",
-  "answer": "BASS-II found that solid fuels can keep burning at lower oxygen than normal-gravity limits suggest.\n\n- The 1g blowoff for the 1/4\" rod is at 16% oxygen, whereas steady spreading was obtained at 13.6% oxygen in BASS-II. [1] That gives a negative Oxygen Margin of Safety of 2.4% O2, so normal gravity flammability limits should be de-rated by at least that much. [2]\n- Flames ignited at a higher O2 survived to final O2 concentrations as low as 13.6 percent. [3] This is quoted in a separate investigation, PSI-62, which cites the BASS-II summary report.\n- Combustion products from a BASS-II-scale fire would be quickly diluted. Even in the U.S. Lab, CO would only reach 1.5 ppm. [4]\n\nAll BASS-II data are microgravity only.",
+  "answer": "BASS-II found that, in microgravity, a solid fuel kept burning at lower oxygen than the normal-gravity limit.\n\n- The 1g blowoff for the 1/4\" rod is at 16% oxygen, whereas steady spreading was obtained at 13.6% oxygen in BASS-II. [1] The report concludes that the material has a negative Oxygen Margin of Safety of 2.4% O2, so the normal-gravity flammability limits should be de-rated by at least that much. [2]\n- Combustion products from a BASS-II-scale fire would be quickly diluted, so CO in the U.S. Lab would only reach 1.5 ppm. That is below the long-term SMAC of 10 ppm. [3]\n- Not covered: the BASS-II table does not record pressure. The NASA report gives 0.979 to 0.982 atm. [4]",
   "citations": [
    {
     "n": 1,
@@ -48,77 +60,77 @@
    },
    {
     "n": 3,
-    "psi_id": "PSI-62",
-    "title": "PSI-62 PSI-62 - Concurrent Flame Spread Modeling using Flamelet Generated Manifolds in Microgravity with Comparison to BASS Experiments using Two-Color Tomography",
-    "cited_text": "Key result, verbatim from NTRS 20210011385 (Burning and Suppression of Solids-II  (BASS-II) Summary Report): \"Despite this limiting O2 concentration for ignition, flames ignited at a higher O2 survived to final O2 concentrations as low as 13.6 percent O2, indicating that the high heat loss to the initially cold rod will quench a postignition flame while a developed solid phase temperature profile allows a sustained"
-   },
-   {
-    "n": 4,
     "psi_id": "PSI-25",
     "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II",
     "cited_text": "Key result, verbatim from NTRS 20210011385 (Burning and Suppression of Solids-II  (BASS-II) Summary Report): \"the combustion products from a fire of the scale of a BASS-II test would quickly be diluted, so that even within just the U.S.Lab (106-m3 pressurized volume), the CO levels in the lab would only be 1.5 ppm, well below spacecraft maximum allowable concentration (SMAC) values for even long-term exposure (10 ppm), let alone the 1 hour SMAC of 55 ppm (Ref. 12).\""
+   },
+   {
+    "n": 4,
+    "psi_id": "DASHBOARD-RESULTS",
+    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
+    "cited_text": "Solid test pressure, PSI-25 BASS-II (ISS MSG): 0.979 to 0.982 atm (99.2 to 99.5 kPa). Quote from NTRS 20210011385 page 46: \"total pressure is also monitored, which varied from 99.2 to 99.5 kPa in the tests reported\""
    }
   ],
   "model": "claude-sonnet-5-5",
-  "generated_at": "2026-11-14T19:39:59",
   "number_check": {
-   "total": 4,
-   "matched": 4,
+   "total": 7,
+   "matched": 7,
    "unmatched": []
-  }
+  },
+  "generated_at": "2026-11-15T07:16:24"
  },
  "what did flex learn about extinguishing flames": {
   "question": "What did FLEX learn about extinguishing flames?",
-  "answer": "FLEX (PSI-69) mapped how dilution and ambient conditions govern extinction of burning droplets in microgravity. It did not test a water-based or other agent beyond diluent gases.\n\n- Suppression was studied by diluting the chamber atmosphere with carbon dioxide and helium, both of which suppress fire. [1]\n- For methanol in these diluent gases, the limiting oxygen index (LOI) is around 12% to 13% oxygen by volume. [2] At one atmosphere, ignition and some burning were seen at 13% oxygen with the rest nitrogen. [3]\n- Observed LOI values appear slightly lower than initially expected. [4] Recorded outcomes were extinction (186), disruption (61) and completion (27). [5]\n\nNot covered: partial-gravity results. All PSI data is microgravity.",
+  "answer": "FLEX (PSI-69) found that droplet flames in microgravity can burn at low oxygen, and it measured how diluents change the limiting oxygen index (LOI).\n\n- For methanol in these diluent gases, the LOI is around 12% to 13% oxygen by volume. [1] At one atmosphere, ignition and some burning were seen at 13% oxygen with the rest nitrogen. [2]\n- Observed LOI values appear slightly lower than initially expected. [3]\n- Suppression was studied by diluting the chamber atmosphere with carbon dioxide and helium, both of which suppress fire. [4] The documents give no suppressant-specific LOI values. Related FLEX-2 work found large n-alkane droplets can keep burning quasi-steadily after radiative extinction, in a low-temperature regime [5].",
   "citations": [
    {
     "n": 1,
     "psi_id": "PSI-69",
     "title": "PSI-69 FLEX - Flame Extinguishment Experiment",
-    "cited_text": "Supports suppression (challenge statement): Suppression was studied in the Flame Extinguishment Experiment (FLEX) through dilution of the chamber atmosphere with carbon dioxide and helium, both of which suppress fire."
-   },
-   {
-    "n": 2,
-    "psi_id": "PSI-69",
-    "title": "PSI-69 FLEX - Flame Extinguishment Experiment",
     "cited_text": "Key result, verbatim from NTRS 20130014061 (Methanol Droplet Combustion in Oxygen-Inert Environments in Microgravity): \"The experiments also show that the limiting oxygen index for methanol in these diluent gases is around 12% to 13% oxygen by volume.\""
    },
    {
-    "n": 3,
+    "n": 2,
     "psi_id": "PSI-69",
     "title": "PSI-69 FLEX - Flame Extinguishment Experiment",
     "cited_text": "Key result, verbatim from NTRS 20120016855 (Methanol Droplet Extinction in Oxygen/Carbon-dioxide/Nitrogen Mixtures in Microgravity: Results from the International Space Station Experiments): \"At one atmosphere pressure, ignition and some burning were observed for an oxygen concentration of 13% with the rest being nitrogen.\""
    },
    {
-    "n": 4,
+    "n": 3,
     "psi_id": "PSI-69",
     "title": "PSI-69 FLEX - Flame Extinguishment Experiment",
     "cited_text": "Key result, verbatim from NTRS 20150023456 (Detailed Results from the Flame Extinguishment Experiment (FLEX) March 2009 to December 2011): \"Observed LOI values for these fuels appear to be slightly lower than initially expected.\""
    },
    {
-    "n": 5,
+    "n": 4,
     "psi_id": "PSI-69",
     "title": "PSI-69 FLEX - Flame Extinguishment Experiment",
-    "cited_text": "Outcomes recorded: extinction (186), disruption (61), completion (27)."
+    "cited_text": "Supports suppression (challenge statement): Suppression was studied in the Flame Extinguishment Experiment (FLEX) through dilution of the chamber atmosphere with carbon dioxide and helium, both of which suppress fire."
+   },
+   {
+    "n": 5,
+    "psi_id": "PSI-68",
+    "title": "PSI-68 FLEX-2 - Flame Extinguishment Experiment - 2",
+    "cited_text": "Key result, verbatim from NTRS 20140006750 (Cool-flame Extinction During N-Alkane Droplet Combustion in Microgravity): \"large n-alkane droplets can continue to burn quasi-steadily following radiative extinction in a low-temperature regime\""
    }
   ],
   "model": "claude-sonnet-5-5",
-  "generated_at": "2026-11-14T19:40:04",
   "number_check": {
-   "total": 5,
-   "matched": 5,
+   "total": 2,
+   "matched": 2,
    "unmatched": []
-  }
+  },
+  "generated_at": "2026-11-15T07:15:31"
  },
  "what did flex learn about putting out flames": {
   "question": "What did FLEX learn about putting out flames?",
-  "answer": "FLEX mapped how far oxygen must be cut, and how diluents such as CO2 and He help, to extinguish burning droplets in microgravity.\n\n- Suppression was studied by diluting the chamber atmosphere with carbon dioxide and helium, both of which suppress fire. [1]\n- The limiting oxygen index (LOI) for methanol in these diluent gases is around 12% to 13% oxygen by volume. [2] Observed LOI values appear slightly lower than initially expected. [3]\n- Recorded outcomes were extinction (186), disruption (61) and completion (27). [4] Extinction counts came from methanol and heptane droplets. These are not LOI values.\n\nNot covered: the documents give no numeric LOI for heptane, and none for SF6 as a suppressant.",
+  "answer": "FLEX mapped how oxygen level, pressure and diluents decide whether burning droplets go out. It aimed to map liquid-fuel flammability limits in microgravity and measure how well gaseous suppressants such as CO2, He and SF6 work. [1]\n\n- **Limiting oxygen index:** For methanol in these diluent gases, the LOI is around 12% to 13% oxygen by volume. [2] Observed LOI values for these fuels appear to be slightly lower than initially expected. [3]\n- **Outcomes recorded:** 274 rows record extinction (186), disruption (61) and completion (27). [4]\n- **Suppression:** Dilution of the chamber atmosphere with carbon dioxide and helium suppresses fire. [5] The documents give no numeric suppressant effectiveness.",
   "citations": [
    {
     "n": 1,
     "psi_id": "PSI-69",
     "title": "PSI-69 FLEX - Flame Extinguishment Experiment",
-    "cited_text": "Supports suppression (challenge statement): Suppression was studied in the Flame Extinguishment Experiment (FLEX) through dilution of the chamber atmosphere with carbon dioxide and helium, both of which suppress fire."
+    "cited_text": "Objectives: The FLEX (Flame Extinguishment Experiment) investigation aims to map the flammability limits of liquid fuels in microgravity environments, measure the effectiveness of various gaseous fire suppressants such as CO2, He, and SF6, and develop reliable predictive models for combustion limits under reduced gravity conditions."
    },
    {
     "n": 2,
@@ -137,338 +149,370 @@
     "psi_id": "PSI-69",
     "title": "PSI-69 FLEX - Flame Extinguishment Experiment",
     "cited_text": "Outcomes recorded: extinction (186), disruption (61), completion (27)."
+   },
+   {
+    "n": 5,
+    "psi_id": "PSI-69",
+    "title": "PSI-69 FLEX - Flame Extinguishment Experiment",
+    "cited_text": "Supports suppression (challenge statement): Suppression was studied in the Flame Extinguishment Experiment (FLEX) through dilution of the chamber atmosphere with carbon dioxide and helium, both of which suppress fire."
    }
   ],
   "model": "claude-sonnet-5-5",
-  "generated_at": "2026-11-14T19:40:09",
   "number_check": {
-   "total": 5,
+   "total": 6,
    "matched": 5,
-   "unmatched": []
-  }
+   "unmatched": [
+    "274"
+   ]
+  },
+  "generated_at": "2026-11-15T07:16:29"
  },
  "what is the highest oxygen any solid material was tested at in psi": {
-  "answer": "The highest ambient O2 for a PSI solid-fuel test was 22.2% (mole fraction 0.222), from BASS-II.\n\n- BASS-II (PSI-25) tested ambient O2 from 0.136 to 0.222. [1]\n- SAFFIRE-II topped out at 0.221 [2] and SAFFIRE-I at 0.217. [3]\n- The dashboard notes PSI solid-fuel tests stop at 22.2 percent ambient O2. [4] Higher-O2 Saffire IV\u2013VI tests exist, but they are not in the PSI repository. [5]",
-  "citations": [
-   {
-    "cited_text": "Ambient O2 tested (mole fraction): 0.136 to 0.222  (n=129, rows 1-129, PSI-25_Experimental table_BASS-II.csv).\n",
-    "n": 1,
-    "psi_id": "PSI-25",
-    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II"
-   },
-   {
-    "cited_text": "Ambient O2 tested (mole fraction): 0.215 to 0.221  (n=9, rows 1-9, PSI-99_Experimental table_SAFFIRE-2.csv).\n",
-    "n": 2,
-    "psi_id": "PSI-99",
-    "title": "PSI-99 SAFFIRE-II - Spacecraft Fire Experiment-II"
-   },
-   {
-    "cited_text": "Ambient O2 tested (mole fraction): 0.215 to 0.217  (n=2, rows 1-2, PSI-98_Experimental table_SAFFIRE-1.csv).\n",
-    "n": 3,
-    "psi_id": "PSI-98",
-    "title": "PSI-98 SAFFIRE-I - Spacecraft Fire Safety Experiment-I"
-   },
-   {
-    "cited_text": "For comparison, PSI solid-fuel tests stop at 22.2 percent ambient O2.\n",
-    "n": 4,
-    "psi_id": "NTRS-SAFFIRE-IV-VI",
-    "title": "Outside PSI - Saffire IV-VI (NTRS)"
-   },
-   {
-    "cited_text": "These tests are not in the PSI repository and are not part of the unified PSI conditions table.\n",
-    "n": 5,
-    "psi_id": "NTRS-SAFFIRE-IV-VI",
-    "title": "Outside PSI - Saffire IV-VI (NTRS)"
-   }
-  ],
-  "generated_at": "2026-11-14T13:45:49",
-  "model": "claude-sonnet-5-5",
   "question": "What is the highest oxygen any solid material was tested at in PSI?",
-  "number_check": {
-   "total": 5,
-   "matched": 5,
-   "unmatched": []
-  }
- },
- "what is the highest oxygen at which nasa burned a solid including tests outside psi": {
-  "answer": "The highest O2 at which a solid burned was 31.0 percent, in Saffire VI-2 (SIBAL cloth), which is outside PSI.\n\n- Saffire VI-2 burned SIBAL cloth at 31.0 percent O2 and 54.1 kPa with 20 cm/s concurrent flow. [1]\n- Saffire VI-1 used a higher O2, 31.9 percent for Nomex fabric, but it did not ignite [2], so it does not count as a burn.\n- PSI solid-fuel tests stop at 22.2 percent ambient O2. [3]\n- This is ambient O2, not an LOI, MOC, ULOI or extinction O2 value, and it only covers the tests in these documents.",
+  "answer": "The highest ambient O2 for any solid test in PSI is 22.2%. It comes from BASS-II (PSI-25), where ambient O2 ranged from 0.136 to 0.222 mole fraction [1].\n\n- Row 1 of the BASS-II table is a 100 micron PMMA film, 2 cm wide, tested at 22.2%.\n- The PSI table has no pressure for these rows. The NASA report gives 0.979 to 0.982 atm (99.2 to 99.5 kPa) [2].\n- The next highest solid-fuel tests are SAFFIRE-II, at 0.215 to 0.221 [3].",
   "citations": [
    {
-    "cited_text": "Saffire VI-2 (NTRS 20250002675): SIBAL cloth (75 pct cotton, 25 pct fiberglass), 50 cm long, 31.0 percent O2, 54.1 kPa (7.85 psia), 20 cm/s concurrent flow. Outcome: Burned. ",
-    "n": 1,
-    "psi_id": "NTRS-SAFFIRE-IV-VI",
-    "title": "Outside PSI - Saffire IV-VI (NTRS)"
-   },
-   {
-    "cited_text": "Saffire VI-1 (NTRS 20250002675): Nomex fabric, 31.9 percent O2, pressure not stated in the extracted text. Outcome: Did not ignite.\n",
-    "n": 2,
-    "psi_id": "NTRS-SAFFIRE-IV-VI",
-    "title": "Outside PSI - Saffire IV-VI (NTRS)"
-   },
-   {
-    "cited_text": "For comparison, PSI solid-fuel tests stop at 22.2 percent ambient O2.\n",
-    "n": 3,
-    "psi_id": "NTRS-SAFFIRE-IV-VI",
-    "title": "Outside PSI - Saffire IV-VI (NTRS)"
-   }
-  ],
-  "generated_at": "2026-11-14T13:45:53",
-  "model": "claude-sonnet-5-5",
-  "question": "What is the highest oxygen at which NASA burned a solid, including tests outside PSI?",
-  "number_check": {
-   "total": 5,
-   "matched": 5,
-   "unmatched": []
-  }
- },
- "what oxygen and pressure range do the solid fuel tests cover": {
-  "answer": "PSI solid-fuel tests span ambient O2 of about 0.136 to 0.222 mole fraction; pressure is not recorded in the PSI tables but NASA reports give roughly 0.98\u20131.0 atm.\n\n- **BASS-II (PSI-25):** Ambient O2 tested was 0.136 to 0.222. [1] NASA-reported pressure was 0.979 to 0.982 atm. [2]\n- **Saffire-I and -II (PSI-98, PSI-99):** Ambient O2 was 0.215 to 0.217 [3] and 0.215 to 0.221 [4], respectively. NASA reports give 0.987 atm for both. [5]\n- **Not covered:** BASS (PSI-26) and Saffire-III (PSI-100) tables record no O2. BASS pressure was 1 atm per NASA reports, with ambient O2 of 16 to 21 percent. [6]",
-  "citations": [
-   {
-    "cited_text": "Ambient O2 tested (mole fraction): 0.136 to 0.222  (n=129, rows 1-129, PSI-25_Experimental table_BASS-II.csv).\n",
     "n": 1,
     "psi_id": "PSI-25",
-    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II"
+    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II",
+    "cited_text": "Ambient O2 tested (mole fraction): 0.136 to 0.222  (n=129, rows 1-129, PSI-25_Experimental table_BASS-II.csv)."
    },
    {
-    "cited_text": "Ambient pressure was 1 atm\"\nSolid test pressure, PSI-25 BASS-II (ISS MSG): 0.979 to 0.982 atm (99.2 to 99.5 kPa). ",
     "n": 2,
     "psi_id": "DASHBOARD-RESULTS",
-    "title": "Dashboard results - habitat windows, test-next and solid test pressures"
+    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
+    "cited_text": "Solid test pressure, PSI-25 BASS-II (ISS MSG): 0.979 to 0.982 atm (99.2 to 99.5 kPa). Quote from NTRS 20210011385 page 46: \"total pressure is also monitored, which varied from 99.2 to 99.5 kPa in the tests reported\""
    },
    {
-    "cited_text": "Ambient O2 tested (mole fraction): 0.215 to 0.217  (n=2, rows 1-2, PSI-98_Experimental table_SAFFIRE-1.csv).\n",
     "n": 3,
-    "psi_id": "PSI-98",
-    "title": "PSI-98 SAFFIRE-I - Spacecraft Fire Safety Experiment-I"
-   },
-   {
-    "cited_text": "Ambient O2 tested (mole fraction): 0.215 to 0.221  (n=9, rows 1-9, PSI-99_Experimental table_SAFFIRE-2.csv).\n",
-    "n": 4,
     "psi_id": "PSI-99",
-    "title": "PSI-99 SAFFIRE-II - Spacecraft Fire Experiment-II"
-   },
-   {
-    "cited_text": "Quote from NTRS 20210011385 page 46: \"total pressure is also monitored, which varied from 99.2 to 99.5 kPa in the tests reported\"\nSolid test pressure, PSI-98 Saffire-I (Cygnus): 0.987 atm (100.0 kPa). Quote from NTRS 20210011521 page 8: \"21 21 21 21 22 100 100 100 100 100\"\nSolid test pressure, PSI-99 Saffire-II (Cygnus): 0.987 atm (100.0 kPa). ",
-    "n": 5,
-    "psi_id": "DASHBOARD-RESULTS",
-    "title": "Dashboard results - habitat windows, test-next and solid test pressures"
-   },
-   {
-    "cited_text": "The PSI tables do not record pressure for these tests, but NASA reports do:\nSolid test pressure, PSI-26 BASS (ISS MSG): 1.000 atm (101.3 kPa). Quote from NTRS 20210011385 page 102: \"tests were conducted in ambient O2 molar fraction of 16 to 21 percent. ",
-    "n": 6,
-    "psi_id": "DASHBOARD-RESULTS",
-    "title": "Dashboard results - habitat windows, test-next and solid test pressures"
+    "title": "PSI-99 SAFFIRE-II - Spacecraft Fire Experiment-II",
+    "cited_text": "Ambient O2 tested (mole fraction): 0.215 to 0.221  (n=9, rows 1-9, PSI-99_Experimental table_SAFFIRE-2.csv)."
    }
   ],
-  "generated_at": "2026-11-14T13:45:38",
   "model": "claude-sonnet-5-5",
-  "question": "What oxygen and pressure range do the solid-fuel tests cover?",
-  "number_check": {
-   "total": 13,
-   "matched": 13,
-   "unmatched": []
-  }
- },
- "what should nasa test next for a moon base": {
-  "answer": "The dashboard's \"test next\" results for the lunar habitat show no PSI test inside the lunar window (34% O2, 8.2 psia) for any fuel class, so those conditions are the gap. The lunar habitat window is 34 percent O2 at 8.2 psia (0.558 atm), with HVAC flow of about 10 to 20 cm/s. [1]\n\n- **Solid fuels:** There are 0 PSI tests inside the window. The nearest PSI test is PSI-25 at O2 0.222, with an O2 gap of 0.113. The nearest outside-PSI test is Saffire VI-2 SIBAL cloth, at O2 0.310 and 0.534 atm. [2] The gap is largest here.\n- **Liquid droplets:** There are 0 PSI tests inside the window. The nearest is PSI-69 at O2 0.340, 0.703 atm. [3]\n- **Gas fuels:** There are 0 PSI tests inside the window. The nearest is PSI-159 at O2 0.341, 0.500 atm. [4]\n\nNot covered: any lunar-gravity (about 0.16 g) data. All PSI data is microgravity, so results can only be bracketed between 0 g and 1 g.",
-  "citations": [
-   {
-    "cited_text": "Environment lunar (Lunar surface habitat): O2 34 percent O2 (control box 33.5-35 percent) (source: NASA/TM-2013-217377 (NTRS 20130013505), NASA/TP-2010-216134, NTRS 20220006612 (ICES-2022-45), NTRS 20210021181); pressure 8.2 psia (0.558 atm), control box 8.1-8.3 psia (source: NASA/TM-2013-217377 (NTRS 20130013505), NTRS 20150021491, NTRS 20210021181, NTRS 20220000245); flow about 10 to 20 cm/s HVAC flow (source: NTRS 20210021181); gravity One-sixth of Earth gravity (about 0.16 g) (source: NASA Science, Moon facts, NTRS 20210021181).\n",
-    "n": 1,
-    "psi_id": "DASHBOARD-RESULTS",
-    "title": "Dashboard results - habitat windows, test-next and solid test pressures"
-   },
-   {
-    "cited_text": "Test next, lunar, solid fuel: 0 PSI tests inside the window (137 rows classified); nearest PSI test: PSI-25, O2 0.222, pressure not recorded, O2 gap 0.113; nearest outside-PSI NASA test: Saffire VI-2 SIBAL cloth, O2 0.310, 0.534 atm, O2 gap 0.025, NTRS 20250002675.\n",
-    "n": 2,
-    "psi_id": "DASHBOARD-RESULTS",
-    "title": "Dashboard results - habitat windows, test-next and solid test pressures"
-   },
-   {
-    "cited_text": "Test next, lunar, liquid droplet fuel: 0 PSI tests inside the window (361 rows classified); nearest PSI test: PSI-69, O2 0.340, 0.703 atm, O2 gap 0.000; nearest outside-PSI NASA test: none checked.\n",
-    "n": 3,
-    "psi_id": "DASHBOARD-RESULTS",
-    "title": "Dashboard results - habitat windows, test-next and solid test pressures"
-   },
-   {
-    "cited_text": "Test next, lunar, gas fuel: 0 PSI tests inside the window (398 rows classified); nearest PSI test: PSI-159, O2 0.341, 0.500 atm, O2 gap 0.000; nearest outside-PSI NASA test: none checked.\n",
-    "n": 4,
-    "psi_id": "DASHBOARD-RESULTS",
-    "title": "Dashboard results - habitat windows, test-next and solid test pressures"
-   }
-  ],
-  "generated_at": "2026-11-14T13:46:12",
-  "model": "claude-sonnet-5-5",
-  "question": "What should NASA test next for a Moon base?",
-  "number_check": {
-   "total": 15,
-   "matched": 15,
-   "unmatched": []
-  }
- },
- "which experiments matter most for a moon base": {
-  "answer": "The top-ranked experiments for a Moon base are PSI-69, PSI-99, PSI-98, PSI-20 and PSI-25, by the default lunar habitat ranking.\n\n- Rank 1 is PSI-69 (score 0.603), rank 2 PSI-99 (0.587), rank 3 PSI-98 (0.566), rank 4 PSI-20 (0.553), rank 5 PSI-25 (0.547). [1]\n- The lunar habitat window is 34 percent O2 at 8.2 psia, with gravity of about 0.16 g. [2] All PSI data is microgravity, so lunar-gravity behavior can only be bracketed between 0 g and 1 g.\n- Of the solid-fuel PSI tests, none fall inside the lunar window; the nearest, PSI-25, has an O2 gap of 0.113. [3] For liquid droplets, PSI-69 has a nearest-test O2 gap of 0.000 at 0.703 atm. [4]",
-  "citations": [
-   {
-    "cited_text": "Quote from NTRS 20210011521 page 8: \"21 21 21 21 22 100 100 100 100 100\"\nDefault lunar habitat ranking, top 5 of 20: rank 1 PSI-69 (score 0.603); rank 2 PSI-99 (score 0.587); rank 3 PSI-98 (score 0.566); rank 4 PSI-20 (score 0.553); rank 5 PSI-25 (score 0.547).",
-    "n": 1,
-    "psi_id": "DASHBOARD-RESULTS",
-    "title": "Dashboard results - habitat windows, test-next and solid test pressures"
-   },
-   {
-    "cited_text": "Environment lunar (Lunar surface habitat): O2 34 percent O2 (control box 33.5-35 percent) (source: NASA/TM-2013-217377 (NTRS 20130013505), NASA/TP-2010-216134, NTRS 20220006612 (ICES-2022-45), NTRS 20210021181); pressure 8.2 psia (0.558 atm), control box 8.1-8.3 psia (source: NASA/TM-2013-217377 (NTRS 20130013505), NTRS 20150021491, NTRS 20210021181, NTRS 20220000245); flow about 10 to 20 cm/s HVAC flow (source: NTRS 20210021181); gravity One-sixth of Earth gravity (about 0.16 g) (source: NASA Science, Moon facts, NTRS 20210021181).\n",
-    "n": 2,
-    "psi_id": "DASHBOARD-RESULTS",
-    "title": "Dashboard results - habitat windows, test-next and solid test pressures"
-   },
-   {
-    "cited_text": "Test next, lunar, solid fuel: 0 PSI tests inside the window (137 rows classified); nearest PSI test: PSI-25, O2 0.222, pressure not recorded, O2 gap 0.113; nearest outside-PSI NASA test: Saffire VI-2 SIBAL cloth, O2 0.310, 0.534 atm, O2 gap 0.025, NTRS 20250002675.\n",
-    "n": 3,
-    "psi_id": "DASHBOARD-RESULTS",
-    "title": "Dashboard results - habitat windows, test-next and solid test pressures"
-   },
-   {
-    "cited_text": "Test next, lunar, liquid droplet fuel: 0 PSI tests inside the window (361 rows classified); nearest PSI test: PSI-69, O2 0.340, 0.703 atm, O2 gap 0.000; nearest outside-PSI NASA test: none checked.\n",
-    "n": 4,
-    "psi_id": "DASHBOARD-RESULTS",
-    "title": "Dashboard results - habitat windows, test-next and solid test pressures"
-   }
-  ],
-  "generated_at": "2026-11-14T13:46:07",
-  "model": "claude-sonnet-5-5",
-  "question": "Which experiments matter most for a Moon base?",
-  "number_check": {
-   "total": 16,
-   "matched": 16,
-   "unmatched": []
-  }
- },
- "which fire modelling relationships do the psi data support": {
-  "question": "Which fire-modelling relationships do the PSI data support?",
-  "answer": "Only the ISS cabin has fully supported relationships.\n\n- **ISS, supported:** Droplet extinction diameter and burn time against O2, diluent and pressure has 41 rows with a recorded response inside the window. Gas-flame ignition and self-extinction against O2 has 28 rows.\n- **ISS, partly supported:** Solid-material ignition and burn against O2 and flow has 8 of the 10 rows needed. Smoke particle size against flow and aging has rows, but none records particle size.\n- **Gateway, Moon base, rover and Mars base:** All four non-partial-gravity relationships are only partly supported. Gateway has 0 of 269 droplet rows, 0 of 303 gas rows and 0 of 11 solid rows inside its window. The Moon base, rover and Mars base also have 0 of 269 droplet rows and 0 of 11 solid rows inside their windows. Their gas rows inside the window are 2 of 10 for the Moon base and Mars base, and 4 of 10 for the rover.\n- **Partial gravity (lunar 0.16 g, Mars 0.38 g):** Not supported. All PSI data is microgravity, so results can only be bracketed between 0 g and 1 g.",
-  "citations": [],
-  "model": "claude-sonnet-5-5",
-  "generated_at": "2026-11-14T19:40:18",
   "number_check": {
    "total": 12,
    "matched": 12,
    "unmatched": []
-  }
+  },
+  "generated_at": "2026-11-15T07:16:12"
+ },
+ "what is the highest oxygen at which nasa burned a solid including tests outside psi": {
+  "question": "What is the highest oxygen at which NASA burned a solid, including tests outside PSI?",
+  "answer": "The highest oxygen at which a solid is recorded as burned is 31.0% O2, in Saffire VI-2. It burned SIBAL cloth at 31.0 percent O2 and 54.1 kPa (7.85 psia) with 20 cm/s concurrent flow. [1]\n\n- Saffire VI-1 (Nomex, 31.9 percent O2) did not ignite. [2]\n- PSI solid-fuel tests stop at 22.2 percent ambient O2. [3]\n- Schechter 2025 gives a microgravity limiting oxygen concentration (LOC) of about 38% for Nomex at 8.2 psi (preliminary, not peer reviewed) [4]. That is a limit value, not a recorded burn at that oxygen level, so I did not count it.",
+  "citations": [
+   {
+    "n": 1,
+    "psi_id": "NTRS-SAFFIRE-IV-VI",
+    "title": "Outside PSI - Saffire IV-VI (NTRS)",
+    "cited_text": "Saffire VI-2 (NTRS 20250002675): SIBAL cloth (75 pct cotton, 25 pct fiberglass), 50 cm long, 31.0 percent O2, 54.1 kPa (7.85 psia), 20 cm/s concurrent flow. Outcome: Burned. Spread rate 4.05 mm/s; peak heat release 3217 W and 580 kJ total by oxygen consumption, burn duration 112 s (a later paper gives peak HRR 3376 W)."
+   },
+   {
+    "n": 2,
+    "psi_id": "NTRS-SAFFIRE-IV-VI",
+    "title": "Outside PSI - Saffire IV-VI (NTRS)",
+    "cited_text": "Saffire VI-1 (NTRS 20250002675): Nomex fabric, 31.9 percent O2, pressure not stated in the extracted text. Outcome: Did not ignite."
+   },
+   {
+    "n": 3,
+    "psi_id": "NTRS-SAFFIRE-IV-VI",
+    "title": "Outside PSI - Saffire IV-VI (NTRS)",
+    "cited_text": "For comparison, PSI solid-fuel tests stop at 22.2 percent ambient O2."
+   },
+   {
+    "n": 4,
+    "psi_id": "PARTIAL-GRAVITY",
+    "title": "Partial gravity - measured lunar, Martian and microgravity flammability points from 7 NASA sources",
+    "cited_text": "Schechter et al. 2025, Nomex HT90-40 fabric (NTRS 20250010975, page 1, https://ntrs.nasa.gov/citations/20250010975): microgravity 0 g; LOC = ~38%; total pressure = 8.2 psi; flags: preliminary, not peer reviewed. Quote: \"0G ~38% Oxygen\""
+   }
+  ],
+  "model": "claude-sonnet-5-5",
+  "number_check": {
+   "total": 8,
+   "matched": 8,
+   "unmatched": []
+  },
+  "generated_at": "2026-11-15T07:16:19"
+ },
+ "what oxygen and pressure range do the solid fuel tests cover": {
+  "question": "What oxygen and pressure range do the solid-fuel tests cover?",
+  "answer": "Solid-fuel tests cover ambient O2 of 13.6 to 22.2%, and the tables record no pressure for any of them.\n\n- Ambient O2: BASS-II spans 0.136 to 0.222 mole fraction [1]. SAFFIRE-I spans 0.215 to 0.217 [2] and SAFFIRE-II spans 0.215 to 0.221 [3]. BASS has no O2 recorded [4].\n- Pressure, from NASA reports: BASS was 1.000 atm [5]. BASS-II was 0.979 to 0.982 atm [6]. SAFFIRE-I, -II and -III were each 0.987 atm (100 kPa) [7].\n- 0 PSI solid tests fall inside the ISS cabin window. [8]",
+  "citations": [
+   {
+    "n": 1,
+    "psi_id": "PSI-25",
+    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II",
+    "cited_text": "Ambient O2 tested (mole fraction): 0.136 to 0.222  (n=129, rows 1-129, PSI-25_Experimental table_BASS-II.csv)."
+   },
+   {
+    "n": 2,
+    "psi_id": "PSI-98",
+    "title": "PSI-98 SAFFIRE-I - Spacecraft Fire Safety Experiment-I",
+    "cited_text": "Ambient O2 tested (mole fraction): 0.215 to 0.217  (n=2, rows 1-2, PSI-98_Experimental table_SAFFIRE-1.csv)."
+   },
+   {
+    "n": 3,
+    "psi_id": "PSI-99",
+    "title": "PSI-99 SAFFIRE-II - Spacecraft Fire Experiment-II",
+    "cited_text": "Ambient O2 tested (mole fraction): 0.215 to 0.221  (n=9, rows 1-9, PSI-99_Experimental table_SAFFIRE-2.csv)."
+   },
+   {
+    "n": 4,
+    "psi_id": "PSI-26",
+    "title": "PSI-26 BASS - Burning and Suppression of Solids",
+    "cited_text": "Ambient O2 tested (mole fraction): not recorded."
+   },
+   {
+    "n": 5,
+    "psi_id": "DASHBOARD-RESULTS",
+    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
+    "cited_text": "Solid test pressure, PSI-26 BASS (ISS MSG): 1.000 atm (101.3 kPa). Quote from NTRS 20210011385 page 102: \"tests were conducted in ambient O2 molar fraction of 16 to 21 percent. Ambient pressure was 1 atm\""
+   },
+   {
+    "n": 6,
+    "psi_id": "DASHBOARD-RESULTS",
+    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
+    "cited_text": "Solid test pressure, PSI-25 BASS-II (ISS MSG): 0.979 to 0.982 atm (99.2 to 99.5 kPa). Quote from NTRS 20210011385 page 46: \"total pressure is also monitored, which varied from 99.2 to 99.5 kPa in the tests reported\""
+   },
+   {
+    "n": 7,
+    "psi_id": "DASHBOARD-RESULTS",
+    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
+    "cited_text": "Solid test pressure, PSI-98 Saffire-I (Cygnus): 0.987 atm (100.0 kPa). Quote from NTRS 20210011521 page 8: \"21 21 21 21 22 100 100 100 100 100\"Solid test pressure, PSI-99 Saffire-II (Cygnus): 0.987 atm (100.0 kPa). Quote from NTRS 20200000557 page 1: \"Cygnus spacecraft at 100 kPa\"Solid test pressure, PSI-100 Saffire-III (Cygnus): 0.987 atm (100.0 kPa). Quote from NTRS 20210011521 page 8: \"21 21 21 21 22 100 100 100 100 100\""
+   },
+   {
+    "n": 8,
+    "psi_id": "DASHBOARD-RESULTS",
+    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
+    "cited_text": "Test next, iss, solid fuel: 0 PSI tests inside the window (137 rows classified); nearest PSI test: PSI-98, O2 0.215, pressure not recorded, O2 gap 0.000; nearest outside-PSI NASA test: Saffire IV-1 SIBAL cloth, O2 0.220, 0.987 atm, O2 gap 0.000, inside the window, NTRS 20210011521."
+   }
+  ],
+  "model": "claude-sonnet-5-5",
+  "number_check": {
+   "total": 13,
+   "matched": 13,
+   "unmatched": []
+  },
+  "generated_at": "2026-11-15T07:15:56"
+ },
+ "what should nasa test next for a moon base": {
+  "question": "What should NASA test next for a Moon base?",
+  "answer": "The Moon base window is 33.5\u201335.0% O2, 8.1\u20138.3 psia and 10\u201320 cm/s flow, and no PSI test falls inside it for any fuel class. The dashboard test plan is 9 tests to close 15 of 15 habitat gaps. [1] Three of those tests cover the Moon base, together with Mars base and the pressurized rover.\n\n- **Solid:** 0 of 137 tests are inside the window. The nearest is PSI-25 BASS-II, row 1, at 22.2% O2 and 14.4 psia (from a NASA report). [2]\n- **Liquid droplet:** 0 of 361 tests are inside the window. The nearest is PSI-69 FLEX, row 37, at 34.0% O2 and 10.3 psia. [3]\n- **Gas:** 0 of 398 tests are inside the window. The nearest is PSI-159 ACME CFI-G, row 128, at 34.1% O2 and 7.3 psia. [4]\n\nAll PSI data is microgravity. It has no lunar-gravity values.",
+  "citations": [
+   {
+    "n": 1,
+    "psi_id": "DASHBOARD-RESULTS",
+    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
+    "cited_text": "9 tests would close 15 of 15 habitat gaps."
+   },
+   {
+    "n": 2,
+    "psi_id": "DASHBOARD-RESULTS",
+    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
+    "cited_text": "Planned test 1, solid fuel, covers Moon base, Mars base, Pressurized rover: O2 window 33.5 to 35.0 percent, pressure window 8.1 to 8.3 psia; nearest PSI test PSI-25 BASS-II, row 1, O2 22.2 percent, 14.4 psia (from a NASA report)."
+   },
+   {
+    "n": 3,
+    "psi_id": "DASHBOARD-RESULTS",
+    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
+    "cited_text": "Planned test 2, liquid droplet fuel, covers Moon base, Mars base, Pressurized rover: O2 window 33.5 to 35.0 percent, pressure window 8.1 to 8.3 psia; nearest PSI test PSI-69 FLEX, row 37, O2 34.0 percent, 10.3 psia."
+   },
+   {
+    "n": 4,
+    "psi_id": "DASHBOARD-RESULTS",
+    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
+    "cited_text": "Planned test 3, gas fuel, covers Moon base, Mars base, Pressurized rover: O2 window 33.5 to 35.0 percent, pressure window 8.1 to 8.3 psia; nearest PSI test PSI-159 ACME CFI-G, row 128, O2 34.1 percent, 7.3 psia."
+   }
+  ],
+  "model": "claude-sonnet-5-5",
+  "number_check": {
+   "total": 21,
+   "matched": 21,
+   "unmatched": []
+  },
+  "generated_at": "2026-11-15T07:16:42"
+ },
+ "which experiments matter most for a moon base": {
+  "question": "Which experiments matter most for a Moon base?",
+  "answer": "The top five for a Moon base are below, using the default weights.\n\n- **Rank 1, PSI-69 FLEX (score 0.60):** FLEX ranks 1 of 20 for the lunar habitat (score 0.603). [1]\n- **Rank 2, PSI-99 SAFFIRE-II (0.59):** It ranks 2 of 20. [2] Rank 3 is PSI-98 SAFFIRE-I (0.57).\n- **Ranks 4 and 5:** PSI-20 ACME BRE (0.55) and PSI-25 BASS-II (0.55).\n- **Gap:** All PSI data is microgravity. PSI holds no partial-gravity values. [3]",
+  "citations": [
+   {
+    "n": 1,
+    "psi_id": "PSI-69",
+    "title": "PSI-69 FLEX - Flame Extinguishment Experiment",
+    "cited_text": "Habitat relevance, default weights, environment lunar: rank 1 of 20, score 0.603."
+   },
+   {
+    "n": 2,
+    "psi_id": "PSI-99",
+    "title": "PSI-99 SAFFIRE-II - Spacecraft Fire Experiment-II",
+    "cited_text": "Habitat relevance, default weights, environment lunar: rank 2 of 20, score 0.587."
+   },
+   {
+    "n": 3,
+    "psi_id": "DASHBOARD-RESULTS",
+    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
+    "cited_text": "Results computed by this dashboard from the PSI conditions table and NASA documents. All PSI data is microgravity; PSI holds no partial-gravity values. Measured lunar and Martian gravity points from NASA reports outside PSI are in the Partial gravity document."
+   }
+  ],
+  "model": "claude-sonnet-5-5",
+  "number_check": {
+   "total": 11,
+   "matched": 11,
+   "unmatched": []
+  },
+  "generated_at": "2026-11-15T07:16:35"
+ },
+ "which fire modelling relationships do the psi data support": {
+  "question": "Which fire-modelling relationships do the PSI data support?",
+  "answer": "Only the ISS cabin has relationships that PSI fully supports, and only two of them. Every other habitat gets \"Partly\" at best.\n\n- **ISS cabin, Supported:** droplet extinction diameter and burn time versus O2, diluent and pressure (41 rows with a recorded response inside the window). Gas-flame ignition and self-extinction versus O2 is also supported (28 rows).\n- **ISS cabin, Partly:** solid-material ignition and burn versus O2 and flow has 8 of the 10 rows needed. Smoke particle size versus flow and aging is partly supported because no row records particle size.\n- **Gateway, Moon base, rover and Mars base:** all four relationships are \"Partly\" at best. For example, no droplet or solid rows with a response fall inside any of these windows. Gas-flame rows fall inside only for the Moon base (2 of 10), rover (4 of 10) and Mars base (2 of 10).\n- **Partial gravity:** not supported in any habitat. All PSI data is microgravity.",
+  "citations": [],
+  "model": "claude-sonnet-5-5",
+  "number_check": {
+   "total": 6,
+   "matched": 6,
+   "unmatched": []
+  },
+  "generated_at": "2026-11-15T07:15:49"
  },
  "which investigations studied smoke detection": {
-  "answer": "Four investigations are classed as smoke or particle detection studies, and several others support detection indirectly.\n\n- **Direct detection studies (primary function: detection):** SAME (PSI-102) [1] and SAME-R (PSI-101) [2] tested fire detection in microgravity [3]. DAFT/DAFT-2 (PSI-47) [4] was also classed as detection. It checked that a modified P-Trak particulate counter would be accurate in microgravity [5].\n- **Modeling studies (detection-related):** PSI-115 simulated smoke generation and is said to lead to better smoke detection devices [6]. PSI-60 (SPICE data analysis) lists safer fire detection among its space applications [7].\n- **Detection as a stated purpose:** BASS-II (PSI-25) results feed computational models for fire detection and suppression systems [8].",
+  "question": "Which investigations studied smoke detection?",
+  "answer": "Three PSI investigations studied smoke or aerosol detection: SAME, SAME-R and DAFT / DAFT-2.\n\n- **PSI-102 (SAME):** Its primary fire-safety function is detection. [1] It quantified the sizes that liquid smoke particulate achieves in low gravity [2] and supports an advanced fire detector for future spacecraft [3].\n- **PSI-101 (SAME-R):** Its primary function is detection. [4] It is a reflight of SAME, and it used a new test material, Pyrell [5].\n- **PSI-47 (DAFT / DAFT-2):** Its primary function is detection. [6] It tested that a modified P-Trak particulate counter would be accurate in microgravity [7].\n\nTwo ground modeling studies also mention detection benefits. PSI-115 simulates smoke growth, and its impact statement says it would lead to better smoke detection devices [8]. PSI-60 says its results support safer fire detection [9]. BASS-II also lists detection among the uses of its models: its results contribute to computational models used in the design of fire detection and suppression systems [10].",
   "citations": [
    {
-    "cited_text": "Primary fire-safety function: detection.\n",
     "n": 1,
     "psi_id": "PSI-102",
-    "title": "PSI-102 SAME - Smoke and Aerosol Measurement Experiment"
+    "title": "PSI-102 SAME - Smoke and Aerosol Measurement Experiment",
+    "cited_text": "Primary fire-safety function: detection."
    },
    {
-    "cited_text": "Primary fire-safety function: detection.\n",
     "n": 2,
-    "psi_id": "PSI-101",
-    "title": "PSI-101 SAME-R - Smoke Aerosol Measurement Experiment-Reflight"
+    "psi_id": "PSI-102",
+    "title": "PSI-102 SAME - Smoke and Aerosol Measurement Experiment",
+    "cited_text": "Objectives: One of the major goals of this investigation was to quantify the sizes that the liquid smoke particulate achieves in low gravity and to relate the droplet size distribution to the smoke generation and smoke transport conditions in the experiment."
    },
    {
-    "cited_text": "Supports detection (challenge statement): Fire detection was tested in microgravity through the Smoke and Aerosol Measurement Experiment studies (SAME and SAME-R).\n",
     "n": 3,
-    "psi_id": "PSI-101",
-    "title": "PSI-101 SAME-R - Smoke Aerosol Measurement Experiment-Reflight"
+    "psi_id": "PSI-102",
+    "title": "PSI-102 SAME - Smoke and Aerosol Measurement Experiment",
+    "cited_text": "The SAME experiment will provide technology for an advanced fire detector for future spacecraft that will be used for long duration missions.; SAME will provide quantitative data on the sensitivity of these detectors to reduced gravity smokes that will allow evaluation of the adequacy of these existing technologies using relevant data.;"
    },
    {
-    "cited_text": "Primary fire-safety function: detection.\n",
     "n": 4,
-    "psi_id": "PSI-47",
-    "title": "PSI-47 DAFT / DAFT-2 - Dust and Aerosol Measurement Feasibility Test / Dust and Aerosol Measurement Feasibility Test-2"
+    "psi_id": "PSI-101",
+    "title": "PSI-101 SAME-R - Smoke Aerosol Measurement Experiment-Reflight",
+    "cited_text": "Primary fire-safety function: detection."
    },
    {
-    "cited_text": "DAFT / DAFT-2 tests that a modified P-Trak particulate counter would be accurate in microgravity.\n\n",
     "n": 5,
-    "psi_id": "PSI-47",
-    "title": "PSI-47 DAFT / DAFT-2 - Dust and Aerosol Measurement Feasibility Test / Dust and Aerosol Measurement Feasibility Test-2"
+    "psi_id": "PSI-101",
+    "title": "PSI-101 SAME-R - Smoke Aerosol Measurement Experiment-Reflight",
+    "cited_text": "Pyrell, an intumescent fire-retardant foam by Foamex, was introduced to replace DBP samples, 2) test conditions were broadened including higher heating temperatures and no-flow during sample heating time, and 3) a new instrument, M-pass, developed in-house GRC, was used to replace one of the two Commercial Diagnostic Enclosures that includes a DustTrak and an ionization detector used in SAME."
    },
    {
-    "cited_text": "Supports detection (keyword match on PSI text): [researchImpacts] This would directly lead to better smoke detection devices and prevent fires that can lead to loss of materiel and loss of life.\n",
     "n": 6,
-    "psi_id": "PSI-115",
-    "title": "PSI-115 PSI-115 - Utilization of the Smoke Aerosol Measurement Experiment Data for Advanced Modeling and Simulation of Smoke Generation in Micro-Gravity"
+    "psi_id": "PSI-47",
+    "title": "PSI-47 DAFT / DAFT-2 - Dust and Aerosol Measurement Feasibility Test / Dust and Aerosol Measurement Feasibility Test-2",
+    "cited_text": "Primary fire-safety function: detection."
    },
    {
-    "cited_text": "Supports detection (keyword match on PSI text): [researchImpacts] For space applications, the results support safer fire detection, suppression, and cleaner combustion technologies critical for long-duration missions.\n",
     "n": 7,
-    "psi_id": "PSI-60",
-    "title": "PSI-60 PSI-60 - Computational and Experimental Analysis of SPICE Data Sets"
+    "psi_id": "PSI-47",
+    "title": "PSI-47 DAFT / DAFT-2 - Dust and Aerosol Measurement Feasibility Test / Dust and Aerosol Measurement Feasibility Test-2",
+    "cited_text": "DAFT / DAFT-2 tests that a modified P-Trak particulate counter would be accurate in microgravity."
    },
    {
-    "cited_text": "Supports detection (keyword match on PSI text): [objective] BASS-II results contribute to the combustion computational models used in the design of fire detection and suppression systems in microgravity and on Earth.\n",
     "n": 8,
+    "psi_id": "PSI-115",
+    "title": "PSI-115 PSI-115 - Utilization of the Smoke Aerosol Measurement Experiment Data for Advanced Modeling and Simulation of Smoke Generation in Micro-Gravity",
+    "cited_text": "Research impact and Earth benefits (PSI record): Models and tools that characterize particles generated as smoke can be used to ascertain how temperature, gravity, and material properties affect the smoke produced. This would directly lead to better smoke detection devices and prevent fires that can lead to loss of materiel and loss of life."
+   },
+   {
+    "n": 9,
+    "psi_id": "PSI-60",
+    "title": "PSI-60 PSI-60 - Computational and Experimental Analysis of SPICE Data Sets",
+    "cited_text": "Supports detection (keyword match on PSI text): [researchImpacts] For space applications, the results support safer fire detection, suppression, and cleaner combustion technologies critical for long-duration missions."
+   },
+   {
+    "n": 10,
     "psi_id": "PSI-25",
-    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II"
+    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II",
+    "cited_text": "Supports detection (keyword match on PSI text): [objective] BASS-II results contribute to the combustion computational models used in the design of fire detection and suppression systems in microgravity and on Earth."
    }
   ],
-  "generated_at": "2026-11-14T13:46:17",
   "model": "claude-sonnet-5-5",
-  "question": "Which investigations studied smoke detection?",
   "number_check": {
    "total": 0,
    "matched": 0,
    "unmatched": []
-  }
+  },
+  "generated_at": "2026-11-15T07:16:48"
  },
  "which investigations studied smoke or fire detection": {
-  "answer": "Smoke and fire detection was the primary function of four investigations, and two modeling studies also support it.\n\n- **Experiments:** SAME (PSI-102) is classed as detection, and fire detection was tested in microgravity through SAME and SAME-R. [1] SAME-R (PSI-101) is also classed as detection. [2] DAFT/DAFT-2 (PSI-47) is classed as detection too; an instrument used for smoke detection in SAME and SAME-R was instead used to detect dust. [3]\n- **Modeling:** PSI-115 simulates SAME smoke generation, with the stated aim of better smoke detection devices. [4] PSI-60 says its results support safer fire detection. [5]\n- **Related:** BASS-II (PSI-25) results contribute to models used in designing fire detection and suppression systems. [6]",
+  "question": "Which investigations studied smoke or fire detection?",
+  "answer": "Three PSI investigations, SAME, SAME-R and DAFT/DAFT-2, have detection as their primary fire-safety function.\n\n- **SAME (PSI-102):** It quantified the sizes that liquid smoke particulate achieves in low gravity. [1] Its primary function is detection. [2]\n- **SAME-R (PSI-101):** It reflew SAME to quantify smoke droplet sizes in low gravity. [3] Its primary function is detection. [4]\n- **DAFT/DAFT-2 (PSI-47):** It tests whether a modified P-Trak particulate counter would be accurate in microgravity. [5] Its primary function is detection. [6]\n\nTwo other investigations touch on detection. The BASS-II (PSI-25) objectives contribute to computational models used in designing fire detection and suppression systems. [7] PSI-115 is a ground study, and its research impacts say it would lead to better smoke detection devices. [8]",
   "citations": [
    {
-    "cited_text": "Primary fire-safety function: detection.\nSupports detection (challenge statement): Fire detection was tested in microgravity through the Smoke and Aerosol Measurement Experiment studies (SAME and SAME-R).\n",
     "n": 1,
     "psi_id": "PSI-102",
-    "title": "PSI-102 SAME - Smoke and Aerosol Measurement Experiment"
+    "title": "PSI-102 SAME - Smoke and Aerosol Measurement Experiment",
+    "cited_text": "Objectives: One of the major goals of this investigation was to quantify the sizes that the liquid smoke particulate achieves in low gravity and to relate the droplet size distribution to the smoke generation and smoke transport conditions in the experiment."
    },
    {
-    "cited_text": "Primary fire-safety function: detection.\n",
     "n": 2,
-    "psi_id": "PSI-101",
-    "title": "PSI-101 SAME-R - Smoke Aerosol Measurement Experiment-Reflight"
+    "psi_id": "PSI-102",
+    "title": "PSI-102 SAME - Smoke and Aerosol Measurement Experiment",
+    "cited_text": "Primary fire-safety function: detection."
    },
    {
-    "cited_text": "Primary fire-safety function: detection.\nSupports detection (challenge statement): One of the instruments used for smoke detection in the SAME and SAME-R studies was instead used to detect dust in the Dust and Aerosol Measurement Feasibility Test (DAFT and DAFT-2) studies.\n",
     "n": 3,
-    "psi_id": "PSI-47",
-    "title": "PSI-47 DAFT / DAFT-2 - Dust and Aerosol Measurement Feasibility Test / Dust and Aerosol Measurement Feasibility Test-2"
+    "psi_id": "PSI-101",
+    "title": "PSI-101 SAME-R - Smoke Aerosol Measurement Experiment-Reflight",
+    "cited_text": "Objectives: Similar to the original SAME investigation, the primary objective of the SAME-R investigation was to quantify the sizes that the liquid smoke particulate achieves in low gravity and to relate the droplet size distribution to the smoke generation and smoke transport conditions in the experiment."
    },
    {
-    "cited_text": "Supports detection (keyword match on PSI text): [researchImpacts] This would directly lead to better smoke detection devices and prevent fires that can lead to loss of materiel and loss of life.\n",
     "n": 4,
-    "psi_id": "PSI-115",
-    "title": "PSI-115 PSI-115 - Utilization of the Smoke Aerosol Measurement Experiment Data for Advanced Modeling and Simulation of Smoke Generation in Micro-Gravity"
+    "psi_id": "PSI-101",
+    "title": "PSI-101 SAME-R - Smoke Aerosol Measurement Experiment-Reflight",
+    "cited_text": "Primary fire-safety function: detection."
    },
    {
-    "cited_text": "Supports detection (keyword match on PSI text): [researchImpacts] For space applications, the results support safer fire detection, suppression, and cleaner combustion technologies critical for long-duration missions.\n",
     "n": 5,
-    "psi_id": "PSI-60",
-    "title": "PSI-60 PSI-60 - Computational and Experimental Analysis of SPICE Data Sets"
+    "psi_id": "PSI-47",
+    "title": "PSI-47 DAFT / DAFT-2 - Dust and Aerosol Measurement Feasibility Test / Dust and Aerosol Measurement Feasibility Test-2",
+    "cited_text": "DAFT / DAFT-2 tests that a modified P-Trak particulate counter would be accurate in microgravity."
    },
    {
-    "cited_text": "Supports detection (keyword match on PSI text): [objective] BASS-II results contribute to the combustion computational models used in the design of fire detection and suppression systems in microgravity and on Earth.\n",
     "n": 6,
+    "psi_id": "PSI-47",
+    "title": "PSI-47 DAFT / DAFT-2 - Dust and Aerosol Measurement Feasibility Test / Dust and Aerosol Measurement Feasibility Test-2",
+    "cited_text": "Primary fire-safety function: detection."
+   },
+   {
+    "n": 7,
     "psi_id": "PSI-25",
-    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II"
+    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II",
+    "cited_text": "Supports detection (keyword match on PSI text): [objective] BASS-II results contribute to the combustion computational models used in the design of fire detection and suppression systems in microgravity and on Earth."
+   },
+   {
+    "n": 8,
+    "psi_id": "PSI-115",
+    "title": "PSI-115 PSI-115 - Utilization of the Smoke Aerosol Measurement Experiment Data for Advanced Modeling and Simulation of Smoke Generation in Micro-Gravity",
+    "cited_text": "Supports detection (keyword match on PSI text): [researchImpacts] This would directly lead to better smoke detection devices and prevent fires that can lead to loss of materiel and loss of life."
    }
   ],
-  "generated_at": "2026-11-14T13:45:22",
   "model": "claude-sonnet-5-5",
-  "question": "Which investigations studied smoke or fire detection?",
   "number_check": {
    "total": 0,
    "matched": 0,
    "unmatched": []
-  }
+  },
+  "generated_at": "2026-11-15T07:15:36"
  },
  "which investigations used solid fuels": {
   "question": "Which investigations used solid fuels?",
-  "answer": "Five investigations have solid fuels in the PSI table: BASS-II, BASS, SAFFIRE-I, SAFFIRE-II and SAFFIRE-III.\n\n- PSI-25 (BASS-II) is classed as solid [1] and has 129 rows [2]. PSI-26 (BASS) is also solid, with 122 rows [3] [4].\n- The three SAFFIRE investigations are solid-fuel tests on Cygnus: PSI-98 (SAFFIRE-I) [5], PSI-99 (SAFFIRE-II) [6] and PSI-100 (SAFFIRE-III) [7].\n- 137 rows are classified as solid [8]. The Saffire IV\u2013VI tests are not in the PSI repository [9].",
+  "answer": "Five PSI investigations are classed as solid fuel: PSI-25, PSI-26, PSI-98, PSI-99 and PSI-100.\n\n- PSI-25 BASS-II is solid [1], with 129 rows [2]. Its samples include SIBAL, PMMA rods and Nomex.\n- PSI-26 BASS is solid [3], with 122 rows [4]. Its samples include spheres, SIBAL, PMMA and candle wax.\n- The Saffire runs are also solid:\n  - PSI-98 SAFFIRE-I [5] burned SIBAL fabric.\n  - PSI-99 SAFFIRE-II [6] burned silicone, SIBAL, PMMA and PMMA with Nomex.\n  - PSI-100 SAFFIRE-III [7] burned SIBAL fabric.\n- PSI-62 modelled BASS solid-fuel flame spread, but it has no rows in the unified conditions table [8].",
   "citations": [
    {
     "n": 1,
@@ -514,158 +558,160 @@
    },
    {
     "n": 8,
-    "psi_id": "DASHBOARD-RESULTS",
-    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
-    "cited_text": "Test next, iss, solid fuel: 0 PSI tests inside the window (137 rows classified); nearest PSI test: PSI-98, O2 0.215, pressure not recorded, O2 gap 0.000; nearest outside-PSI NASA test: Saffire IV-1 SIBAL cloth, O2 0.220, 0.987 atm, O2 gap 0.000, inside the window, NTRS 20210011521."
-   },
-   {
-    "n": 9,
-    "psi_id": "NTRS-SAFFIRE-IV-VI",
-    "title": "Outside PSI - Saffire IV-VI (NTRS)",
-    "cited_text": "Saffire IV-VI solid flammability tests published by NASA on NTRS. These tests are not in the PSI repository and are not part of the unified PSI conditions table."
+    "psi_id": "PSI-62",
+    "title": "PSI-62 PSI-62 - Concurrent Flame Spread Modeling using Flamelet Generated Manifolds in Microgravity with Comparison to BASS Experiments using Two-Color Tomography",
+    "cited_text": "This investigation has no rows in the unified conditions table."
    }
   ],
   "model": "claude-sonnet-5-5",
-  "generated_at": "2026-11-14T19:40:24",
   "number_check": {
-   "total": 3,
-   "matched": 3,
+   "total": 2,
+   "matched": 2,
    "unmatched": []
-  }
+  },
+  "generated_at": "2026-11-15T07:15:42"
  },
  "which solid materials were tested and at what oxygen": {
-  "answer": "Solid materials appear across several PSI investigations, but O2 is recorded for only some of them.\n\n- **PSI-25 BASS-II:** ambient O2 of 0.136 to 0.222 [1]. Samples include SIBAL, clear and black rods, and PMMA [2].\n- **PSI-98 Saffire-I:** SIBAL fabric at 0.215 to 0.217 ambient O2 [3]. **PSI-99 Saffire-II:** silicone, SIBAL, PMMA, and PMMA & Nomex at 0.215 to 0.221 ambient O2 [4] [5].\n- **PSI-26 BASS and PSI-100 Saffire-III:** BASS ambient O2 is not recorded [6] and so is Saffire-III's [7]. Their materials were cotton/fiberglass fabric, Nomex and Ultem [8] (BASS) and SIBAL fabric [9] (Saffire-III).\n\nNot covered: PSI solid-fuel tests stop at 22.2 percent ambient O2 [10]. Higher-O2 Saffire IV-VI tests are outside PSI.",
-  "citations": [
-   {
-    "cited_text": "Ambient O2 tested (mole fraction): 0.136 to 0.222  (n=129, rows 1-129, PSI-25_Experimental table_BASS-II.csv).\n",
-    "n": 1,
-    "psi_id": "PSI-25",
-    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II"
-   },
-   {
-    "cited_text": "Fuels observed in table rows: 2 cm SIBAL (17), 1/4\" clear rod (15), 1/4\" black rod (12), 1 cm SIBAL (8), 3/8\" black rod (7), 1 cm wide 200 micron thick PMMA (5), 3/8\" clear rod (5), 0.5\" black rod (4).\n",
-    "n": 2,
-    "psi_id": "PSI-25",
-    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II"
-   },
-   {
-    "cited_text": "Ambient O2 tested (mole fraction): 0.215 to 0.217  (n=2, rows 1-2, PSI-98_Experimental table_SAFFIRE-1.csv).\n",
-    "n": 3,
-    "psi_id": "PSI-98",
-    "title": "PSI-98 SAFFIRE-I - Spacecraft Fire Safety Experiment-I"
-   },
-   {
-    "cited_text": "Fuels observed in table rows: Silicone (4), Cotton-Fiberglass (SIBAL) (1), PMMA (1), PMMA & Nomex (1).\n",
-    "n": 4,
-    "psi_id": "PSI-99",
-    "title": "PSI-99 SAFFIRE-II - Spacecraft Fire Experiment-II"
-   },
-   {
-    "cited_text": "Ambient O2 tested (mole fraction): 0.215 to 0.221  (n=9, rows 1-9, PSI-99_Experimental table_SAFFIRE-2.csv).\n",
-    "n": 5,
-    "psi_id": "PSI-99",
-    "title": "PSI-99 SAFFIRE-II - Spacecraft Fire Experiment-II"
-   },
-   {
-    "cited_text": "Ambient O2 tested (mole fraction): not recorded.\n",
-    "n": 6,
-    "psi_id": "PSI-26",
-    "title": "PSI-26 BASS - Burning and Suppression of Solids"
-   },
-   {
-    "cited_text": "Ambient O2 tested (mole fraction): not recorded.\n",
-    "n": 7,
-    "psi_id": "PSI-100",
-    "title": "PSI-100 SAFFIRE-III - Spacecraft Fire Experiment-III"
-   },
-   {
-    "cited_text": "Custom-made fabric samples consisting of 75% cotton and 25% fiberglass (by mass) measuring were used as a fuel source as well as Nomex fabric and Ultem. ",
-    "n": 8,
-    "psi_id": "PSI-26",
-    "title": "PSI-26 BASS - Burning and Suppression of Solids"
-   },
-   {
-    "cited_text": "Fuels observed in table rows: SIBAL Fabric (2).\n",
-    "n": 9,
-    "psi_id": "PSI-100",
-    "title": "PSI-100 SAFFIRE-III - Spacecraft Fire Experiment-III"
-   },
-   {
-    "cited_text": "For comparison, PSI solid-fuel tests stop at 22.2 percent ambient O2.\n",
-    "n": 10,
-    "psi_id": "NTRS-SAFFIRE-IV-VI",
-    "title": "Outside PSI - Saffire IV-VI (NTRS)"
-   }
-  ],
-  "generated_at": "2026-11-14T13:45:13",
-  "model": "claude-sonnet-5-5",
   "question": "Which solid materials were tested and at what oxygen?",
-  "number_check": {
-   "total": 6,
-   "matched": 6,
-   "unmatched": []
-  }
- },
- "how many solid fuel tests were run inside moon base oxygen levels": {
-  "question": "How many solid-fuel tests were run inside Moon base oxygen levels?",
-  "answer": "0 solid-fuel tests were run at Moon base oxygen levels (33.5\u201335% ambient O2). That count covers 137 classified solid-fuel rows.\n\n- The Moon base atmosphere is 34% O2 (control box 33.5\u201335%). [1]\n- The nearest solid-fuel data is BASS-II (PSI-25), which tested ambient O2 of 0.136 to 0.222. [2] That is about 22.2% at most.\n- PSI solid-fuel tests stop at 22.2 percent ambient O2. [3] The Saffire VI tests were run outside PSI at 28.8\u201331.0% O2, still below the Moon base range.\n\nAll of this data is microgravity. Results for the Moon's one-sixth gravity can only be bracketed between 0 g and 1 g.",
+  "answer": "Solid-fuel tests cover SIBAL, PMMA, Nomex, silicone and others, at ambient O2 of 13.6\u201322.2%, but only some investigations recorded O2.\n\n- **BASS-II (PSI-25):** Ambient O2 ran from 0.136 to 0.222 mole fraction. [1] The fuels include SIBAL, clear and black PMMA rods, and PMMA films. [2] Nomex is also listed. [3]\n- **Saffire-I, II and III:**\n  - Saffire-I tested SIBAL fabric at 0.215 to 0.217 [4].\n  - Saffire-II tested silicone, SIBAL, PMMA, and PMMA & Nomex [5] at 0.215 to 0.221 [6].\n  - Saffire-III has no ambient O2 recorded. [7]\n- **BASS (PSI-26):** Ambient O2 was not recorded. [8] Its fuels were cotton/fiberglass fabric, Nomex and Ultem. [9]",
   "citations": [
    {
     "n": 1,
-    "psi_id": "DASHBOARD-RESULTS",
-    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
-    "cited_text": "Environment lunar (Lunar surface habitat): O2 34 percent O2 (control box 33.5-35 percent) (source: NASA/TM-2013-217377 (NTRS 20130013505), NASA/TP-2010-216134, NTRS 20220006612 (ICES-2022-45), NTRS 20210021181); pressure 8.2 psia (0.558 atm), control box 8.1-8.3 psia (source: NASA/TM-2013-217377 (NTRS 20130013505), NTRS 20150021491, NTRS 20210021181, NTRS 20220000245); flow about 10 to 20 cm/s HVAC flow (source: NTRS 20210021181); gravity One-sixth of Earth gravity (about 0.16 g) (source: NASA Science, Moon facts, NTRS 20210021181).\n"
+    "psi_id": "PSI-25",
+    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II",
+    "cited_text": "Ambient O2 tested (mole fraction): 0.136 to 0.222  (n=129, rows 1-129, PSI-25_Experimental table_BASS-II.csv)."
    },
    {
     "n": 2,
     "psi_id": "PSI-25",
     "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II",
-    "cited_text": "Ambient O2 tested (mole fraction): 0.136 to 0.222  (n=129, rows 1-129, PSI-25_Experimental table_BASS-II.csv).\n"
+    "cited_text": "Fuels observed in table rows: 2 cm SIBAL (17), 1/4\" clear rod (15), 1/4\" black rod (12), 1 cm SIBAL (8), 3/8\" black rod (7), 1 cm wide 200 micron thick PMMA (5), 3/8\" clear rod (5), 0.5\" black rod (4)."
+   },
+   {
+    "n": 3,
+    "psi_id": "PSI-25",
+    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II",
+    "cited_text": "Fuels: 2 cm SIBAL (17 rows); 1/4\" clear rod (15 rows); 1/4\" black rod (12 rows); 1 cm SIBAL (8 rows); 3/8\" black rod (7 rows); 1 cm wide 200 micron thick PMMA (5 rows); 3/8\" clear rod (5 rows); 0.5\" black rod (4 rows); 1/2\" clear PMMA rod (4 rows); 2 cm 0.1 mm PMMA film (3 rows); 2 cm 100 micron thick PMMA (3 rows); Nomex natural (nomex III) (3 rows); 1 mm thick PMMA 2 cm wide (2 rows); 1/4 black rod (2 rows);"
+   },
+   {
+    "n": 4,
+    "psi_id": "PSI-98",
+    "title": "PSI-98 SAFFIRE-I - Spacecraft Fire Safety Experiment-I",
+    "cited_text": "Ambient O2 tested (mole fraction): 0.215 to 0.217  (n=2, rows 1-2, PSI-98_Experimental table_SAFFIRE-1.csv)."
+   },
+   {
+    "n": 5,
+    "psi_id": "PSI-99",
+    "title": "PSI-99 SAFFIRE-II - Spacecraft Fire Experiment-II",
+    "cited_text": "Fuels observed in table rows: Silicone (4), Cotton-Fiberglass (SIBAL) (1), PMMA (1), PMMA & Nomex (1)."
+   },
+   {
+    "n": 6,
+    "psi_id": "PSI-99",
+    "title": "PSI-99 SAFFIRE-II - Spacecraft Fire Experiment-II",
+    "cited_text": "Ambient O2 tested (mole fraction): 0.215 to 0.221  (n=9, rows 1-9, PSI-99_Experimental table_SAFFIRE-2.csv)."
+   },
+   {
+    "n": 7,
+    "psi_id": "PSI-100",
+    "title": "PSI-100 SAFFIRE-III - Spacecraft Fire Experiment-III",
+    "cited_text": "Ambient O2 tested (mole fraction): not recorded."
+   },
+   {
+    "n": 8,
+    "psi_id": "PSI-26",
+    "title": "PSI-26 BASS - Burning and Suppression of Solids",
+    "cited_text": "Ambient O2 tested (mole fraction): not recorded."
+   },
+   {
+    "n": 9,
+    "psi_id": "PSI-26",
+    "title": "PSI-26 BASS - Burning and Suppression of Solids",
+    "cited_text": "Approach: The experiment was conducted aboard the International Space Station (ISS) inside the Microgravity Glove Box (MSG). Custom-made fabric samples consisting of 75% cotton and 25% fiberglass (by mass) measuring were used as a fuel source as well as Nomex fabric and Ultem. A Kanthal wire (29-gage)igniter was used to initiate combustion at one end of the fabric."
+   }
+  ],
+  "model": "claude-sonnet-5-5",
+  "number_check": {
+   "total": 7,
+   "matched": 7,
+   "unmatched": []
+  },
+  "generated_at": "2026-11-15T07:15:25"
+ },
+ "how many solid fuel tests were run inside moon base oxygen levels": {
+  "question": "How many solid-fuel tests were run inside Moon base oxygen levels?",
+  "answer": "None. 0 of 137 solid-fuel tests fall inside the Moon base window, which is 33.5\u201335.0% O2.\n\n- The Moon base atmosphere is 34% O2, with a control box of 33.5\u201335%. [1]\n- The highest solid-fuel ambient O2 in the data is 22.2%, from PSI-25 BASS-II (0.136 to 0.222) [2]. The gap to the Moon base window is 11.3 O2 points.\n- Outside PSI, Saffire VI-2 burned SIBAL cloth at 31.0% O2 and 54.1 kPa [3]. That is still below the window.",
+  "citations": [
+   {
+    "n": 1,
+    "psi_id": "DASHBOARD-RESULTS",
+    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
+    "cited_text": "Environment lunar (Lunar surface habitat): O2 34 percent O2 (control box 33.5-35 percent) (source: NASA/TM-2013-217377 (NTRS 20130013505), NASA/TP-2010-216134, NTRS 20220006612 (ICES-2022-45), NTRS 20210021181); pressure 8.2 psia (0.558 atm), control box 8.1-8.3 psia (source: NASA/TM-2013-217377 (NTRS 20130013505), NTRS 20150021491, NTRS 20210021181, NTRS 20220000245);"
+   },
+   {
+    "n": 2,
+    "psi_id": "PSI-25",
+    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II",
+    "cited_text": "Ambient O2 tested (mole fraction): 0.136 to 0.222  (n=129, rows 1-129, PSI-25_Experimental table_BASS-II.csv)."
    },
    {
     "n": 3,
     "psi_id": "NTRS-SAFFIRE-IV-VI",
     "title": "Outside PSI - Saffire IV-VI (NTRS)",
-    "cited_text": "For comparison, PSI solid-fuel tests stop at 22.2 percent ambient O2.\n"
+    "cited_text": "Saffire VI-2 (NTRS 20250002675): SIBAL cloth (75 pct cotton, 25 pct fiberglass), 50 cm long, 31.0 percent O2, 54.1 kPa (7.85 psia), 20 cm/s concurrent flow. Outcome: Burned. Spread rate 4.05 mm/s; peak heat release 3217 W and 580 kJ total by oxygen consumption, burn duration 112 s (a later paper gives peak HRR 3376 W)."
    }
   ],
   "model": "claude-sonnet-5-5",
-  "generated_at": "2026-11-14T09:01:17Z",
-  "steps": [
-   {
-    "tool": "test_next",
-    "label": "Checked test-next windows for Moon base",
-    "detail": "solid 0 inside, liquid droplet 0 inside, gas 0 inside"
-   },
-   {
-    "tool": "habitat_profile",
-    "label": "Read the Moon base atmosphere profile",
-    "detail": "O2 34 percent O2 (control box 33.5-35 percent); pressure 8.2 psia (0.558 atm), control box 8.1-8.3 psia"
-   },
-   {
-    "tool": "find_tests",
-    "label": "Searched 2,009 test rows",
-    "detail": "solid, ambient O2 33.5 to 35%: 0 matches"
-   }
-  ],
-  "actions": [
-   {
-    "label": "Open the Moon base ranking",
-    "href": "#/rank?habitat=lunar"
-   },
-   {
-    "label": "Open the data extractor",
-    "href": "#/data?at=extractor"
-   }
-  ],
-  "followups": [
-   "What is the nearest solid-fuel test to Moon base conditions?",
-   "Which gas-fuel tests are closest to Moon base oxygen?"
-  ],
   "number_check": {
-   "total": 10,
-   "matched": 10,
+   "total": 12,
+   "matched": 11,
+   "unmatched": [
+    "11.3"
+   ]
+  },
+  "generated_at": "2026-11-15T07:17:00"
+ },
+ "what data is missing to model a fire in a moon base cabin": {
+  "question": "What data is missing to model a fire in a Moon base cabin?",
+  "answer": "Partial-gravity data is the biggest gap. The data holds no usable fire model for a Moon base cabin.\n\n- **Habitat window:** 34% O2, 8.2 psia, about 10\u201320 cm/s flow and one-sixth g. [1] All PSI data is microgravity, and PSI holds no partial-gravity values. [2]\n- **Coverage:** 0 PSI tests fall inside the window for solid, liquid-droplet or gas fuel. The nearest solid test is PSI-25 at 22.2% O2, with no pressure recorded. [3] Only 2 of the 10 gas rows needed lie inside the window. None of the 269 droplet rows with a response lie inside it, and none of the 11 solid rows with a response do. No smoke row records particle size.\n- **Measured lunar-g points:** The highest lunar-gravity O2 figure is about 29% (Nomex HT90-40 fabric, 8.2 psi, preliminary). [4] No measured test reaches 34% O2 at 8.2 psia in lunar gravity. [4] The lunar-g buoyant velocity is not known. [5]",
+  "citations": [
+   {
+    "n": 1,
+    "psi_id": "DASHBOARD-RESULTS",
+    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
+    "cited_text": "Environment lunar (Lunar surface habitat): O2 34 percent O2 (control box 33.5-35 percent) (source: NASA/TM-2013-217377 (NTRS 20130013505), NASA/TP-2010-216134, NTRS 20220006612 (ICES-2022-45), NTRS 20210021181); pressure 8.2 psia (0.558 atm), control box 8.1-8.3 psia (source: NASA/TM-2013-217377 (NTRS 20130013505), NTRS 20150021491, NTRS 20210021181, NTRS 20220000245);flow about 10 to 20 cm/s HVAC flow (source: NTRS 20210021181); gravity One-sixth of Earth gravity (about 0.16 g) (source: NASA Science, Moon facts, NTRS 20210021181)."
+   },
+   {
+    "n": 2,
+    "psi_id": "DASHBOARD-RESULTS",
+    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
+    "cited_text": "Results computed by this dashboard from the PSI conditions table and NASA documents. All PSI data is microgravity; PSI holds no partial-gravity values. Measured lunar and Martian gravity points from NASA reports outside PSI are in the Partial gravity document."
+   },
+   {
+    "n": 3,
+    "psi_id": "DASHBOARD-RESULTS",
+    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
+    "cited_text": "Test next, lunar, solid fuel: 0 PSI tests inside the window (137 rows classified); nearest PSI test: PSI-25, O2 0.222, pressure not recorded, O2 gap 0.113; nearest outside-PSI NASA test: Saffire VI-2 SIBAL cloth, O2 0.310, 0.534 atm, O2 gap 0.025, NTRS 20250002675."
+   },
+   {
+    "n": 4,
+    "psi_id": "PARTIAL-GRAVITY",
+    "title": "Partial gravity - measured lunar, Martian and microgravity flammability points from 7 NASA sources",
+    "cited_text": "No measured test reaches 34% O2 at 8.2 psia in lunar gravity. Highest lunar-gravity O2 figure in these sources: about 29% (Nomex HT90-40 fabric, 8.2 psi, preliminary)."
+   },
+   {
+    "n": 5,
+    "psi_id": "LUNAR-GRAVITY",
+    "title": "Lunar gravity check - measured 1-g to lunar-g flammability deltas",
+    "cited_text": "Verbatim from Urban et al., ICES-2025-392, page 10 (https://ntrs.nasa.gov/api/citations/20250002114/downloads/ICES_2025-392-correctedcaptions.pdf): \"but the lunar gravity velocity is not known.\""
+   }
+  ],
+  "model": "claude-sonnet-5-5",
+  "number_check": {
+   "total": 11,
+   "matched": 11,
    "unmatched": []
-  }
+  },
+  "generated_at": "2026-11-15T07:16:05"
  }
 }

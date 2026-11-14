@@ -641,7 +641,7 @@ class SiteDataTest(unittest.TestCase):
         readiness = read_json(os.path.join(SITE, "model_readiness.json"))
         self.assertEqual(readiness["min_rows"], 10)
         self.assertIn("grouped", readiness["grouped_validation_note"])
-        self.assertIn("No trained model", readiness["no_model_note"])
+        self.assertIn("No general model", readiness["no_model_note"])
         self.assertEqual(set(readiness["environments"]), {e["id"] for e in self.environments["environments"]})
         for env in self.environments["environments"]:
             items = {i["id"]: i for i in readiness["environments"][env["id"]]["items"]}

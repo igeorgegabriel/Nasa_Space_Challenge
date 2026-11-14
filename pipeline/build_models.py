@@ -274,8 +274,8 @@ def limiting_block(rows, all_rows_n):
             "quote": "The experiments also show that the limiting oxygen index for methanol in these diluent gases is around 12% to 13% oxygen by volume.",
         },
         "Heptane": {
-            "value_text": "about 15 percent O2",
-            "source": "Dietrich 2014, as reported in the project research notes",
+            "value_text": "not checked in this project",
+            "source": "",
             "title": "",
             "url": "",
             "verified_in_repo": False,

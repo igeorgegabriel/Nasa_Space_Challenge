@@ -146,10 +146,25 @@
   "passed": 1012,
   "seed": 20261114
  },
+ "earth": {
+  "checked": 2,
+  "failed": 0
+ },
+ "lunar_g": {
+  "checked": 9,
+  "failed": 0
+ },
  "outside_psi": {
   "checked": 57,
   "errors": [],
   "failed": 0
+ },
+ "partial_g": {
+  "failed": 0,
+  "fields": 116,
+  "points": 24,
+  "quotes": 152,
+  "sources": 7
  },
  "present": true,
  "quotes": {
@@ -438,5 +453,6 @@
    "PSI-60"
   ],
   "verified": 39
- }
+ },
+ "quotes_total": 259
 }

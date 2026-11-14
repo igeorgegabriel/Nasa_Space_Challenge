@@ -1270,7 +1270,7 @@ def fmt_num(value):
     return ("%.4f" % value).rstrip("0").rstrip(".")
 
 
-def build_corpus(investigations, rankings, outside=None, psi_max=None, environments=None, test_next=None, earth=None, lunar=None, partial=None):
+def build_corpus(investigations, rankings, outside=None, psi_max=None, environments=None, test_next=None, earth=None, lunar=None, partial=None, plan=None):
     docs = []
     for inv in investigations:
         lines = []
@@ -1339,7 +1339,7 @@ def build_corpus(investigations, rankings, outside=None, psi_max=None, environme
     if outside and outside["tests"]:
         docs.append(outside_psi.corpus_document(outside, psi_max))
     if environments and test_next:
-        docs.append(dashboard_results_document(environments, test_next, rankings))
+        docs.append(dashboard_results_document(environments, test_next, rankings, plan))
     if earth:
         docs.append(earth_corpus_document(earth))
     return {"documents": docs}
@@ -1380,12 +1380,32 @@ def nearest_phrase(entry):
     return ", ".join(parts)
 
 
-def dashboard_results_document(environments, test_next, rankings):
+def test_plan_lines(plan):
+    lines = [plan["headline"]["text"] + "."]
+    for t in plan["tests"]:
+        n = t.get("nearest") or {}
+        if n:
+            if n.get("pressure_atm") is None:
+                where = "pressure not recorded"
+            else:
+                where = "%.1f psia%s" % (n["pressure_atm"] * PSIA_PER_ATM, " (from a NASA report)" if n.get("pressure_sourced") else "")
+            near = "nearest PSI test %s %s, row %s, O2 %.1f percent, %s" % (n.get("psi_id"), n.get("investigation"), n.get("source_row"), n["o2_frac"] * 100, where)
+        else:
+            near = "no nearest PSI test"
+        lines.append("Planned test %d, %s fuel, covers %s: O2 window %.1f to %.1f percent, pressure window %.1f to %.1f psia; %s." % (
+            t["rank"], FUEL_CLASS_LABELS.get(t["fuel_class"], t["fuel_class"]), ", ".join(t["habitat_names"]),
+            t["o2"]["min"] * 100, t["o2"]["max"] * 100,
+            t["pressure_atm"]["min"] * PSIA_PER_ATM, t["pressure_atm"]["max"] * PSIA_PER_ATM, near))
+    return lines
+
+
+def dashboard_results_document(environments, test_next, rankings, plan=None):
     if isinstance(environments, dict):
         environments = environments["environments"]
     lines = [
         "Results computed by this dashboard from the PSI conditions table and NASA documents. "
-        "All PSI data is microgravity; no partial-gravity values exist or are implied."
+        "All PSI data is microgravity; PSI holds no partial-gravity values. "
+        "Measured lunar and Martian gravity points from NASA reports outside PSI are in the Partial gravity document."
     ]
     lines.append("Habitat windows (O2 as mole fraction, pressure, flow, gravity):")
     for env in environments:
@@ -1416,6 +1436,9 @@ def dashboard_results_document(environments, test_next, rankings):
     if ranking:
         lines.append("Default lunar habitat ranking, top 5 of %d: %s." % (len(ranking), "; ".join(
             "rank %d %s (score %.3f)" % (item["rank"], item["psi_id"], item["score"]) for item in ranking[:5])))
+    if plan:
+        lines.append("Test plan:")
+        lines.extend(test_plan_lines(plan))
     return {"psi_id": "DASHBOARD-RESULTS", "title": DASHBOARD_RESULTS_TITLE, "body": chr(10).join(lines)}
 
 
@@ -1440,8 +1463,8 @@ RULE_TEXT = (
 )
 
 NO_MODEL_NOTE = (
-    "No trained model is shipped. A model fitted to this table would be asked for predictions outside the tested range, "
-    "which would not be valid. The downloads are model-ready instead: units, provenance, a group column and a validity note."
+    "No general model is shipped for this table. The one model shown here, FLEX droplet extinction, predicts only inside its tested range "
+    "and refuses outside it. The downloads are model-ready: units, provenance, a group column and a validity note."
 )
 
 GROUPED_VALIDATION_NOTE = (
@@ -1493,7 +1516,7 @@ RELATIONSHIPS = [
         "axes": [],
         "response_keys": [],
         "response_label": "any response",
-        "needs": "Partial-gravity flight data such as LUCI (Lunar-g Combustion Investigation) and FM2 (Flammability of Materials on the Moon), both named in the challenge statement as expected additions to PSI.",
+        "needs": "Partial-gravity flight data such as LUCI (Lunar-g Combustion Investigation) and FM2 (Flammability of Materials on the Moon), both named in the challenge statement as expected additions to PSI. Measured lunar and Martian gravity points from NASA reports outside PSI are shown on the gravity page.",
     },
 ]
 
@@ -2063,9 +2086,39 @@ def build_ask_eval():
     }
 
 
+def build_simple_verification(name):
+    data = read_json_file(os.path.join(ROOT, "data", name, "verification.json"))
+    if not isinstance(data, dict):
+        return None
+    return {"checked": data.get("checked", 0), "failed": data.get("failed", 0)}
+
+
+def build_partial_verification():
+    data = read_json_file(os.path.join(ROOT, "data", "partial_g", "verification.json"))
+    if not isinstance(data, dict) or not isinstance(data.get("checked"), dict):
+        return None
+    checked = data["checked"]
+    return {
+        "sources": checked.get("sources", 0),
+        "points": checked.get("points", 0),
+        "quotes": checked.get("quotes", 0),
+        "fields": checked.get("fields", 0),
+        "failed": data.get("failed", 0),
+    }
+
+
+def verified_count(block):
+    if not block:
+        return 0
+    return max(block.get("checked", 0) - block.get("failed", 0), 0)
+
+
 def build_verification(verification_summary, verification_items):
     audit = read_json_file(AUDIT_PATH)
     result = {"present": False, "audit": None, "quotes": None, "outside_psi": build_outside_verification(), "ask_eval": build_ask_eval()}
+    result["lunar_g"] = build_simple_verification("lunar_g")
+    result["earth"] = build_simple_verification("earth")
+    result["partial_g"] = build_partial_verification()
     if result["outside_psi"] or result["ask_eval"]:
         result["present"] = True
     if isinstance(audit, dict) and isinstance(audit.get("checks"), dict):
@@ -2098,6 +2151,14 @@ def build_verification(verification_summary, verification_items):
             "no_finding": (verification_summary or {}).get("no_finding", []),
         }
         result["present"] = True
+    partial = result["partial_g"] or {}
+    result["quotes_total"] = (
+        (result["quotes"] or {}).get("verified", 0)
+        + verified_count(result["outside_psi"])
+        + verified_count(result["lunar_g"])
+        + verified_count(result["earth"])
+        + max(partial.get("quotes", 0) - partial.get("failed", 0), 0)
+    )
     return result
 
 
@@ -2137,7 +2198,7 @@ def build():
     earth = build_earth()
     lunar = build_lunar_g()
     partial = partial_g_site.build_partial_g()
-    corpus = build_corpus(investigations, default_rankings, outside, outside["summary"]["psi_solid_max_o2"], environments, test_next, earth, lunar, partial)
+    corpus = build_corpus(investigations, default_rankings, outside, outside["summary"]["psi_solid_max_o2"], environments, test_next, earth, lunar, partial, plan)
     return {
         "investigations": investigations,
         "conditions": slim_conditions(rows),

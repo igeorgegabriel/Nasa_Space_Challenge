@@ -229,7 +229,7 @@
      "status": "Partly"
     },
     {
-     "gap": "Partial-gravity flight data such as LUCI (Lunar-g Combustion Investigation) and FM2 (Flammability of Materials on the Moon), both named in the challenge statement as expected additions to PSI.",
+     "gap": "Partial-gravity flight data such as LUCI (Lunar-g Combustion Investigation) and FM2 (Flammability of Materials on the Moon), both named in the challenge statement as expected additions to PSI. Measured lunar and Martian gravity points from NASA reports outside PSI are shown on the gravity page.",
      "id": "partial_gravity",
      "investigations": [],
      "link": {
@@ -494,7 +494,7 @@
      "status": "Partly"
     },
     {
-     "gap": "Partial-gravity flight data such as LUCI (Lunar-g Combustion Investigation) and FM2 (Flammability of Materials on the Moon), both named in the challenge statement as expected additions to PSI.",
+     "gap": "Partial-gravity flight data such as LUCI (Lunar-g Combustion Investigation) and FM2 (Flammability of Materials on the Moon), both named in the challenge statement as expected additions to PSI. Measured lunar and Martian gravity points from NASA reports outside PSI are shown on the gravity page.",
      "id": "partial_gravity",
      "investigations": [],
      "link": {
@@ -759,7 +759,7 @@
      "status": "Partly"
     },
     {
-     "gap": "Partial-gravity flight data such as LUCI (Lunar-g Combustion Investigation) and FM2 (Flammability of Materials on the Moon), both named in the challenge statement as expected additions to PSI.",
+     "gap": "Partial-gravity flight data such as LUCI (Lunar-g Combustion Investigation) and FM2 (Flammability of Materials on the Moon), both named in the challenge statement as expected additions to PSI. Measured lunar and Martian gravity points from NASA reports outside PSI are shown on the gravity page.",
      "id": "partial_gravity",
      "investigations": [],
      "link": {
@@ -1024,7 +1024,7 @@
      "status": "Partly"
     },
     {
-     "gap": "Partial-gravity flight data such as LUCI (Lunar-g Combustion Investigation) and FM2 (Flammability of Materials on the Moon), both named in the challenge statement as expected additions to PSI.",
+     "gap": "Partial-gravity flight data such as LUCI (Lunar-g Combustion Investigation) and FM2 (Flammability of Materials on the Moon), both named in the challenge statement as expected additions to PSI. Measured lunar and Martian gravity points from NASA reports outside PSI are shown on the gravity page.",
      "id": "partial_gravity",
      "investigations": [],
      "link": {
@@ -1289,7 +1289,7 @@
      "status": "Partly"
     },
     {
-     "gap": "Partial-gravity flight data such as LUCI (Lunar-g Combustion Investigation) and FM2 (Flammability of Materials on the Moon), both named in the challenge statement as expected additions to PSI.",
+     "gap": "Partial-gravity flight data such as LUCI (Lunar-g Combustion Investigation) and FM2 (Flammability of Materials on the Moon), both named in the challenge statement as expected additions to PSI. Measured lunar and Martian gravity points from NASA reports outside PSI are shown on the gravity page.",
      "id": "partial_gravity",
      "investigations": [],
      "link": {
@@ -1328,7 +1328,7 @@
  },
  "grouped_validation_note": "Validate any model with grouped (leave-one-investigation-out) splits on the group column. Rows within one investigation share hardware, fuel and procedure, so a random row split leaks information and overstates accuracy.",
  "min_rows": 10,
- "no_model_note": "No trained model is shipped. A model fitted to this table would be asked for predictions outside the tested range, which would not be valid. The downloads are model-ready instead: units, provenance, a group column and a validity note.",
+ "no_model_note": "No general model is shipped for this table. The one model shown here, FLEX droplet extinction, predicts only inside its tested range and refuses outside it. The downloads are model-ready: units, provenance, a group column and a validity note.",
  "relationships": [
   {
    "axes": [
