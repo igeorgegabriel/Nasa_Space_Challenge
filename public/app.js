@@ -872,9 +872,19 @@ const STORY_INCIDENTS = [
   ["Recent", "Artemis II", "smoke alarm", "https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/"]
 ];
 
+const HERO_VIDEO = {
+  webm: "video/iss_flame_loop.webm",
+  mp4: "video/iss_flame_loop.mp4",
+  poster: "video/iss_flame_poster.jpg",
+  caption: "Real flame on the ISS: NASA BASS-II flight footage (PSI-25)"
+};
+
+const HERO_FALLBACK = { src: "img/PSI-25/bass_ii_flame_testing.jpg", alt: "A flame burning in microgravity, photographed during NASA's BASS-II experiment" };
+
 const CHALLENGE_URL = "https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/";
 
 let storyObserver = null;
+let heroObserver = null;
 let gapNode = null;
 let gapWidth = 0;
 
@@ -888,6 +898,60 @@ function stopStory() {
     storyObserver = null;
   }
   gapNode = null;
+  if (heroObserver) {
+    heroObserver.disconnect();
+    heroObserver = null;
+  }
+}
+
+function heroMedia(hero) {
+  const quiet = reduceMotion();
+  const video = el("video", { class: "hero-img hero-video", poster: HERO_VIDEO.poster, preload: "metadata", playsinline: "", "aria-hidden": "true", tabindex: "-1" },
+    el("source", { src: HERO_VIDEO.webm, type: "video/webm" }),
+    el("source", { src: HERO_VIDEO.mp4, type: "video/mp4" }));
+  video.muted = true;
+  video.defaultMuted = true;
+  video.setAttribute("muted", "");
+  video.loop = true;
+  video.playsInline = true;
+  let failed = false;
+  function fallBack() {
+    if (failed) {
+      return;
+    }
+    failed = true;
+    const img = el("img", { class: "hero-img hero-fallback", src: HERO_FALLBACK.src, alt: "", "aria-hidden": "true" });
+    if (video.parentNode) {
+      video.parentNode.replaceChild(img, video);
+    }
+  }
+  video.addEventListener("error", fallBack);
+  video.lastChild.addEventListener("error", fallBack);
+  if (!quiet) {
+    video.autoplay = true;
+    video.setAttribute("autoplay", "");
+    heroVideoWatch(hero, video);
+  }
+  return video;
+}
+
+function heroVideoWatch(hero, video) {
+  if (!window.IntersectionObserver) {
+    return;
+  }
+  heroObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        const p = video.play();
+        if (p && p.catch) {
+          p.catch(function () {});
+        }
+      } else {
+        video.pause();
+      }
+    });
+  }, { threshold: 0.05 });
+  heroObserver.observe(hero);
 }
 
 function countUp(node, target) {
@@ -1106,6 +1170,126 @@ function gapDetails(lunar) {
 
 const scenario = { env: "lunar", fuel: "solid" };
 
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+function svgEl(tagName, attrs) {
+  const node = document.createElementNS(SVG_NS, tagName);
+  Object.keys(attrs || {}).forEach(function (key) {
+    node.setAttribute(key, attrs[key]);
+  });
+  return node;
+}
+
+function countTo(node, from, to, ms) {
+  if (reduceMotion() || from === to) {
+    node.textContent = String(to);
+    return;
+  }
+  const start = performance.now();
+  function step(now) {
+    const u = Math.min(1, (now - start) / ms);
+    node.textContent = String(Math.round(from + (to - from) * u));
+    if (u < 1) {
+      requestAnimationFrame(step);
+    }
+  }
+  node.textContent = String(from);
+  requestAnimationFrame(step);
+}
+
+const OXR = { pad: 4, span: 92, max: 40 };
+
+function oxrX(v) {
+  return OXR.pad + (v / OXR.max) * OXR.span;
+}
+
+function oxrValues(fuelClass) {
+  const seen = {};
+  state.data.conditions.forEach(function (r) {
+    if (r.fuel_class === fuelClass && r.o2_basis === "ambient" && typeof r.o2_frac === "number" &&
+      (r.value_quality === "exact" || r.value_quality === "approximate")) {
+      seen[(r.o2_frac * 100).toFixed(1)] = true;
+    }
+  });
+  return Object.keys(seen).map(Number).sort(function (a, b) { return a - b; });
+}
+
+function scenarioRuler() {
+  const band = el("div", { class: "oxr-band" });
+  const svg = svgEl("svg", { class: "oxr-svg", "aria-hidden": "true", focusable: "false" });
+  const marks = svgEl("g");
+  const gapGroup = svgEl("g");
+  const defs = svgEl("defs");
+  const marker = svgEl("marker", { id: "oxr-arrow", viewBox: "0 0 8 8", refX: "7", refY: "4", markerWidth: "8", markerHeight: "8", orient: "auto", markerUnits: "userSpaceOnUse" });
+  marker.appendChild(svgEl("path", { d: "M0 0 L8 4 L0 8 Z", fill: "#ff8a50" }));
+  defs.appendChild(marker);
+  svg.appendChild(defs);
+  svg.appendChild(svgEl("line", { class: "oxr-axis", x1: oxrX(0) + "%", x2: oxrX(OXR.max) + "%", y1: "72%", y2: "72%" }));
+  for (let v = 0; v <= OXR.max; v += 5) {
+    const major = v % 10 === 0;
+    svg.appendChild(svgEl("line", { class: "oxr-tick", x1: oxrX(v) + "%", x2: oxrX(v) + "%", y1: "72%", y2: (major ? 80 : 77) + "%" }));
+    if (major) {
+      const label = svgEl("text", { class: "oxr-lab", x: oxrX(v) + "%", y: "97%", "text-anchor": "middle" });
+      label.textContent = v + "%";
+      svg.appendChild(label);
+    }
+  }
+  svg.appendChild(marks);
+  svg.appendChild(gapGroup);
+  const wrap = el("div", { class: "oxr", role: "img" }, band, svg);
+  const legend = el("p", { class: "oxr-legend", text: "dot = PSI test - diamond = flight outside PSI (solids) - band = habitat air" });
+  let lastFuel = null;
+
+  function update(entry, block) {
+    const win = block.windows.o2;
+    const lo = win.min * 100;
+    const hi = win.max * 100;
+    const fuel = entry.fuel_class;
+    const values = oxrValues(fuel);
+    const flights = fuel === "solid" ? state.data.outside_psi.tests.map(function (t) { return t.o2_percent; }) : [];
+    band.style.left = oxrX(lo) + "%";
+    band.style.width = (oxrX(hi) - oxrX(lo)) + "%";
+    if (fuel !== lastFuel) {
+      lastFuel = fuel;
+      clear(marks);
+      const n = values.length;
+      values.forEach(function (v, i) {
+        const dot = svgEl("circle", { class: "oxr-dot", cx: oxrX(v) + "%", cy: "62%", r: "3.2" });
+        dot.style.setProperty("--d", Math.round(120 + 900 * (i / Math.max(1, n))) + "ms");
+        marks.appendChild(dot);
+      });
+      const diamonds = {};
+      flights.forEach(function (v) { diamonds[v.toFixed(1)] = true; });
+      Object.keys(diamonds).forEach(function (k, i) {
+        const holder = svgEl("svg", { x: oxrX(Number(k)) + "%", y: "42%", width: "1", height: "1", overflow: "visible" });
+        const d = svgEl("path", { class: "oxr-dia", d: "M0 -5 L5 0 L0 5 L-5 0 Z" });
+        d.style.setProperty("--d", Math.round(700 + i * 90) + "ms");
+        holder.appendChild(d);
+        marks.appendChild(holder);
+      });
+    }
+    clear(gapGroup);
+    const tested = values.concat(flights);
+    const top = tested.length ? Math.max.apply(null, tested) : null;
+    const inside = tested.some(function (v) { return v >= lo - 1e-9 && v <= hi + 1e-9; });
+    let note = "";
+    if (inside) {
+      note = entry.inside > 0 ? "Tested inside" : "Tested at this O2";
+    } else if (top !== null && top < lo) {
+      note = fmt(lo - top, 1) + " points never tested";
+      gapGroup.appendChild(svgEl("line", { class: "oxr-gapline", x1: oxrX(top) + "%", x2: oxrX(lo) + "%", y1: "26%", y2: "26%", "marker-end": "url(#oxr-arrow)" }));
+    }
+    if (note) {
+      const text = svgEl("text", { class: "oxr-note", x: (inside ? oxrX((lo + hi) / 2) : oxrX(lo)) + "%", y: "14%", "text-anchor": inside ? "middle" : "end" });
+      text.textContent = note;
+      gapGroup.appendChild(text);
+    }
+    wrap.setAttribute("aria-label", "Oxygen ruler, 0 to 40 percent. " + values.length + " tested levels. Habitat air " + fmt(lo, 1) + " to " + fmt(hi, 1) + " percent. " + note);
+  }
+  return { nodes: [wrap, legend], update: update };
+}
+
+
 function scenarioQuestion(entry, hab) {
   const fuel = (NEXT_LABELS[entry.fuel_class] || FUEL_LABELS[entry.fuel_class]).toLowerCase() + " fuel in " + hab + " air";
   if (entry.inside > 0) {
@@ -1142,6 +1326,8 @@ function scenarioCard() {
   const habRow = el("div", { class: "pills sc-seg", role: "group", "aria-label": "Habitat" });
   const fuelRow = el("div", { class: "pills sc-seg", role: "group", "aria-label": "Fuel type" });
   const result = el("div", { class: "sc-result", "aria-live": "polite" });
+  const ruler = scenarioRuler();
+  let shown = null;
   function pill(key, label, on, pick) {
     return el("button", { type: "button", class: "pill" + (on ? " active" : ""), "aria-pressed": on ? "true" : "false", "data-key": key, text: label, onclick: function () {
       pick();
@@ -1168,8 +1354,14 @@ function scenarioCard() {
     block.classes.forEach(function (c) {
       fuelRow.appendChild(pill("fuel-" + c.fuel_class, NEXT_LABELS[c.fuel_class] || FUEL_LABELS[c.fuel_class], c.fuel_class === scenario.fuel, function () { scenario.fuel = c.fuel_class; }));
     });
+    const numNode = el("p", { class: "sc-num" + (entry.inside === 0 ? " zero" : ""), text: String(entry.inside) });
+    if (shown !== null) {
+      countTo(numNode, shown, entry.inside, 400);
+    }
+    shown = entry.inside;
+    ruler.update(entry, block);
     appendKids(result, [
-      el("p", { class: "sc-num" + (entry.inside === 0 ? " zero" : ""), text: String(entry.inside) }),
+      numNode,
       el("p", { class: "sc-label", text: (entry.inside === 1 ? "NASA test" : "NASA tests") + " inside " + hab + " air" }),
       scenarioNearest(entry),
       scenarioFlight(entry),
@@ -1189,7 +1381,7 @@ function scenarioCard() {
     }
   }
   draw(null);
-  return [habRow, fuelRow, result];
+  return [habRow, fuelRow, el("div", { class: "sc-ruler" }, ruler.nodes), result];
 }
 
 const TOUR_QUESTION = "How many solid-fuel tests were run inside Moon base oxygen levels?";
@@ -1383,7 +1575,6 @@ function renderHome() {
     return section;
   }
   const hero = el("section", { class: "story hero in", id: "s-hero" },
-    el("img", { class: "hero-img", src: "img/PSI-25/bass_ii_flame_testing.jpg", alt: "A flame burning in microgravity, photographed during NASA's BASS-II experiment" }),
     el("div", { class: "hero-copy" },
       rv(0, "h1", { text: "Flame in Freefall" }),
       rv(1, "p", { class: "hero-line", text: "Fire behaves differently in space. We checked every NASA test so Moon crews know where the evidence stops." }),
@@ -1391,7 +1582,8 @@ function renderHome() {
     el("button", { type: "button", class: "scroll-cue", "aria-label": "Scroll to the next section", onclick: function () {
       document.getElementById("s-quote").scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth" });
     } }, el("span", { text: "Scroll" }), el("i")),
-    el("span", { class: "credit", text: "NASA / PSI" }));
+    el("span", { class: "hero-alt", text: HERO_FALLBACK.alt }),
+    el("span", { class: "credit", text: HERO_VIDEO.caption }));
   const quote = story("st-quote", "s-quote", [
     rv(0, "blockquote", { class: "big-quote" }, el("p", { text: ARTEMIS_QUOTE }), el("footer", { text: "Artemis II commander" })),
     rv(1, "ul", { class: "incidents" }, STORY_INCIDENTS.map(function (i) {
@@ -1445,6 +1637,7 @@ function renderHome() {
   drawGapChart(chart);
   gapNode = chart;
   watchStory(sections);
+  hero.insertBefore(heroMedia(hero), hero.firstChild);
   return view;
 }
 
@@ -2844,7 +3037,8 @@ function loadAskState() {
         steps: cleanAskSteps(t.steps),
         actions: cleanAskActions(t.actions),
         followups: cleanAskFollowups(t.followups),
-        error: typeof t.error === "string" ? t.error : null
+        error: typeof t.error === "string" ? t.error : null,
+        stepsShown: true
       };
     });
   } catch (err) {
@@ -2856,12 +3050,46 @@ function elapsedText(turn) {
   return Math.max(0, Math.floor((Date.now() - (turn.startedAt || Date.now())) / 1000)) + " s";
 }
 
-function askStepsView(steps, open) {
-  return el("details", { class: "ask-steps", open: open ? true : null },
+function stepTick() {
+  const svg = svgEl("svg", { class: "tick", viewBox: "0 0 12 12", width: "12", height: "12", "aria-hidden": "true", focusable: "false" });
+  svg.appendChild(svgEl("path", { d: "M2 6.5 L5 9.5 L10 3" }));
+  return svg;
+}
+
+function playSteps(turn, items) {
+  if (turn.stepsShown) {
+    return;
+  }
+  turn.stepsShown = true;
+  if (reduceMotion()) {
+    return;
+  }
+  items.forEach(function (li) { li.classList.add("step-hide"); });
+  items.forEach(function (li, i) {
+    setTimeout(function () {
+      li.classList.remove("step-hide");
+      li.classList.add("step-in");
+    }, 120 + i * 220);
+  });
+}
+
+function askStepsView(steps, open, turn) {
+  const items = steps.map(function (s) {
+    return el("li", null, stepTick(), el("span", { class: "ask-step-label", text: s.label }), s.detail ? el("span", { class: "ask-step-detail", text: s.detail }) : null);
+  });
+  const details = el("details", { class: "ask-steps", open: open ? true : null },
     el("summary", { text: "How I checked (" + steps.length + ")" }),
-    el("ul", { class: "ask-steps-list" }, steps.map(function (s) {
-      return el("li", null, el("span", { class: "ask-step-label", text: s.label }), s.detail ? el("span", { class: "ask-step-detail", text: s.detail }) : null);
-    })));
+    el("ul", { class: "ask-steps-list" }, items));
+  if (open) {
+    playSteps(turn, items);
+  } else {
+    details.addEventListener("toggle", function () {
+      if (details.open) {
+        playSteps(turn, items);
+      }
+    });
+  }
+  return details;
 }
 
 function askTurnView(turn, index) {
@@ -2881,7 +3109,7 @@ function askTurnView(turn, index) {
       actions.length ? el("div", { class: "ask-actions" }, actions.map(function (a) {
         return el("a", { class: "ask-action", href: a.href, text: a.label });
       })) : null,
-      steps.length ? askStepsView(steps, turn.openSteps === true) : null,
+      steps.length ? askStepsView(steps, turn.openSteps === true, turn) : null,
       citations.length ? el("details", { class: "ask-sources" },
         el("summary", { text: "Sources (" + citations.length + ")" }),
         el("div", { class: "ask-cites" }, citationList(citations, scope))) : null));

@@ -13,7 +13,7 @@ const SHOTS = process.env.SHOTS_DIR || "";
 const SITE_PORT = 8791;
 const DEBUG_PORT = 9334;
 const SITE = "http://127.0.0.1:" + SITE_PORT + "/index.html";
-const TYPES = { ".html": "text/html", ".js": "application/javascript", ".css": "text/css", ".json": "application/json", ".png": "image/png", ".jpg": "image/jpeg", ".svg": "image/svg+xml" };
+const TYPES = { ".html": "text/html", ".js": "application/javascript", ".css": "text/css", ".json": "application/json", ".png": "image/png", ".jpg": "image/jpeg", ".svg": "image/svg+xml", ".webm": "video/webm", ".mp4": "video/mp4" };
 
 function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 
@@ -359,6 +359,13 @@ async function main() {
   const tn = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "test_next.json"), "utf8")).environments;
   const insideOf = function (env, fuel) { return String(tn[env].classes.find(function (c) { return c.fuel_class === fuel; }).inside); };
   assert.strictEqual(await js("document.querySelector('.scenario .sc-num').textContent"), insideOf("lunar", "solid"));
+  assert.strictEqual(await js("document.querySelectorAll('video.hero-video').length"), 1, "hero video");
+  assert.deepStrictEqual(JSON.parse(await js("JSON.stringify(Array.from(document.querySelectorAll('video.hero-video source')).map(function (n) { return n.getAttribute('type'); }))")), ["video/webm", "video/mp4"]);
+  assert.strictEqual(await js("document.querySelector('video.hero-video').getAttribute('poster')"), "video/iss_flame_poster.jpg");
+  assert.strictEqual(await js("document.querySelector('.hero .credit').textContent"), "Real flame on the ISS: NASA BASS-II flight footage (PSI-25)");
+  assert.ok(await js("document.querySelectorAll('.oxr .oxr-dot').length") > 0, "ruler dots");
+  assert.ok((await js("document.querySelector('.oxr-note').textContent")).indexOf("never tested") > 0, "gap label");
+  assert.strictEqual(await js("document.querySelectorAll('.oxr-dia').length") > 0, true, "flight diamonds for solids");
   assert.ok((await js("document.querySelector('.sc-label').textContent")).indexOf("inside Moon base air") > 0);
   assert.ok((await js("document.querySelector('.sc-line').textContent")).indexOf("Nearest PSI test: ") === 0);
   assert.ok((await js("document.querySelector('.sc-line a').getAttribute('href')")).indexOf("#/investigation/PSI-") === 0);
@@ -371,6 +378,15 @@ async function main() {
   assert.strictEqual(await js("document.querySelector('.sc-actions a').getAttribute('href')"), "#/rank?habitat=mars");
   assert.strictEqual(await js("document.activeElement.getAttribute('data-key')"), "fuel-gas", "focus kept on the pressed pill");
   await js("document.querySelector('.scenario [data-key=\"env-lunar\"]').click()");
+  await js("document.querySelector('.scenario [data-key=\"fuel-solid\"]').click()");
+  const bandBefore = await js("document.querySelector('.oxr-band').style.left");
+  await js("document.querySelector('.scenario [data-key=\"env-iss\"]').click()");
+  const bandIss = await js("document.querySelector('.oxr-band').style.left");
+  assert.notStrictEqual(bandIss, bandBefore, "band moves with the habitat");
+  await js("document.querySelector('.scenario [data-key=\"env-lunar\"]').click()");
+  assert.strictEqual(await js("document.querySelector('.oxr-band').style.left"), bandBefore);
+  await js("document.querySelector('.scenario [data-key=\"fuel-liquid_droplet\"]').click()");
+  assert.strictEqual(await js("document.querySelectorAll('.oxr-dia').length"), 0, "no diamonds for liquids");
   await js("document.querySelector('.scenario [data-key=\"fuel-solid\"]').click()");
   const asksBeforeWhy = mock.asks.length;
   await js("document.querySelector('.sc-actions .btn').click()");
@@ -411,6 +427,10 @@ async function main() {
   assert.strictEqual(await js("document.querySelector('.ask-steps').open"), true, "tour answer opens How I checked");
   assert.strictEqual(await js("document.querySelectorAll('.ask-action').length"), 1);
   assert.strictEqual(await js("document.querySelector('.ask-more-title').textContent"), "Follow up");
+  assert.ok(await js("document.querySelectorAll('.ask-steps-list li').length") > 0);
+  assert.strictEqual(await js("document.querySelectorAll('.ask-steps-list li .tick').length"), await js("document.querySelectorAll('.ask-steps-list li').length"), "each step has a tick");
+  await sleep(1500);
+  assert.strictEqual(await js("document.querySelectorAll('.ask-steps-list li.step-hide').length"), 0, "steps revealed");
   await shot("tour_4_1366");
   await js("document.querySelector('.tour-next').click()");
   await waitFor("location.hash === '#/equipment'", "equipment hash");
@@ -432,6 +452,8 @@ async function main() {
   await go("#/home");
   await sleep(300);
   assert.strictEqual(await js("document.documentElement.scrollWidth > window.innerWidth"), false, "home overflows at 390");
+  assert.ok(await js("document.querySelector('.oxr').getBoundingClientRect().right <= window.innerWidth"), "ruler overflows at 390");
+  assert.strictEqual(await js("document.querySelector('.oxr').getBoundingClientRect().height"), 80);
   await js("document.getElementById('tour-open').click()");
   for (let i = 1; i < 5; i += 1) {
     await sleep(600);
