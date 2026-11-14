@@ -68,9 +68,17 @@ def split_sentences(text):
     return [s for s in re.split(r"(?<=[.!?])\s+|\n+", text) if s.strip()]
 
 
-def finish(records):
+def arg_value(name, default=None):
+    if name in sys.argv:
+        return sys.argv[sys.argv.index(name) + 1]
+    return default
+
+
+def finish(records, tag=None):
     os.makedirs(RESULTS_DIR, exist_ok=True)
     stamp = datetime.date.today().isoformat()
+    if tag:
+        stamp = stamp + "_" + tag
     models = sorted({r["model"] for r in records if r["model"]})
     summary = {
         "run_at": RUN_AT,
@@ -84,8 +92,9 @@ def finish(records):
     }
     with open(os.path.join(RESULTS_DIR, "ask_eval_%s.json" % stamp), "w", encoding="ascii") as handle:
         json.dump({"summary": summary, "records": records}, handle, indent=2)
-    with open(os.path.join(RESULTS_DIR, "ask_eval_summary.json"), "w", encoding="ascii") as handle:
-        json.dump(summary, handle, indent=2)
+    if not tag:
+        with open(os.path.join(RESULTS_DIR, "ask_eval_summary.json"), "w", encoding="ascii") as handle:
+            json.dump(summary, handle, indent=2)
     print(json.dumps(summary, indent=2))
 
 
@@ -118,12 +127,16 @@ def main():
         return
     with open(EVAL_SET, "r", encoding="ascii") as handle:
         items = json.load(handle)["questions"]
+    model = arg_value("--model")
+    effort = arg_value("--effort")
+    legacy = "--legacy-system" in sys.argv
+    tag = arg_value("--tag")
     recorder = Recorder(ask.make_client())
     records = []
     for index, item in enumerate(items):
         if index:
             time.sleep(2)
-        status, body = ask.answer_question(item["question"], client=recorder)
+        status, body = ask.answer_question(item["question"], client=recorder, model=model, effort=effort, system=ask.SYSTEM_LEGACY if legacy else None, use_cache=False)
         answer = body.get("answer", "") if status == 200 else ""
         citations = body.get("citations", []) if status == 200 else []
         checks = run_checks(item, answer, citations)
@@ -145,7 +158,7 @@ def main():
             "passed": passed,
         })
         print(item["id"], "PASS" if passed else "FAIL", flush=True)
-    finish(records)
+    finish(records, tag)
 
 
 if __name__ == "__main__":

@@ -1149,7 +1149,7 @@ def fmt_num(value):
     return ("%.4f" % value).rstrip("0").rstrip(".")
 
 
-def build_corpus(investigations, rankings, outside=None, psi_max=None):
+def build_corpus(investigations, rankings, outside=None, psi_max=None, environments=None, test_next=None):
     docs = []
     for inv in investigations:
         lines = []
@@ -1214,7 +1214,83 @@ def build_corpus(investigations, rankings, outside=None, psi_max=None):
         })
     if outside and outside["tests"]:
         docs.append(outside_psi.corpus_document(outside, psi_max))
+    if environments and test_next:
+        docs.append(dashboard_results_document(environments, test_next, rankings))
     return {"documents": docs}
+
+
+DASHBOARD_RESULTS_TITLE = "Dashboard results - habitat windows, test-next and solid test pressures"
+SOLID_PRESSURE_PATH = os.path.join(ROOT, "data", "outside_psi", "solid_pressure_sources.json")
+FUEL_CLASS_LABELS = {"solid": "solid", "liquid_droplet": "liquid droplet", "gas": "gas"}
+
+
+def window_phrase(block, unit):
+    if block.get("not_specified"):
+        return "not specified"
+    refs = ", ".join(src["ref"] for src in block.get("sources", []) if src.get("ref"))
+    return "%s (source: %s)" % (block.get("display", ""), refs or "none")
+
+
+def nearest_phrase(entry):
+    if not entry:
+        return "none"
+    parts = []
+    if entry.get("psi_id"):
+        parts.append(entry["psi_id"])
+    elif entry.get("label"):
+        parts.append("%s %s" % (entry["label"], entry.get("material_short", "")))
+    if entry.get("o2_frac") is not None:
+        parts.append("O2 %.3f" % entry["o2_frac"])
+    if entry.get("pressure_atm") is not None:
+        parts.append("%.3f atm" % entry["pressure_atm"])
+    else:
+        parts.append("pressure not recorded")
+    if entry.get("o2_gap") is not None:
+        parts.append("O2 gap %.3f" % entry["o2_gap"])
+    if entry.get("inside"):
+        parts.append("inside the window")
+    if entry.get("source_id"):
+        parts.append("NTRS %s" % entry["source_id"])
+    return ", ".join(parts)
+
+
+def dashboard_results_document(environments, test_next, rankings):
+    if isinstance(environments, dict):
+        environments = environments["environments"]
+    lines = [
+        "Results computed by this dashboard from the PSI conditions table and NASA documents. "
+        "All PSI data is microgravity; no partial-gravity values exist or are implied."
+    ]
+    lines.append("Habitat windows (O2 as mole fraction, pressure, flow, gravity):")
+    for env in environments:
+        lines.append("Environment %s (%s): O2 %s; pressure %s; flow %s; gravity %s." % (
+            env["id"], env["name"], window_phrase(env["o2"], ""), window_phrase(env["pressure_atm"], ""),
+            window_phrase(env["flow_cm_s"], ""), window_phrase(env["gravity"], "")))
+    lines.append("Test next, by environment and fuel class (tests inside the habitat window, nearest PSI test, nearest outside-PSI NASA test):")
+    for env in environments:
+        block = test_next["environments"].get(env["id"])
+        if not block:
+            continue
+        for cls in block["classes"]:
+            lines.append("Test next, %s, %s fuel: %d PSI tests inside the window (%d rows classified); nearest PSI test: %s; nearest outside-PSI NASA test: %s." % (
+                env["id"], FUEL_CLASS_LABELS.get(cls["fuel_class"], cls["fuel_class"]), cls["inside"], cls["classified_rows"],
+                nearest_phrase(cls.get("nearest")), nearest_phrase(cls.get("outside_nearest")) if cls.get("outside_nearest") else "none checked"))
+    lines.append("NASA-sourced ambient pressures of the PSI solid-fuel tests. The PSI tables do not record pressure for these tests, but NASA reports do:")
+    with open(SOLID_PRESSURE_PATH, "r", encoding="utf-8") as handle:
+        records = json.load(handle)["records"]
+    for psi_id, rec in records.items():
+        primary = rec["primary"]
+        if rec.get("pressure_atm") is not None:
+            value = "%.3f atm (%.1f kPa)" % (rec["pressure_atm"], rec["pressure_kpa"])
+        else:
+            value = "%.3f to %.3f atm (%.1f to %.1f kPa)" % (tuple(rec["pressure_atm_range"]) + tuple(rec["pressure_kpa_range"]))
+        lines.append("Solid test pressure, %s %s (%s): %s. Quote from NTRS %s page %s: \"%s\"" % (
+            psi_id, rec["name"], rec["platform"], value, primary["source_id"], primary["page"], primary["quote"]))
+    ranking = rankings.get("lunar") or []
+    if ranking:
+        lines.append("Default lunar habitat ranking, top 5 of %d: %s." % (len(ranking), "; ".join(
+            "rank %d %s (score %.3f)" % (item["rank"], item["psi_id"], item["score"]) for item in ranking[:5])))
+    return {"psi_id": "DASHBOARD-RESULTS", "title": DASHBOARD_RESULTS_TITLE, "body": chr(10).join(lines)}
 
 
 MIN_SUPPORTED_ROWS = 10
@@ -1891,7 +1967,8 @@ def build():
     default_rankings = {
         env_id: data["ranking"] for env_id, data in reference["variants"]["default"].items()
     }
-    corpus = build_corpus(investigations, default_rankings, outside, outside["summary"]["psi_solid_max_o2"])
+    test_next = build_test_next(rows, environments, outside)
+    corpus = build_corpus(investigations, default_rankings, outside, outside["summary"]["psi_solid_max_o2"], environments, test_next)
     return {
         "investigations": investigations,
         "conditions": slim_conditions(rows),
@@ -1900,7 +1977,7 @@ def build():
         "earth": {"applications": EARTH},
         "model_readiness": build_model_readiness(rows, environments),
         "rank_reference": reference,
-        "test_next": build_test_next(rows, environments, outside),
+        "test_next": test_next,
         "outside_psi": outside,
         "verification": build_verification(verification_summary, verification_items),
         "images": images,

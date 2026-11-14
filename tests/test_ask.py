@@ -41,8 +41,10 @@ def make_fake_anthropic():
     return module
 
 
-def load_ask():
+def load_ask(env=None):
     saved = sys.modules.get("anthropic")
+    saved_env = {k: os.environ.pop(k, None) for k in ("ASK_MODEL", "ASK_EFFORT")}
+    os.environ.update(env or {})
     fake = make_fake_anthropic()
     sys.modules["anthropic"] = fake
     try:
@@ -54,6 +56,10 @@ def load_ask():
             del sys.modules["anthropic"]
         else:
             sys.modules["anthropic"] = saved
+        for k, v in saved_env.items():
+            os.environ.pop(k, None)
+            if v is not None:
+                os.environ[k] = v
     return module, fake
 
 
@@ -90,12 +96,17 @@ class AskTest(unittest.TestCase):
 
     def test_corpus_loaded(self):
         self.assertGreater(len(self.ask.CORPUS), 0)
-        self.assertEqual(self.ask.MODEL, "claude-opus-5-5")
+        self.assertEqual(self.ask.MODEL, "claude-sonnet-5-5")
+        self.assertEqual(self.ask.EFFORT, "low")
 
     def test_outside_psi_document_citation_maps_and_context_validates(self):
         corpus = self.ask.CORPUS
-        index = len(corpus) - 1
+        index = next(i for i, d in enumerate(corpus) if d["psi_id"] == "NTRS-SAFFIRE-IV-VI")
         self.assertEqual(corpus[index]["psi_id"], "NTRS-SAFFIRE-IV-VI")
+        dash = next(i for i, d in enumerate(corpus) if d["psi_id"] == "DASHBOARD-RESULTS")
+        self.assertEqual(self.ask.psi_id_for(dash, corpus), "DASHBOARD-RESULTS")
+        sentence, error = self.ask.validate_context({"context": {"page": "investigation", "psi_id": "DASHBOARD-RESULTS"}}, corpus)
+        self.assertIsNone(error)
         self.assertEqual(self.ask.psi_id_for(index, corpus), "NTRS-SAFFIRE-IV-VI")
         self.assertEqual(self.ask.psi_id_for(0, corpus), corpus[0]["psi_id"])
         response = SimpleNamespace(content=[text_block("Saffire VI-2 burned at 31.0 percent O2.", [citation(index, "Saffire VI-2 (NTRS 20250002675)", corpus[index]["title"])])],
@@ -140,17 +151,82 @@ class AskTest(unittest.TestCase):
         status, body = self.ask.answer_question("q", client=client)
         self.assertEqual(status, 200)
         call = client.beta.messages.calls[0]
-        self.assertEqual(call["model"], "claude-opus-5-5")
+        self.assertEqual(call["model"], "claude-sonnet-5-5")
         self.assertEqual(call["max_tokens"], 4000)
         self.assertEqual(call["betas"], ["server-side-fallback-2026-07-01"])
         self.assertEqual(call["fallbacks"], "default")
-        self.assertEqual(call["output_config"], {"effort": "medium"})
+        self.assertEqual(call["output_config"], {"effort": "low"})
         self.assertIsInstance(call["system"], str)
         for forbidden in ("temperature", "top_p", "top_k", "thinking"):
             self.assertNotIn(forbidden, call)
         messages = call["messages"]
         self.assertEqual(len(messages), 1)
         self.assertEqual(messages[0]["role"], "user")
+
+    def test_env_overrides_model_and_effort(self):
+        module, _ = load_ask({"ASK_MODEL": "claude-opus-5-5", "ASK_EFFORT": "medium"})
+        self.assertEqual(module.MODEL, "claude-opus-5-5")
+        self.assertEqual(module.EFFORT, "medium")
+        response = SimpleNamespace(content=[text_block("ok")], stop_reason="end_turn", model="claude-opus-5-5")
+        client = StubClient(response)
+        module.answer_question("q", client=client, use_cache=False)
+        call = client.beta.messages.calls[0]
+        self.assertEqual(call["model"], "claude-opus-5-5")
+        self.assertEqual(call["output_config"], {"effort": "medium"})
+
+    def test_haiku_has_no_fallback_params(self):
+        options = self.ask.request_options("claude-haiku-5-5", "low")
+        self.assertNotIn("betas", options)
+        self.assertNotIn("fallbacks", options)
+        self.assertEqual(options["output_config"], {"effort": "low"})
+
+    def test_system_has_brevity_and_keeps_rules(self):
+        self.assertIn("120 words", self.ask.SYSTEM)
+        self.assertTrue(self.ask.SYSTEM.startswith(self.ask.SYSTEM_LEGACY))
+
+    def test_normalize_question(self):
+        n = self.ask.normalize_question
+        self.assertEqual(n("  What did BASS-II find?? "), "what did bass ii find")
+        self.assertEqual(n("What did BASS-II find"), n("what did bass ii find?"))
+
+    def test_cache_hit_skips_client(self):
+        cache = {"what did bass ii find": {"question": "What did BASS-II find?", "answer": "A [1]", "citations": [{"n": 1}], "model": "m"}}
+        original = self.ask.ASK_CACHE
+        self.ask.ASK_CACHE = cache
+        try:
+            client = StubClient(SimpleNamespace(content=[], stop_reason="end_turn", model="m"))
+            status, body = self.ask.answer_question("what did BASS-II find?!", client=client)
+            self.assertEqual(status, 200)
+            self.assertTrue(body["cached"])
+            self.assertEqual(body["answer"], "A [1]")
+            self.assertEqual(body["citations"], [{"n": 1}])
+            self.assertEqual(client.beta.messages.calls, [])
+            status, body = self.ask.answer_question("What did BASS-II find?", client=client, history=[{"question": "x", "answer": "y"}])
+            self.assertNotIn("cached", body)
+            self.assertEqual(len(client.beta.messages.calls), 1)
+            status, body = self.ask.answer_question("What did BASS-II find?", client=client, use_cache=False)
+            self.assertNotIn("cached", body)
+        finally:
+            self.ask.ASK_CACHE = original
+
+    def test_cache_miss_calls_client(self):
+        original = self.ask.ASK_CACHE
+        self.ask.ASK_CACHE = {"other": {"answer": "x", "citations": []}}
+        try:
+            response = SimpleNamespace(content=[text_block("Live.", [citation(0, "t")])], stop_reason="end_turn", model="m")
+            client = StubClient(response)
+            status, body = self.ask.answer_question("an uncached question", client=client)
+            self.assertEqual(status, 200)
+            self.assertNotIn("cached", body)
+            self.assertEqual(len(client.beta.messages.calls), 1)
+        finally:
+            self.ask.ASK_CACHE = original
+
+    def test_shipped_cache_file_is_valid(self):
+        for key, entry in self.ask.load_ask_cache().items():
+            self.assertEqual(key, self.ask.normalize_question(entry["question"]))
+            self.assertTrue(entry["answer"])
+            self.assertIsInstance(entry["citations"], list)
 
     def test_system_prompt_rules(self):
         system = self.ask.SYSTEM
@@ -180,12 +256,12 @@ class AskTest(unittest.TestCase):
     def test_answer_question_returns_structure(self):
         corpus = [{"psi_id": "PSI-25", "title": "PSI-25 BASS-II - Burning", "body": "a"}]
         response = SimpleNamespace(
-            content=[text_block("Yes.", [citation(0, "text")])], stop_reason="end_turn", model="claude-opus-5-5")
+            content=[text_block("Yes.", [citation(0, "text")])], stop_reason="end_turn", model="claude-sonnet-5-5")
         status, body = self.ask.answer_question("q", client=StubClient(response), corpus=corpus)
         self.assertEqual(status, 200)
         self.assertEqual(body["answer"], "Yes. [1]")
         self.assertEqual(body["citations"][0]["psi_id"], "PSI-25")
-        self.assertEqual(body["model"], "claude-opus-5-5")
+        self.assertEqual(body["model"], "claude-sonnet-5-5")
         self.assertEqual(set(body), {"answer", "citations", "model"})
 
     def test_refusal_is_polite(self):

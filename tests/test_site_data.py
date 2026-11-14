@@ -451,11 +451,11 @@ class SiteDataTest(unittest.TestCase):
             self.assertTrue(insight["links"] or insight.get("sources"))
 
     def test_corpus_has_one_document_per_investigation(self):
-        self.assertEqual(len(self.corpus), len(self.investigations) + 1)
+        self.assertEqual(len(self.corpus), len(self.investigations) + 2)
         ids = [d["psi_id"] for d in self.corpus]
-        self.assertEqual(ids, [inv["psi_id"] for inv in self.investigations] + [outside_psi.CORPUS_ID])
+        self.assertEqual(ids, [inv["psi_id"] for inv in self.investigations] + [outside_psi.CORPUS_ID, "DASHBOARD-RESULTS"])
         self.assertEqual(len(set(ids)), len(ids))
-        for doc in self.corpus[:-1]:
+        for doc in self.corpus[:-2]:
             self.assertTrue(doc["title"].startswith(doc["psi_id"] + " "))
             self.assertIn(" - ", doc["title"])
             self.assertGreater(len(doc["body"]), 100)
@@ -481,7 +481,7 @@ class SiteDataTest(unittest.TestCase):
         self.assertFalse(result["meta_present"])
         unified = read_json(os.path.join(UNIFIED, "investigations.json"))
         self.assertEqual({i["psi_id"] for i in result["investigations"]}, set(unified))
-        self.assertEqual(len(result["corpus"]["documents"]), len(unified) + 1)
+        self.assertEqual(len(result["corpus"]["documents"]), len(unified) + 2)
         for inv in result["investigations"]:
             self.assertFalse(inv["meta_present"])
             for entry in inv["functions"]:
@@ -741,8 +741,15 @@ class SiteDataTest(unittest.TestCase):
         self.assertEqual(lunar["outside_nearest"]["sample_id"], "VI-2")
         self.assertEqual(lunar["inside"], 0)
 
-    def test_outside_corpus_document_and_citation_mapping(self):
+    def test_dashboard_results_document(self):
         doc = self.corpus[-1]
+        self.assertEqual(doc["psi_id"], "DASHBOARD-RESULTS")
+        self.assertEqual(doc["title"], build_site_data.DASHBOARD_RESULTS_TITLE)
+        for token in ("Environment lunar", "Test next, lunar, solid", "Solid test pressure, PSI-25", "20210011385", "Default lunar habitat ranking"):
+            self.assertIn(token, doc["body"])
+
+    def test_outside_corpus_document_and_citation_mapping(self):
+        doc = self.corpus[-2]
         self.assertEqual(doc["psi_id"], outside_psi.CORPUS_ID)
         self.assertEqual(doc["title"], outside_psi.CORPUS_TITLE)
         self.assertIn("not in the PSI repository", doc["body"])

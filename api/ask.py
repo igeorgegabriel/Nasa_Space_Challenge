@@ -8,7 +8,8 @@ from http.server import BaseHTTPRequestHandler
 
 import anthropic
 
-MODEL = "claude-opus-5-5"
+MODEL = os.environ.get("ASK_MODEL") or "claude-sonnet-5-5"
+EFFORT = os.environ.get("ASK_EFFORT") or "low"
 MAX_TOKENS = 4000
 MAX_QUESTION_CHARS = 1000
 MAX_BODY_BYTES = 16384
@@ -25,13 +26,68 @@ SYSTEM = (
     "You answer questions about NASA Physical Sciences Informatics (PSI) combustion investigations. "
     "Use only the provided documents; each document describes one investigation. "
     "Cite the documents that support every factual statement. "
-    "If the documents do not contain the answer, reply exactly \"Not in the data.\" on its own line and then name what data would be needed. "
+    "If nothing in the documents answers the question, reply exactly \"Not in the data.\" on its own line and then name what data would be needed. "
+    "Say \"Not in the data.\" only when nothing in the documents answers the question. If the documents answer part of it, answer that part first and then state briefly what is not covered. "
+    "When the question asks for a value for a material, mission or gravity level the documents do not cover, reply \"Not in the data.\" and name the data needed, and do not quote numbers from other materials, missions or conditions as a substitute: give only that line, one sentence on why, and the data needed, with no bullets and no numbers. "
     "Never give partial-gravity numbers: all PSI data is microgravity, and results can only be bracketed between 0 g and 1 g. "
     "Never say a condition, material or atmosphere is safe. "
     "Keep MOC (minimum oxygen concentration), LOI (limiting oxygen index), ULOI (upper limit oxygen index) and extinction O2 as separate quantities. "
     "Keep ambient O2 and oxidizer-stream O2 separate. "
     "Be concise."
 )
+
+BREVITY = (
+    " Keep every answer to at most 120 words: a one-line direct answer first, then up to 3 short bullets. "
+    "Do not add preamble or a closing summary."
+)
+
+SYSTEM_LEGACY = SYSTEM
+SYSTEM = SYSTEM_LEGACY + BREVITY
+
+CACHE_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "public", "data", "ask_cache.json")
+
+
+def normalize_question(text):
+    return " ".join(re.sub(r"[^a-z0-9]+", " ", text.lower()).split())
+
+
+def load_ask_cache():
+    try:
+        with open(CACHE_PATH, "r", encoding="utf-8") as handle:
+            data = json.load(handle)
+    except (OSError, ValueError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+ASK_CACHE = load_ask_cache()
+
+
+def cached_answer(question, history=None, cache=None):
+    if history:
+        return None
+    entries = ASK_CACHE if cache is None else cache
+    entry = entries.get(normalize_question(question))
+    if not entry or not entry.get("answer"):
+        return None
+    return {
+        "answer": entry["answer"],
+        "citations": entry.get("citations", []),
+        "model": entry.get("model", MODEL),
+        "cached": True,
+    }
+
+
+def request_options(model, effort):
+    options = {"model": model}
+    if model.startswith("claude-haiku"):
+        options["output_config"] = {"effort": effort}
+        return options
+    options["betas"] = ["server-side-fallback-2026-07-01"]
+    options["fallbacks"] = "default"
+    options["output_config"] = {"effort": effort}
+    return options
+
 
 CORPUS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "context", "corpus.json")
 
@@ -254,19 +310,22 @@ def make_client():
     return anthropic.Anthropic()
 
 
-def answer_question(question, client=None, corpus=None, context_sentence=None, history=None):
+def answer_question(question, client=None, corpus=None, context_sentence=None, history=None, model=None, effort=None, system=None, use_cache=True):
+    if use_cache:
+        hit = cached_answer(question, history)
+        if hit:
+            return 200, hit
+    model = model or MODEL
+    effort = effort or EFFORT
     try:
         client = client or make_client()
     except anthropic.AnthropicError:
         return 500, {"error": "The Ask service is not configured on this deployment."}
     try:
         response = client.beta.messages.create(
-            model=MODEL,
             max_tokens=MAX_TOKENS,
-            betas=["server-side-fallback-2026-07-01"],
-            fallbacks="default",
-            output_config={"effort": "medium"},
-            system=SYSTEM,
+            system=system or SYSTEM,
+            **request_options(model, effort),
             messages=build_messages(question, history, context_sentence, corpus),
         )
     except anthropic.RateLimitError:
@@ -279,12 +338,12 @@ def answer_question(question, client=None, corpus=None, context_sentence=None, h
         return 200, {
             "answer": "The model declined to answer this question. Try rephrasing it as a question about the loaded PSI investigations.",
             "citations": [],
-            "model": field(response, "model", MODEL),
+            "model": field(response, "model", model),
         }
     answer, citations = parse_response(response, corpus)
     if not answer:
         answer = NOT_IN_DATA
-    return 200, {"answer": answer, "citations": citations, "model": field(response, "model", MODEL)}
+    return 200, {"answer": answer, "citations": citations, "model": field(response, "model", model)}
 
 
 class handler(BaseHTTPRequestHandler):

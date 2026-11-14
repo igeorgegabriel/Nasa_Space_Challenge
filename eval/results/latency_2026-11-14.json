@@ -1,0 +1,793 @@
+{
+  "baseline_opus_medium_legacy": {
+    "model": "claude-opus-5-5",
+    "effort": "medium",
+    "cold_s": 8.73,
+    "warm_median_s": 11.879999999999999,
+    "warm_cost_avg_usd": 0.0469,
+    "rows": [
+      {
+        "phase": "cold",
+        "question": "What is the highest ambient oxygen mole fraction tested for solid fuels in the dataset?",
+        "status": 200,
+        "latency_s": 8.73,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 111082
+          },
+          "cache_creation_input_tokens": 111082,
+          "cache_read_input_tokens": 0,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 36,
+          "iterations": [
+            {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 0,
+                "ephemeral_5m_input_tokens": 111082
+              },
+              "cache_creation_input_tokens": 111082,
+              "cache_read_input_tokens": 0,
+              "input_tokens": 36,
+              "model": null,
+              "output_tokens": 1012,
+              "type": "message"
+            }
+          ],
+          "output_tokens": 1012,
+          "output_tokens_details": {
+            "thinking_tokens": 225
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.5758,
+        "words": 190,
+        "answer": "The highest ambient O2 for solid fuels in the PSI dataset is **0.222 mole fraction**, from BASS-II (PSI-25). Ambient O2 tested (mole fraction): 0.136 to 0.222 (n=129, rows 1-129, PSI-25_Experimental table_BASS-II.csv). [1] This matches the summary note that PSI solid-fuel tests stop at 22.2 percent ambient O2. [2]\n\n**Other solid-fuel investigations in PSI:**\n- **SAFFIRE-II (PSI-99):** 0.215 to 0.221 (n=9, rows 1-9, PSI-99_Experimental table_SAFFIRE-2.csv) [3]\n- **SAFFIRE-I (PSI-98):** 0.215 to 0.217 (n=2, rows 1-2, PSI-98_Experimental table_SAFFIRE-1.csv) [4]\n- **BASS (PSI-26):** Ambient O2 tested (mole fraction): not recorded. [5]\n- **SAFFIRE-III (PSI-100):** Ambient O2 tested (mole fraction): not recorded. [6]\n\n**Outside the PSI dataset:** Saffire IV-VI tests on NTRS used higher O2, but these tests are not in the PSI repository and are not part of the unified PSI conditions table. [7] The highest of these was Saffire VI-1 (NTRS 20250002675): Nomex fabric, 31.9 percent O2, pressure not stated in the extracted text. Outcome: Did not ignite. [8] The highest one that burned was Saffire VI-2 (NTRS 20250002675): SIBAL cloth (75 pct cotton, 25 pct fiberglass), 50 cm long, 31.0 percent O2, 54.1 kPa (7.85 psia), 20 cm/s concurrent flow. [9]"
+      },
+      {
+        "phase": "warm",
+        "question": "What is the highest ambient oxygen mole fraction tested for solid fuels in the dataset?",
+        "status": 200,
+        "latency_s": 8.33,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 111082,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 36,
+          "iterations": [
+            {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 0,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 0,
+              "cache_read_input_tokens": 111082,
+              "input_tokens": 36,
+              "model": null,
+              "output_tokens": 994,
+              "type": "message"
+            }
+          ],
+          "output_tokens": 994,
+          "output_tokens_details": {
+            "thinking_tokens": 212
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.0422,
+        "words": 204,
+        "answer": "**Within PSI, the highest ambient O2 tested for solid fuels is 0.222 mole fraction, in BASS-II (PSI-25).**\n\n| Investigation | Ambient O2 range (mole fraction) |\n|---|---|\n| BASS-II (PSI-25) | 0.136 to 0.222 (n=129, rows 1-129, PSI-25_Experimental table_BASS-II.csv) [1] |\n| SAFFIRE-I (PSI-98) | 0.215 to 0.217 [2] |\n| SAFFIRE-II (PSI-99) | 0.215 to 0.221 [3] |\n| BASS (PSI-26) | not recorded [4] |\n| SAFFIRE-III (PSI-100) | not recorded [5] |\n\nThe outside-PSI document gives the same ceiling: PSI solid-fuel tests stop at 22.2 percent ambient O2. [6] Because BASS and SAFFIRE-III have no recorded O2 values, the 0.222 maximum covers only the recorded rows.\n\n**Outside PSI, NASA tested higher O2 in Saffire IV\u2013VI.** These results are published on NTRS, and these tests are not in the PSI repository and are not part of the unified PSI conditions table. [7]\n- **Highest O2:** Saffire VI-1, with Nomex fabric, 31.9 percent O2, pressure not stated in the extracted text. [8] Outcome: Did not ignite. [9]\n- **Highest O2 where the sample burned:** Saffire VI-2, with SIBAL cloth (75 pct cotton, 25 pct fiberglass), 50 cm long, 31.0 percent O2, 54.1 kPa (7.85 psia), 20 cm/s concurrent flow. [10] Outcome: Burned. [11]"
+      },
+      {
+        "phase": "warm",
+        "question": "What did BASS-II find?",
+        "status": 200,
+        "latency_s": 11.53,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 111082,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 14,
+          "iterations": [
+            {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 0,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 0,
+              "cache_read_input_tokens": 111082,
+              "input_tokens": 14,
+              "model": null,
+              "output_tokens": 1265,
+              "type": "message"
+            }
+          ],
+          "output_tokens": 1265,
+          "output_tokens_details": {
+            "thinking_tokens": 284
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.0476,
+        "words": 379,
+        "answer": "**BASS-II (PSI-25) key findings**\n\n**Burning at lower oxygen in microgravity than in 1 g**\n- For the 1/4\" PMMA rod, \"The 1g blowoff for the 1/4\" rod is at 16% oxygen, whereas we obtained steady spreading at 13.6% oxygen in BASS-II.\" [1]\n- The investigators concluded that \"the material has a negative Oxygen Margin of Safety of 2.4% O2, and the normal gravity flammability limits should be de-rated by at least that much.\" [2]\n- This supports the investigation's concern that NASA's upward-burning 1 g test, considered to be the worst-case geometry for flammability of the material on Earth, may not be conservative for flammability in space. [3]\n\n**Ignition oxygen differs from sustained-burning oxygen**\n- The BASS-II Summary Report states: \"Despite this limiting O2 concentration for ignition, flames ignited at a higher O2 survived to final O2 concentrations as low as 13.6 percent O2, indicating that the high heat loss to the initially cold rod will quench a postignition flame while a developed solid phase temperature profile allows a sustained flame down to these low ambient O2 concentrations.\" [4]\n- The 13.6% value is the lowest ambient O2 at which a flame was sustained. It is not a reported MOC or LOI. The documents do not give the numeric O2 limit for ignition.\n\n**Combustion products**\n- The report estimated that products from a BASS-II-scale fire would quickly be diluted, so that even within just the U.S. Lab (106-m3 pressurized volume), the CO levels in the lab would only be 1.5 ppm, well below spacecraft maximum allowable concentration (SMAC) values for even long-term exposure (10 ppm), let alone the 1 hour SMAC of 55 ppm [5].\n- This finding applies only to a fire of that scale. It does not show that any condition is safe.\n\n**Test conditions**\n- Fuel samples were mounted inside a small wind tunnel which could impose airflow speeds up to 40 cm/s. Main variables are airflow speed and oxygen concentration (oxygen varied below 21% by adding nitrogen). Flame appearance, flame growth, and spread rates were determined in both the opposed and concurrent flow. [6]\n- Ambient O2 tested (mole fraction): 0.136 to 0.222 [7].\n- All results are from microgravity. They cannot be extrapolated to partial gravity, only bracketed between 0 g and 1 g."
+      },
+      {
+        "phase": "warm",
+        "question": "Which investigations in the data studied smoke detection?",
+        "status": 200,
+        "latency_s": 12.23,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 111082,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 21,
+          "iterations": [
+            {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 0,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 0,
+              "cache_read_input_tokens": 111082,
+              "input_tokens": 21,
+              "model": null,
+              "output_tokens": 1212,
+              "type": "message"
+            }
+          ],
+          "output_tokens": 1212,
+          "output_tokens_details": {
+            "thinking_tokens": 174
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.0465,
+        "words": 340,
+        "answer": "Three investigations in the data have detection as their primary fire-safety function, and one ground study modeled smoke for detection purposes:\n\n**SAME (PSI-102), Smoke and Aerosol Measurement Experiment**\n- Fire detection was tested in microgravity through the Smoke and Aerosol Measurement Experiment studies (SAME and SAME-R). [1]\n- A major goal was to quantify the sizes that the liquid smoke particulate achieves in low gravity and to relate the droplet size distribution to the smoke generation and smoke transport conditions in the experiment. [2]\n- The operator ran the self diagnostic procedures on the two smoke detectors [3]. Afterward, the digital data was transcribed from the video record and analyzed to determine the response of the detectors. [4]\n- Key result: \"all samples produced significant numbers of sub-micron particulate that are readily detected using an ionization smoke detector.\" [5]\n\n**SAME-R (PSI-101), Smoke Aerosol Measurement Experiment-Reflight**\n- It had the same primary objective as SAME. Changes included a new test material, Pyrell, an intumescent fire-retardant foam by Foamex [6] and a new instrument, M-pass, developed in-house GRC [6].\n- Key result: \"The ISS detector showed a relatively weak signal for some Teflon runs doubtless a result of the particle size.\" [7]\n\n**DAFT / DAFT-2 (PSI-47), Dust and Aerosol Measurement Feasibility Test**\n- The focus of DAFT / DAFT-2 was to mitigate the risk for the Smoke Aerosol Measurement Experiment (SAME). [8]\n- It tested that a modified P-Trak particulate counter would be accurate in microgravity. [9]\n- It measured dust, not smoke: One of the instruments used for smoke detection in the SAME and SAME-R studies was instead used to detect dust [10].\n\n**PSI-115 (ground modeling)**\n- This study used numerical simulation to explore the influence of gravity on pyrolysis smoke growth from a fundamental perspective. [11]\n- Its stated aim was that this would directly lead to better smoke detection devices [12].\n\nA related but non-smoke-focused item: BASS-II lists a publication on on-board CSA-CP and CDM Sensor Readings during the Burning and Suppression of Solids - II (BASS-II) Experiment [13]."
+      },
+      {
+        "phase": "warm",
+        "question": "What should NASA test next for a Moon base?",
+        "status": 200,
+        "latency_s": 13.87,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 111082,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 19,
+          "iterations": [
+            {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 0,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 0,
+              "cache_read_input_tokens": 111082,
+              "input_tokens": 19,
+              "model": null,
+              "output_tokens": 1462,
+              "type": "message"
+            }
+          ],
+          "output_tokens": 1462,
+          "output_tokens_details": {
+            "thinking_tokens": 569
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.0515,
+        "words": 308,
+        "answer": "Not in the data.\n\nNone of the documents recommends a next test campaign for a lunar habitat, and all PSI flight data is microgravity. Lunar behavior can only be bracketed between 0 g and 1 g. The documents do show gaps that a lunar test plan would need to fill:\n\n- **Partial-gravity flammability of solids at exploration atmospheres.** PSI solid-fuel tests stop at 22.2 percent ambient O2. [1] BRE named candidate atmospheres such as 10.2 psia, 26.5 %; and 8.2 psia, 34 % oxygen [2], but it burned gaseous fuels. The Saffire IV\u2013VI elevated-O2, reduced-pressure solid tests are not in the PSI repository and are not part of the unified PSI conditions table. [3] Lunar-gravity runs on fabrics and PMMA at these atmospheres would be needed.\n- **Quiescent-burning limits at partial gravity.** In microgravity, BRE flames were found to self-extinguish in concentrations below ~25% (by volume). [4] Whether this changes with weak buoyancy is untested.\n- **Gravity de-rating of the 1-g screening test.** BASS-II found the 1g blowoff for the 1/4\" rod is at 16% oxygen, whereas we obtained steady spreading at 13.6% oxygen [5]. A lunar-g counterpart to this comparison is needed.\n- **Liquid-fuel LOI at partial gravity.** FLEX determined the Limiting Oxygen Index (LOI) as a function of ambient pressure [6] in microgravity only.\n- **Smoke and dust detection at partial gravity.** In SAME, zero flow conditions produced smoke particles that were 2 to 3 times larger than those produced at the nominal 8 cm/s flow rate. [7] DAFT used Arizona Red Dust (ARD) [8] as an aerosol standard, not lunar regolith. Detector response to lunar-g smoke and lunar dust is needed.\n\nTo answer the question, you would need partial-gravity (lunar) combustion test data: for example, from centrifuge or lunar-surface experiments. These should cover the candidate habitat atmospheres, the relevant materials, MOC/LOI determinations, and detector response."
+      }
+    ]
+  },
+  "opus_low_brief": {
+    "model": "claude-opus-5-5",
+    "effort": "low",
+    "cold_s": 6.32,
+    "warm_median_s": 5.275,
+    "warm_cost_avg_usd": 0.033,
+    "rows": [
+      {
+        "phase": "cold",
+        "question": "What is the highest ambient oxygen mole fraction tested for solid fuels in the dataset?",
+        "status": 200,
+        "latency_s": 6.32,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 111131
+          },
+          "cache_creation_input_tokens": 111131,
+          "cache_read_input_tokens": 0,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 36,
+          "iterations": [
+            {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 0,
+                "ephemeral_5m_input_tokens": 111131
+              },
+              "cache_creation_input_tokens": 111131,
+              "cache_read_input_tokens": 0,
+              "input_tokens": 36,
+              "model": null,
+              "output_tokens": 620,
+              "type": "message"
+            }
+          ],
+          "output_tokens": 620,
+          "output_tokens_details": {
+            "thinking_tokens": 164
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.5682,
+        "words": 113,
+        "answer": "**The highest ambient O2 mole fraction for solid fuels in PSI is 0.222, from BASS-II (PSI-25).**\n\n- BASS-II covered ambient O2 (mole fraction): 0.136 to 0.222 (n=129, rows 1-129, PSI-25_Experimental table_BASS-II.csv) [1]. The other solid-fuel tests were lower: SAFFIRE-I reached 0.215 to 0.217 [2] and SAFFIRE-II reached 0.215 to 0.221 [3]. BASS and SAFFIRE-III did not record O2 (not recorded [4]; not recorded [5]).\n- This matches the dataset note that PSI solid-fuel tests stop at 22.2 percent ambient O2. [6]\n- Outside PSI, Saffire VI-1 used Nomex fabric, 31.9 percent O2 [7], but these tests are not in the PSI repository and are not part of the unified PSI conditions table. [8]"
+      },
+      {
+        "phase": "warm",
+        "question": "What is the highest ambient oxygen mole fraction tested for solid fuels in the dataset?",
+        "status": 200,
+        "latency_s": 5.81,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 111131,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 36,
+          "iterations": [
+            {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 0,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 0,
+              "cache_read_input_tokens": 111131,
+              "input_tokens": 36,
+              "model": null,
+              "output_tokens": 643,
+              "type": "message"
+            }
+          ],
+          "output_tokens": 643,
+          "output_tokens_details": {
+            "thinking_tokens": 173
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.0352,
+        "words": 122,
+        "answer": "**The highest ambient O2 for solid fuels in the PSI data is 0.222 mole fraction, from BASS-II (PSI-25).**\n\n- BASS-II tested ambient O2 (mole fraction): 0.136 to 0.222 (n=129, rows 1-129, PSI-25_Experimental table_BASS-II.csv) [1]. This matches the note that PSI solid-fuel tests stop at 22.2 percent ambient O2. [2]\n- The other solid-fuel ranges are lower. SAFFIRE-II tested 0.215 to 0.221 [3] and SAFFIRE-I tested 0.215 to 0.217 [4]. SAFFIRE-III and BASS have ambient O2 tested (mole fraction): not recorded. [5]\n- Outside PSI, the Saffire VI tests went higher. Saffire VI-1: Nomex fabric, 31.9 percent O2 \u2026 Outcome: Did not ignite. [6] These tests are not in the PSI repository and are not part of the unified PSI conditions table. [7]"
+      },
+      {
+        "phase": "warm",
+        "question": "What did BASS-II find?",
+        "status": 200,
+        "latency_s": 4.29,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 111131,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 14,
+          "iterations": [
+            {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 0,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 0,
+              "cache_read_input_tokens": 111131,
+              "input_tokens": 14,
+              "model": null,
+              "output_tokens": 441,
+              "type": "message"
+            }
+          ],
+          "output_tokens": 441,
+          "output_tokens_details": {
+            "thinking_tokens": 80
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.0311,
+        "words": 134,
+        "answer": "BASS-II found that PMMA rods burn in microgravity at lower oxygen than normal-gravity tests predict.\n\n- **Lower oxygen limit in microgravity:** \"The 1g blowoff for the 1/4\" rod is at 16% oxygen, whereas we obtained steady spreading at 13.6% oxygen in BASS-II.\" [1]\n- **Implication for 1 g screening:** \"Thus the material has a negative Oxygen Margin of Safety of 2.4% O2, and the normal gravity flammability limits should be de-rated by at least that much.\" [2]\n- **Ignition vs. sustained burning:** Flames ignited at a higher O2 survived to final O2 concentrations as low as 13.6 percent O2, indicating that the high heat loss to the initially cold rod will quench a postignition flame while a developed solid phase temperature profile allows a sustained flame down to these low ambient O2 concentrations. [3]"
+      },
+      {
+        "phase": "warm",
+        "question": "Which investigations in the data studied smoke detection?",
+        "status": 200,
+        "latency_s": 4.74,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 111131,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 21,
+          "iterations": [
+            {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 0,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 0,
+              "cache_read_input_tokens": 111131,
+              "input_tokens": 21,
+              "model": null,
+              "output_tokens": 499,
+              "type": "message"
+            }
+          ],
+          "output_tokens": 499,
+          "output_tokens_details": {
+            "thinking_tokens": 107
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.0323,
+        "words": 129,
+        "answer": "SAME, SAME-R and DAFT/DAFT-2 are the investigations whose primary function is detection.\n\n- **SAME (PSI-102):** Fire detection was tested in microgravity through the Smoke and Aerosol Measurement Experiment studies (SAME and SAME-R). [1] Changes in particle size distribution and number density could affect smoke detector response, and possibly result in some detectors not producing an alarm. [2]\n- **SAME-R (PSI-101):** A reflight. Its results can lead to technology for an advanced fire detector for future spacecraft [3].\n- **DAFT/DAFT-2 (PSI-47):** One of the instruments used for smoke detection in the SAME and SAME-R studies was instead used to detect dust [4] in these tests.\n\nThe ground modeling study PSI-115 used SAME data. It is tagged as supporting detection because this would directly lead to better smoke detection devices [5]."
+      },
+      {
+        "phase": "warm",
+        "question": "What should NASA test next for a Moon base?",
+        "status": 200,
+        "latency_s": 6.21,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 111131,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 19,
+          "iterations": [
+            {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 0,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 0,
+              "cache_read_input_tokens": 111131,
+              "input_tokens": 19,
+              "model": null,
+              "output_tokens": 552,
+              "type": "message"
+            }
+          ],
+          "output_tokens": 552,
+          "output_tokens_details": {
+            "thinking_tokens": 201
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.0333,
+        "words": 121,
+        "answer": "Not in the data.\n\nThe documents do not recommend tests for a Moon base. These gaps would need data:\n\n- **Partial-gravity (lunar) flammability data.** All PSI tests here are microgravity or 1 g. One investigation hypothesized that due to large differences between fire behavior in normal and reduced gravity, the use of terrestrial fires and fire standards to design spacecraft fire safety systems presents an inherent risk [1].\n- **Solid-fuel tests in elevated-O2, reduced-pressure atmospheres.** PSI solid-fuel tests stop at 22.2 percent ambient O2. [2] Candidate habitat atmospheres such as 10.2 psia, 26.5 %; and 8.2 psia, 34 % oxygen [3] appear in PSI only for BRE gas burners.\n- **Lunar-specific suppression and detection data.** Neither appears in the provided records."
+      }
+    ]
+  },
+  "sonnet_low_brief": {
+    "model": "claude-sonnet-5-5",
+    "effort": "low",
+    "cold_s": 2.81,
+    "warm_median_s": 4.31,
+    "warm_cost_avg_usd": 0.0147,
+    "rows": [
+      {
+        "phase": "cold",
+        "question": "What is the highest ambient oxygen mole fraction tested for solid fuels in the dataset?",
+        "status": 200,
+        "latency_s": 2.81,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 111214
+          },
+          "cache_creation_input_tokens": 111214,
+          "cache_read_input_tokens": 0,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 36,
+          "iterations": [
+            {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 0,
+                "ephemeral_5m_input_tokens": 111214
+              },
+              "cache_creation_input_tokens": 111214,
+              "cache_read_input_tokens": 0,
+              "input_tokens": 36,
+              "model": null,
+              "output_tokens": 268,
+              "type": "message"
+            }
+          ],
+          "output_tokens": 268,
+          "output_tokens_details": {
+            "thinking_tokens": 0
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.2808,
+        "words": 69,
+        "answer": "The highest ambient O2 for PSI solid-fuel tests is 0.222 mole fraction (22.2%), from BASS-II.\n\n- BASS-II ambient O2 ranged from 0.136 to 0.222. [1]\n- SAFFIRE-II ranged from 0.215 to 0.221 [2], and SAFFIRE-I from 0.215 to 0.217. [3]\n- PSI solid-fuel tests stop at 22.2 percent ambient O2 [4]. Saffire IV-VI tests at higher O2 (up to 31.9%) are outside PSI and not in the unified table."
+      },
+      {
+        "phase": "warm",
+        "question": "What is the highest ambient oxygen mole fraction tested for solid fuels in the dataset?",
+        "status": 200,
+        "latency_s": 2.56,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 111214,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 36,
+          "iterations": [
+            {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 0,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 0,
+              "cache_read_input_tokens": 111214,
+              "input_tokens": 36,
+              "model": null,
+              "output_tokens": 252,
+              "type": "message"
+            }
+          ],
+          "output_tokens": 252,
+          "output_tokens_details": {
+            "thinking_tokens": 0
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.0137,
+        "words": 61,
+        "answer": "Highest ambient O2 for PSI solid fuels is 0.222 mole fraction (22.2%), from BASS-II.\n\n- BASS-II ambient O2 spans 0.136 to 0.222 mole fraction. [1]\n- SAFFIRE-II spans 0.215 to 0.221 [2], and SAFFIRE-I spans 0.215 to 0.217 [3].\n- PSI solid-fuel tests stop at 22.2 percent ambient O2 [4]. Saffire IV-VI are outside PSI, so they are not counted here."
+      },
+      {
+        "phase": "warm",
+        "question": "What did BASS-II find?",
+        "status": 200,
+        "latency_s": 4.31,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 111214,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 14,
+          "iterations": [
+            {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 0,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 0,
+              "cache_read_input_tokens": 111214,
+              "input_tokens": 14,
+              "model": null,
+              "output_tokens": 289,
+              "type": "message"
+            }
+          ],
+          "output_tokens": 289,
+          "output_tokens_details": {
+            "thinking_tokens": 0
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.014,
+        "words": 101,
+        "answer": "BASS-II found that solid fuels can sustain flames in microgravity at lower oxygen than normal-gravity limits suggest.\n\n- The 1g blowoff for the 1/4\" rod is at 16% oxygen, whereas steady spreading was obtained at 13.6% oxygen in BASS-II. [1] This is ambient O2.\n- The material has a negative Oxygen Margin of Safety of 2.4% O2, so normal gravity flammability limits should be de-rated by at least that much. [2]\n- A fire of BASS-II test scale would be quickly diluted, giving CO of only 1.5 ppm in the U.S. Lab, well below the 10 ppm long-term SMAC value. [3]"
+      },
+      {
+        "phase": "warm",
+        "question": "Which investigations in the data studied smoke detection?",
+        "status": 200,
+        "latency_s": 4.31,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 111214,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 21,
+          "iterations": [
+            {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 0,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 0,
+              "cache_read_input_tokens": 111214,
+              "input_tokens": 21,
+              "model": null,
+              "output_tokens": 437,
+              "type": "message"
+            }
+          ],
+          "output_tokens": 437,
+          "output_tokens_details": {
+            "thinking_tokens": 0
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.0155,
+        "words": 132,
+        "answer": "Four investigations in the data have detection as their primary fire-safety function or a stated detection focus: PSI-47, PSI-101, PSI-102 and PSI-115.\n\n- **PSI-47 (DAFT/DAFT-2):** It tests that a modified P-Trak particulate counter would be accurate in microgravity. [1] The instrument used for smoke detection in SAME and SAME-R was used here to detect dust. [2]\n- **PSI-101 (SAME-R) and PSI-102 (SAME):** Fire detection was tested in microgravity through the SAME and SAME-R studies. [3] SAME aimed to quantify the sizes that liquid smoke particulate achieves in low gravity. [4]\n- **PSI-115:** This ground investigation simulated smoke growth. Its models and tools could lead to better smoke detection devices. [5]\n\nPSI-60 also lists detection in its research impacts, but it is a soot-formation study (\"safer fire detection, suppression, and cleaner combustion\" [6])."
+      },
+      {
+        "phase": "warm",
+        "question": "What should NASA test next for a Moon base?",
+        "status": 200,
+        "latency_s": 6.16,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 111214,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 19,
+          "iterations": [
+            {
+              "cache_creation": {
+                "ephemeral_1h_input_tokens": 0,
+                "ephemeral_5m_input_tokens": 0
+              },
+              "cache_creation_input_tokens": 0,
+              "cache_read_input_tokens": 111214,
+              "input_tokens": 19,
+              "model": null,
+              "output_tokens": 455,
+              "type": "message"
+            }
+          ],
+          "output_tokens": 455,
+          "output_tokens_details": {
+            "thinking_tokens": 307
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.0157,
+        "words": 64,
+        "answer": "Not in the data.\n\nThe data needed to answer this:\n- A NASA requirements or planning document defining Moon-base atmospheres (O2 fraction and pressure) and priority fire scenarios.\n- Reduced-gravity (lunar-level) combustion tests. All PSI data is microgravity, so lunar behavior can only be bracketed between 0 g and 1 g.\n- Test results for the materials and geometries planned for a lunar habitat."
+      }
+    ]
+  },
+  "haiku_low_brief": {
+    "model": "claude-haiku-5-5",
+    "effort": "low",
+    "cold_s": 6.44,
+    "warm_median_s": 5.61,
+    "warm_cost_avg_usd": 0.0015,
+    "rows": [
+      {
+        "phase": "cold",
+        "question": "What is the highest ambient oxygen mole fraction tested for solid fuels in the dataset?",
+        "status": 200,
+        "latency_s": 6.44,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 111131
+          },
+          "cache_creation_input_tokens": 111131,
+          "cache_read_input_tokens": 0,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 36,
+          "iterations": null,
+          "output_tokens": 608,
+          "output_tokens_details": {
+            "thinking_tokens": 310
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.0142,
+        "words": 79,
+        "answer": "**0.222 (22.2% ambient O2)**, from PSI-25 (BASS-II).\n\n- Ambient O2 tested (mole fraction): 0.136 to 0.222 (n=129, rows 1-129, PSI-25_Experimental table_BASS-II.csv). [1]\n- Other PSI solid-fuel tests fall within that range: Ambient O2 tested (mole fraction): 0.215 to 0.217 [2] for PSI-98 and 0.215 to 0.221 [3] for PSI-99.\n- These tests are not in the PSI repository and are not part of the unified PSI conditions table. [4] Those NTRS Saffire IV-VI results are excluded from this answer."
+      },
+      {
+        "phase": "warm",
+        "question": "What is the highest ambient oxygen mole fraction tested for solid fuels in the dataset?",
+        "status": 200,
+        "latency_s": 5.57,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 111131,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 36,
+          "iterations": null,
+          "output_tokens": 791,
+          "output_tokens_details": {
+            "thinking_tokens": 475
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.0015,
+        "words": 79,
+        "answer": "**Answer: 0.222 (22.2 mole fraction), from PSI-25 BASS-II.**\n\n- Ambient O2 tested (mole fraction): 0.136 to 0.222 (n=129, rows 1-129, PSI-25_Experimental table_BASS-II.csv). [1]\n- The other PSI solid-fuel investigations tested lower ranges or did not record O2: PSI-98 SAFFIRE-I: 0.215 to 0.217 [2], and PSI-99 SAFFIRE-II: 0.215 to 0.221 [3].\n- NTRS Saffire IV-VI tests reached higher O2 levels, but these tests are not in the PSI repository and are not part of the unified PSI conditions table. [4]"
+      },
+      {
+        "phase": "warm",
+        "question": "What did BASS-II find?",
+        "status": 200,
+        "latency_s": 5.65,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 111131,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 14,
+          "iterations": null,
+          "output_tokens": 912,
+          "output_tokens_details": {
+            "thinking_tokens": 570
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.0016,
+        "words": 137,
+        "answer": "BASS-II found that solid fuels sustained steady spread in microgravity at lower ambient oxygen than normal-gravity data suggested, which points to a negative oxygen margin of safety for at least one material.\n\n- The 1g blowoff for the 1/4\" rod is at 16% oxygen, whereas we obtained steady spreading at 13.6% oxygen in BASS-II. [1]\n- Thus the material has a negative Oxygen Margin of Safety of 2.4% O2, and the normal gravity flammability limits should be de-rated by at least that much. [2]\n- Flames ignited at a higher O2 survived to final O2 concentrations as low as 13.6 percent O2, indicating that the high heat loss to the initially cold rod will quench a postignition flame while a developed solid phase temperature profile allows a sustained flame down to these low ambient O2 concentrations. [3]"
+      },
+      {
+        "phase": "warm",
+        "question": "Which investigations in the data studied smoke detection?",
+        "status": 200,
+        "latency_s": 6.77,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 111131,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 21,
+          "iterations": null,
+          "output_tokens": 1074,
+          "output_tokens_details": {
+            "thinking_tokens": 704
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.0017,
+        "words": 135,
+        "answer": "Two investigations directly studied smoke detection, and one used a detection instrument for dust measurement:\n\n- **PSI-102 (SAME):** The operator then ran the self diagnostic procedures on the two smoke detectors and activated the video cameras [1], and the investigation considered that the change in the size distribution and number density will, in turn, affect the response of the smoke detectors and possibly result in some detectors not producing an alarm when exposed to this smoke. [2]\n- **PSI-101 (SAME-R):** This reflight will provide quantitative data on the sensitivity of these detectors to reduced gravity smokes [3].\n- **PSI-47 (DAFT / DAFT-2):** One of the instruments used for smoke detection in the SAME and SAME-R studies was instead used to detect dust in the Dust and Aerosol Measurement Feasibility Test (DAFT and DAFT-2) studies. [4]"
+      },
+      {
+        "phase": "warm",
+        "question": "What should NASA test next for a Moon base?",
+        "status": 200,
+        "latency_s": 5.42,
+        "usage": {
+          "cache_creation": {
+            "ephemeral_1h_input_tokens": 0,
+            "ephemeral_5m_input_tokens": 0
+          },
+          "cache_creation_input_tokens": 0,
+          "cache_read_input_tokens": 111131,
+          "fallback_credit": null,
+          "inference_geo": "global",
+          "input_tokens": 19,
+          "iterations": null,
+          "output_tokens": 459,
+          "output_tokens_details": {
+            "thinking_tokens": 265
+          },
+          "server_tool_use": null,
+          "service_tier": "standard",
+          "speed": "standard"
+        },
+        "cost_usd": 0.0013,
+        "words": 87,
+        "answer": "Not in the data.\n\nThe PSI records cover combustion and fire-safety investigations, but none recommend tests for a Moon base. To answer, I would need:\n\n- Lunar base mission requirements, such as habitat atmosphere composition, pressure, and oxygen levels.\n- Lunar gravity or partial-gravity combustion data. PSI data is microgravity only, so lunar-specific results would need a separate source.\n- Hazard and materials inventories for the base, including the fuels and solids it will contain.\n- NASA's current fire-safety priorities or test gaps for lunar surface operations."
+      }
+    ]
+  }
+}
