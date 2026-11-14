@@ -102,9 +102,9 @@ def cached_answer(question, history=None, cache=None):
         "citations": entry.get("citations", []),
         "model": entry.get("model", MODEL),
         "cached": True,
-        "steps": [],
-        "actions": [],
-        "followups": [],
+        "steps": [s for s in entry.get("steps") or [] if isinstance(s, dict)][:8],
+        "actions": [a for a in entry.get("actions") or [] if isinstance(a, dict) and str(a.get("href", "")).startswith("#/")][:2],
+        "followups": [f for f in entry.get("followups") or [] if isinstance(f, str)][:2],
     }
 
 

@@ -58,6 +58,14 @@ const CACHE = {
     answer: "Cached: PSI solid tests top out at 22.2 percent ambient O2 [1].",
     citations: [{ n: 1, psi_id: "PSI-25", title: "PSI-25 BASS-II", cited_text: "Rows in the BASS-II table record ambient O2 up to 0.222." }],
     model: "cache"
+  },
+  "how many solid fuel tests were run inside moon base oxygen levels": {
+    answer: "None. No PSI solid-fuel row reaches Moon base oxygen [1].",
+    citations: [{ n: 1, psi_id: "PSI-25", title: "PSI-25 BASS-II", cited_text: "Rows in the BASS-II table record ambient O2 up to 0.222." }],
+    steps: [{ tool: "psi", label: "Counted solid rows in the Moon base window", detail: "0 rows" }],
+    actions: [{ label: "Open the lunar ranking", href: "#/rank?habitat=lunar" }],
+    followups: ["What is the nearest solid test?"],
+    model: "cache"
   }
 };
 
@@ -344,6 +352,94 @@ async function main() {
   await js("Array.from(document.querySelectorAll('.ask-head button')).find(b => b.getAttribute('aria-label') === 'Close Ask panel').click()");
   await sleep(200);
   assert.strictEqual(await js("document.body.classList.contains('ask-open')"), false);
+
+  await viewport(1366, 900, false);
+  await go("#/home");
+  await waitFor("document.querySelectorAll('.scenario .sc-num').length === 1", "scenario card");
+  const tn = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "test_next.json"), "utf8")).environments;
+  const insideOf = function (env, fuel) { return String(tn[env].classes.find(function (c) { return c.fuel_class === fuel; }).inside); };
+  assert.strictEqual(await js("document.querySelector('.scenario .sc-num').textContent"), insideOf("lunar", "solid"));
+  assert.ok((await js("document.querySelector('.sc-label').textContent")).indexOf("inside Moon base air") > 0);
+  assert.ok((await js("document.querySelector('.sc-line').textContent")).indexOf("Nearest PSI test: ") === 0);
+  assert.ok((await js("document.querySelector('.sc-line a').getAttribute('href')")).indexOf("#/investigation/PSI-") === 0);
+  assert.strictEqual(await js("document.querySelectorAll('.sc-line').length"), 2);
+  await js("document.querySelector('.scenario [data-key=\"env-mars\"]').click()");
+  await js("document.querySelector('.scenario [data-key=\"fuel-gas\"]').click()");
+  assert.strictEqual(await js("document.querySelector('.scenario .sc-num').textContent"), insideOf("mars", "gas"));
+  assert.ok((await js("document.querySelector('.sc-label').textContent")).indexOf("inside Mars base air") > 0);
+  assert.strictEqual(await js("document.querySelectorAll('.sc-line').length"), 1, "flight line is for solids only");
+  assert.strictEqual(await js("document.querySelector('.sc-actions a').getAttribute('href')"), "#/rank?habitat=mars");
+  assert.strictEqual(await js("document.activeElement.getAttribute('data-key')"), "fuel-gas", "focus kept on the pressed pill");
+  await js("document.querySelector('.scenario [data-key=\"env-lunar\"]').click()");
+  await js("document.querySelector('.scenario [data-key=\"fuel-solid\"]').click()");
+  const asksBeforeWhy = mock.asks.length;
+  await js("document.querySelector('.sc-actions .btn').click()");
+  await waitFor("document.querySelectorAll('.ask-turn').length >= 1", "ask why turn");
+  assert.ok(await js("document.body.classList.contains('ask-open')"));
+  assert.ok((await js("Array.from(document.querySelectorAll('.ask-q')).pop().textContent")).indexOf("Why has NASA not tested solid fuel in Moon base air") === 0);
+  await sleep(600);
+  assert.strictEqual(mock.asks.length, asksBeforeWhy + 1, "Ask why must call the API");
+  await js("Array.from(document.querySelectorAll('#ask-panel button')).find(b => b.getAttribute('aria-label') === 'New conversation').click()");
+  await sleep(200);
+  await js("Array.from(document.querySelectorAll('.ask-head button')).find(b => b.getAttribute('aria-label') === 'Close Ask panel').click()");
+  await sleep(200);
+  assert.strictEqual(await js("document.body.classList.contains('ask-open')"), false);
+
+  assert.strictEqual(await js("document.querySelectorAll('#tour').length"), 0);
+  assert.strictEqual(await js("document.getElementById('tour-open').textContent"), "Tour");
+  assert.strictEqual(await js("document.querySelector('.hero-tour').textContent"), "60-second tour");
+  await js("document.querySelector('.hero-tour').click()");
+  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 1 of 5");
+  assert.ok((await js("document.querySelector('.tour-text').textContent")).indexOf("stop at 22.2% oxygen. Moon base air is 34%.") > 0);
+  await sleep(600);
+  assert.strictEqual(await js("document.querySelectorAll('.tour-ring').length"), 1);
+  await shot("tour_1_1366");
+  await js("document.querySelector('.tour-next').click()");
+  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 2 of 5");
+  await sleep(600);
+  await js("document.querySelector('.tour-next').click()");
+  await waitFor("location.hash === '#/rank?habitat=lunar'", "rank hash");
+  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 3 of 5");
+  await sleep(600);
+  assert.strictEqual(await js("document.querySelectorAll('.rank-cards.tour-ring').length"), 1);
+  const asksBeforeTour = mock.asks.length;
+  await js("document.querySelector('.tour-next').click()");
+  await waitFor("document.querySelectorAll('.ask-turn .ask-a').length === 1", "tour answer");
+  assert.ok(await js("document.body.classList.contains('ask-open')"));
+  assert.strictEqual(mock.asks.length, asksBeforeTour, "tour answer must come from the cache");
+  assert.ok((await js("document.querySelector('.ask-a').textContent")).indexOf("None. No PSI solid-fuel row") === 0);
+  assert.strictEqual(await js("document.querySelector('.ask-steps').open"), true, "tour answer opens How I checked");
+  assert.strictEqual(await js("document.querySelectorAll('.ask-action').length"), 1);
+  assert.strictEqual(await js("document.querySelector('.ask-more-title').textContent"), "Follow up");
+  await shot("tour_4_1366");
+  await js("document.querySelector('.tour-next').click()");
+  await waitFor("location.hash === '#/equipment'", "equipment hash");
+  assert.strictEqual(await js("document.body.classList.contains('ask-open')"), false, "tour closes the panel it opened");
+  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 5 of 5");
+  assert.strictEqual(await js("document.querySelector('.tour-next').textContent"), "Done");
+  await sleep(600);
+  await js("document.querySelector('.tour-next').click()");
+  assert.strictEqual(await js("document.querySelectorAll('#tour').length"), 0, "Done closes the tour");
+  assert.strictEqual(await js("document.body.classList.contains('tour-open')"), false);
+  assert.strictEqual(await js("document.querySelectorAll('.tour-ring').length"), 0);
+
+  await js("document.getElementById('tour-open').click()");
+  assert.strictEqual(await js("document.querySelectorAll('#tour').length"), 1);
+  await js("window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))");
+  assert.strictEqual(await js("document.querySelectorAll('#tour').length"), 0, "Esc closes the tour");
+
+  await viewport(390, 844, true);
+  await go("#/home");
+  await sleep(300);
+  assert.strictEqual(await js("document.documentElement.scrollWidth > window.innerWidth"), false, "home overflows at 390");
+  await js("document.getElementById('tour-open').click()");
+  for (let i = 1; i < 5; i += 1) {
+    await sleep(600);
+    await js("document.querySelector('.tour-next').click()");
+  }
+  await waitFor("document.querySelector('.tour-count').textContent === 'Step 5 of 5'", "mobile step 5");
+  await js("document.querySelector('.tour-close').click()");
+  assert.strictEqual(await js("document.querySelectorAll('#tour').length"), 0);
 
   assert.deepStrictEqual(errors, [], "page errors: " + JSON.stringify(errors));
   console.log("panel headless checks passed");

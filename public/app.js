@@ -1104,6 +1104,274 @@ function gapDetails(lunar) {
     el("p", { class: "small muted", text: "Solid pressures and outcomes come from NASA reports, not the PSI table. Air-composition sources are under Moon base air." })));
 }
 
+const scenario = { env: "lunar", fuel: "solid" };
+
+function scenarioQuestion(entry, hab) {
+  const fuel = (NEXT_LABELS[entry.fuel_class] || FUEL_LABELS[entry.fuel_class]).toLowerCase() + " fuel in " + hab + " air";
+  if (entry.inside > 0) {
+    return "Which NASA tests covered " + fuel + ", and which is the closest?";
+  }
+  return "Why has NASA not tested " + fuel + ", and what is the closest test?";
+}
+
+function scenarioNearest(entry) {
+  const n = entry.nearest;
+  if (!n) {
+    return el("p", { class: "sc-line", text: "Nearest PSI test: none with an O2 value recorded." });
+  }
+  const inv = invById(n.psi_id);
+  const pressure = n.pressure_atm === null || n.pressure_atm === undefined ? "" : ", " + fmt(psia(n.pressure_atm), 1) + " psia";
+  return el("p", { class: "sc-line" },
+    "Nearest PSI test: " + percent(n.o2_frac) + "% O2" + pressure + " - ",
+    inv ? invLink(inv) : n.psi_id,
+    el("span", { class: "sc-src", text: " (" + n.source_file + " row " + n.source_row + ")" }));
+}
+
+function scenarioFlight(entry) {
+  const o = entry.outside_nearest;
+  if (entry.fuel_class !== "solid" || !o || !state.data.outside_psi.tests.length) {
+    return null;
+  }
+  const pressure = o.pressure_psia === null || o.pressure_psia === undefined ? "" : ", " + fmt(o.pressure_psia, 2) + " psia";
+  return el("p", { class: "sc-line" },
+    "Nearest flight outside PSI: " + o.label + " at " + percent(o.o2_frac) + "% O2" + pressure + " - ",
+    ntrsLink(o.source_url, "NTRS " + o.source_id));
+}
+
+function scenarioCard() {
+  const habRow = el("div", { class: "pills sc-seg", role: "group", "aria-label": "Habitat" });
+  const fuelRow = el("div", { class: "pills sc-seg", role: "group", "aria-label": "Fuel type" });
+  const result = el("div", { class: "sc-result", "aria-live": "polite" });
+  function pill(key, label, on, pick) {
+    return el("button", { type: "button", class: "pill" + (on ? " active" : ""), "aria-pressed": on ? "true" : "false", "data-key": key, text: label, onclick: function () {
+      pick();
+      draw(key);
+    } });
+  }
+  function draw(focusKey) {
+    const envs = state.data.environments.environments.filter(function (e) { return state.data.test_next.environments[e.id]; });
+    if (!envs.some(function (e) { return e.id === scenario.env; })) {
+      scenario.env = envs[0].id;
+    }
+    const block = state.data.test_next.environments[scenario.env];
+    if (!block.classes.some(function (c) { return c.fuel_class === scenario.fuel; })) {
+      scenario.fuel = block.classes[0].fuel_class;
+    }
+    const entry = block.classes.find(function (c) { return c.fuel_class === scenario.fuel; });
+    const hab = envShort(envById(scenario.env));
+    clear(habRow);
+    clear(fuelRow);
+    clear(result);
+    envs.forEach(function (env) {
+      habRow.appendChild(pill("env-" + env.id, envShort(env), env.id === scenario.env, function () { scenario.env = env.id; }));
+    });
+    block.classes.forEach(function (c) {
+      fuelRow.appendChild(pill("fuel-" + c.fuel_class, NEXT_LABELS[c.fuel_class] || FUEL_LABELS[c.fuel_class], c.fuel_class === scenario.fuel, function () { scenario.fuel = c.fuel_class; }));
+    });
+    appendKids(result, [
+      el("p", { class: "sc-num" + (entry.inside === 0 ? " zero" : ""), text: String(entry.inside) }),
+      el("p", { class: "sc-label", text: (entry.inside === 1 ? "NASA test" : "NASA tests") + " inside " + hab + " air" }),
+      scenarioNearest(entry),
+      scenarioFlight(entry),
+      el("p", { class: "sc-win", text: "Window: " + testNextConditions(block.windows) }),
+      el("p", { class: "sc-actions" },
+        el("button", { type: "button", class: "btn", text: "Ask why", onclick: function () {
+          openAskPanel(false);
+          sendAsk(scenarioQuestion(entry, hab));
+        } }),
+        el("a", { class: "textlink", href: "#/rank?habitat=" + encodeURIComponent(scenario.env), text: "See the full ranking" }))
+    ]);
+    if (focusKey) {
+      const again = document.querySelector(".scenario [data-key=\"" + focusKey + "\"]");
+      if (again) {
+        again.focus();
+      }
+    }
+  }
+  draw(null);
+  return [habRow, fuelRow, result];
+}
+
+const TOUR_QUESTION = "How many solid-fuel tests were run inside Moon base oxygen levels?";
+
+const tour = { open: false, step: 0, node: null, nodes: null, waiting: false, openedAsk: false, ring: null, ringTimer: null };
+
+const TOUR_STEPS = [
+  {
+    hash: "#/home", scroll: "#s-gap", ring: "#s-gap .gap",
+    text: function () {
+      const d = gapChartData();
+      return "PSI solid-fuel tests stop at " + fmt(d.psiMax, 1) + "% oxygen. Moon base air is " + d.moon + "%.";
+    }
+  },
+  {
+    hash: "#/home", scroll: "#s-next", ring: ".scenario",
+    text: function () { return "Pick a habitat and a fuel. See the closest NASA test, with its source row."; }
+  },
+  {
+    hash: "#/rank?habitat=lunar", scroll: null, ring: ".rank-cards",
+    text: function () { return "Every investigation, scored for the " + envShort(envById("lunar")) + ". The weights are adjustable."; }
+  },
+  {
+    hash: "#/rank?habitat=lunar", scroll: null, ring: "#ask-panel", ask: true,
+    text: function () { return "Ask anything. Each answer shows its sources and how it checked the data."; }
+  },
+  {
+    hash: "#/equipment", scroll: null, ring: "#view .page-head, #view h1",
+    text: function () { return "Research mapped to prevention, detection and suppression equipment."; }
+  }
+];
+
+function tourClearRing() {
+  clearTimeout(tour.ringTimer);
+  if (tour.ring) {
+    tour.ring.classList.remove("tour-ring");
+    tour.ring = null;
+  }
+}
+
+function tourBuild() {
+  if (tour.node) {
+    return;
+  }
+  const count = el("p", { class: "tour-count" });
+  const text = el("p", { class: "tour-text" });
+  const back = el("button", { type: "button", class: "tour-btn", text: "Back", onclick: function () { tourMove(-1); } });
+  const next = el("button", { type: "button", class: "tour-btn tour-next", onclick: function () { tourMove(1); } });
+  const close = el("button", { type: "button", class: "tour-close", text: "Close", "aria-label": "Close tour", onclick: tourClose });
+  tour.nodes = { count: count, text: text, back: back, next: next };
+  tour.node = el("div", { id: "tour", class: "tour", role: "dialog", "aria-label": "60-second tour" },
+    count, text, el("div", { class: "tour-bar" }, back, next, close));
+  document.body.appendChild(tour.node);
+  window.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && tour.open) {
+      e.stopPropagation();
+      tourClose();
+    }
+  }, true);
+}
+
+function tourStart() {
+  if (!state.data) {
+    return;
+  }
+  tourBuild();
+  tour.open = true;
+  tour.step = 0;
+  tour.openedAsk = false;
+  document.body.classList.add("tour-open");
+  tourShow();
+  tour.nodes.next.focus();
+}
+
+function tourClose() {
+  tour.open = false;
+  tour.waiting = false;
+  tourClearRing();
+  document.body.classList.remove("tour-open");
+  document.documentElement.style.removeProperty("--tour-h");
+  if (tour.node) {
+    tour.node.remove();
+    tour.node = null;
+    tour.nodes = null;
+  }
+}
+
+function tourMove(delta) {
+  const target = tour.step + delta;
+  if (target >= TOUR_STEPS.length) {
+    tourClose();
+    return;
+  }
+  if (target < 0) {
+    return;
+  }
+  if (TOUR_STEPS[tour.step].ask && tour.openedAsk) {
+    closeAskPanel(false);
+    tour.openedAsk = false;
+  }
+  tour.step = target;
+  tourShow();
+}
+
+function tourShow() {
+  const s = TOUR_STEPS[tour.step];
+  tour.nodes.count.textContent = "Step " + (tour.step + 1) + " of " + TOUR_STEPS.length;
+  tour.nodes.text.textContent = s.text();
+  tour.nodes.next.textContent = tour.step === TOUR_STEPS.length - 1 ? "Done" : "Next";
+  tour.nodes.back.disabled = tour.step === 0;
+  document.documentElement.style.setProperty("--tour-h", tour.node.offsetHeight + "px");
+  tourClearRing();
+  const here = location.hash === "" || location.hash === "#" || location.hash === "#/" ? "#/home" : location.hash;
+  if (here === s.hash) {
+    if (s.hash.indexOf("#/rank") === 0) {
+      route();
+    }
+    setTimeout(tourFocus, 60);
+    return;
+  }
+  tour.waiting = true;
+  location.hash = s.hash;
+}
+
+function tourFocus() {
+  if (!tour.open) {
+    return;
+  }
+  const s = TOUR_STEPS[tour.step];
+  const behavior = reduceMotion() ? "auto" : "smooth";
+  const anchor = s.scroll ? document.querySelector(s.scroll) : null;
+  const header = document.querySelector(".top");
+  const headerH = header ? header.offsetHeight : 0;
+  let top = anchor ? Math.max(0, anchor.getBoundingClientRect().top + window.scrollY - headerH) : 0;
+  const ringNode = document.querySelector(s.ring);
+  if (anchor && ringNode && tour.node) {
+    const box = ringNode.getBoundingClientRect();
+    const ringTop = box.top + window.scrollY;
+    const over = ringTop + box.height - (top + window.innerHeight - tour.node.offsetHeight - 24);
+    if (over > 0) {
+      top = Math.max(top, Math.min(top + over, ringTop - headerH - 12));
+    }
+  }
+  window.scrollTo({ top: top, behavior: behavior });
+  if (s.ask) {
+    openAskPanel(false);
+    tour.openedAsk = true;
+    const asked = askPanel.thread.some(function (t) { return normalizeQuestion(t.question) === normalizeQuestion(TOUR_QUESTION); });
+    if (!asked) {
+      sendAsk(TOUR_QUESTION, true, true);
+    }
+    setTimeout(function () {
+      const thread = askPanel.nodes.thread;
+      const all = thread.querySelectorAll(".ask-steps");
+      const steps = all.length ? all[all.length - 1] : null;
+      if (steps) {
+        steps.open = true;
+        thread.scrollTop += steps.getBoundingClientRect().top - thread.getBoundingClientRect().top - 140;
+      }
+    }, 60);
+  }
+  const ring = ringNode;
+  if (ring) {
+    ring.classList.add("tour-ring");
+    tour.ring = ring;
+    tour.ringTimer = setTimeout(tourClearRing, 2600);
+  }
+}
+
+function tourRouted() {
+  if (tour.open && tour.waiting) {
+    tour.waiting = false;
+    setTimeout(tourFocus, 80);
+  }
+}
+
+function buildTourToggle() {
+  const ask = document.getElementById("ask-open");
+  const button = el("button", { type: "button", id: "tour-open", class: "ask-toggle tour-toggle", text: "Tour", onclick: tourStart });
+  ask.parentNode.insertBefore(button, ask);
+}
+
 function renderHome() {
   const data = state.data;
   const lunar = envById("lunar");
@@ -1118,7 +1386,8 @@ function renderHome() {
     el("img", { class: "hero-img", src: "img/PSI-25/bass_ii_flame_testing.jpg", alt: "A flame burning in microgravity, photographed during NASA's BASS-II experiment" }),
     el("div", { class: "hero-copy" },
       rv(0, "h1", { text: "Flame in Freefall" }),
-      rv(1, "p", { class: "hero-line", text: "Fire behaves differently in space. Crews on the Moon will need to know how." })),
+      rv(1, "p", { class: "hero-line", text: "Fire behaves differently in space. We checked every NASA test so Moon crews know where the evidence stops." }),
+      rv(2, "p", { class: "hero-cta" }, el("button", { type: "button", class: "btn ghost hero-tour", text: "60-second tour", onclick: function () { tourStart(); } }))),
     el("button", { type: "button", class: "scroll-cue", "aria-label": "Scroll to the next section", onclick: function () {
       document.getElementById("s-quote").scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth" });
     } }, el("span", { text: "Scroll" }), el("i")),
@@ -1152,7 +1421,10 @@ function renderHome() {
     chart,
     gapDetails(lunar)
   ]);
-  const next = story("st-next", "s-next", [testNextSection(lunar)]);
+  const next = story("st-next", "s-next", [
+    rv(0, "h2", { text: "Check a scenario" }),
+    rv(1, "div", { class: "scenario" }, scenarioCard())
+  ]);
   const tile = function (href, title, index) {
     return rv(index, "a", { class: "tile", href: href }, el("span", { text: title }));
   };
@@ -2584,8 +2856,8 @@ function elapsedText(turn) {
   return Math.max(0, Math.floor((Date.now() - (turn.startedAt || Date.now())) / 1000)) + " s";
 }
 
-function askStepsView(steps) {
-  return el("details", { class: "ask-steps" },
+function askStepsView(steps, open) {
+  return el("details", { class: "ask-steps", open: open ? true : null },
     el("summary", { text: "How I checked (" + steps.length + ")" }),
     el("ul", { class: "ask-steps-list" }, steps.map(function (s) {
       return el("li", null, el("span", { class: "ask-step-label", text: s.label }), s.detail ? el("span", { class: "ask-step-detail", text: s.detail }) : null);
@@ -2609,7 +2881,7 @@ function askTurnView(turn, index) {
       actions.length ? el("div", { class: "ask-actions" }, actions.map(function (a) {
         return el("a", { class: "ask-action", href: a.href, text: a.label });
       })) : null,
-      steps.length ? askStepsView(steps) : null,
+      steps.length ? askStepsView(steps, turn.openSteps === true) : null,
       citations.length ? el("details", { class: "ask-sources" },
         el("summary", { text: "Sources (" + citations.length + ")" }),
         el("div", { class: "ask-cites" }, citationList(citations, scope))) : null));
@@ -2759,6 +3031,7 @@ function resizeAskInput() {
   const input = askPanel.nodes.input;
   input.style.height = "auto";
   input.style.height = Math.min(input.scrollHeight, ASK_INPUT_MAX_PX) + "px";
+  input.style.overflowY = input.scrollHeight > ASK_INPUT_MAX_PX ? "auto" : "hidden";
 }
 
 function clearAskInput() {
@@ -2783,7 +3056,7 @@ function askFailure(result) {
   return "The Ask service is not available here (HTTP " + result.status + ").";
 }
 
-function sendAsk(text, fromChip) {
+function sendAsk(text, fromChip, openSteps) {
   const question = String(text || "").trim();
   if (askPanel.busy || !question) {
     return;
@@ -2794,14 +3067,15 @@ function sendAsk(text, fromChip) {
   if (hit) {
     askPanel.thread.push({
       question: question, pending: false, answer: hit.answer, citations: hit.citations || [],
-      steps: cleanAskSteps(hit.steps), actions: cleanAskActions(hit.actions), followups: cleanAskFollowups(hit.followups), error: null
+      steps: cleanAskSteps(hit.steps), actions: cleanAskActions(hit.actions), followups: cleanAskFollowups(hit.followups), error: null,
+      openSteps: openSteps === true
     });
     clearAskInput();
     saveAskState();
     renderAskThread();
     return;
   }
-  const turn = { question: question, pending: true, startedAt: Date.now(), answer: null, citations: [], steps: [], actions: [], followups: [], error: null };
+  const turn = { question: question, pending: true, startedAt: Date.now(), answer: null, citations: [], steps: [], actions: [], followups: [], error: null, openSteps: openSteps === true };
   const generation = askPanel.generation;
   askPanel.thread.push(turn);
   askPanel.busy = true;
@@ -2874,6 +3148,7 @@ function buildAskPanel() {
   });
   toggle.addEventListener("click", function () { setAskOpen(!askPanel.open, true); });
   toggle.hidden = false;
+  buildTourToggle();
   node.addEventListener("click", function (e) {
     const link = e.target && e.target.closest ? e.target.closest("a") : null;
     if (link && window.innerWidth < ASK_NARROW_PX) {
@@ -2940,6 +3215,9 @@ function route() {
     return;
   }
   stopStory();
+  if (r.name === "rank" && r.params.habitat && envById(r.params.habitat)) {
+    state.envId = r.params.habitat;
+  }
   buildNav(NAV_ACTIVE[r.name] || r.name);
   document.title = "Flame in Freefall";
   document.body.classList.toggle("brief-page", r.name === "brief");
@@ -2971,6 +3249,7 @@ function route() {
   if (r.params.at) {
     revealTarget(r.params.at);
   }
+  tourRouted();
 }
 
 function init() {

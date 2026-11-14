@@ -572,5 +572,62 @@
   "generated_at": "2026-11-14T13:45:13",
   "model": "claude-sonnet-5-5",
   "question": "Which solid materials were tested and at what oxygen?"
+ },
+ "how many solid fuel tests were run inside moon base oxygen levels": {
+  "question": "How many solid-fuel tests were run inside Moon base oxygen levels?",
+  "answer": "0 solid-fuel tests were run at Moon base oxygen levels (33.5\u201335% ambient O2). That count covers 137 classified solid-fuel rows.\n\n- The Moon base atmosphere is 34% O2 (control box 33.5\u201335%). [1]\n- The nearest solid-fuel data is BASS-II (PSI-25), which tested ambient O2 of 0.136 to 0.222. [2] That is about 22.2% at most.\n- PSI solid-fuel tests stop at 22.2 percent ambient O2. [3] The Saffire VI tests were run outside PSI at 28.8\u201331.0% O2, still below the Moon base range.\n\nAll of this data is microgravity. Results for the Moon's one-sixth gravity can only be bracketed between 0 g and 1 g.",
+  "citations": [
+   {
+    "n": 1,
+    "psi_id": "DASHBOARD-RESULTS",
+    "title": "Dashboard results - habitat windows, test-next and solid test pressures",
+    "cited_text": "Environment lunar (Lunar surface habitat): O2 34 percent O2 (control box 33.5-35 percent) (source: NASA/TM-2013-217377 (NTRS 20130013505), NASA/TP-2010-216134, NTRS 20220006612 (ICES-2022-45), NTRS 20210021181); pressure 8.2 psia (0.558 atm), control box 8.1-8.3 psia (source: NASA/TM-2013-217377 (NTRS 20130013505), NTRS 20150021491, NTRS 20210021181, NTRS 20220000245); flow about 10 to 20 cm/s HVAC flow (source: NTRS 20210021181); gravity One-sixth of Earth gravity (about 0.16 g) (source: NASA Science, Moon facts, NTRS 20210021181).\n"
+   },
+   {
+    "n": 2,
+    "psi_id": "PSI-25",
+    "title": "PSI-25 BASS-II - Burning and Suppression of Solids - II",
+    "cited_text": "Ambient O2 tested (mole fraction): 0.136 to 0.222  (n=129, rows 1-129, PSI-25_Experimental table_BASS-II.csv).\n"
+   },
+   {
+    "n": 3,
+    "psi_id": "NTRS-SAFFIRE-IV-VI",
+    "title": "Outside PSI - Saffire IV-VI (NTRS)",
+    "cited_text": "For comparison, PSI solid-fuel tests stop at 22.2 percent ambient O2.\n"
+   }
+  ],
+  "model": "claude-sonnet-5-5",
+  "generated_at": "2026-11-14T09:01:17Z",
+  "steps": [
+   {
+    "tool": "test_next",
+    "label": "Checked test-next windows for Moon base",
+    "detail": "solid 0 inside, liquid droplet 0 inside, gas 0 inside"
+   },
+   {
+    "tool": "habitat_profile",
+    "label": "Read the Moon base atmosphere profile",
+    "detail": "O2 34 percent O2 (control box 33.5-35 percent); pressure 8.2 psia (0.558 atm), control box 8.1-8.3 psia"
+   },
+   {
+    "tool": "find_tests",
+    "label": "Searched 2,009 test rows",
+    "detail": "solid, ambient O2 33.5 to 35%: 0 matches"
+   }
+  ],
+  "actions": [
+   {
+    "label": "Open the Moon base ranking",
+    "href": "#/rank?habitat=lunar"
+   },
+   {
+    "label": "Open the data extractor",
+    "href": "#/data?at=extractor"
+   }
+  ],
+  "followups": [
+   "What is the nearest solid-fuel test to Moon base conditions?",
+   "Which gas-fuel tests are closest to Moon base oxygen?"
+  ]
  }
 }
