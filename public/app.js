@@ -1043,7 +1043,7 @@ const GAP_COL = { psi: "#e06d34", fl: "#5b95e8", gray: "#8f9bb8", surf: "#0e152b
 const GAP_ANIM = 0.35;
 const GAP_TRAVEL = 1300;
 const GAP_BINS = 48;
-const GAP_GRAY_DIM = 0.35;
+const GAP_GRAY_DIM = 0.55;
 const GAP_SOLID_DIM = 0.7;
 let gapModel = null;
 let gapQ = 0;
@@ -1289,7 +1289,7 @@ function drawGapChart(node) {
   const grayBot = grayTop + grayH;
   const solidTop = grayBot + 12;
   const solidH = axisY - solidTop;
-  const gr = small ? 1.6 : 2.2;
+  const gr = small ? 1.9 : 2.7;
   let r = small ? 3 : 4.4;
   let swarm = swarmPoints(d.solid, xo, r);
   const swarmLimit = Math.max(30, solidH - (small ? 40 : 34));
@@ -1336,7 +1336,7 @@ function drawGapChart(node) {
   s += "<text x=\"" + (w / 2) + "\" y=\"" + (H - 8) + "\" font-size=\"" + (fs - 1) + "\" text-anchor=\"middle\" fill=\"" + GAP_COL.t3 + "\">Oxygen in the air (percent)</text>";
   s += "<text class=\"gglab\" x=\"" + pad + "\" y=\"" + (grayTop - 6) + "\" font-size=\"" + (fs - 1) + "\" fill=\"" + GAP_COL.t3 + "\" opacity=\"0\">Droplet and gas flames</text>";
   s += "<g class=\"ggray\">" + binned(grayPts, function (p) {
-    return "<circle cx=\"" + p.x.toFixed(1) + "\" cy=\"" + p.y.toFixed(1) + "\" r=\"" + gr + "\" fill=\"" + GAP_COL.gray + "\" fill-opacity=\"0.6\"/>";
+    return "<circle cx=\"" + p.x.toFixed(1) + "\" cy=\"" + p.y.toFixed(1) + "\" r=\"" + gr + "\" fill=\"" + GAP_COL.gray + "\" fill-opacity=\"0.78\"/>";
   }) + "</g>";
   s += "<g class=\"gsol\">" + binned(swarm, function (p) {
     return "<circle cx=\"" + p.x.toFixed(1) + "\" cy=\"" + (axisY - p.up).toFixed(1) + "\" r=\"" + r + "\" fill=\"" + GAP_COL.psi + "\" stroke=\"" + GAP_COL.surf + "\" stroke-width=\"1\"/>";
