@@ -2,7 +2,7 @@
 
 NASA Space Apps Challenge 2026
 
-Challenge: Flame in Freefall: AI-Powered Fire Safety Insights from Microgravity Combustion Data
+Challenge: Flame in Freefall: SI-Powered Fire Safety Insights from Microgravity Combustion Data
 
 Team: Kenyalang Blue Flame (Bintulu, Malaysia)
 
