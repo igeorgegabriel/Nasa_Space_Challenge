@@ -908,6 +908,9 @@ function stopStory() {
     storyObserver = null;
   }
   gapNode = null;
+  gapModel = null;
+  gapCapsRef = null;
+  gapQ = 0;
   if (heroObserver) {
     heroObserver.disconnect();
     heroObserver = null;
@@ -1013,14 +1016,16 @@ function rv(index, tagName, props) {
 }
 
 function gapChartData() {
-  const solid = state.data.conditions.filter(function (r) {
+  const rows = state.data.conditions.filter(function (r) {
     return r.fuel_class === "solid" && r.o2_frac !== undefined && r.o2_basis === "ambient";
-  }).map(function (r) { return r.o2_frac * 100; }).sort(function (a, b) { return a - b; });
+  }).sort(function (a, b) { return a.o2_frac - b.o2_frac; });
+  const solid = rows.map(function (r) { return r.o2_frac * 100; });
   const lunar = envById("lunar");
   const lo = lunar.o2.window_min !== undefined ? lunar.o2.window_min : lunar.o2.min;
   const hi = lunar.o2.window_max !== undefined ? lunar.o2.window_max : lunar.o2.max;
   return {
     solid: solid,
+    rows: rows,
     flights: state.data.outside_psi.tests,
     moonLo: lo * 100,
     moonHi: hi * 100,
@@ -1029,17 +1034,45 @@ function gapChartData() {
   };
 }
 
+const GAP_COL = { psi: "#e06d34", fl: "#5b95e8", t1: "#eef2fb", t2: "#c9d2e6", t3: "#8f9bb8", grid: "#1a2340", axis: "#34405f" };
+const GAP_ANIM = 0.45;
+const GAP_TRAVEL = 2600;
+let gapModel = null;
+let gapQ = 0;
+let gapCapsRef = null;
+let gapStaticMode = false;
+
+function gapClamp(v) {
+  return v < 0 ? 0 : v > 1 ? 1 : v;
+}
+
+function gapEaseOut(u) {
+  return 1 - Math.pow(1 - u, 3);
+}
+
+function gapEaseIO(u) {
+  return 0.5 - 0.5 * Math.cos(Math.PI * u);
+}
+
+function gapStage(q, k) {
+  return gapEaseIO(gapClamp((q - k) / GAP_ANIM));
+}
+
 function swarmPoints(values, xo, r) {
   const placed = [];
+  const gap = 2 * r + 1.2;
   return values.map(function (v) {
     const x = xo(v);
-    let up = r + 2;
+    let up = r + 1;
     for (;;) {
       let free = true;
-      for (let k = 0; k < placed.length; k += 1) {
+      for (let k = placed.length - 1; k >= 0; k -= 1) {
         const dx = placed[k].x - x;
+        if (dx > gap || dx < -gap) {
+          continue;
+        }
         const dy = placed[k].up - up;
-        if (dx * dx + dy * dy < (2 * r + 0.6) * (2 * r + 0.6)) {
+        if (dx * dx + dy * dy < gap * gap) {
           free = false;
           break;
         }
@@ -1055,79 +1088,368 @@ function swarmPoints(values, xo, r) {
   });
 }
 
+function gapKpa(atm) {
+  return atm === undefined || atm === null ? null : fmt(atm * 101.325, 1) + " kPa";
+}
+
+function gapTipLines(mk) {
+  if (mk.kind === "p") {
+    const r = mk.row;
+    const lines = [[fmt(r.o2_frac * 100, 1) + "% oxygen", "v"], [(r.investigation || "Unknown investigation") + (r.psi_id ? " (" + r.psi_id + ")" : ""), "n"]];
+    if (r.fuel) {
+      lines.push([r.fuel, "s"]);
+    }
+    const kpa = gapKpa(r.pressure_atm);
+    if (kpa) {
+      lines.push(["Pressure " + kpa, "s"]);
+    }
+    lines.push(["Source " + r.source_file + ", row " + r.source_row, "m"]);
+    return lines;
+  }
+  const t = mk.row;
+  const lines = [[fmt(t.o2_percent, 1) + "% oxygen, " + (t.outcome_short || "").toLowerCase(), "v"], [t.label, "n"]];
+  if (t.material_short) {
+    lines.push([t.material_short, "s"]);
+  }
+  if (t.pressure_kpa !== undefined && t.pressure_kpa !== null) {
+    lines.push(["Pressure " + fmt(t.pressure_kpa, 1) + " kPa", "s"]);
+  }
+  lines.push(["NTRS " + t.source_id, "m"]);
+  return lines;
+}
+
+function gapBindTips(node, svg, tip, live, m) {
+  let cur = null;
+  function visible() {
+    return m.marks.filter(function (k) { return k.kind === "p" ? m.vis.p : m.vis.f; });
+  }
+  function hide() {
+    cur = null;
+    tip.hidden = true;
+    m.hov.setAttribute("opacity", "0");
+  }
+  function show(mk, announce) {
+    cur = mk;
+    clear(tip);
+    const lines = gapTipLines(mk);
+    lines.forEach(function (l) {
+      tip.appendChild(el("div", { class: "gt-" + l[1], text: l[0] }));
+    });
+    tip.hidden = false;
+    m.hov.setAttribute("cx", mk.x);
+    m.hov.setAttribute("cy", mk.y);
+    m.hov.setAttribute("r", mk.r + 4);
+    m.hov.setAttribute("opacity", "1");
+    const w = node.clientWidth;
+    const tw = tip.offsetWidth;
+    const th = tip.offsetHeight;
+    let left = mk.x + 16;
+    if (left + tw > w - 4) {
+      left = mk.x - tw - 16;
+    }
+    left = Math.max(4, left);
+    let top = svg.parentNode.offsetTop + mk.y - th - 14;
+    if (top < svg.parentNode.offsetTop - 8) {
+      top = svg.parentNode.offsetTop + mk.y + 18;
+    }
+    tip.style.left = left.toFixed(1) + "px";
+    tip.style.top = top.toFixed(1) + "px";
+    if (announce) {
+      live.textContent = lines.map(function (l) { return l[0]; }).join(". ");
+    }
+  }
+  function pick(e) {
+    const b = svg.getBoundingClientRect();
+    const k = b.width / m.w;
+    const x = (e.clientX - b.left) / k;
+    const y = (e.clientY - b.top) / k;
+    const reach = e.pointerType === "touch" ? 26 : 20;
+    let best = null;
+    let bd = reach * reach;
+    const list = visible();
+    for (let i = 0; i < list.length; i += 1) {
+      const dx = list[i].x - x;
+      const dy = list[i].y - y;
+      const dd = dx * dx + dy * dy;
+      if (dd < bd) {
+        bd = dd;
+        best = list[i];
+      }
+    }
+    return best;
+  }
+  function onPoint(e) {
+    const hit = pick(e);
+    if (!hit) {
+      hide();
+    } else if (hit !== cur) {
+      show(hit, false);
+    }
+  }
+  svg.addEventListener("pointermove", onPoint);
+  svg.addEventListener("pointerdown", onPoint);
+  svg.addEventListener("pointerleave", function (e) {
+    if (e.pointerType !== "touch") {
+      hide();
+    }
+  });
+  svg.addEventListener("blur", hide);
+  svg.addEventListener("keydown", function (e) {
+    const list = visible();
+    if (!list.length) {
+      return;
+    }
+    let i = cur ? list.indexOf(cur) : -1;
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      i = i < 0 ? 0 : Math.min(list.length - 1, i + 1);
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      i = i < 0 ? 0 : Math.max(0, i - 1);
+    } else if (e.key === "Home") {
+      i = 0;
+    } else if (e.key === "End") {
+      i = list.length - 1;
+    } else if (e.key === "Escape") {
+      hide();
+      return;
+    } else {
+      return;
+    }
+    e.preventDefault();
+    show(list[i], true);
+  });
+}
+
+function gapLegend() {
+  function item(stage, swatch, text) {
+    return el("span", { class: "lg", "data-s": String(stage) }, swatch, el("span", { text: text }));
+  }
+  return el("div", { class: "gap-legend" },
+    item(0, el("i", { class: "lg-dot" }), "PSI solid-fuel test (one dot each)"),
+    item(2, el("i", { class: "lg-ring on" }), "Newest NASA flight, burned"),
+    item(2, el("i", { class: "lg-ring" }), "did not ignite"),
+    item(3, el("i", { class: "lg-band" }), "Moon base air"),
+    el("a", { class: "lg-link", href: "#/data?at=extractor", text: "See the rows" }));
+}
+
 function drawGapChart(node) {
   const d = gapChartData();
   const w = Math.max(280, Math.floor(node.clientWidth || 320));
   const small = w < 640;
-  const LF = small ? 13 : Math.max(20, Math.min(30, Math.round(w * 0.024)));
-  const TF = small ? 11 : 16;
+  const vh = window.innerHeight || 800;
+  const H = small ? Math.max(300, Math.min(480, Math.round(vh * 0.5))) : Math.max(320, Math.min(600, Math.round(vh * 0.55)));
+  const fs = small ? 12 : 13;
+  const pad = small ? 16 : 26;
   const lo = 12;
   const hi = 36;
-  const pad = small ? 10 : 20;
   const px = (w - 2 * pad) / (hi - lo);
-  const xo = function (v) { return pad + (v - lo) * px; };
-  const r = Math.max(2.2, Math.min(7, px * 0.095));
-  const dm = small ? 7 : Math.max(10, Math.min(14, px * 0.26));
+  function xo(v) { return pad + (v - lo) * px; }
+  const top = small ? 48 : 40;
+  const axisY = Math.round(H - (small ? 46 : 52));
+  const plotH = axisY - top;
+  const r = small ? 2.5 : 3.5;
   const swarm = swarmPoints(d.solid, xo, r);
-  const peak = Math.max.apply(null, swarm.map(function (p) { return p.up; })) + r;
-  const labelH = LF * 4.9;
-  const rowStep = 2 * dm + 4;
+  const x0 = swarm[0].x;
+  const xN = swarm[swarm.length - 1].x;
+  const burned = d.flights.filter(function (t) { return t.outcome_short === "Burned"; });
+  const maxBurn = Math.max.apply(null, burned.map(function (t) { return t.o2_percent; }));
+  const ruleX = Math.round(xo(d.psiMax)) + 0.5;
+  const ruleTop = top - 6;
+  const bandL = Math.round(xo(d.moonLo)) + 0.5;
+  const bandR = Math.round(xo(d.moonHi)) + 0.5;
+  const moonX = xo(d.moon);
+  const dimY = Math.round(top + plotH * 0.56) + 0.5;
+  const laneY = top + 20;
   const seen = {};
-  const flights = d.flights.map(function (t) {
+  const flights = d.flights.slice().sort(function (a, b) { return a.o2_percent - b.o2_percent; }).map(function (t) {
     const key = t.o2_percent.toFixed(1);
     seen[key] = seen[key] || 0;
     const row = seen[key];
     seen[key] += 1;
-    return { t: t, row: row, x: xo(t.o2_percent) };
+    return { t: t, x: xo(t.o2_percent), y: laneY + row * 15 };
   });
-  const rows = Math.max.apply(null, flights.map(function (f) { return f.row + 1; }));
-  const diamondsBottom = labelH + 6 + rows * rowStep + dm;
-  const axisY = Math.max(diamondsBottom + 26 + peak, labelH + 260);
-  const H = Math.round(axisY + (small ? 38 : 52));
-  const n = swarm.length;
-  const bandX = xo(d.moonLo);
-  const bandW = xo(d.moonHi) - xo(d.moonLo);
-  const bandTop = LF * 1.7;
-  const lineX = xo(d.psiMax);
-  const wallTop = LF * 1.9;
-  const rightEdge = w - pad;
-  const arrowY = axisY - Math.max(46, LF * 1.8);
-  const arrowX1 = lineX + 3;
-  const arrowX2 = xo(d.moon) - 3;
-  const ah = small ? 5 : 9;
-  const gapPts = d.moon - d.psiMax;
-  let s = "";
-  s += "<defs><filter id=\"gapglow\" x=\"-80%\" y=\"-10%\" width=\"260%\" height=\"120%\"><feGaussianBlur stdDeviation=\"" + (small ? 6 : 12) + "\"/></filter>";
-  s += "<clipPath id=\"gwc\"><rect class=\"gwallclip\" x=\"" + (lineX - 12) + "\" y=\"" + axisY + "\" width=\"24\" height=\"0\" style=\"--ya:" + axisY + "px;--yb:" + wallTop + "px;--hh:" + (axisY - wallTop) + "px\"/></clipPath>";
-  s += "<clipPath id=\"gsc\"><rect class=\"gsweepclip\" x=\"" + (arrowX1 - 6) + "\" y=\"" + (arrowY - LF * 1.6) + "\" width=\"0\" height=\"" + (LF * 2.4) + "\" style=\"--sw:" + (arrowX2 - arrowX1 + 12) + "px\"/></clipPath></defs>";
-  s += "<rect class=\"gshade\" x=\"" + lineX + "\" y=\"" + wallTop + "\" width=\"0\" height=\"" + (axisY - wallTop) + "\" fill=\"#ffffff\" fill-opacity=\"0.055\" style=\"--sw:" + (rightEdge - lineX) + "px\"/>";
-  s += "<rect class=\"gglow\" x=\"" + bandX + "\" y=\"" + bandTop + "\" width=\"" + bandW + "\" height=\"" + (axisY - bandTop) + "\" fill=\"#e8743b\" filter=\"url(#gapglow)\"/>";
-  s += "<rect class=\"g4\" x=\"" + bandX + "\" y=\"" + bandTop + "\" width=\"" + bandW + "\" height=\"" + (axisY - bandTop) + "\" fill=\"#e8743b\" fill-opacity=\"0.24\" stroke=\"#e8743b\" stroke-width=\"" + (small ? 1.5 : 2.5) + "\"/>";
-  s += "<line x1=\"" + pad + "\" y1=\"" + axisY + "\" x2=\"" + (w - pad) + "\" y2=\"" + axisY + "\" stroke=\"#6b7898\" stroke-width=\"2\"/>";
   const step = small ? 4 : 2;
+  const grid = [];
+  const ticks = [];
   for (let v = lo; v <= hi; v += step) {
-    s += "<line x1=\"" + xo(v) + "\" y1=\"" + axisY + "\" x2=\"" + xo(v) + "\" y2=\"" + (axisY + 8) + "\" stroke=\"#6b7898\" stroke-width=\"2\"/>";
-    s += "<text x=\"" + xo(v) + "\" y=\"" + (axisY + 10 + TF * 1.3) + "\" font-size=\"" + TF + "\" text-anchor=\"middle\" fill=\"#b8c2db\">" + v + "%</text>";
+    const gx = Math.round(xo(v)) + 0.5;
+    grid.push("<line x1=\"" + gx + "\" y1=\"" + top + "\" x2=\"" + gx + "\" y2=\"" + axisY + "\" stroke=\"" + GAP_COL.grid + "\" stroke-width=\"1\"/>");
+    ticks.push("<text x=\"" + xo(v).toFixed(1) + "\" y=\"" + (axisY + 19) + "\" font-size=\"" + fs + "\" text-anchor=\"middle\" fill=\"" + GAP_COL.t3 + "\">" + v + "</text>");
   }
+  let s = "";
+  s += "<g shape-rendering=\"crispEdges\">" + grid.join("") + "</g>";
+  s += "<rect class=\"gshade\" x=\"" + ruleX + "\" y=\"" + top + "\" width=\"" + (w - pad - ruleX) + "\" height=\"" + plotH + "\" fill=\"#ffffff\" fill-opacity=\"0.035\" opacity=\"0\"/>";
+  s += "<g class=\"gband\" opacity=\"0\" shape-rendering=\"crispEdges\"><rect x=\"" + bandL + "\" y=\"" + top + "\" width=\"" + (bandR - bandL) + "\" height=\"" + plotH + "\" fill=\"#ffffff\" fill-opacity=\"0.08\"/>";
+  s += "<line x1=\"" + bandL + "\" y1=\"" + top + "\" x2=\"" + bandL + "\" y2=\"" + axisY + "\" stroke=\"#ffffff\" stroke-opacity=\"0.45\" stroke-width=\"1\"/>";
+  s += "<line x1=\"" + bandR + "\" y1=\"" + top + "\" x2=\"" + bandR + "\" y2=\"" + axisY + "\" stroke=\"#ffffff\" stroke-opacity=\"0.45\" stroke-width=\"1\"/></g>";
+  s += "<line x1=\"" + pad + "\" y1=\"" + (axisY + 0.5) + "\" x2=\"" + (w - pad) + "\" y2=\"" + (axisY + 0.5) + "\" stroke=\"" + GAP_COL.axis + "\" stroke-width=\"1\" shape-rendering=\"crispEdges\"/>";
+  s += ticks.join("");
+  s += "<text x=\"" + (w / 2) + "\" y=\"" + (H - 8) + "\" font-size=\"" + (fs - 1) + "\" text-anchor=\"middle\" fill=\"" + GAP_COL.t3 + "\">Oxygen in the air (percent)</text>";
+  swarm.forEach(function (p) {
+    s += "<circle class=\"gd\" cx=\"" + p.x.toFixed(1) + "\" cy=\"" + (axisY - p.up).toFixed(1) + "\" r=\"" + r + "\" fill=\"" + GAP_COL.psi + "\" opacity=\"0\"/>";
+  });
+  s += "<line class=\"grule\" x1=\"" + ruleX + "\" y1=\"" + axisY + "\" x2=\"" + ruleX + "\" y2=\"" + axisY + "\" stroke=\"" + GAP_COL.t2 + "\" stroke-width=\"1\" shape-rendering=\"crispEdges\"/>";
+  const ruleText = "Highest PSI solid test: " + fmt(d.psiMax, 1) + "%";
+  if (small) {
+    s += "<text class=\"grlab\" font-size=\"" + fs + "\" text-anchor=\"middle\" fill=\"" + GAP_COL.t1 + "\" opacity=\"0\"><tspan x=\"" + ruleX + "\" y=\"" + (top - 24) + "\">Highest PSI solid</tspan><tspan x=\"" + ruleX + "\" y=\"" + (top - 10) + "\">test: " + fmt(d.psiMax, 1) + "%</tspan></text>";
+  } else {
+    s += "<text class=\"grlab\" x=\"" + ruleX + "\" y=\"" + (top - 14) + "\" font-size=\"" + fs + "\" font-weight=\"600\" text-anchor=\"middle\" fill=\"" + GAP_COL.t1 + "\" opacity=\"0\">" + ruleText + "</text>";
+  }
+  s += "<text class=\"glane\" font-size=\"" + (fs - 1) + "\" fill=\"" + GAP_COL.t3 + "\" opacity=\"0\">";
+  if (small) {
+    s += "<tspan x=\"" + pad + "\" y=\"" + (laneY - 2) + "\">Newest flights,</tspan><tspan x=\"" + pad + "\" y=\"" + (laneY + 11) + "\">not in PSI</tspan>";
+  } else {
+    s += "<tspan x=\"" + pad + "\" y=\"" + (laneY + 4) + "\">Newest flights, not in PSI</tspan>";
+  }
+  s += "</text>";
+  flights.forEach(function (f) {
+    const on = f.t.outcome_short === "Burned";
+    s += "<g class=\"gf\" transform=\"translate(" + f.x.toFixed(1) + " " + f.y + ") scale(0.6)\" opacity=\"0\"><circle r=\"" + (small ? 4.2 : 5) + "\" fill=\"" + (on ? GAP_COL.fl : "none") + "\" stroke=\"" + GAP_COL.fl + "\" stroke-width=\"2\"/></g>";
+  });
+  const moonText = "Moon base air: " + d.moon + "%";
+  const moonW = moonText.length * fs * 0.58;
+  const anchorEnd = moonX + moonW / 2 > w - 4;
+  s += "<text class=\"gmlab\" x=\"" + (anchorEnd ? w - 6 : moonX.toFixed(1)) + "\" y=\"" + (top - 14) + "\" font-size=\"" + fs + "\" font-weight=\"600\" text-anchor=\"" + (anchorEnd ? "end" : "middle") + "\" fill=\"" + GAP_COL.t1 + "\" opacity=\"0\">" + moonText + "</text>";
+  const gapA = ruleX;
+  const gapB = Math.round(moonX) + 0.5;
+  s += "<g class=\"gdim\" shape-rendering=\"crispEdges\"><line class=\"gdl\" x1=\"" + gapA + "\" y1=\"" + dimY + "\" x2=\"" + gapA + "\" y2=\"" + dimY + "\" stroke=\"" + GAP_COL.t1 + "\" stroke-width=\"1\"/>";
+  s += "<line class=\"gdta\" x1=\"" + gapA + "\" y1=\"" + (dimY - 5) + "\" x2=\"" + gapA + "\" y2=\"" + (dimY + 5) + "\" stroke=\"" + GAP_COL.t1 + "\" stroke-width=\"1\" opacity=\"0\"/>";
+  s += "<line class=\"gdtb\" x1=\"" + gapA + "\" y1=\"" + (dimY - 5) + "\" x2=\"" + gapA + "\" y2=\"" + (dimY + 5) + "\" stroke=\"" + GAP_COL.t1 + "\" stroke-width=\"1\" opacity=\"0\"/></g>";
+  const gapMid = (gapA + gapB) / 2;
+  if (small) {
+    s += "<text class=\"gdlab\" font-size=\"" + fs + "\" font-weight=\"600\" text-anchor=\"middle\" fill=\"" + GAP_COL.t1 + "\" opacity=\"0\"><tspan x=\"" + gapMid + "\" y=\"" + (dimY - 24) + "\">Untested by PSI:</tspan><tspan x=\"" + gapMid + "\" y=\"" + (dimY - 10) + "\">" + fmt(d.psiMax, 1) + "% to " + d.moon + "%</tspan></text>";
+  } else {
+    s += "<text class=\"gdlab\" x=\"" + gapMid + "\" y=\"" + (dimY - 10) + "\" font-size=\"" + fs + "\" font-weight=\"600\" text-anchor=\"middle\" fill=\"" + GAP_COL.t1 + "\" opacity=\"0\">Untested by PSI: " + fmt(d.psiMax, 1) + "% to " + d.moon + "%</text>";
+  }
+  s += "<circle class=\"ghov\" r=\"8\" fill=\"none\" stroke=\"" + GAP_COL.t1 + "\" stroke-width=\"1.5\" opacity=\"0\" pointer-events=\"none\"/>";
+  const label = "Oxygen axis from 12 to 36 percent: " + d.solid.length + " PSI solid-fuel tests end at " + fmt(d.psiMax, 1) + " percent, newest NASA flights burned solids up to " + fmt(maxBurn, 1) + " percent, Moon base air is " + d.moon + " percent. Focus the chart and use arrow keys to read each test, or open the rows link.";
+  clear(node);
+  const legend = gapLegend();
+  node.appendChild(legend);
+  const holder = el("div", { class: "gap-plot" });
+  holder.innerHTML = "<svg viewBox=\"0 0 " + w + " " + H + "\" width=\"" + w + "\" height=\"" + H + "\" role=\"group\" tabindex=\"0\" aria-label=\"" + label + "\">" + s + "</svg>";
+  node.appendChild(holder);
+  const svg = holder.firstChild;
+  const tip = el("div", { class: "gap-tip", role: "tooltip", hidden: "" });
+  const live = el("div", { class: "gap-live", "aria-live": "polite" });
+  node.appendChild(tip);
+  node.appendChild(live);
+  const q = function (sel) { return svg.querySelector(sel); };
+  const dotEls = svg.querySelectorAll(".gd");
+  const flEls = svg.querySelectorAll(".gf");
+  const m = {
+    w: w,
+    axisY: axisY,
+    ruleTop: ruleTop,
+    dimA: gapA,
+    dimB: gapB,
+    dots: swarm.map(function (p, i) {
+      return { el: dotEls[i], order: xN > x0 ? (p.x - x0) / (xN - x0) : 0 };
+    }),
+    flights: flights.map(function (f, i) {
+      return { el: flEls[i], x: f.x, y: f.y, order: flights.length > 1 ? i / (flights.length - 1) : 0 };
+    }),
+    shade: q(".gshade"),
+    band: q(".gband"),
+    rule: q(".grule"),
+    ruleLab: q(".grlab"),
+    lane: q(".glane"),
+    moonLab: q(".gmlab"),
+    dl: q(".gdl"),
+    dta: q(".gdta"),
+    dtb: q(".gdtb"),
+    dlab: q(".gdlab"),
+    hov: q(".ghov"),
+    leg: Array.prototype.map.call(legend.querySelectorAll(".lg"), function (n) { return { el: n, s: parseInt(n.getAttribute("data-s"), 10), c: -1 }; }),
+    vis: { p: false, f: false },
+    marks: [],
+    c0: -1, c1: -1, c2: -1, c3: -1
+  };
   swarm.forEach(function (p, i) {
-    const delay = Math.round(200 + 1800 * (i / n));
-    s += "<circle class=\"gd\" style=\"--d:" + delay + "ms\" cx=\"" + p.x.toFixed(1) + "\" cy=\"" + (axisY - p.up).toFixed(1) + "\" r=\"" + r.toFixed(1) + "\" fill=\"#e8743b\"/>";
+    m.marks.push({ kind: "p", x: p.x, y: axisY - p.up, r: r, row: d.rows[i] });
   });
-  s += "<line clip-path=\"url(#gwc)\" x1=\"" + lineX + "\" y1=\"" + wallTop + "\" x2=\"" + lineX + "\" y2=\"" + axisY + "\" stroke=\"#e8743b\" stroke-width=\"" + (small ? 2 : 3.5) + "\" stroke-dasharray=\"" + (small ? "7 5" : "14 9") + "\"/>";
-  s += "<text class=\"g2\" font-size=\"" + LF + "\" font-weight=\"700\" fill=\"#ff8a50\" text-anchor=\"end\"><tspan x=\"" + (lineX - (small ? 8 : 14)) + "\" y=\"" + (LF * 3.05) + "\">PSI solid tests</tspan><tspan x=\"" + (lineX - (small ? 8 : 14)) + "\" y=\"" + (LF * 4.35) + "\">stop at " + fmt(d.psiMax, 1) + "%</tspan></text>";
-  flights.forEach(function (f, i) {
-    const y = labelH + 6 + dm + f.row * rowStep;
-    const t = f.t;
-    s += "<path class=\"g3\" style=\"--d:" + (i * 110) + "ms\" d=\"M" + f.x + " " + (y - dm) + " L" + (f.x + dm) + " " + y + " L" + f.x + " " + (y + dm) + " L" + (f.x - dm) + " " + y + " Z\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"" + (small ? 1.6 : 2.6) + "\"><title>" + t.label + ": " + t.material_short + ", " + t.o2_percent.toFixed(1) + "% O2, " + t.outcome_short + "</title></path>";
+  m.flights.forEach(function (f, i) {
+    m.marks.push({ kind: "f", x: f.x, y: f.y, r: 7, row: flights[i].t });
   });
-  s += "<text class=\"g3\" style=\"--d:500ms\" font-size=\"" + LF + "\" font-weight=\"700\" fill=\"#ffffff\"><tspan x=\"" + xo(22.9) + "\" y=\"" + (LF * 3.05) + "\">Newest NASA flights</tspan><tspan x=\"" + xo(22.9) + "\" y=\"" + (LF * 4.35) + "\">not in PSI</tspan></text>";
-  s += "<text class=\"g4\" x=\"" + xo(hi - 0.1) + "\" y=\"" + (LF * 1.1) + "\" font-size=\"" + LF + "\" font-weight=\"700\" fill=\"#ff8a50\" text-anchor=\"end\">Moon base " + d.moon + "%</text>";
-  s += "<g clip-path=\"url(#gsc)\"><line x1=\"" + arrowX1 + "\" y1=\"" + arrowY + "\" x2=\"" + arrowX2 + "\" y2=\"" + arrowY + "\" stroke=\"#ffffff\" stroke-width=\"" + (small ? 1.6 : 2.4) + "\"/>";
-  s += "<path d=\"M" + (arrowX1 + ah) + " " + (arrowY - ah) + " L" + arrowX1 + " " + arrowY + " L" + (arrowX1 + ah) + " " + (arrowY + ah) + "\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"" + (small ? 1.6 : 2.4) + "\"/>";
-  s += "<path d=\"M" + (arrowX2 - ah) + " " + (arrowY - ah) + " L" + arrowX2 + " " + arrowY + " L" + (arrowX2 - ah) + " " + (arrowY + ah) + "\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"" + (small ? 1.6 : 2.4) + "\"/>";
-  s += "<text x=\"" + ((arrowX1 + arrowX2) / 2) + "\" y=\"" + (arrowY - (small ? 9 : 14)) + "\" font-size=\"" + (small ? TF + 1 : LF * 0.95) + "\" font-weight=\"700\" fill=\"#ffffff\" text-anchor=\"middle\">" + fmt(gapPts, 0) + " O2 points</text></g>";
-  node.innerHTML = "<svg viewBox=\"0 0 " + w + " " + H + "\" width=\"" + w + "\" height=\"" + H + "\" role=\"img\" aria-label=\"Oxygen axis: " + d.solid.length + " PSI solid-fuel tests end at " + fmt(d.psiMax, 1) + " percent, newest NASA flights burned solids at " + fmt(Math.max.apply(null, d.flights.filter(function (t) { return t.outcome_short === "Burned"; }).map(function (t) { return t.o2_percent; })), 1) + " percent, Moon base air is " + d.moon + " percent\">" + s + "</svg>";
+  m.marks.sort(function (a, b) { return a.x - b.x || a.y - b.y; });
+  gapBindTips(node, svg, tip, live, m);
+  gapModel = m;
   gapWidth = node.clientWidth;
+  gapRender(gapQ, true);
+}
+
+function gapRender(q, force) {
+  const m = gapModel;
+  if (!m) {
+    return;
+  }
+  const a0 = gapStage(q, 0);
+  const a1 = gapStage(q, 1);
+  const a2 = gapStage(q, 2);
+  const a3 = gapStage(q, 3);
+  if (force || a0 !== m.c0 || a3 !== m.c3) {
+    m.c0 = a0;
+    m.c3 = a3;
+    const dim = 1 - 0.55 * a3;
+    for (let i = 0; i < m.dots.length; i += 1) {
+      const dt = m.dots[i];
+      const e = gapEaseOut(gapClamp(a0 * 1.8 - 0.8 * dt.order));
+      dt.el.setAttribute("opacity", (e * dim).toFixed(3));
+      dt.el.setAttribute("transform", "translate(0 " + ((1 - e) * 18).toFixed(2) + ")");
+    }
+    m.vis.p = a0 > 0.6;
+  }
+  if (force || a1 !== m.c1) {
+    m.c1 = a1;
+    const dr = gapEaseOut(gapClamp(a1 / 0.7));
+    m.rule.setAttribute("y2", (m.axisY - (m.axisY - m.ruleTop) * dr).toFixed(2));
+    m.ruleLab.setAttribute("opacity", gapClamp((a1 - 0.55) / 0.45).toFixed(3));
+    m.shade.setAttribute("opacity", dr.toFixed(3));
+  }
+  if (force || a2 !== m.c2) {
+    m.c2 = a2;
+    const n = m.flights.length;
+    for (let i = 0; i < n; i += 1) {
+      const f = m.flights[i];
+      const e = gapEaseOut(gapClamp(a2 * 1.7 - 0.7 * f.order));
+      f.el.setAttribute("opacity", e.toFixed(3));
+      f.el.setAttribute("transform", "translate(" + f.x.toFixed(1) + " " + f.y + ") scale(" + (0.6 + 0.4 * e).toFixed(3) + ")");
+    }
+    m.lane.setAttribute("opacity", gapClamp((a2 - 0.3) / 0.7).toFixed(3));
+    m.vis.f = a2 > 0.6;
+  }
+  if (force || a3 !== m.c3b) {
+    m.c3b = a3;
+    m.band.setAttribute("opacity", a3.toFixed(3));
+    m.moonLab.setAttribute("opacity", gapClamp((a3 - 0.35) / 0.65).toFixed(3));
+    const dd = gapEaseOut(gapClamp(a3 / 0.85));
+    const xr = m.dimA + (m.dimB - m.dimA) * dd;
+    m.dl.setAttribute("x2", xr.toFixed(2));
+    m.dta.setAttribute("opacity", gapClamp(a3 * 5).toFixed(3));
+    m.dtb.setAttribute("x1", xr.toFixed(2));
+    m.dtb.setAttribute("x2", xr.toFixed(2));
+    m.dtb.setAttribute("opacity", gapClamp(a3 * 5).toFixed(3));
+    m.dlab.setAttribute("opacity", gapClamp((a3 - 0.6) / 0.4).toFixed(3));
+  }
+  const av = [a0, a1, a2, a3];
+  for (let i = 0; i < m.leg.length; i += 1) {
+    const v = av[m.leg[i].s];
+    if (force || v !== m.leg[i].c) {
+      m.leg[i].c = v;
+      m.leg[i].el.style.opacity = (0.25 + 0.75 * v).toFixed(3);
+    }
+  }
+  if (gapCapsRef && !gapStaticMode) {
+    const caps = gapCapsRef;
+    for (let k = 0; k < caps.items.length; k += 1) {
+      const u = gapClamp((q - k) / GAP_ANIM);
+      const un = k < caps.items.length - 1 ? gapClamp((q - k - 1) / GAP_ANIM) : 0;
+      const inn = k === 0 ? gapEaseIO(gapClamp(u / 0.6)) : gapEaseIO(gapClamp((u - 0.5) / 0.5));
+      const o = inn * (1 - gapEaseIO(gapClamp(un / 0.45)));
+      caps.items[k].style.opacity = o.toFixed(3);
+      caps.items[k].style.transform = "translateY(" + ((1 - o) * 10).toFixed(2) + "px)";
+      caps.dots[k].style.setProperty("--a", av[k].toFixed(3));
+    }
+  }
 }
 
 function headerH() {
@@ -1153,7 +1475,7 @@ function gapCaptions() {
       el("span", { class: "gap-cap-k", text: t[0] }), t[1]);
   });
   const dots = el("span", { class: "gap-dots", "aria-hidden": "true" }, texts.map(function () { return el("i"); }));
-  return { node: el("div", { class: "gap-caps", "aria-live": "polite" }, items, dots), items: items, dots: dots.children };
+  return { node: el("div", { class: "gap-caps" }, items, dots), items: items, dots: dots.children };
 }
 
 function gapGeometry(track) {
@@ -1161,64 +1483,93 @@ function gapGeometry(track) {
   const hdr = headerH();
   const rect = track.getBoundingClientRect();
   const scrollable = Math.max(1, rect.height - (vh - hdr));
-  const lead = vh * 0.12;
-  const seg = (scrollable + lead) / 4;
+  const seg = scrollable / 4;
+  const lead = seg * 0.28;
   const absTop = rect.top + window.scrollY;
   return {
     s: hdr - rect.top,
     seg: seg,
     lead: lead,
-    stageY: function (k) { return absTop - hdr + k * seg + seg * 0.5 - lead; }
+    top: rect.top,
+    bottom: rect.bottom,
+    vh: vh,
+    plateauY: function (k) { return absTop - hdr + (k + GAP_ANIM) * seg - lead; }
   };
 }
 
 function gapWatch(section, track, chart, caps) {
-  const total = caps.items.length;
-  let stage = -2;
-  let queued = false;
-  function apply(k) {
-    stage = k;
-    for (let i = 1; i <= total; i += 1) {
-      chart.classList.toggle("st" + i, k + 1 >= i);
+  gapCapsRef = caps;
+  gapStaticMode = false;
+  let p = 0;
+  let q = 0;
+  let raf = 0;
+  let last = 0;
+  let alive = true;
+  function tick(now) {
+    raf = 0;
+    if (!alive) {
+      return;
     }
-    caps.items.forEach(function (c, i) { c.classList.toggle("on", i === k); });
-    Array.prototype.forEach.call(caps.dots, function (dot, i) { dot.classList.toggle("on", i <= k); });
+    const dt = Math.min(64, Math.max(1, now - last));
+    last = now;
+    q += (p - q) * (1 - Math.exp(-dt / 140));
+    const settled = Math.abs(p - q) < 0.0005;
+    if (settled) {
+      q = p;
+    }
+    gapQ = q;
+    gapRender(q, false);
+    if (!settled) {
+      raf = requestAnimationFrame(tick);
+    }
   }
-  function update() {
-    queued = false;
-    if (!document.body.contains(track)) {
+  function kick() {
+    if (!raf && alive) {
+      last = performance.now();
+      raf = requestAnimationFrame(tick);
+    }
+  }
+  function measure(jump) {
+    if (!alive || !document.body.contains(track)) {
       return;
     }
     track.style.setProperty("--gap-top", headerH() + "px");
     const g = gapGeometry(track);
-    const k = Math.max(-1, Math.min(total - 1, Math.floor((g.s + g.lead) / g.seg)));
-    if (!section.classList.contains("in") && track.getBoundingClientRect().top < window.innerHeight * 0.85) {
+    p = Math.max(0, Math.min(4, (g.s + g.lead) / g.seg));
+    if (!section.classList.contains("in") && g.top < g.vh * 0.85) {
       revealSection(section);
     }
-    if (k !== stage) {
-      apply(k);
+    if (jump) {
+      q = p;
+      gapQ = q;
+      gapRender(q, true);
+    } else if (g.top < g.vh * 1.3 && g.bottom > -g.vh * 0.3) {
+      kick();
+    } else {
+      q = p;
+      gapQ = q;
+      gapRender(q, false);
     }
   }
-  function queue() {
-    if (!queued) {
-      queued = true;
-      requestAnimationFrame(update);
-    }
-  }
-  window.addEventListener("scroll", queue, { passive: true });
-  window.addEventListener("resize", queue);
-  update();
+  function onScroll() { measure(false); }
+  function onResize() { measure(true); }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onResize);
+  measure(true);
   return function () {
-    window.removeEventListener("scroll", queue);
-    window.removeEventListener("resize", queue);
+    alive = false;
+    cancelAnimationFrame(raf);
+    window.removeEventListener("scroll", onScroll);
+    window.removeEventListener("resize", onResize);
   };
 }
 
 function gapStatic(section, chart, caps) {
   section.classList.add("gap-static");
-  for (let i = 1; i <= caps.items.length; i += 1) {
-    chart.classList.add("st" + i);
-  }
+  gapStaticMode = true;
+  gapCapsRef = caps;
+  gapQ = 4;
+  gapRender(4, true);
   caps.items.forEach(function (c) { c.classList.add("on"); });
   revealSection(section);
 }
@@ -1241,6 +1592,22 @@ function playStop() {
   }
 }
 
+function playWords(sel) {
+  const words = [];
+  sel.forEach(function (s) {
+    const n = document.querySelector(s);
+    if (n) {
+      words.push(n.textContent.trim());
+    }
+  });
+  const text = words.join(" ").trim();
+  return text ? text.split(/\s+/).length : 0;
+}
+
+function playDwell(words) {
+  return Math.max(2800, 1200 + 260 * words);
+}
+
 function playPoints() {
   const hdr = headerH();
   const at = function (sel) {
@@ -1248,23 +1615,27 @@ function playPoints() {
     return n ? Math.max(0, n.getBoundingClientRect().top + window.scrollY - hdr) : null;
   };
   const pts = [];
-  [["#s-quote", 3600], ["#s-air", 3800]].forEach(function (p) {
+  [["#s-quote", ["#s-quote .big-quote p"]], ["#s-air", ["#s-air h2", "#s-air .story-line"]]].forEach(function (p) {
     const y = at(p[0]);
     if (y !== null) {
-      pts.push({ y: y, dwell: p[1] });
+      pts.push({ y: y, dwell: playDwell(playWords(p[1])), settle: 1000, gap: false });
     }
   });
   const track = document.querySelector("#s-gap .gap-track");
   if (track) {
     const g = gapGeometry(track);
     for (let k = 0; k < 4; k += 1) {
-      pts.push({ y: Math.max(0, g.stageY(k)), dwell: k === 0 ? 3200 : 2600 });
+      const sel = ["#s-gap .gap-cap:nth-child(" + (k + 1) + ")"];
+      if (k === 0) {
+        sel.push("#s-gap h2", "#s-gap .story-sub");
+      }
+      pts.push({ y: Math.max(0, g.plateauY(k)), dwell: playDwell(playWords(sel)), settle: 450, gap: true });
     }
   }
-  [["#s-grav", 4200], ["#s-next", 0]].forEach(function (p) {
+  [["#s-grav", ["#s-grav h2", "#s-grav .story-line"]], ["#s-next", []]].forEach(function (p) {
     const y = at(p[0]);
     if (y !== null) {
-      pts.push({ y: y, dwell: p[1] });
+      pts.push({ y: y, dwell: p[1].length ? playDwell(playWords(p[1])) : 0, settle: p[1].length ? 1000 : 0, gap: false });
     }
   });
   return pts;
@@ -1312,22 +1683,24 @@ function playStory() {
         playStop();
         return;
       }
-      run.timer = setTimeout(function () { next(i + 1); }, p.dwell);
+      run.timer = setTimeout(function () { next(i + 1); }, p.settle + p.dwell);
     }
     if (reduceMotion() || dist < 2) {
       put(p.y);
       dwell();
       return;
     }
-    const dur = Math.max(1100, Math.min(2800, dist * 0.9));
+    let dur = Math.max(1000, Math.min(2400, 700 + 0.6 * dist));
+    if (p.gap && i > 0 && pts[i - 1].gap) {
+      dur = Math.max(dur, GAP_TRAVEL);
+    }
     const t0 = performance.now();
     function step(now) {
       if (playRun !== run) {
         return;
       }
       const u = Math.min(1, (now - t0) / dur);
-      const e = u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
-      put(from + (p.y - from) * e);
+      put(from + (p.y - from) * gapEaseIO(u));
       if (u < 1) {
         run.raf = requestAnimationFrame(step);
       } else {
@@ -1347,8 +1720,8 @@ function heroIntro(hero) {
     requestAnimationFrame(function () {
       hero.classList.add("in");
       setTimeout(function () {
-        nums.forEach(function (n, i) { countUp(n, targets[i], 800); });
-      }, 700);
+        nums.forEach(function (n, i) { countUp(n, targets[i], 700); });
+      }, 250);
     });
   });
 }
@@ -1934,9 +2307,9 @@ function renderHome() {
       el("p", { class: "who-link" }, ntrsLink(TEAM_URL, "Meet the team on NASA Space Apps")))
   ]);
   const view = setView(hero, quote, air, gap, grav, next, explore);
+  watchStory(sections);
   drawGapChart(chart);
   gapNode = chart;
-  watchStory(sections);
   if (reduceMotion()) {
     gapStatic(gap, chart, caps);
   } else {
