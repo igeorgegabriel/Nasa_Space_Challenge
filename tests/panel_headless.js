@@ -416,8 +416,8 @@ async function main() {
 
   assert.strictEqual(await js("document.querySelectorAll('#tour').length"), 0);
   assert.strictEqual(await js("document.getElementById('tour-open').textContent"), "Tour");
-  assert.strictEqual(await js("document.querySelector('.hero-tour').textContent"), "60-second tour");
-  await js("document.querySelector('.hero-tour').click()");
+  assert.strictEqual(await js("document.querySelector('.hero-play').textContent"), "Play the story");
+  await js("document.getElementById('tour-open').click()");
   assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 1 of 5");
   assert.ok((await js("document.querySelector('.tour-text').textContent")).indexOf("stop at 22.2% oxygen. Moon base air is 34%.") > 0);
   await sleep(600);

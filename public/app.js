@@ -889,12 +889,20 @@ let storyObserver = null;
 let heroObserver = null;
 let gapNode = null;
 let gapWidth = 0;
+let gapScrollOff = null;
+let heroPlayed = false;
+let playRun = null;
 
 function reduceMotion() {
   return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 }
 
 function stopStory() {
+  playStop();
+  if (gapScrollOff) {
+    gapScrollOff();
+    gapScrollOff = null;
+  }
   if (storyObserver) {
     storyObserver.disconnect();
     storyObserver = null;
@@ -956,14 +964,15 @@ function heroVideoWatch(hero, video) {
   heroObserver.observe(hero);
 }
 
-function countUp(node, target) {
+function countUp(node, target, duration) {
   if (reduceMotion()) {
     node.textContent = fmt(target, 0);
     return;
   }
   const start = performance.now();
+  const span = duration || 1300;
   function step(now) {
-    const u = Math.min(1, (now - start) / 1300);
+    const u = Math.min(1, (now - start) / span);
     node.textContent = fmt(target * (1 - Math.pow(1 - u, 3)), 0);
     if (u < 1) {
       requestAnimationFrame(step);
@@ -1079,10 +1088,21 @@ function drawGapChart(node) {
   const bandX = xo(d.moonLo);
   const bandW = xo(d.moonHi) - xo(d.moonLo);
   const bandTop = LF * 1.7;
+  const lineX = xo(d.psiMax);
+  const wallTop = LF * 1.9;
+  const rightEdge = w - pad;
+  const arrowY = axisY - Math.max(46, LF * 1.8);
+  const arrowX1 = lineX + 3;
+  const arrowX2 = xo(d.moon) - 3;
+  const ah = small ? 5 : 9;
+  const gapPts = d.moon - d.psiMax;
   let s = "";
-  s += "<defs><filter id=\"gapglow\" x=\"-80%\" y=\"-10%\" width=\"260%\" height=\"120%\"><feGaussianBlur stdDeviation=\"" + (small ? 6 : 12) + "\"/></filter></defs>";
+  s += "<defs><filter id=\"gapglow\" x=\"-80%\" y=\"-10%\" width=\"260%\" height=\"120%\"><feGaussianBlur stdDeviation=\"" + (small ? 6 : 12) + "\"/></filter>";
+  s += "<clipPath id=\"gwc\"><rect class=\"gwallclip\" x=\"" + (lineX - 12) + "\" y=\"" + axisY + "\" width=\"24\" height=\"0\" style=\"--ya:" + axisY + "px;--yb:" + wallTop + "px;--hh:" + (axisY - wallTop) + "px\"/></clipPath>";
+  s += "<clipPath id=\"gsc\"><rect class=\"gsweepclip\" x=\"" + (arrowX1 - 6) + "\" y=\"" + (arrowY - LF * 1.6) + "\" width=\"0\" height=\"" + (LF * 2.4) + "\" style=\"--sw:" + (arrowX2 - arrowX1 + 12) + "px\"/></clipPath></defs>";
+  s += "<rect class=\"gshade\" x=\"" + lineX + "\" y=\"" + wallTop + "\" width=\"0\" height=\"" + (axisY - wallTop) + "\" fill=\"#ffffff\" fill-opacity=\"0.055\" style=\"--sw:" + (rightEdge - lineX) + "px\"/>";
   s += "<rect class=\"gglow\" x=\"" + bandX + "\" y=\"" + bandTop + "\" width=\"" + bandW + "\" height=\"" + (axisY - bandTop) + "\" fill=\"#e8743b\" filter=\"url(#gapglow)\"/>";
-  s += "<rect class=\"gx\" style=\"transition-delay:5000ms\" x=\"" + bandX + "\" y=\"" + bandTop + "\" width=\"" + bandW + "\" height=\"" + (axisY - bandTop) + "\" fill=\"#e8743b\" fill-opacity=\"0.24\" stroke=\"#e8743b\" stroke-width=\"" + (small ? 1.5 : 2.5) + "\"/>";
+  s += "<rect class=\"g4\" x=\"" + bandX + "\" y=\"" + bandTop + "\" width=\"" + bandW + "\" height=\"" + (axisY - bandTop) + "\" fill=\"#e8743b\" fill-opacity=\"0.24\" stroke=\"#e8743b\" stroke-width=\"" + (small ? 1.5 : 2.5) + "\"/>";
   s += "<line x1=\"" + pad + "\" y1=\"" + axisY + "\" x2=\"" + (w - pad) + "\" y2=\"" + axisY + "\" stroke=\"#6b7898\" stroke-width=\"2\"/>";
   const step = small ? 4 : 2;
   for (let v = lo; v <= hi; v += step) {
@@ -1090,21 +1110,247 @@ function drawGapChart(node) {
     s += "<text x=\"" + xo(v) + "\" y=\"" + (axisY + 10 + TF * 1.3) + "\" font-size=\"" + TF + "\" text-anchor=\"middle\" fill=\"#b8c2db\">" + v + "%</text>";
   }
   swarm.forEach(function (p, i) {
-    const delay = Math.round(400 + 2500 * (i / n));
-    s += "<circle class=\"gd\" style=\"transition-delay:" + delay + "ms\" cx=\"" + p.x.toFixed(1) + "\" cy=\"" + (axisY - p.up).toFixed(1) + "\" r=\"" + r.toFixed(1) + "\" fill=\"#e8743b\"/>";
+    const delay = Math.round(200 + 1800 * (i / n));
+    s += "<circle class=\"gd\" style=\"--d:" + delay + "ms\" cx=\"" + p.x.toFixed(1) + "\" cy=\"" + (axisY - p.up).toFixed(1) + "\" r=\"" + r.toFixed(1) + "\" fill=\"#e8743b\"/>";
   });
-  const lineX = xo(d.psiMax);
-  s += "<line class=\"gx\" style=\"transition-delay:3000ms\" x1=\"" + lineX + "\" y1=\"" + (LF * 1.9) + "\" x2=\"" + lineX + "\" y2=\"" + axisY + "\" stroke=\"#e8743b\" stroke-width=\"" + (small ? 2 : 3.5) + "\" stroke-dasharray=\"" + (small ? "7 5" : "14 9") + "\"/>";
-  s += "<text class=\"gx\" style=\"transition-delay:3100ms\" font-size=\"" + LF + "\" font-weight=\"700\" fill=\"#ff8a50\" text-anchor=\"end\"><tspan x=\"" + (lineX - (small ? 8 : 14)) + "\" y=\"" + (LF * 3.05) + "\">PSI solid tests</tspan><tspan x=\"" + (lineX - (small ? 8 : 14)) + "\" y=\"" + (LF * 4.35) + "\">stop at " + fmt(d.psiMax, 1) + "%</tspan></text>";
+  s += "<line clip-path=\"url(#gwc)\" x1=\"" + lineX + "\" y1=\"" + wallTop + "\" x2=\"" + lineX + "\" y2=\"" + axisY + "\" stroke=\"#e8743b\" stroke-width=\"" + (small ? 2 : 3.5) + "\" stroke-dasharray=\"" + (small ? "7 5" : "14 9") + "\"/>";
+  s += "<text class=\"g2\" font-size=\"" + LF + "\" font-weight=\"700\" fill=\"#ff8a50\" text-anchor=\"end\"><tspan x=\"" + (lineX - (small ? 8 : 14)) + "\" y=\"" + (LF * 3.05) + "\">PSI solid tests</tspan><tspan x=\"" + (lineX - (small ? 8 : 14)) + "\" y=\"" + (LF * 4.35) + "\">stop at " + fmt(d.psiMax, 1) + "%</tspan></text>";
   flights.forEach(function (f, i) {
     const y = labelH + 6 + dm + f.row * rowStep;
     const t = f.t;
-    s += "<path class=\"gx\" style=\"transition-delay:" + (3700 + i * 110) + "ms\" d=\"M" + f.x + " " + (y - dm) + " L" + (f.x + dm) + " " + y + " L" + f.x + " " + (y + dm) + " L" + (f.x - dm) + " " + y + " Z\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"" + (small ? 1.6 : 2.6) + "\"><title>" + t.label + ": " + t.material_short + ", " + t.o2_percent.toFixed(1) + "% O2</title></path>";
+    s += "<path class=\"g3\" style=\"--d:" + (i * 110) + "ms\" d=\"M" + f.x + " " + (y - dm) + " L" + (f.x + dm) + " " + y + " L" + f.x + " " + (y + dm) + " L" + (f.x - dm) + " " + y + " Z\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"" + (small ? 1.6 : 2.6) + "\"><title>" + t.label + ": " + t.material_short + ", " + t.o2_percent.toFixed(1) + "% O2, " + t.outcome_short + "</title></path>";
   });
-  s += "<text class=\"gx\" style=\"transition-delay:4700ms\" font-size=\"" + LF + "\" font-weight=\"700\" fill=\"#ffffff\"><tspan x=\"" + xo(22.9) + "\" y=\"" + (LF * 3.05) + "\">Newest NASA flights</tspan><tspan x=\"" + xo(22.9) + "\" y=\"" + (LF * 4.35) + "\">not in PSI</tspan></text>";
-  s += "<text class=\"gx\" style=\"transition-delay:5000ms\" x=\"" + xo(hi - 0.1) + "\" y=\"" + (LF * 1.1) + "\" font-size=\"" + LF + "\" font-weight=\"700\" fill=\"#ff8a50\" text-anchor=\"end\">Moon base " + d.moon + "%</text>";
+  s += "<text class=\"g3\" style=\"--d:500ms\" font-size=\"" + LF + "\" font-weight=\"700\" fill=\"#ffffff\"><tspan x=\"" + xo(22.9) + "\" y=\"" + (LF * 3.05) + "\">Newest NASA flights</tspan><tspan x=\"" + xo(22.9) + "\" y=\"" + (LF * 4.35) + "\">not in PSI</tspan></text>";
+  s += "<text class=\"g4\" x=\"" + xo(hi - 0.1) + "\" y=\"" + (LF * 1.1) + "\" font-size=\"" + LF + "\" font-weight=\"700\" fill=\"#ff8a50\" text-anchor=\"end\">Moon base " + d.moon + "%</text>";
+  s += "<g clip-path=\"url(#gsc)\"><line x1=\"" + arrowX1 + "\" y1=\"" + arrowY + "\" x2=\"" + arrowX2 + "\" y2=\"" + arrowY + "\" stroke=\"#ffffff\" stroke-width=\"" + (small ? 1.6 : 2.4) + "\"/>";
+  s += "<path d=\"M" + (arrowX1 + ah) + " " + (arrowY - ah) + " L" + arrowX1 + " " + arrowY + " L" + (arrowX1 + ah) + " " + (arrowY + ah) + "\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"" + (small ? 1.6 : 2.4) + "\"/>";
+  s += "<path d=\"M" + (arrowX2 - ah) + " " + (arrowY - ah) + " L" + arrowX2 + " " + arrowY + " L" + (arrowX2 - ah) + " " + (arrowY + ah) + "\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"" + (small ? 1.6 : 2.4) + "\"/>";
+  s += "<text x=\"" + ((arrowX1 + arrowX2) / 2) + "\" y=\"" + (arrowY - (small ? 9 : 14)) + "\" font-size=\"" + (small ? TF + 1 : LF * 0.95) + "\" font-weight=\"700\" fill=\"#ffffff\" text-anchor=\"middle\">" + fmt(gapPts, 0) + " O2 points</text></g>";
   node.innerHTML = "<svg viewBox=\"0 0 " + w + " " + H + "\" width=\"" + w + "\" height=\"" + H + "\" role=\"img\" aria-label=\"Oxygen axis: " + d.solid.length + " PSI solid-fuel tests end at " + fmt(d.psiMax, 1) + " percent, newest NASA flights reach " + fmt(Math.max.apply(null, d.flights.map(function (t) { return t.o2_percent; })), 0) + " percent, Moon base air is " + d.moon + " percent\">" + s + "</svg>";
   gapWidth = node.clientWidth;
+}
+
+function headerH() {
+  const header = document.querySelector(".top");
+  return header ? header.offsetHeight : 0;
+}
+
+function gapCaptionTexts() {
+  const d = gapChartData();
+  const top = Math.max.apply(null, d.flights.map(function (t) { return t.o2_percent; }));
+  return [
+    [fmt(d.solid.length, 0), " solid NASA tests"],
+    ["Solid tests stop at ", fmt(d.psiMax, 1) + "%"],
+    ["Newest flights: ", fmt(top, 1) + "%, outside PSI"],
+    ["Moon base air: ", d.moon + "%"]
+  ];
+}
+
+function gapCaptions() {
+  const texts = gapCaptionTexts();
+  const items = texts.map(function (t, i) {
+    return el("p", { class: "gap-cap" + (i === texts.length - 1 ? " last" : ""), "data-n": String(i + 1) },
+      el("span", { class: "gap-cap-k", text: t[0] }), t[1]);
+  });
+  const dots = el("span", { class: "gap-dots", "aria-hidden": "true" }, texts.map(function () { return el("i"); }));
+  return { node: el("div", { class: "gap-caps", "aria-live": "polite" }, items, dots), items: items, dots: dots.children };
+}
+
+function gapGeometry(track) {
+  const vh = window.innerHeight;
+  const hdr = headerH();
+  const rect = track.getBoundingClientRect();
+  const scrollable = Math.max(1, rect.height - (vh - hdr));
+  const lead = vh * 0.12;
+  const seg = (scrollable + lead) / 4;
+  const absTop = rect.top + window.scrollY;
+  return {
+    s: hdr - rect.top,
+    seg: seg,
+    lead: lead,
+    stageY: function (k) { return absTop - hdr + k * seg + seg * 0.5 - lead; }
+  };
+}
+
+function gapWatch(section, track, chart, caps) {
+  const total = caps.items.length;
+  let stage = -2;
+  let queued = false;
+  function apply(k) {
+    stage = k;
+    for (let i = 1; i <= total; i += 1) {
+      chart.classList.toggle("st" + i, k + 1 >= i);
+    }
+    caps.items.forEach(function (c, i) { c.classList.toggle("on", i === k); });
+    Array.prototype.forEach.call(caps.dots, function (dot, i) { dot.classList.toggle("on", i <= k); });
+  }
+  function update() {
+    queued = false;
+    if (!document.body.contains(track)) {
+      return;
+    }
+    track.style.setProperty("--gap-top", headerH() + "px");
+    const g = gapGeometry(track);
+    const k = Math.max(-1, Math.min(total - 1, Math.floor((g.s + g.lead) / g.seg)));
+    if (!section.classList.contains("in") && track.getBoundingClientRect().top < window.innerHeight * 0.85) {
+      revealSection(section);
+    }
+    if (k !== stage) {
+      apply(k);
+    }
+  }
+  function queue() {
+    if (!queued) {
+      queued = true;
+      requestAnimationFrame(update);
+    }
+  }
+  window.addEventListener("scroll", queue, { passive: true });
+  window.addEventListener("resize", queue);
+  update();
+  return function () {
+    window.removeEventListener("scroll", queue);
+    window.removeEventListener("resize", queue);
+  };
+}
+
+function gapStatic(section, chart, caps) {
+  section.classList.add("gap-static");
+  for (let i = 1; i <= caps.items.length; i += 1) {
+    chart.classList.add("st" + i);
+  }
+  caps.items.forEach(function (c) { c.classList.add("on"); });
+  revealSection(section);
+}
+
+function playStop() {
+  if (!playRun) {
+    return;
+  }
+  const run = playRun;
+  playRun = null;
+  cancelAnimationFrame(run.raf);
+  clearTimeout(run.timer);
+  ["wheel", "touchstart", "keydown", "pointerdown"].forEach(function (t) {
+    window.removeEventListener(t, run.stop, true);
+  });
+  window.removeEventListener("scroll", run.onScroll);
+  const btn = document.querySelector(".hero-play");
+  if (btn) {
+    btn.textContent = "Play the story";
+  }
+}
+
+function playPoints() {
+  const hdr = headerH();
+  const at = function (sel) {
+    const n = document.querySelector(sel);
+    return n ? Math.max(0, n.getBoundingClientRect().top + window.scrollY - hdr) : null;
+  };
+  const pts = [];
+  [["#s-quote", 3600], ["#s-air", 3800]].forEach(function (p) {
+    const y = at(p[0]);
+    if (y !== null) {
+      pts.push({ y: y, dwell: p[1] });
+    }
+  });
+  const track = document.querySelector("#s-gap .gap-track");
+  if (track) {
+    const g = gapGeometry(track);
+    for (let k = 0; k < 4; k += 1) {
+      pts.push({ y: Math.max(0, g.stageY(k)), dwell: k === 0 ? 3200 : 2600 });
+    }
+  }
+  [["#s-grav", 4200], ["#s-next", 0]].forEach(function (p) {
+    const y = at(p[0]);
+    if (y !== null) {
+      pts.push({ y: y, dwell: p[1] });
+    }
+  });
+  return pts;
+}
+
+function playStory() {
+  if (playRun) {
+    playStop();
+    return;
+  }
+  const pts = playPoints();
+  const run = { raf: 0, timer: 0, expect: window.scrollY, stop: null, onScroll: null };
+  run.stop = function () { playStop(); };
+  run.onScroll = function () {
+    if (playRun === run && Math.abs(window.scrollY - run.expect) > 6) {
+      playStop();
+    }
+  };
+  playRun = run;
+  ["wheel", "touchstart", "keydown", "pointerdown"].forEach(function (t) {
+    window.addEventListener(t, run.stop, { capture: true, passive: true });
+  });
+  window.addEventListener("scroll", run.onScroll, { passive: true });
+  const btn = document.querySelector(".hero-play");
+  if (btn) {
+    btn.textContent = "Stop";
+  }
+  function put(y) {
+    window.scrollTo({ top: y, behavior: "instant" });
+    run.expect = window.scrollY;
+  }
+  function next(i) {
+    if (playRun !== run) {
+      return;
+    }
+    if (i >= pts.length) {
+      playStop();
+      return;
+    }
+    const p = pts[i];
+    const from = window.scrollY;
+    const dist = Math.abs(p.y - from);
+    function dwell() {
+      if (i === pts.length - 1) {
+        playStop();
+        return;
+      }
+      run.timer = setTimeout(function () { next(i + 1); }, p.dwell);
+    }
+    if (reduceMotion() || dist < 2) {
+      put(p.y);
+      dwell();
+      return;
+    }
+    const dur = Math.max(1100, Math.min(2800, dist * 0.9));
+    const t0 = performance.now();
+    function step(now) {
+      if (playRun !== run) {
+        return;
+      }
+      const u = Math.min(1, (now - t0) / dur);
+      const e = u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+      put(from + (p.y - from) * e);
+      if (u < 1) {
+        run.raf = requestAnimationFrame(step);
+      } else {
+        dwell();
+      }
+    }
+    run.raf = requestAnimationFrame(step);
+  }
+  run.timer = setTimeout(function () { next(0); }, 150);
+}
+
+function heroIntro(hero) {
+  const nums = Array.prototype.slice.call(hero.querySelectorAll(".hv-num, .hv-tot"));
+  const targets = nums.map(function (n) { return parseFloat(n.textContent.replace(/,/g, "")); });
+  nums.forEach(function (n) { n.textContent = "0"; });
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      hero.classList.add("in");
+      setTimeout(function () {
+        nums.forEach(function (n, i) { countUp(n, targets[i], 800); });
+      }, 700);
+    });
+  });
 }
 
 function bandRow(label, value, scale, cls, index) {
@@ -1338,7 +1584,7 @@ const tour = { open: false, step: 0, node: null, nodes: null, waiting: false, op
 
 const TOUR_STEPS = [
   {
-    hash: "#/home", scroll: "#s-gap", ring: "#s-gap .gap",
+    hash: "#/home", scroll: "#s-gap .gap-end", ring: "#s-gap .gap",
     text: function () {
       const d = gapChartData();
       return "PSI solid-fuel tests stop at " + fmt(d.psiMax, 1) + "% oxygen. Moon base air is " + d.moon + "%.";
@@ -1556,7 +1802,7 @@ function heroVerdict() {
     appendKids(body, [
       el("p", { class: "hv-air", text: envShort(env) + " air: " + heroAir(block) }),
       el("div", { class: "hv-main" },
-        el("p", { class: "hv-big" }, num, el("span", { class: "hv-of", text: " of " + fmt(entry.classified_rows, 0) })),
+        el("p", { class: "hv-big" }, num, el("span", { class: "hv-of" }, " of ", el("span", { class: "hv-tot", text: fmt(entry.classified_rows, 0) }))),
         el("div", { class: "hv-side" },
           el("p", { class: "hv-unit", text: "solid-fuel NASA tests ran in this air" }),
           el("span", { class: "hv-word " + tone, text: verdict.word }))),
@@ -1607,12 +1853,14 @@ function renderHome() {
     return section;
   }
   const verdictBox = heroVerdict();
-  const hero = el("section", { class: "story hero in", id: "s-hero" },
+  const intro = !heroPlayed && !reduceMotion();
+  heroPlayed = true;
+  const hero = el("section", { class: "story hero" + (intro ? " intro" : " in"), id: "s-hero" },
     el("div", { class: "hero-copy" },
       rv(0, "h1", { text: "Flame in Freefall" }),
       rv(1, "p", { class: "hero-line", text: "Fire behaves differently in space. We checked every NASA test so Moon crews know where the evidence stops." }),
       rv(2, "div", { class: "hv-wrap" }, verdictBox.card),
-      rv(3, "p", { class: "hero-cta" }, verdictBox.go, el("button", { type: "button", class: "btn ghost hero-tour", text: "60-second tour", onclick: function () { tourStart(); } })),
+      rv(3, "p", { class: "hero-cta" }, verdictBox.go, el("button", { type: "button", class: "btn ghost hero-play", text: "Play the story", onclick: playStory })),
       rv(4, "div", { class: "hv-stats" }, heroStats())),
     el("button", { type: "button", class: "scroll-cue", "aria-label": "Scroll to the next section", onclick: function () {
       document.getElementById("s-quote").scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth" });
@@ -1643,11 +1891,27 @@ function renderHome() {
       envSourcesTable(lunar)))
   ]);
   const chart = el("div", { class: "gap" });
-  const gap = story("st-gap", "s-gap", [
-    rv(0, "h2", { text: "Has NASA tested that air?" }),
-    rv(1, "p", { class: "story-sub", text: "Solid-material tests in the PSI database" }),
-    chart,
-    gapDetails(lunar)
+  const caps = gapCaptions();
+  const track = el("div", { class: "gap-track" },
+    el("div", { class: "gap-pin" },
+      el("div", { class: "story-in" },
+        rv(0, "h2", { text: "Has NASA tested that air?" }),
+        rv(1, "p", { class: "story-sub", text: "Solid-material tests in the PSI database" }),
+        chart,
+        caps.node)),
+    el("span", { class: "gap-end", "aria-hidden": "true" }));
+  const gap = el("section", { class: "story st-gap", id: "s-gap" },
+    track,
+    el("div", { class: "story-in gap-more" }, gapDetails(lunar)));
+  const lg = data.lunar_g;
+  const grav = story("st-grav", "s-grav", [
+    rv(0, "h2", { text: "Gravity changes it too" }),
+    el("div", { class: "grav-wrap" },
+      rv(1, "figure", { class: "gm gm-home" }, gravityMap(true),
+        el("figcaption", { class: "small", text: "Concept drawing, not data." })),
+      el("div", { class: "grav-copy" },
+        rv(2, "p", { class: "story-line", text: "On the Moon, a 1-g test margin can shrink by up to " + fmt(lg.paper.worst_case_delta_o2_points, 1) + " oxygen points." }),
+        rv(3, "p", { class: "story-sub" }, el("a", { class: "btn ghost", href: "#/gravity", text: "See the lunar gravity check" }))))
   ]);
   const next = story("st-next", "s-next", [
     rv(0, "h2", { text: "Check a scenario" }),
@@ -1669,10 +1933,18 @@ function renderHome() {
       TEAM_WHY ? el("blockquote", { id: "team-why", class: "team-why", text: TEAM_WHY }) : null,
       el("p", { class: "who-link" }, ntrsLink(TEAM_URL, "Meet the team on NASA Space Apps")))
   ]);
-  const view = setView(hero, quote, air, gap, next, explore);
+  const view = setView(hero, quote, air, gap, grav, next, explore);
   drawGapChart(chart);
   gapNode = chart;
   watchStory(sections);
+  if (reduceMotion()) {
+    gapStatic(gap, chart, caps);
+  } else {
+    gapScrollOff = gapWatch(gap, track, chart, caps);
+  }
+  if (intro) {
+    heroIntro(hero);
+  }
   hero.insertBefore(heroMedia(hero), hero.firstChild);
   return view;
 }
@@ -2284,7 +2556,7 @@ function gravityChart(lg) {
     el("figcaption", { class: "small muted", text: "Conservative allowance from the paper, in oxygen points (percentage points of O2). Colour marks what the lunar-g tests showed, not the size of the bar." }));
 }
 
-function gravityMap() {
+function gravityMap(glide) {
   const reduced = reduceMotion();
   const svg = svgEl("svg", { class: "gm-svg", viewBox: "0 0 380 270", role: "img", "aria-label": "Concept drawing of a flammability map: oxygen needed against flow speed, with a quenching branch at low flow and a blowoff branch at high flow." });
   function text(x, y, str, cls, anchor) {
@@ -2311,7 +2583,7 @@ function gravityMap() {
   text(143, 155, "not known", "gm-ml", "middle");
   svg.appendChild(svgEl("path", { d: "M248 184 L 158 184", class: "gm-arrow" }));
   svg.appendChild(svgEl("path", { d: "M168 178 L 158 184 L 168 190", class: "gm-arrow" }));
-  const flame = svgEl("g", { class: "gm-flame" + (reduced ? " still" : "") });
+  const flame = svgEl("g", { class: "gm-flame" + (glide ? " glide" : "") + (reduced ? " still" : "") });
   flame.appendChild(svgEl("circle", { cx: 262, cy: 184, r: 7, class: "gm-dot" }));
   svg.appendChild(flame);
   return svg;
