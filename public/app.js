@@ -3762,8 +3762,8 @@ function modelVerdict(model, hab) {
 
 function modelChart(model, selId, narrow) {
   const W = narrow ? 340 : 680;
-  const H = narrow ? 300 : 330;
-  const m = { l: 40, r: 12, t: 12, b: 70 };
+  const H = narrow ? 318 : 348;
+  const m = { l: 40, r: 12, t: 30, b: 70 };
   const x0 = 0.10;
   const x1 = 0.36;
   const px = function (o2) { return m.l + (o2 - x0) / (x1 - x0) * (W - m.l - m.r); };
@@ -3782,6 +3782,7 @@ function modelChart(model, selId, narrow) {
   }
   svg.appendChild(svgEl("rect", { x: px(lo), y: m.t, width: px(hi) - px(lo), height: H - m.t - m.b, class: "mdl-tested" }));
   text({ x: px(lo) + 6, y: H - m.b - 8, class: "mdl-note", "font-size": fs - 1 }, "tested at 1 atm");
+  text({ x: 4, y: 14, class: "mdl-axis", "font-size": fs }, "Chance the flame goes out on its own");
   [0, 0.25, 0.5, 0.75, 1].forEach(function (v) {
     svg.appendChild(svgEl("line", { x1: m.l, x2: W - m.r, y1: py(v), y2: py(v), class: "mdl-grid" }));
     text({ x: m.l - 6, y: py(v) + 4, "text-anchor": "end", class: "mdl-tick", "font-size": fs - 1 }, Math.round(v * 100) + "%");

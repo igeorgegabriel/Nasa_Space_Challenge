@@ -225,12 +225,28 @@ def habitat_reference(data_tools):
     return items
 
 
+OUTSIDE_KEYS = ("o2_frac", "o2_percent", "pressure_atm", "pressure_kpa", "pressure_psia", "flow_cm_s")
+
+
+def outside_reference(data_tools):
+    items = []
+    try:
+        tests = data_tools.load_json("outside_psi.json").get("tests", [])
+    except (OSError, ValueError):
+        return items
+    for test in tests:
+        for key in OUTSIDE_KEYS:
+            if isinstance(test.get(key), (int, float)) and not isinstance(test.get(key), bool):
+                items.extend(reference_items_from_data(test[key], key))
+    return items
+
+
 def check_live(answer, citations, log, data_tools):
     return check_answer(
         answer,
         tool_results=[result for _, _, result in log],
         texts=citation_texts(citations),
-        items=habitat_reference(data_tools),
+        items=habitat_reference(data_tools) + outside_reference(data_tools),
     )
 
 
@@ -240,5 +256,5 @@ def check_cached(question, answer, citations, steps, data_tools):
         answer,
         tool_results=habitat_results(data_tools, habitats),
         texts=citation_texts(citations) + step_texts(steps),
-        items=habitat_reference(data_tools),
+        items=habitat_reference(data_tools) + outside_reference(data_tools),
     )
