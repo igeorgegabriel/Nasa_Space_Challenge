@@ -771,7 +771,7 @@ body.ask-open #ask-panel { display: flex; animation: slidein 0.28s ease; }
 
 .ask-context-on:hover, .ask-context-on:focus-visible { color: var(--fire-soft); }
 
-.ask-thread { position: relative; flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 0.2rem 0 0.8rem; }
+.ask-thread { position: relative; flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 0.2rem 0 0.8rem; }
 
 .ask-turn { margin: 0 0 1.6rem; }
 
@@ -819,7 +819,7 @@ body.ask-open #ask-panel { display: flex; animation: slidein 0.28s ease; }
 
 .ask-more-title { margin: 0 0 0.3rem; max-width: none; color: var(--muted); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; }
 
-.ask-suggest { display: flex; flex-direction: column; gap: 0.1rem; margin: 0 -0.5rem; }
+.ask-suggest { display: flex; flex-direction: column; gap: 0.1rem; margin: 0; }
 
 .ask-suggest-row { display: flex; gap: 0.6rem; align-items: baseline; width: 100%; text-align: left; padding: 0.5rem 0.5rem; margin: 0; border: 0; border-radius: 8px; background: transparent; color: #fff; font-size: 0.9rem; line-height: 1.45; cursor: pointer; }
 
