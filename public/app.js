@@ -889,6 +889,7 @@ let storyObserver = null;
 let heroObserver = null;
 let gapNode = null;
 let gapWidth = 0;
+let gapVh = 0;
 let gapScrollOff = null;
 let heroPlayed = false;
 let playRun = null;
@@ -1254,8 +1255,9 @@ function drawGapChart(node) {
   const d = gapChartData();
   const w = Math.max(280, Math.floor(node.clientWidth || 320));
   const small = w < 640;
-  const vh = window.innerHeight || 800;
-  const H = small ? Math.max(300, Math.min(480, Math.round(vh * 0.5))) : Math.max(320, Math.min(600, Math.round(vh * 0.55)));
+  const vh = (window.innerHeight || 800) - tourRoom();
+  gapVh = vh;
+  const H = small ? Math.max(tour.open ? 200 : 300, Math.min(480, Math.round(vh * (tour.open ? 0.38 : 0.5)))) : Math.max(320, Math.min(600, Math.round(vh * (tour.open ? 0.5 : 0.55))));
   const fs = small ? 12 : 13;
   const pad = small ? 16 : 26;
   const lo = 12;
@@ -1553,11 +1555,18 @@ function gapCaptions() {
   return { node: el("div", { class: "gap-caps" }, items, dots), items: items, dots: dots.children, c: texts.map(function () { return -1; }) };
 }
 
+function tourRoom() {
+  if (!tour.open || !tour.node) {
+    return 0;
+  }
+  return Math.max(0, window.innerHeight - tour.node.getBoundingClientRect().top);
+}
+
 function gapGeometry(track) {
   const vh = window.innerHeight;
   const hdr = headerH();
   const rect = track.getBoundingClientRect();
-  const scrollable = Math.max(1, rect.height - (vh - hdr));
+  const scrollable = Math.max(1, rect.height - (vh - hdr - tourRoom()));
   const seg = scrollable / 4;
   const lead = seg * 0.28;
   const absTop = rect.top + window.scrollY;
@@ -1649,7 +1658,7 @@ function gapStatic(section, chart, caps) {
   revealSection(section);
 }
 
-function playStop() {
+function playStop(natural) {
   if (!playRun) {
     return;
   }
@@ -1661,9 +1670,8 @@ function playStop() {
     window.removeEventListener(t, run.stop, true);
   });
   window.removeEventListener("scroll", run.onScroll);
-  const btn = document.querySelector(".hero-play");
-  if (btn) {
-    btn.textContent = "Play the story";
+  if (run.onEnd) {
+    run.onEnd(natural === true);
   }
 }
 
@@ -1713,16 +1721,20 @@ function playPoints() {
   return pts;
 }
 
-function playStory() {
+function playStory(onEnd) {
   if (playRun) {
     playStop();
-    return;
   }
   const pts = playPoints();
-  const run = { raf: 0, timer: 0, expect: window.scrollY, stop: null, onScroll: null };
-  run.stop = function () { playStop(); };
+  const run = { raf: 0, timer: 0, expect: window.scrollY, armed: false, asked: window.scrollY, stop: null, onScroll: null, onEnd: onEnd || null };
+  run.stop = function (e) {
+    if (e && e.target instanceof Node && tour.node && tour.node.contains(e.target)) {
+      return;
+    }
+    playStop();
+  };
   run.onScroll = function () {
-    if (playRun === run && Math.abs(window.scrollY - run.expect) > 6) {
+    if (playRun === run && run.armed && Math.abs(window.scrollY - run.expect) > 6 && Math.abs(window.scrollY - run.asked) > 6) {
       playStop();
     }
   };
@@ -1731,11 +1743,9 @@ function playStory() {
     window.addEventListener(t, run.stop, { capture: true, passive: true });
   });
   window.addEventListener("scroll", run.onScroll, { passive: true });
-  const btn = document.querySelector(".hero-play");
-  if (btn) {
-    btn.textContent = "Stop";
-  }
   function put(y) {
+    run.asked = y;
+    run.armed = true;
     window.scrollTo({ top: y, behavior: "instant" });
     run.expect = window.scrollY;
   }
@@ -1744,7 +1754,7 @@ function playStory() {
       return;
     }
     if (i >= pts.length) {
-      playStop();
+      playStop(true);
       return;
     }
     const p = pts[i];
@@ -1752,7 +1762,7 @@ function playStory() {
     const dist = Math.abs(p.y - from);
     function dwell() {
       if (i === pts.length - 1) {
-        playStop();
+        playStop(true);
         return;
       }
       run.timer = setTimeout(function () { next(i + 1); }, p.settle + p.dwell);
@@ -2025,15 +2035,12 @@ function scenarioCard() {
 
 const TOUR_QUESTION = "How many solid-fuel tests were run inside Moon base oxygen levels?";
 
-const tour = { open: false, step: 0, node: null, nodes: null, waiting: false, openedAsk: false, ring: null, ringTimer: null };
+const tour = { open: false, step: 0, node: null, nodes: null, waiting: false, playing: false, openedAsk: false, ring: null, ringTimer: null };
 
 const TOUR_STEPS = [
   {
-    hash: "#/home", scroll: "#s-gap .gap-end", ring: "#s-gap .gap",
-    text: function () {
-      const d = gapChartData();
-      return "PSI solid-fuel tests stop at " + fmt(d.psiMax, 1) + "% oxygen. Moon base air is " + d.moon + "%.";
-    }
+    hash: "#/home", scroll: null, ring: null, story: true,
+    text: function () { return "The story: what NASA has tested, and the gap a Moon base leaves. It plays by itself; scroll to take over."; }
   },
   {
     hash: "#/home", scroll: "#s-next", ring: ".scenario",
@@ -2095,12 +2102,30 @@ function tourStart() {
   tour.nodes.next.focus();
 }
 
+function tourSyncChart() {
+  if (gapNode && document.body.contains(gapNode) && Math.round((window.innerHeight || 800) - tourRoom()) !== Math.round(gapVh)) {
+    drawGapChart(gapNode);
+  }
+}
+
+function tourStopPlay() {
+  if (playRun) {
+    playRun.onEnd = null;
+    playStop();
+  }
+  tour.playing = false;
+}
+
 function tourClose() {
+  tourStopPlay();
   tour.open = false;
   tour.waiting = false;
   tourClearRing();
   document.body.classList.remove("tour-open");
   document.documentElement.style.removeProperty("--tour-h");
+  document.documentElement.style.removeProperty("--tour-room");
+  window.dispatchEvent(new Event("resize"));
+  tourSyncChart();
   if (tour.node) {
     tour.node.remove();
     tour.node = null;
@@ -2109,6 +2134,7 @@ function tourClose() {
 }
 
 function tourMove(delta) {
+  tourStopPlay();
   const target = tour.step + delta;
   if (target >= TOUR_STEPS.length) {
     tourClose();
@@ -2132,6 +2158,9 @@ function tourShow() {
   tour.nodes.next.textContent = tour.step === TOUR_STEPS.length - 1 ? "Done" : "Next";
   tour.nodes.back.disabled = tour.step === 0;
   document.documentElement.style.setProperty("--tour-h", tour.node.offsetHeight + "px");
+  document.documentElement.style.setProperty("--tour-room", tourRoom() + "px");
+  window.dispatchEvent(new Event("resize"));
+  tourSyncChart();
   tourClearRing();
   const here = location.hash === "" || location.hash === "#" || location.hash === "#/" ? "#/home" : location.hash;
   if (here === s.hash) {
@@ -2145,11 +2174,39 @@ function tourShow() {
   location.hash = s.hash;
 }
 
+function tourStory() {
+  window.scrollTo({ top: 0, behavior: "instant" });
+  if (reduceMotion()) {
+    const end = document.querySelector("#s-gap .gap-end");
+    if (end) {
+      window.scrollTo({ top: Math.max(0, end.getBoundingClientRect().top + window.scrollY - headerH()), behavior: "instant" });
+    }
+    return;
+  }
+  tour.playing = true;
+  tour.nodes.next.textContent = "Skip";
+  playStory(function (natural) {
+    tour.playing = false;
+    if (!tour.open || !tour.nodes) {
+      return;
+    }
+    if (natural) {
+      tourMove(1);
+    } else {
+      tour.nodes.next.textContent = "Next";
+    }
+  });
+}
+
 function tourFocus() {
   if (!tour.open) {
     return;
   }
   const s = TOUR_STEPS[tour.step];
+  if (s.story) {
+    tourStory();
+    return;
+  }
   const behavior = reduceMotion() ? "auto" : "smooth";
   const anchor = s.scroll ? document.querySelector(s.scroll) : null;
   const header = document.querySelector(".top");
@@ -2305,7 +2362,7 @@ function renderHome() {
       rv(0, "h1", { text: "Flame in Freefall" }),
       rv(1, "p", { class: "hero-line", text: "Fire behaves differently in space. We checked every NASA test so Moon crews know where the evidence stops." }),
       rv(2, "div", { class: "hv-wrap" }, verdictBox.card),
-      rv(3, "p", { class: "hero-cta" }, verdictBox.go, el("button", { type: "button", class: "btn ghost hero-play", text: "Play the story", onclick: playStory })),
+      rv(3, "p", { class: "hero-cta" }, verdictBox.go, el("button", { type: "button", class: "btn ghost hero-play", text: "Take the tour", onclick: tourStart })),
       rv(4, "div", { class: "hv-stats" }, heroStats())),
     el("button", { type: "button", class: "scroll-cue", "aria-label": "Scroll to the next section", onclick: function () {
       document.getElementById("s-quote").scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth" });
