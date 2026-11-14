@@ -4394,7 +4394,11 @@ function plotWrap(text, width) {
   if (cur) {
     lines.push(cur);
   }
-  return lines.map(escapeHtml).join("<br>");
+  return lines.map(plotEscape).join("<br>");
+}
+
+function plotEscape(text) {
+  return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 function plotRun(duration, frame, done) {
