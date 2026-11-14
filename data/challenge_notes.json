@@ -1,0 +1,80 @@
+{
+  "hardware_families": [
+    {
+      "id": "acme_cir",
+      "label": "ACME modular hardware in the CIR",
+      "psi_ids": [
+        "PSI-10",
+        "PSI-20",
+        "PSI-21",
+        "PSI-22",
+        "PSI-23",
+        "PSI-159"
+      ],
+      "source": "challenge statement",
+      "quote": "The six experiments in the ACME project featured flames of gaseous fuels and were all conducted with the same modular set of ACME hardware in the Combustion Integrated Rack (CIR)."
+    },
+    {
+      "id": "mdca_cir",
+      "label": "Droplet apparatus (MDCA) in the CIR",
+      "psi_ids": [
+        "PSI-39",
+        "PSI-68",
+        "PSI-69"
+      ],
+      "source": "challenge statement",
+      "quote": "FLEX, FLEX-2, and the Cool Flames Investigation (CFI) each featured burning droplets of liquid fuel and were conducted with the Multi-user Droplet Combustion Apparatus (MDCA) in the CIR."
+    },
+    {
+      "id": "msg_duct",
+      "label": "Glovebox (MSG) flow duct",
+      "psi_ids": [
+        "PSI-25",
+        "PSI-26",
+        "PSI-106",
+        "PSI-107"
+      ],
+      "source": "challenge statement",
+      "quote": "BASS, BASS-II, the Smoke Point In Co-flow Experiment (SPICE), and the Structure & Liftoff In Combustion Experiment (SLICE) collectively featured both solid and gaseous fuels. Each of these investigations was conducted within the Microgravity Science Glovebox (MSG) using the modular fan-driven flow duct built for SPICE."
+    },
+    {
+      "id": "saffire_cygnus",
+      "label": "Saffire in a Cygnus cargo vehicle",
+      "psi_ids": [
+        "PSI-98",
+        "PSI-99",
+        "PSI-100"
+      ],
+      "source": "PSI hardware field",
+      "quote": ""
+    }
+  ],
+  "notes": [
+    {
+      "id": "smoke_dust_instrument",
+      "psi_ids": [
+        "PSI-47",
+        "PSI-101",
+        "PSI-102"
+      ],
+      "quote": "One of the instruments used for smoke detection in the SAME and SAME-R studies was instead used to detect dust in the Dust and Aerosol Measurement Feasibility Test (DAFT and DAFT-2) studies.",
+      "source": "challenge statement"
+    },
+    {
+      "id": "efield_partial_gravity",
+      "psi_ids": [
+        "PSI-22"
+      ],
+      "quote": "Partial gravity was mimicked in ACME's Electric-Field Effects on Laminar Diffusion Flames (E-FIELD Flames) experiment through the effect of the electric field on the ions that naturally occur in flames.",
+      "source": "challenge statement"
+    },
+    {
+      "id": "cfig_high_oxygen",
+      "psi_ids": [
+        "PSI-159"
+      ],
+      "quote": "Microgravity tests with the highest oxygen concentrations were conducted as part of the ACME's Cool Flames Investigation with Gases (CFI-G). In those tests, the combustion chamber was filled with a mixture of nitrogen and a flammable gas (e.g., propane), while an oxygen-nitrogen mixture of up to 85% oxygen flowed from the spherical burner creating an inside-out flame.",
+      "source": "challenge statement"
+    }
+  ]
+}

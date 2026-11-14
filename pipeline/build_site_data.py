@@ -28,6 +28,7 @@ FINDINGS_PATH = os.path.join(ROOT, "data", "findings", "key_findings.json")
 FINDINGS_VERIFICATION_PATH = os.path.join(ROOT, "data", "findings", "verification.json")
 IMAGES_PATH = os.path.join(ROOT, "data", "images", "images.json")
 AUDIT_PATH = os.path.join(ROOT, "data", "audit", "audit.json")
+CHALLENGE_NOTES_PATH = os.path.join(ROOT, "data", "challenge_notes.json")
 NOT_SPECIFIED_TEXT = "not specified by NASA sources"
 PSIA_PER_ATM = 14.6959
 CORPUS_PATH = os.path.join(ROOT, "api", "context", "corpus.json")
@@ -688,7 +689,13 @@ def top_values(rows, field, limit):
     return [{"value": value, "count": count} for value, count in ordered[:limit]]
 
 
+def load_challenge_notes():
+    data = read_json_file(CHALLENGE_NOTES_PATH) or {}
+    return data.get("hardware_families") or [], data.get("notes") or []
+
+
 def build_investigations(rows, unified, meta, images=None, findings=None):
+    families, notes = load_challenge_notes()
     by_psi = {}
     for row in rows:
         by_psi.setdefault(row["psi_id"], []).append(row)
@@ -746,6 +753,9 @@ def build_investigations(rows, unified, meta, images=None, findings=None):
             "value_quality": top_values(inv_rows, "value_quality", 6),
             "images": (images or {}).get(psi_id, []),
             "key_findings": (findings or {}).get(psi_id, []),
+            "hardware_family": next(({"id": f["id"], "label": f["label"], "source": f["source"], "quote": f["quote"]}
+                                    for f in families if psi_id in f["psi_ids"]), None),
+            "challenge_notes": [n["quote"] for n in notes if psi_id in n["psi_ids"]],
         }
         out.append(entry)
     return out
@@ -1206,6 +1216,10 @@ def build_corpus(investigations, rankings, outside=None, psi_max=None, environme
             lines.append("Research impact and Earth benefits (PSI record): %s" % inv["earth_benefits"])
         if inv["doi"]:
             lines.append("DOI: %s." % inv["doi"])
+        if inv.get("hardware_family"):
+            lines.append("Hardware family: %s (%s)" % (inv["hardware_family"]["label"], inv["hardware_family"]["source"]))
+        for note in inv.get("challenge_notes") or []:
+            lines.append("Challenge statement, verbatim: \"%s\"" % note)
         lines.append("PSI record: %s." % inv["psi_url"])
         docs.append({
             "psi_id": inv["psi_id"],
@@ -1515,6 +1529,8 @@ def readiness_item(rel, env, rows_all, e_field_rows):
         reason = (
             "No PSI table has a gravity column and every row is a 0 g test. The challenge statement says partial gravity was mimicked in "
             "ACME E-FIELD Flames (PSI-22, %d rows in the table) through an electric field acting on flame ions; that is not a partial-gravity measurement."
+            " The challenge statement adds: \"Microgravity and normal-gravity results could bound what occurs at intermediate gravity levels.\""
+            " PSI holds only the 0 g side; normal-gravity tests are outside PSI."
             % e_field_rows
         )
     elif not ids:

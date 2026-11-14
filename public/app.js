@@ -1131,7 +1131,9 @@ function renderHome() {
     rv(0, "h2", { text: "Moon base air" }),
     el("div", { class: "bars" }, bandRow("Earth air", 21, 40, "earth", 1), bandRow("Moon base", moon, 40, "moon", 2)),
     rv(3, "p", { class: "story-line", text: "More oxygen means materials burn more easily." }),
+    rv(4, "p", { class: "story-sub", text: "Why so high? Spacesuits run on pure oxygen at 4.3 psi. Base air sits between suit and Earth to cut pre-breathing time." }),
     expander("Details", el("div", null,
+      el("p", { class: "small", text: "Source, challenge statement: spacesuits hold 100% oxygen at 4.3 psi against 14.7 psi at sea level, and the Moon base and rovers are expected to sit between the spacesuit and Earth's atmosphere to reduce pre-breathing." }),
       el("p", { class: "small", text: "Moon base oxygen is " + lunar.o2.display + ". Earth air is about 21 percent." }),
       envSourcesTable(lunar)))
   ]);
@@ -1414,8 +1416,20 @@ function keyFindingBlock(finding, compact) {
     el("cite", null, link));
 }
 
+const HARDWARE_FILTER_LABELS = {
+  acme_cir: "ACME in the CIR",
+  mdca_cir: "MDCA in the CIR",
+  msg_duct: "Glovebox flow duct",
+  saffire_cygnus: "Saffire in Cygnus",
+  other: "Other or not stated"
+};
+
+function hardwareFamilyId(inv) {
+  return inv.hardware_family ? inv.hardware_family.id : "other";
+}
+
 function renderInvestigations(params) {
-  const filters = { fuel: params.fuel || "", fn: params.fn || "" };
+  const filters = { fuel: params.fuel || "", fn: params.fn || "", hw: params.hw || "" };
   const fuelOptions = Array.from(new Set(state.data.investigations.map(fuelClassOf))).sort();
   const grid = el("div", { class: "inv-grid" });
   const count = el("p", { class: "small muted count" });
@@ -1426,6 +1440,9 @@ function renderInvestigations(params) {
         return false;
       }
       if (filters.fn && shownFunctions(inv).indexOf(filters.fn) < 0) {
+        return false;
+      }
+      if (filters.hw && hardwareFamilyId(inv) !== filters.hw) {
         return false;
       }
       return true;
@@ -1454,6 +1471,7 @@ function renderInvestigations(params) {
     el("div", { class: "filters" },
       select("Fuel class", fuelOptions, "fuel", function (o) { return FUEL_LABELS[o]; }),
       select("Function", FUNCTION_ORDER, "fn"),
+      select("Hardware", Object.keys(HARDWARE_FILTER_LABELS), "hw", function (o) { return HARDWARE_FILTER_LABELS[o]; }),
       count),
     grid
   );
@@ -1548,6 +1566,9 @@ function renderInvestigation(psiId) {
     pull,
     stats,
     expander("What it studied", el("div", null,
+      inv.challenge_notes && inv.challenge_notes.length ? el("div", null,
+        el("h3", { text: "From the challenge brief" }),
+        inv.challenge_notes.map(function (note) { return el("blockquote", { class: "brief-note", text: note }); })) : null,
       objective ? el("div", { class: "pre", text: objective }) : el("p", { class: "muted", text: "not provided" }),
       inv.hypothesis ? el("p", { class: "pre", text: "Hypothesis: " + inv.hypothesis }) : null,
       inv.approach ? el("p", { class: "pre", text: "Approach: " + inv.approach }) : null,
@@ -1565,6 +1586,9 @@ function renderInvestigation(psiId) {
         el("p", null, el("strong", { text: "Varied: " }), vh.varied.length ? vh.varied.join(", ") : "nothing recorded"),
         el("p", null, el("strong", { text: "Held constant: " }), vh.held.length ? vh.held.join(", ") : "nothing recorded")) : null,
       el("p", null, el("strong", { text: "Hardware: " }), inv.hardware || "not provided"),
+      el("p", null, el("strong", { text: "Hardware family: " }),
+        inv.hardware_family ? inv.hardware_family.label + (inv.hardware_family.source === "challenge statement" ? " (challenge statement)" : " (PSI hardware field)") : "not grouped"),
+      inv.hardware_family && inv.hardware_family.quote ? el("p", { class: "small src", text: inv.hardware_family.quote }) : null,
       el("p", null, el("strong", { text: "Platform: " }), inv.platform || "not provided"),
       el("p", null, el("strong", { text: "Fuels in table rows: " }), inv.fuels_observed.length ? inv.fuels_observed.map(function (f) { return f.value + " (" + f.count + ")"; }).join("; ") : "not recorded"),
       el("p", null, el("strong", { text: "Sample geometry: " })), listBlock(inv.sample_geometry, 8),
@@ -1599,6 +1623,7 @@ function cmpFields() {
     ["What it studied", function (inv) { return whatStudied(inv) || "not provided"; }],
     ["Fuel class", function (inv) { return FUEL_LABELS[fuelClassOf(inv)]; }],
     ["Hardware", function (inv) { return inv.hardware || "not provided"; }],
+    ["Hardware family", function (inv) { return inv.hardware_family ? inv.hardware_family.label : "not grouped"; }],
     ["Ambient O2 tested", function (inv) { return o2Text(inv.ranges.o2_ambient); }],
     ["Pressure tested", function (inv) { return pressureText(inv.ranges.pressure_atm); }],
     ["Flow speed tested", function (inv) { return rangeText(inv.ranges.flow_cm_s, "cm/s"); }],

@@ -240,7 +240,7 @@
       "o2": null,
       "pressure": null
      },
-     "reason": "No PSI table has a gravity column and every row is a 0 g test. The challenge statement says partial gravity was mimicked in ACME E-FIELD Flames (PSI-22, 32 rows in the table) through an electric field acting on flame ions; that is not a partial-gravity measurement.",
+     "reason": "No PSI table has a gravity column and every row is a 0 g test. The challenge statement says partial gravity was mimicked in ACME E-FIELD Flames (PSI-22, 32 rows in the table) through an electric field acting on flame ions; that is not a partial-gravity measurement. The challenge statement adds: \"Microgravity and normal-gravity results could bound what occurs at intermediate gravity levels.\" PSI holds only the 0 g side; normal-gravity tests are outside PSI.",
      "rows_counted": 0,
      "rows_total": 0,
      "rows_with_response": 0,
@@ -505,7 +505,7 @@
       "o2": null,
       "pressure": null
      },
-     "reason": "No PSI table has a gravity column and every row is a 0 g test. The challenge statement says partial gravity was mimicked in ACME E-FIELD Flames (PSI-22, 32 rows in the table) through an electric field acting on flame ions; that is not a partial-gravity measurement.",
+     "reason": "No PSI table has a gravity column and every row is a 0 g test. The challenge statement says partial gravity was mimicked in ACME E-FIELD Flames (PSI-22, 32 rows in the table) through an electric field acting on flame ions; that is not a partial-gravity measurement. The challenge statement adds: \"Microgravity and normal-gravity results could bound what occurs at intermediate gravity levels.\" PSI holds only the 0 g side; normal-gravity tests are outside PSI.",
      "rows_counted": 0,
      "rows_total": 0,
      "rows_with_response": 0,
@@ -770,7 +770,7 @@
       "o2": null,
       "pressure": null
      },
-     "reason": "No PSI table has a gravity column and every row is a 0 g test. The challenge statement says partial gravity was mimicked in ACME E-FIELD Flames (PSI-22, 32 rows in the table) through an electric field acting on flame ions; that is not a partial-gravity measurement.",
+     "reason": "No PSI table has a gravity column and every row is a 0 g test. The challenge statement says partial gravity was mimicked in ACME E-FIELD Flames (PSI-22, 32 rows in the table) through an electric field acting on flame ions; that is not a partial-gravity measurement. The challenge statement adds: \"Microgravity and normal-gravity results could bound what occurs at intermediate gravity levels.\" PSI holds only the 0 g side; normal-gravity tests are outside PSI.",
      "rows_counted": 0,
      "rows_total": 0,
      "rows_with_response": 0,
@@ -1035,7 +1035,7 @@
       "o2": null,
       "pressure": null
      },
-     "reason": "No PSI table has a gravity column and every row is a 0 g test. The challenge statement says partial gravity was mimicked in ACME E-FIELD Flames (PSI-22, 32 rows in the table) through an electric field acting on flame ions; that is not a partial-gravity measurement.",
+     "reason": "No PSI table has a gravity column and every row is a 0 g test. The challenge statement says partial gravity was mimicked in ACME E-FIELD Flames (PSI-22, 32 rows in the table) through an electric field acting on flame ions; that is not a partial-gravity measurement. The challenge statement adds: \"Microgravity and normal-gravity results could bound what occurs at intermediate gravity levels.\" PSI holds only the 0 g side; normal-gravity tests are outside PSI.",
      "rows_counted": 0,
      "rows_total": 0,
      "rows_with_response": 0,
@@ -1300,7 +1300,7 @@
       "o2": null,
       "pressure": null
      },
-     "reason": "No PSI table has a gravity column and every row is a 0 g test. The challenge statement says partial gravity was mimicked in ACME E-FIELD Flames (PSI-22, 32 rows in the table) through an electric field acting on flame ions; that is not a partial-gravity measurement.",
+     "reason": "No PSI table has a gravity column and every row is a 0 g test. The challenge statement says partial gravity was mimicked in ACME E-FIELD Flames (PSI-22, 32 rows in the table) through an electric field acting on flame ions; that is not a partial-gravity measurement. The challenge statement adds: \"Microgravity and normal-gravity results could bound what occurs at intermediate gravity levels.\" PSI holds only the 0 g side; normal-gravity tests are outside PSI.",
      "rows_counted": 0,
      "rows_total": 0,
      "rows_with_response": 0,

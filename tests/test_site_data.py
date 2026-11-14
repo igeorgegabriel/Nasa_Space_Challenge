@@ -463,6 +463,41 @@ class SiteDataTest(unittest.TestCase):
         self.assertTrue(with_rows)
         self.assertIn("Ambient O2 tested", with_rows[0]["body"])
 
+    def test_challenge_notes_quotes_are_verbatim(self):
+        notes = read_json(os.path.join(ROOT, "data", "challenge_notes.json"))
+        with open(os.path.join(ROOT, "docs", "challenge_statement.md"), "r", encoding="ascii") as handle:
+            statement = handle.read()
+        quotes = [f["quote"] for f in notes["hardware_families"] if f["quote"]] + [n["quote"] for n in notes["notes"]]
+        self.assertTrue(quotes)
+        for quote in quotes:
+            self.assertIn(quote, statement)
+
+    def test_challenge_notes_psi_ids_exist_and_families_are_disjoint(self):
+        notes = read_json(os.path.join(ROOT, "data", "challenge_notes.json"))
+        known = {inv["psi_id"] for inv in self.investigations}
+        seen = Counter()
+        for family in notes["hardware_families"]:
+            for psi_id in family["psi_ids"]:
+                self.assertIn(psi_id, known)
+                seen[psi_id] += 1
+        for note in notes["notes"]:
+            for psi_id in note["psi_ids"]:
+                self.assertIn(psi_id, known)
+        self.assertTrue(all(count == 1 for count in seen.values()))
+
+    def test_acme_family_has_six_investigations(self):
+        members = [i for i in self.investigations if i["hardware_family"] and i["hardware_family"]["id"] == "acme_cir"]
+        self.assertEqual(len(members), 6)
+
+    def test_investigations_carry_hardware_family_and_notes(self):
+        by_id = {i["psi_id"]: i for i in self.investigations}
+        e_field = by_id["PSI-22"]
+        self.assertEqual(e_field["hardware_family"]["id"], "acme_cir")
+        self.assertTrue(any(n.startswith("Partial gravity was mimicked") for n in e_field["challenge_notes"]))
+        for inv in self.investigations:
+            self.assertIn("hardware_family", inv)
+            self.assertIsInstance(inv["challenge_notes"], list)
+
     def test_every_investigation_card_field_present(self):
         required = ["psi_id", "acronym", "title", "objectives", "hardware", "fuel_class", "ranges", "varied",
                     "outcomes", "publications", "psi_url", "row_count", "functions", "fire_safety_function_basis"]
