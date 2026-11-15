@@ -440,7 +440,12 @@ async function main() {
   await waitFor("location.hash === '#/rank?habitat=lunar'", "rank hash");
   assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 3 of 5");
   await sleep(600);
-  assert.strictEqual(await js("document.querySelectorAll('.rank-cards.tour-ring').length"), 1);
+  assert.strictEqual(await js("document.querySelectorAll('#test-plan.tour-ring').length"), 1);
+  await js("document.querySelector('.tour-next').click()");
+  await waitFor("location.hash === '#/gravity'", "gravity hash");
+  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 4 of 5");
+  await sleep(600);
+  assert.ok(await js("document.querySelectorAll('.gv-block.tour-ring').length") >= 1);
   const asksBeforeTour = mock.asks.length;
   await js("document.querySelector('.tour-next').click()");
   await waitFor("document.querySelectorAll('.ask-turn .ask-a').length === 1", "tour answer");
@@ -455,12 +460,8 @@ async function main() {
   await sleep(1500);
   assert.strictEqual(await js("document.querySelectorAll('.ask-steps-list li.step-hide').length"), 0, "steps revealed");
   await shot("tour_4_1366");
-  await js("document.querySelector('.tour-next').click()");
-  await waitFor("location.hash === '#/equipment'", "equipment hash");
-  assert.strictEqual(await js("document.body.classList.contains('ask-open')"), false, "tour closes the panel it opened");
   assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 5 of 5");
   assert.strictEqual(await js("document.querySelector('.tour-next').textContent"), "Done");
-  await sleep(600);
   await js("document.querySelector('.tour-next').click()");
   assert.strictEqual(await js("document.querySelectorAll('#tour').length"), 0, "Done closes the tour");
   assert.strictEqual(await js("document.body.classList.contains('tour-open')"), false);

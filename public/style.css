@@ -1367,3 +1367,20 @@ body.ask-open #ask-panel { display: flex; animation: slidein 0.28s ease; }
   .hero-copy { padding-bottom: 4.5rem; }
   .credit { top: calc(min(92vw, 900px) * 0.5625 + 0.6rem); bottom: auto; }
 }
+
+.act-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem; margin-top: clamp(1.2rem, 3vh, 2rem); }
+.act-card { display: flex; flex-direction: column; align-items: flex-start; gap: 0.8rem; padding: 1.3rem 1.4rem; border: 1px solid var(--line); background: var(--navy-2); }
+.act-card h3 { margin: 0; font-size: 1rem; color: var(--fire-soft); font-family: var(--sans); font-weight: 600; }
+.act-card p { margin: 0; flex: 1; font-size: 1.15rem; color: #fff; max-width: none; }
+.act-gap { max-width: 46rem; color: #dbe2f2; }
+.act-next { max-width: 46rem; margin-top: 0.8rem; }
+.act-next .quote { margin: 0.4rem 0 0; }
+.solid-card { margin-top: 1.6rem; padding: 1rem 1.2rem; border: 1px solid var(--line); max-width: 46rem; }
+.solid-card h3 { margin: 0 0 0.5rem; font-size: 1.1rem; }
+.solid-card p { margin: 0.4rem 0 0; }
+@media (max-width: 900px) {
+  .act-cards { grid-template-columns: 1fr; }
+}
+@media (min-width: 721px) and (max-aspect-ratio: 4/5) {
+  .act-cards { grid-template-columns: 1fr; }
+}
