@@ -1974,8 +1974,8 @@ function planSection() {
   const pills = el("div", { class: "pills plan-pills", role: "group", "aria-label": "Fuel class" }, CLASS_ORDER_PLAN.map(function (fc) {
     return el("button", { type: "button", class: "pill" + (fc === planUi.fuel ? " active" : ""), "data-key": fc, "aria-pressed": fc === planUi.fuel ? "true" : "false", text: NEXT_LABELS[fc], onclick: function () { planSelect(fc); } });
   }));
-  const node = el("div", { class: "plan-plot", role: "img", "aria-label": "Oxygen and pressure of existing PSI tests, habitat windows and planned tests" });
-  const note = el("p", { class: "small muted plan-note" });
+  const node = el("div", { class: "plan-plot", role: "img", "aria-label": "Oxygen and pressure of existing PSI tests, habitat windows and planned tests", "aria-describedby": "plan-note" });
+  const note = el("p", { class: "small muted plan-note", id: "plan-note" });
   const legend = el("div", { class: "plan-legend" });
   planUi.legend = legend;
   planUi.node = node;
@@ -2447,6 +2447,7 @@ function airMapDraw(animate) {
   }
   const t = animate && !reduceMotion() ? 0 : 1;
   m.fuel = air.fuel;
+  m.node.setAttribute("aria-label", "Map of NASA flame tests by oxygen and pressure with a marker for the chosen air: " + airRound(air.o2).toFixed(1) + " percent oxygen at " + airRound(air.p).toFixed(1) + " psia. Click the map to move the marker.");
   return window.Plotly.react(m.node, airMapTraces(t), airMapLayout(), plotConfig()).then(function () {
     m.ready = true;
     if (!m.wired) {
@@ -2735,9 +2736,9 @@ function scenarioCard() {
   ui.pValue = pr.value;
   ui.o2Input = o2.input;
   ui.pInput = pr.input;
-  ui.verdict = el("div", { class: "air-verdict-wrap", "aria-live": "polite" });
+  ui.verdict = el("div", { class: "air-verdict-wrap", id: "air-verdict", "aria-live": "polite" });
   ui.cards = el("div", { class: "air-cards" });
-  const mapNode = el("div", { class: "air-map", role: "img", "aria-label": "Map of NASA flame tests by oxygen and pressure with a marker for the chosen air. Click the map to move the marker." });
+  const mapNode = el("div", { class: "air-map", role: "img", "aria-label": "Map of NASA flame tests by oxygen and pressure with a marker for the chosen air. Click the map to move the marker.", "aria-describedby": "air-verdict" });
   const ask = el("button", { type: "button", class: "btn air-ask", text: "Ask about this air", onclick: function () {
     openAskPanel(false);
     askPanel.nodes.input.value = airQuestion();
@@ -3113,12 +3114,12 @@ function renderHome() {
       el("p", { class: "small", text: "Moon base oxygen is " + lunar.o2.display + ". Earth air is about 21 percent." }),
       envSourcesTable(lunar)))
   ]);
-  const chart = el("div", { class: "gap", role: "img" });
+  const chart = el("div", { class: "gap", role: "img", "aria-label": "Oxygen gap chart: every ambient-oxygen flame test in the PSI database", "aria-describedby": "gap-note" });
   const gap = story("st-gap", "s-gap", [
     rv(0, "h2", { text: "Has NASA tested that air?" }),
     rv(1, "p", { class: "story-sub", text: "Every ambient-oxygen flame test in the PSI database" }),
     chart,
-    el("p", { class: "gap-note" }, gapCaption(), " ", el("a", { href: "#/data?at=extractor", text: "See the rows" })),
+    el("p", { class: "gap-note", id: "gap-note" }, gapCaption(), " ", el("a", { href: "#/data?at=extractor", text: "See the rows" })),
     el("div", { class: "gap-more" }, gapDetails(lunar))
   ]);
   const grav = story("st-grav", "s-grav", [
@@ -3332,7 +3333,7 @@ function renderRank() {
       list.appendChild(el("li", { class: "rank-card rank-item" },
         el("span", { class: "rank-num", text: String(item.rank) }),
         el("div", { class: "rank-main" },
-          el("h3", null, invLink(inv)),
+          el("h2", null, invLink(inv)),
           el("p", { class: "rank-why", text: shortReason(inv, item, env) }),
           el("span", { class: "rank-range", text: stability[item.psi_id].min === stability[item.psi_id].max ? "rank stable" : "rank " + stability[item.psi_id].min + "-" + stability[item.psi_id].max + " if weights move 20%" })),
         el("div", { class: "rank-score" },
@@ -3502,7 +3503,7 @@ function renderInvestigations(params) {
       grid.appendChild(el("a", { class: "inv-card", href: "#/investigation/" + inv.psi_id },
         invMedia(inv),
         el("div", { class: "inv-body" },
-          el("h3", { text: invLabel(inv) }),
+          el("h2", { text: invLabel(inv) }),
           el("p", { class: "inv-line", text: oneLine(inv, 12) }),
           el("span", { class: "tag", text: FUEL_LABELS[fuelClassOf(inv)] }))));
     });
@@ -5589,6 +5590,16 @@ function init() {
       }, 120);
     });
     window.addEventListener("hashchange", route);
+    const skipLink = document.getElementById("skip-link");
+    if (skipLink) {
+      skipLink.addEventListener("click", function (e) {
+        e.preventDefault();
+        const main = document.getElementById("view");
+        if (main) {
+          main.focus();
+        }
+      });
+    }
     route();
   }).catch(function (err) {
     setView(el("h1", { text: "Data failed to load" }), el("p", { class: "muted", text: String(err.message || err) }));
@@ -5843,11 +5854,12 @@ function modelChart(model, selId, narrow, animate) {
   const x1 = 36;
   const px = function (o2) { return (o2 - x0) / (x1 - x0) * plotW; };
   const fs = narrow ? 11 : 12.5;
-  const node = el("div", { class: "mdl-plot", role: "img", "aria-label": "Chance that a droplet flame goes out on its own against oxygen, with the tested oxygen range and habitat air" });
+  const node = el("div", { class: "mdl-plot", role: "img", "aria-label": "Chance that a droplet flame goes out on its own against oxygen, with the tested oxygen range and habitat air", "aria-describedby": "mdl-verdict" });
   node.style.height = H + "px";
   const curves = model.curve.fuels;
   const lo = Math.min.apply(null, MODEL_FUELS.map(function (f) { return curves[f].tested_o2_at_curve_pressure[0]; })) * 100;
   const hi = Math.max.apply(null, MODEL_FUELS.map(function (f) { return curves[f].tested_o2_at_curve_pressure[1]; })) * 100;
+  node.setAttribute("aria-label", "Chance that a droplet flame goes out on its own against oxygen. Tested oxygen runs from " + fmt(lo, 0) + " to " + fmt(hi, 0) + " percent. The habitat air is marked.");
   const pct = function (v) { return Math.round(v * 100) + "%"; };
   const scale = function (arr, e) { return arr.map(function (v) { return v * e; }); };
   const defs = [];
@@ -6035,7 +6047,7 @@ function modelPanel() {
   let modelPlayed = false;
   const chips = el("div", { class: "pills mdl-chips", role: "group", "aria-label": "Habitat" });
   const chart = el("div", { class: "mdl-chart" });
-  const verdict = el("p", { class: "mdl-verdict", "aria-live": "polite" });
+  const verdict = el("p", { class: "mdl-verdict", id: "mdl-verdict", "aria-live": "polite" });
   function paint() {
     const hab = habs.find(function (h) { return h.id === selId; });
     const out = modelVerdict(model, hab);
@@ -6119,8 +6131,8 @@ function modelPanel() {
 }
 
 function mapPanel() {
-  const chart = el("div", { class: "chart", id: "gap-map", role: "img", "aria-label": "Oxygen versus pressure of every PSI test, with habitat windows" });
-  const notes = el("div", { class: "map-notes" });
+  const chart = el("div", { class: "chart", id: "gap-map", role: "img", "aria-label": "Oxygen versus pressure of every PSI test, with habitat windows", "aria-describedby": "gap-map-notes" });
+  const notes = el("div", { class: "map-notes", id: "gap-map-notes" });
   let drawn = false;
   function draw() {
     if (drawn) {
