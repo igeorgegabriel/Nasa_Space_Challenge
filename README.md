@@ -92,7 +92,7 @@ The site in `public/` is static. The Ask function is `api/ask.py` (Vercel Python
 
 ## Use of Super Intelligence (SI)
 
-SI (Claude, Anthropic) was used to help research the challenge and data sources, write and test code, extract candidate quotes from NASA reports, and draft text. Quotes are machine-checked against their sources and all data processing is plain code with automated tests. The Ask panel uses Claude restricted to the loaded NASA documents. No SI-generated images are used. Video narration, if present, is an SI-generated voice and is labelled as such.
+SI (Claude, Anthropic) was used to help research the challenge and data sources, write and test code, extract candidate quotes from NASA reports, and draft text. Quotes are machine-checked against their sources and all data processing is plain code with automated tests. The Ask panel uses Claude restricted to the loaded NASA documents. The demo video's narration voice (Microsoft Edge neural TTS) and music (ACE-Step 1.5) are AI-generated and labelled on screen. No AI-generated images or video are used; flame footage is real NASA BASS-II flight video.
 
 
 ## License

@@ -15,3 +15,11 @@ data/investigations/raw_ntrs/
 .env*
 brief_out/
 data/partial_g/sources/*.pdf
+
+/reports/
+/research_notes/
+/tasks/
+/docs/design.md
+/docs/submission.md
+/docs/space_apps_page.md
+/docs/video_storyboard.md
