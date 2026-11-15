@@ -577,37 +577,6 @@
   },
   "generated_at": "2026-11-15T13:21:24"
  },
- "how accurate is the ai assistant": {
-  "question": "How accurate is the AI assistant?",
-  "answer": "The assistant passed 94 of 100 questions on its version 2 evaluation. On the version 2 evaluation it passed 94 of 100 questions, refused 25 of 25 trap questions, and 98.2 percent of the numbers it claimed matched the data (381 of 388). [1]\n\n- It cites the sentences it used. It answers questions from NASA text, cites the sentences it used, and checks every number in the answer against the data. [2]\n- The wider project checks passed. The unified audit passed 1012 of 1012 checks. [3]\n- That 98.2 percent figure applies to numbers in the assistant's answers. It is not a measure of the separate FLEX droplet-flame model.",
-  "citations": [
-   {
-    "n": 1,
-    "psi_id": "PROJECT-OVERVIEW",
-    "title": "About this project - Flame in Freefall dashboard: finding, features, checks, assistant accuracy, team, limits",
-    "cited_text": "How accurate is the AI assistant: on the version 2 evaluation it passed 94 of 100 questions, refused 25 of 25 trap questions, and 98.2 percent of the numbers it claimed matched the data (381 of 388)."
-   },
-   {
-    "n": 2,
-    "psi_id": "PROJECT-OVERVIEW",
-    "title": "About this project - Flame in Freefall dashboard: finding, features, checks, assistant accuracy, team, limits",
-    "cited_text": "Ask: answers questions from NASA text, cites the sentences it used, and checks every number in the answer against the data."
-   },
-   {
-    "n": 3,
-    "psi_id": "PROJECT-OVERVIEW",
-    "title": "About this project - Flame in Freefall dashboard: finding, features, checks, assistant accuracy, team, limits",
-    "cited_text": "Verification: the unified audit passed 1012 of 1012 checks."
-   }
-  ],
-  "model": "claude-sonnet-5-5",
-  "number_check": {
-   "total": 8,
-   "matched": 8,
-   "unmatched": []
-  },
-  "generated_at": "2026-11-15T13:21:29"
- },
  "what does the 3d chart show": {
   "question": "What does the 3D chart show?",
   "answer": "The 3D chart plots oxygen against pressure against gravity. It is the \"3D evidence space\" on the Story page. [1]\n\n- It plots PSI tests and Saffire flights at 0 g, the measured partial-gravity limits at Moon, Mars and 1 g, and the habitat boxes at their own gravity. [1]\n- Moon base air sits alone at lunar gravity. [1]\n- The Flat, Tilted and Moon base buttons change the view. [1]",
@@ -853,5 +822,36 @@
    "unmatched": []
   },
   "generated_at": "2026-11-15T07:15:56"
+ },
+ "how accurate is the ai assistant": {
+  "question": "How accurate is the AI assistant?",
+  "answer": "On the version 2 evaluation, the assistant passed 94 of 100 questions.\n\n- It refused 25 of 25 trap questions, and 98.2 percent of the numbers it claimed matched the data (381 of 388). [1]\n- It answers from NASA text, cites the sentences it used, and checks every number in the answer against the data. [2]\n- Its limits: all PSI data is microgravity, and partial-gravity values are shown only as measured, never interpolated. [3]",
+  "citations": [
+   {
+    "n": 1,
+    "psi_id": "PROJECT-OVERVIEW",
+    "title": "About this project - Flame in Freefall dashboard: finding, features, checks, assistant accuracy, team, limits",
+    "cited_text": "How accurate is the AI assistant: on the version 2 evaluation it passed 94 of 100 questions, refused 25 of 25 trap questions, and 98.2 percent of the numbers it claimed matched the data (381 of 388)."
+   },
+   {
+    "n": 2,
+    "psi_id": "PROJECT-OVERVIEW",
+    "title": "About this project - Flame in Freefall dashboard: finding, features, checks, assistant accuracy, team, limits",
+    "cited_text": "Ask: answers questions from NASA text, cites the sentences it used, and checks every number in the answer against the data."
+   },
+   {
+    "n": 3,
+    "psi_id": "PROJECT-OVERVIEW",
+    "title": "About this project - Flame in Freefall dashboard: finding, features, checks, assistant accuracy, team, limits",
+    "cited_text": "Limits: all PSI data is microgravity. The model covers droplet flames only and refuses outside its tested air. Partial-gravity values are shown only as measured, never interpolated. Counts cover PSI unless marked outside PSI."
+   }
+  ],
+  "model": "claude-sonnet-5-5",
+  "number_check": {
+   "total": 7,
+   "matched": 7,
+   "unmatched": []
+  },
+  "generated_at": "2026-11-15T13:29:34"
  }
 }

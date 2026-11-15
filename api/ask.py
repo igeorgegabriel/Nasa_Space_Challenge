@@ -77,6 +77,9 @@ DATA_TOOLS = load_data_tools()
 NUMBER_CHECK = load_sibling("_number_check.py", "ask_number_check")
 
 FOLLOWUPS_RE = re.compile(r"(?im)^[ \t>*_#-]*FOLLOWUPS[ \t]*[*_]*[ \t]*:?[ \t]*[*_]*(.*)$")
+MARKUP_TAG_RE = re.compile(r"(?:<|&lt;)/?(?:cite|parameter|invoke|function_calls|antml:[a-z_]+)\b[^>&]*(?:>|&gt;)", re.I)
+CITE_ATTR_RE = re.compile(r"\(?\s*cite\s+index=\"[^\"]*\"\s*\)?\s*(?:>|&gt;)?", re.I)
+CITE_SPAN_RE = re.compile(r"\(\s*(?:\d+-\d+(?::\d+-\d+)?[\s,]*)+(\[\d+\])\s*\)")
 CITE_TAIL_RE = re.compile(r"(\s*\[\d+\])+\s*$")
 
 CACHE_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "public", "data", "ask_cache.json")
@@ -395,6 +398,13 @@ def psi_id_for(document_index, corpus):
     return match.group(1) if match else None
 
 
+def scrub_markup(text):
+    text = MARKUP_TAG_RE.sub("", text)
+    text = CITE_ATTR_RE.sub("", text)
+    text = CITE_SPAN_RE.sub(r"\1", text)
+    return re.sub(r"[ \t]{2,}", " ", text)
+
+
 def parse_response(response, corpus=None):
     documents = corpus if corpus is not None else CORPUS
     answer_parts = []
@@ -403,7 +413,7 @@ def parse_response(response, corpus=None):
     for block in field(response, "content", []) or []:
         if field(block, "type") != "text":
             continue
-        text = field(block, "text", "") or ""
+        text = scrub_markup(field(block, "text", "") or "")
         markers = []
         for cite in field(block, "citations", None) or []:
             index = field(cite, "document_index")

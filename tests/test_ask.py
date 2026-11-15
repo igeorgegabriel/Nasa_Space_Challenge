@@ -248,6 +248,14 @@ class AskTest(unittest.TestCase):
         self.assertIn("ULOI", system)
         self.assertIn("LOI", system)
 
+    def test_scrub_markup_removes_leaked_citation_tags(self):
+        scrub = self.ask.scrub_markup
+        self.assertEqual(scrub("Moon base air is 34 percent.</parameter>"), "Moon base air is 34 percent.")
+        self.assertEqual(scrub("Solids stop at 22.2 percent (cite index=\"25-5\">."), "Solids stop at 22.2 percent .")
+        self.assertEqual(scrub("No test covers it (29-4:29-5 [1])."), "No test covers it [1].")
+        self.assertEqual(scrub("&lt;cite index=\"3-1\"&gt;BASS-II&lt;/cite&gt; burned"), "BASS-II burned")
+        self.assertEqual(scrub("Keep (1 g) and [2] and 8.1-8.3 psia."), "Keep (1 g) and [2] and 8.1-8.3 psia.")
+
     def test_parse_response_numbers_citations(self):
         corpus = [
             {"psi_id": "PSI-25", "title": "PSI-25 BASS-II - Burning", "body": "a"},
