@@ -886,6 +886,7 @@ const HERO_FALLBACK = { src: "img/PSI-25/bass_ii_flame_testing.jpg", alt: "A fla
 const CHALLENGE_URL = "https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/";
 
 let storyObserver = null;
+let evidenceObserver = null;
 let heroObserver = null;
 let gapNode = null;
 let gapWidth = 0;
@@ -903,6 +904,10 @@ function stopStory() {
     storyObserver = null;
   }
   gapStop();
+  if (evidenceObserver) {
+    evidenceObserver.disconnect();
+    evidenceObserver = null;
+  }
   if (heroObserver) {
     heroObserver.disconnect();
     heroObserver = null;
@@ -1419,6 +1424,10 @@ function playPoints() {
     const seen = Math.max(gapY, Math.min(gapChart.getBoundingClientRect().top + window.scrollY - hdr, gapNote.getBoundingClientRect().bottom + window.scrollY - floor + 12));
     pts.push({ y: seen, dwell: playDwell(playWords(["#s-gap h2", "#s-gap .story-sub", "#s-gap .gap-note"])) + GAP_READ, settle: GAP_DUR });
   }
+  const evY = at("#s-3d");
+  if (evY !== null) {
+    pts.push({ y: evY, dwell: playDwell(playWords(["#s-3d h2", "#s-3d .story-sub"])) + EVIDENCE_READ, settle: 600 });
+  }
   [["#s-grav", ["#s-grav h2", "#s-grav .story-line"]], ["#s-next", []]].forEach(function (p) {
     const y = at(p[0]);
     if (y !== null) {
@@ -1426,6 +1435,68 @@ function playPoints() {
     }
   });
   return pts;
+}
+
+const EVIDENCE_READ = 2200;
+const EVIDENCE_SRC = "evidence3d.html";
+
+function evidenceCounts() {
+  const data = state.data;
+  const map = gapMapData().counts;
+  const byId = {};
+  data.partial_g.points.forEach(function (p) { byId[p.id] = p; });
+  let measured = 0;
+  data.partial_g.chart.forEach(function (series) {
+    data.partial_g.levels.forEach(function (lv) {
+      const p = byId[series.points[lv.id]];
+      if (p && gravityField(p, series.field) && gravityField(p, "total_pressure")) {
+        measured += 1;
+      }
+    });
+  });
+  const flights = data.outside_psi.tests.filter(function (t) { return t.plotted && t.pressure_psia !== null && t.pressure_psia !== undefined; }).length;
+  const habitats = data.environments.environments.filter(function (e) { return isSpecified(e, "o2") && isSpecified(e, "pressure_atm"); }).length;
+  return { psi: map.plotted + map.sourced, flights: flights, measured: measured, habitats: habitats };
+}
+
+function evidenceSummary() {
+  const lunar = envById("lunar");
+  const c = evidenceCounts();
+  return "Three-dimensional chart of oxygen, total pressure and gravity. " + c.psi.toLocaleString("en-US") + " PSI flame tests and " + c.flights + " Saffire flights sit at 0 g. " + c.measured + " measured partial-gravity points sit at their own gravity. " + c.habitats + " habitat windows are drawn as boxes. Moon base air spans " + dashSpan(lunar.o2.window_min * 100, lunar.o2.window_max * 100, 1, "percent oxygen") + " and " + dashSpan(psia(lunar.pressure_atm.window_min), psia(lunar.pressure_atm.window_max), 1, "psia") + " at " + fmt(lunar.gravity.g, 3) + " g.";
+}
+
+function evidenceWatch(section) {
+  const holder = section.querySelector(".e3d");
+  const frame = section.querySelector(".e3d-frame");
+  const load = function () {
+    if (!frame.getAttribute("src")) {
+      frame.setAttribute("src", EVIDENCE_SRC);
+    }
+  };
+  if (window.IntersectionObserver) {
+    evidenceObserver = new IntersectionObserver(function (entries) {
+      if (entries.some(function (e) { return e.isIntersecting; })) {
+        load();
+        evidenceObserver.disconnect();
+        evidenceObserver = null;
+      }
+    }, { rootMargin: "500px 0px" });
+    evidenceObserver.observe(holder);
+  } else {
+    load();
+  }
+}
+
+function evidenceSection() {
+  const frame = el("iframe", { class: "e3d-frame", title: "Interactive three-dimensional chart of oxygen, pressure and gravity for NASA flame tests and habitat air", loading: "lazy" });
+  const holder = rv(2, "div", { class: "e3d" }, frame);
+  return [
+    rv(0, "h2", { text: "The gap is three-dimensional" }),
+    rv(1, "p", { class: "story-sub", text: "Moon base air sits at lunar gravity. Almost every test sits at 0 g." }),
+    holder,
+    el("p", { class: "pg-sr", text: evidenceSummary() }),
+    rv(3, "p", { class: "small e3d-cap", text: "Drag to rotate, click then scroll to zoom. Hover any mark for its source." })
+  ];
 }
 
 function playStory(onEnd) {
@@ -3122,6 +3193,7 @@ function renderHome() {
     el("p", { class: "gap-note", id: "gap-note" }, gapCaption(), " ", el("a", { href: "#/data?at=extractor", text: "See the rows" })),
     el("div", { class: "gap-more" }, gapDetails(lunar))
   ]);
+  const evidence = story("st-3d", "s-3d", evidenceSection());
   const grav = story("st-grav", "s-grav", [
     rv(0, "h2", { text: "Gravity changes it too" }),
     el("div", { class: "grav-wrap" },
@@ -3170,8 +3242,9 @@ function renderHome() {
       TEAM_WHY ? el("blockquote", { id: "team-why", class: "team-why", text: TEAM_WHY }) : null,
       el("p", { class: "who-link" }, ntrsLink(TEAM_URL, "Meet the team on NASA Space Apps")))
   ]);
-  const view = setView(hero, act, quote, air, gap, grav, next, explore);
+  const view = setView(hero, act, quote, air, gap, evidence, grav, next, explore);
   watchStory(sections);
+  evidenceWatch(evidence);
   gapNode = chart;
   drawGapChart(chart);
   gapWatch(chart);

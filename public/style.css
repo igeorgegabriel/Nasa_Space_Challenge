@@ -430,6 +430,12 @@ table.preview th, table.preview td { white-space: nowrap; }
 
 .gap-more { margin-top: 1.2rem; }
 
+.e3d { width: 100%; margin-top: clamp(1.2rem, 3vh, 2rem); }
+
+.e3d-frame { display: block; width: 100%; height: clamp(420px, 70vh, 720px); border: 0; border-radius: 10px; background: var(--navy); }
+
+.e3d-cap { margin-top: 0.7rem; max-width: none; color: var(--muted); }
+
 .mdl-plot, .gv-plot { width: 100%; }
 
 .st-grav .grav-wrap { margin-top: clamp(1.4rem, 4vh, 2.4rem); display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(1.5rem, 5vw, 4rem); align-items: center; }
