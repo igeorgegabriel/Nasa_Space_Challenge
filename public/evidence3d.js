@@ -7,7 +7,7 @@
   var PSIA_PER_ATM = 14.6959;
   var QUALITY = ["exact", "approximate"];
   var LABEL_BELOW = {};
-  var LABEL_SIDE = { rover: true };
+  var LABEL_SIDE = { rover: true, gateway: true };
   var LEVEL_Z = { "0g": 0, moon: 1, mars: 2, "1g": 3 };
   var P_TICKS = [4, 8, 15, 30, 60];
   var P_RANGE = [3, 80];
@@ -18,7 +18,7 @@
   var legendNode = document.getElementById("legend");
   var msgNode = document.getElementById("msg");
   var camStart = { eye: { x: 0, y: 0, z: 2.7 }, up: { x: 0, y: 1, z: 0 }, center: { x: 0, y: 0, z: 0 } };
-  var camEnd = { eye: { x: 1.12, y: -1.34, z: 0.7 }, up: { x: 0, y: 0, z: 1 }, center: { x: -0.05, y: 0, z: -0.2 } };
+  var camEnd = { eye: { x: 1.45, y: -1.5, z: 0.34 }, up: { x: 0, y: 0, z: 1 }, center: { x: -0.05, y: 0, z: -0.12 } };
   var raf = 0;
   var active = false;
 
@@ -269,6 +269,12 @@
       var half = moon ? HALF_Z : b.id === "rover" ? HALF_Z * 1.7 : HALF_Z * 1.2;
       traces.push(boxMesh(b, half, moon ? COL.accent : COL.muted, moon ? 0.62 : 0.22));
       traces.push(boxEdges(b, half, moon ? "#ff9a62" : "#97a3bf", moon ? 4 : 2));
+      if (b.z > 0) {
+        var cx = (b.x0 + b.x1) / 2;
+        var cy = Math.sqrt(b.y0 * b.y1);
+        traces.push({ type: "scatter3d", mode: "lines", showlegend: false, hoverinfo: "skip", x: [cx, cx], y: [cy, cy], z: [b.z - half, 0], line: { color: moon ? "#ff9a62" : "#5b6785", width: moon ? 3 : 2, dash: "dash" } });
+        traces.push(boxEdges({ x0: b.x0, x1: b.x1, y0: b.y0, y1: b.y1, z: 0 }, 0, moon ? "#ff9a62" : "#5b6785", moon ? 3 : 1));
+      }
     });
     traces.push({
       type: "scatter3d", mode: "markers", name: "Solid fuels", showlegend: false,
@@ -283,7 +289,7 @@
     traces.push(d.flightTrace(d.burned, "Saffire flights, burned", false));
     traces.push(d.flightTrace(d.quiet, "Saffire flights, no ignition", true));
     traces.push({
-      type: "scatter3d", mode: "markers", name: "Measured at partial gravity", showlegend: false,
+      type: "scatter3d", mode: "markers", name: "Measured limits at 1 g, Mars, Moon", showlegend: false,
       x: d.meas.x, y: d.meas.y, z: d.meas.z, text: d.meas.text, hovertemplate: "%{text}<extra></extra>",
       marker: { symbol: "circle-open", size: 6, color: COL.measured, line: { color: COL.measured, width: 2 } }
     });
@@ -333,7 +339,7 @@
         [COL.solid, "Solid fuel tests"],
         [COL.other, "Droplet and gas tests"],
         [COL.flight, "Saffire flights"],
-        [COL.measured, "Measured at partial gravity"],
+        [COL.measured, "Measured limits at 1 g, Mars, Moon"],
         [COL.accent, "Moon base air"]
       ]);
       animate();
