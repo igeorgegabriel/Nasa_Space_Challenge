@@ -1796,6 +1796,167 @@ function planCsvText() {
   return lines.join("\r\n") + "\r\n";
 }
 
+const planGame = { budget: 3, picked: [], bar: null, track: null, meter: null, chips: null, compare: null, cards: null, count: null, picksLeft: null };
+
+function planGameKey(fuel, habitat) { return fuel + "|" + habitat; }
+
+function planGameClosedKeys(plan, ids) {
+  const gapKeys = {};
+  plan.gaps.forEach(function (g) { gapKeys[planGameKey(g.fuel_class, g.habitat)] = true; });
+  const closed = {};
+  plan.tests.forEach(function (t) {
+    if (ids.indexOf(t.id) < 0) { return; }
+    t.habitats.forEach(function (h) {
+      const k = planGameKey(t.fuel_class, h);
+      if (gapKeys[k]) { closed[k] = true; }
+    });
+  });
+  return closed;
+}
+
+function planGameClosedCount(plan, ids) {
+  return Object.keys(planGameClosedKeys(plan, ids)).length;
+}
+
+function planGameGreedy(plan, n) {
+  return plan.tests.slice(0, n).map(function (t) { return t.id; });
+}
+
+function planGameAverage(plan, n) {
+  const ids = plan.tests.map(function (t) { return t.id; });
+  let sum = 0;
+  let count = 0;
+  const pick = [];
+  function walk(start) {
+    if (pick.length === n) {
+      sum += planGameClosedCount(plan, pick);
+      count += 1;
+      return;
+    }
+    for (let i = start; i < ids.length; i += 1) {
+      pick.push(ids[i]);
+      walk(i + 1);
+      pick.pop();
+    }
+  }
+  walk(0);
+  return { sum: sum, count: count, mean: count ? sum / count : 0 };
+}
+
+function planGameHabitatNames(plan) {
+  const names = {};
+  plan.tests.forEach(function (t) {
+    t.habitats.forEach(function (h, i) { names[h] = t.habitat_names[i]; });
+  });
+  return names;
+}
+
+function planGameToggle(id) {
+  const at = planGame.picked.indexOf(id);
+  if (at >= 0) {
+    planGame.picked.splice(at, 1);
+  } else if (planGame.picked.length < planGame.budget) {
+    planGame.picked.push(id);
+  }
+  planGameRender(state.data.test_plan);
+}
+
+function planGameSetBudget(n) {
+  const plan = state.data.test_plan;
+  planGame.budget = Math.max(1, Math.min(plan.tests.length, n));
+  if (planGame.picked.length > planGame.budget) { planGame.picked.length = planGame.budget; }
+  planGameRender(plan);
+}
+
+function planGameChoose() {
+  planGame.picked = planGameGreedy(state.data.test_plan, planGame.budget);
+  planGameRender(state.data.test_plan);
+}
+
+function planGameClear() {
+  planGame.picked = [];
+  planGameRender(state.data.test_plan);
+}
+
+function planGameRender(plan) {
+  const total = plan.gaps.length;
+  const closed = planGameClosedKeys(plan, planGame.picked);
+  const nClosed = Object.keys(closed).length;
+  const names = planGameHabitatNames(plan);
+  planGame.count.textContent = String(planGame.budget);
+  planGame.meter.textContent = nClosed + " of " + total + " habitat gaps closed";
+  planGame.bar.style.width = (total ? (100 * nClosed / total) : 0) + "%";
+  planGame.track.setAttribute("aria-valuenow", String(nClosed));
+  planGame.cards.querySelectorAll("button").forEach(function (b) {
+    const on = planGame.picked.indexOf(b.getAttribute("data-id")) >= 0;
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+    b.classList.toggle("on", on);
+    const full = !on && planGame.picked.length >= planGame.budget;
+    b.setAttribute("aria-disabled", full ? "true" : "false");
+    b.classList.toggle("full", full);
+  });
+  planGame.picksLeft.textContent = planGame.picked.length + " of " + planGame.budget + " flights picked";
+  clear(planGame.chips);
+  CLASS_ORDER_PLAN.forEach(function (fc) {
+    const hs = plan.gaps.filter(function (g) { return g.fuel_class === fc; }).map(function (g) { return g.habitat; });
+    planGame.chips.appendChild(el("div", { class: "pg-row" },
+      el("span", { class: "pg-fuel", text: NEXT_LABELS[fc] }),
+      el("span", { class: "pg-chips" }, hs.map(function (h) {
+        const done = !!closed[planGameKey(fc, h)];
+        return el("span", { class: "pg-chip" + (done ? " done" : "") },
+          names[h] || h,
+          el("span", { class: "pg-sr", text: done ? " (tested)" : " (still untested)" }));
+      }))));
+  });
+  const greedy = planGameClosedCount(plan, planGameGreedy(plan, planGame.budget));
+  const avg = planGameAverage(plan, planGame.budget);
+  planGame.compare.textContent = "Planner's first " + planGame.budget + ": " + greedy + " gaps; average of all possible " + planGame.budget + " picks: " + fmt(avg.mean, 1) + " gaps";
+}
+
+function planGameBlock(plan) {
+  const total = plan.gaps.length;
+  const count = el("span", { id: "pg-count", text: String(planGame.budget) });
+  const range = el("input", { type: "range", id: "pg-budget", min: "1", max: String(plan.tests.length), step: "1", value: String(planGame.budget), "aria-label": "Number of flights" });
+  range.addEventListener("input", function () { planGameSetBudget(Number(range.value)); });
+  const cards = el("div", { class: "pg-cards", role: "group", "aria-label": "Choose your flights" }, plan.tests.map(function (t) {
+    return el("button", { type: "button", class: "pg-card", "data-id": t.id, "aria-pressed": "false", "aria-disabled": "false", onclick: function () { planGameToggle(t.id); } },
+      el("span", { class: "plan-rank", text: String(t.rank) }),
+      el("span", { class: "pg-card-text" },
+        el("strong", { text: NEXT_LABELS[t.fuel_class] || t.fuel_class }),
+        el("span", { text: t.habitat_names.join(", ") })));
+  }));
+  const bar = el("span", { class: "pg-fill" });
+  const track = el("div", { class: "pg-track", role: "progressbar", "aria-label": "Habitat gaps closed", "aria-valuemin": "0", "aria-valuemax": String(total), "aria-valuenow": "0" }, bar);
+  const meter = el("p", { class: "pg-meter", "aria-live": "polite", "aria-atomic": "true" });
+  const compare = el("p", { class: "pg-compare", "aria-live": "polite", "aria-atomic": "true" });
+  const picksLeft = el("span", { class: "small muted pg-picks", "aria-live": "polite" });
+  const chips = el("div", { class: "pg-chiprows" });
+  const partialTest = plan.tests.find(function (t) { return t.gravity.partial.length > 0; });
+  planGame.count = count;
+  planGame.bar = bar;
+  planGame.track = track;
+  planGame.meter = meter;
+  planGame.compare = compare;
+  planGame.cards = cards;
+  planGame.chips = chips;
+  planGame.picksLeft = picksLeft;
+  const block = el("div", { class: "pg", id: "plan-game" },
+    el("h4", { class: "pg-title" }, "Your turn: you get ", count, " flights"),
+    el("div", { class: "pg-controls" },
+      el("label", { class: "pg-label", for: "pg-budget", text: "Flights" }),
+      range,
+      el("button", { type: "button", class: "btn pg-btn", id: "pg-choose", text: "Let the planner choose", onclick: planGameChoose }),
+      el("button", { type: "button", class: "pg-clear", id: "pg-clear", text: "Clear", onclick: planGameClear })),
+    cards,
+    picksLeft,
+    el("div", { class: "pg-meter-wrap" }, meter, track),
+    chips,
+    compare,
+    partialTest ? el("p", { class: "small muted pg-gravity", text: partialTest.gravity.note }) : null);
+  planGameRender(plan);
+  return block;
+}
+
 function planSection() {
   const plan = state.data.test_plan;
   const holder = el("div", { class: "plan", id: "test-plan" });
@@ -1824,6 +1985,7 @@ function planSection() {
   holder.appendChild(el("div", { class: "plan-grid" },
     el("div", { class: "plan-side" }, list),
     el("div", { class: "plan-viz" }, pills, legend, node, note)));
+  holder.appendChild(planGameBlock(plan));
   holder.appendChild(el("p", { class: "cta" }, el("button", { type: "button", class: "btn", id: "plan-csv", text: "Download test matrix (CSV)", onclick: function () { download("flame_in_freefall_test_matrix.csv", planCsvText(), "text/csv"); } })));
   holder.appendChild(expander("How this is derived", el("div", null,
     plan.method.map(function (m) { return el("p", { class: "small", text: m }); }),
