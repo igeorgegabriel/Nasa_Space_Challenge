@@ -33,41 +33,9 @@ A Moon base is planned to run at about 34% oxygen. Across 2,009 NASA combustion 
 
 ## How it works
 
-```mermaid
-flowchart TD
-  subgraph SRC["1. NASA sources"]
-    P["PSI repository<br/>24 investigations<br/>22 test tables"]
-    N["NASA reports (NTRS)<br/>and Spinoff pages"]
-  end
-  subgraph CHK["2. Checked data"]
-    U["Unified table<br/>2,009 tests, each with<br/>its file and row"]
-    A["Audit against the<br/>original files:<br/>1,012 of 1,012 pass"]
-    H["65 rows flagged<br/>for PSI curators"]
-    Q["259 quotes checked<br/>word for word"]
-  end
-  subgraph MOD["3. Models and gravity"]
-    F["FLEX droplet model<br/>refuses outside<br/>its tested air"]
-    G["Measured lunar and<br/>Mars gravity limits<br/>24 points, 7 sources"]
-  end
-  subgraph APP["4. Dashboard"]
-    R["Rank investigations<br/>for 5 habitats"]
-    W["Check any cabin air<br/>drag O2 and pressure"]
-    X["3D evidence space<br/>O2 x pressure x gravity"]
-    T["Test plan<br/>9 tests close<br/>15 of 15 gaps"]
-    K["Ask the data<br/>cited answers,<br/>numbers checked"]
-  end
-  P --> U
-  P ~~~ A
-  P ~~~ H
-  N --> Q
-  U --> F
-  Q --> G
-  F --> W
-  G --> X
-  F ~~~ R
-  G ~~~ T
-  G ~~~ K
-```
+![How it works: 1. NASA sources (PSI repository, NTRS reports and Spinoff pages) feed 2. checked data (unified table of 2,009 tests, audit 1,012 of 1,012, 65 curator flags, 259 quotes checked), which feeds 3. models and gravity (FLEX model that refuses outside its tested air, 24 measured lunar and Mars gravity limits), which feed 4. the dashboard (rank for 5 habitats, check any cabin air, 3D evidence space, test plan, Ask the data)](docs/img/how_it_works.png)
+
+Chart source: `docs/how_it_works.mmd` (Mermaid).
 
 ## What sets it apart
 
