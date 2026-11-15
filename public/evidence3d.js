@@ -18,7 +18,7 @@
   var legendNode = document.getElementById("legend");
   var msgNode = document.getElementById("msg");
   var camStart = { eye: { x: 0, y: 0, z: 2.7 }, up: { x: 0, y: 1, z: 0 }, center: { x: 0, y: 0, z: 0 } };
-  var camEnd = { eye: { x: 1.28, y: -1.32, z: 0.3 }, up: { x: 0, y: 0, z: 1 }, center: { x: -0.05, y: 0, z: -0.12 } };
+  var camEnd = { eye: { x: 1.13, y: -1.17, z: 0.28 }, up: { x: 0, y: 0, z: 1 }, center: { x: -0.05, y: 0, z: -0.12 } };
   var raf = 0;
   var active = false;
   var ready = false;
