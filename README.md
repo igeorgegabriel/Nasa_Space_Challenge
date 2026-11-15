@@ -8,7 +8,7 @@ Team: Kenyalang Blue Flame (Bintulu, Malaysia)
 
 Live dashboard: https://flame-in-freefall-three.vercel.app
 
-Demo video (30 s): https://youtu.be/TOJCLF_SySE
+Demo video (30 s): https://youtu.be/q3KyZFqHhr4
 
 ## The finding
 
