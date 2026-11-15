@@ -3090,7 +3090,8 @@ function tourRouted() {
 
 function buildTourToggle() {
   const ask = document.getElementById("ask-open");
-  const button = el("button", { type: "button", id: "tour-open", class: "ask-toggle tour-toggle", text: "Tour", onclick: tourStart });
+  const button = el("button", { type: "button", id: "tour-open", class: "ask-toggle tour-toggle", "aria-label": "Take the guided tour", onclick: tourStart });
+  button.innerHTML = '<svg class="hdr-ico" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 8.5l5.5 3.5-5.5 3.5z" fill="currentColor"/></svg><span>Tour</span>';
   ask.parentNode.insertBefore(button, ask);
 }
 
