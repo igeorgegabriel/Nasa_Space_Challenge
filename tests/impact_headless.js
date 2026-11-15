@@ -113,7 +113,7 @@ async function main() {
   assert(/cabin air/.test(info.cards[2]));
   assert.strictEqual(info.gap, pg.summary.headline);
   assert(info.quote.indexOf("late 2026") > 0, "fm2 quote");
-  assert.strictEqual(info.before, "s-explore");
+  assert.strictEqual(info.before, "s-quote");
   assert.strictEqual(info.h2, "Who acts on this");
   await shot("act_1440", 1440, 900, "#s-act", false);
   await shot("act_390", 390, 844, "#s-act", true);

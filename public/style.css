@@ -1420,3 +1420,7 @@ body.ask-open #ask-panel { display: flex; animation: slidein 0.28s ease; }
 @media (min-width: 721px) and (max-aspect-ratio: 4/5) {
   .act-cards { grid-template-columns: 1fr; }
 }
+
+.rank-play { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 0.9rem; margin: 0.9rem 0 0; }
+.rank-play .small { color: var(--muted); }
+#plan-game, #test-plan, #test-next { scroll-margin-top: calc(var(--hdr, 70px) + 1rem); }

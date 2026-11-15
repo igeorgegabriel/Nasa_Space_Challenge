@@ -1962,6 +1962,7 @@ function planSection() {
   const holder = el("div", { class: "plan", id: "test-plan" });
   holder.appendChild(el("h3", { text: "Fly these tests first" }));
   holder.appendChild(el("p", { class: "plan-head", id: "plan-head", text: plan.headline.text }));
+  holder.appendChild(planGameBlock(plan));
   const list = el("ol", { class: "plan-list" }, plan.tests.map(function (t) {
     return el("li", { class: "plan-item" + (t.fuel_class === planUi.fuel ? " on" : ""), "data-fuel": t.fuel_class, "data-id": t.id },
       el("button", { type: "button", class: "plan-pick", onclick: function () { planSelect(t.fuel_class); } },
@@ -1985,7 +1986,6 @@ function planSection() {
   holder.appendChild(el("div", { class: "plan-grid" },
     el("div", { class: "plan-side" }, list),
     el("div", { class: "plan-viz" }, pills, legend, node, note)));
-  holder.appendChild(planGameBlock(plan));
   holder.appendChild(el("p", { class: "cta" }, el("button", { type: "button", class: "btn", id: "plan-csv", text: "Download test matrix (CSV)", onclick: function () { download("flame_in_freefall_test_matrix.csv", planCsvText(), "text/csv"); } })));
   holder.appendChild(expander("How this is derived", el("div", null,
     plan.method.map(function (m) { return el("p", { class: "small", text: m }); }),
@@ -3032,7 +3032,7 @@ function heroVerdict() {
       n ? el("p", { class: "hv-line", text: "Closest: " + (inv ? invLabel(inv) : n.psi_id) + " at " + percent(n.o2_frac) + "% O2" }) : null,
       o ? el("p", { class: "hv-line hv-out", text: o.label + " " + (/not/i.test(o.outcome_short) ? "did not ignite" : "burned") + " at " + percent(o.o2_frac) + "% O2 - not in the PSI database" }) : null
     ]);
-    go.setAttribute("href", "#/rank?habitat=" + encodeURIComponent(envId) + "&at=test-next");
+    go.setAttribute("href", "#/rank?habitat=" + encodeURIComponent(envId) + "&at=plan-game");
     if (animate) {
       countUp(num, entry.inside);
       body.classList.remove("swap");
@@ -3150,7 +3150,7 @@ function renderHome() {
     rv(0, "h2", { text: "Who acts on this" }),
     el("div", { class: "act-cards" },
       actCard(1, "PSI curators", data.data_health.summary.flagged_rows + " PSI rows flagged for review", "#/data?at=health", "See the rows"),
-      actCard(2, "Flammability test teams", data.test_plan.headline.text, "#/rank?habitat=lunar&at=test-plan", "See the test plan"),
+      actCard(2, "Flammability test teams", data.test_plan.headline.text, "#/rank?habitat=lunar&at=plan-game", "Plan the flights"),
       actCard(3, "Habitat designers", "Where the evidence stops for your cabin air", "#/home?at=s-next", "Check your air")),
     rv(4, "p", { class: "story-sub act-gap", text: data.partial_g.summary.headline }),
     rv(5, "div", { class: "act-next" },
@@ -3170,7 +3170,7 @@ function renderHome() {
       TEAM_WHY ? el("blockquote", { id: "team-why", class: "team-why", text: TEAM_WHY }) : null,
       el("p", { class: "who-link" }, ntrsLink(TEAM_URL, "Meet the team on NASA Space Apps")))
   ]);
-  const view = setView(hero, quote, air, gap, grav, next, act, explore);
+  const view = setView(hero, act, quote, air, gap, grav, next, explore);
   watchStory(sections);
   gapNode = chart;
   drawGapChart(chart);
@@ -3379,6 +3379,15 @@ function renderRank() {
           target.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth", block: "start" });
         }
       } })));
+    noteHolder.appendChild(el("p", { class: "rank-play" },
+      el("button", { type: "button", class: "btn", text: "Plan NASA's next flights", onclick: function () {
+        const target = document.getElementById("plan-game");
+        if (target) {
+          openAncestors(target);
+          target.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth", block: "start" });
+        }
+      } }),
+      el("span", { class: "small", text: " " + state.data.test_plan.headline.text })));
   }
 
   function drawHow(ranking, stability) {
