@@ -107,6 +107,7 @@ The site in `public/` is static. The Ask function is `api/ask.py` (Vercel Python
 
 ## Verification
 
+- Accessibility: Lighthouse accessibility 100 on the Story, Rank, Investigations, Data, Gravity and Verification pages; axe-core 4.10 reports no violations after a full-page scroll. Every chart has a text alternative and every control works from the keyboard.
 - Every quoted finding is checked word for word against its NASA source text (`pipeline/verify_findings.py`, `pipeline/verify_earth.py`, `pipeline/verify_lunar_g.py`), and the Saffire IV-VI rows and sourced solid pressures against their NTRS reports (`pipeline/verify_outside_psi.py`, 57 of 57 quotes). The partial-gravity points are checked the same way (`pipeline/verify_partial_g.py`): 152 quotes and 116 numbers against saved source text in `data/partial_g/`.
 - 259 quotes in total are checked word for word: 39 key findings, 57 outside PSI, 9 lunar gravity, 2 Earth uses and 152 partial gravity.
 - `pipeline/data_health.py` flags 65 PSI rows by fixed rules for curator review. The scan also found 8 negative airflows in PSI-107 SPICE that our parser had read as positive; fixed and covered by tests in `tests/test_build_unified.py`.
