@@ -19,6 +19,15 @@
   var msgNode = document.getElementById("msg");
   var camStart = { eye: { x: 0, y: 0, z: 2.7 }, up: { x: 0, y: 1, z: 0 }, center: { x: 0, y: 0, z: 0 } };
   var camEnd = { eye: { x: 1.13, y: -1.17, z: 0.28 }, up: { x: 0, y: 0, z: 1 }, center: { x: -0.05, y: 0, z: -0.12 } };
+  var camMoon = { eye: { x: 0.64, y: -0.65, z: 0.12 }, up: { x: 0, y: 0, z: 1 }, center: { x: 0.14, y: 0, z: -0.36 } };
+  var barNode = document.getElementById("bar");
+  var viewBtns = Array.prototype.slice.call(document.querySelectorAll("[data-view]"));
+  var dragBtns = Array.prototype.slice.call(document.querySelectorAll("[data-drag]"));
+  var zoomBtns = Array.prototype.slice.call(document.querySelectorAll("[data-zoom]"));
+  var TWEEN_MS = 600;
+  var ZOOM_MIN = 0.3;
+  var ZOOM_MAX = 4;
+  var lastSet = "";
   var raf = 0;
   var active = false;
   var ready = false;
@@ -225,7 +234,90 @@
   }
 
   function setCam(cam) {
+    lastSet = JSON.stringify(cam);
     Plotly.relayout(plotNode, { "scene.camera": cam });
+  }
+
+  function markView(id) {
+    viewBtns.forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-view") === id ? "true" : "false"); });
+  }
+
+  function markDrag(mode) {
+    dragBtns.forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-drag") === mode ? "true" : "false"); });
+  }
+
+  function readCam() {
+    var c = plotNode._fullLayout.scene.camera;
+    var out = { eye: {}, up: {}, center: {} };
+    ["eye", "up", "center"].forEach(function (k) {
+      ["x", "y", "z"].forEach(function (a) { out[k][a] = c[k][a]; });
+    });
+    return out;
+  }
+
+  function mixCam(a, b, t) {
+    var out = { eye: {}, up: {}, center: {} };
+    ["eye", "up", "center"].forEach(function (k) {
+      ["x", "y", "z"].forEach(function (c) { out[k][c] = lerp(a[k][c], b[k][c], t); });
+    });
+    return out;
+  }
+
+  function tweenTo(target, done) {
+    if (raf) {
+      cancelAnimationFrame(raf);
+      raf = 0;
+    }
+    if (quietMotion()) {
+      setCam(target);
+      if (done) {
+        done();
+      }
+      return;
+    }
+    var from = readCam();
+    var t0 = 0;
+    function step(now) {
+      if (!t0) {
+        t0 = now;
+      }
+      var u = Math.min(1, (now - t0) / TWEEN_MS);
+      var e = u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+      setCam(mixCam(from, target, e));
+      if (u < 1) {
+        raf = requestAnimationFrame(step);
+      } else {
+        raf = 0;
+        if (done) {
+          done();
+        }
+      }
+    }
+    raf = requestAnimationFrame(step);
+  }
+
+  function goView(id) {
+    var base = id === "flat" ? camStart : id === "moon" ? camMoon : camAt(1, zoomFor());
+    markView(id);
+    tweenTo(base, function () { markView(id); });
+  }
+
+  function setDrag(mode) {
+    markDrag(mode);
+    Plotly.relayout(plotNode, { "scene.dragmode": mode });
+  }
+
+  function zoomBy(f) {
+    var c = readCam();
+    var dx = c.eye.x - c.center.x;
+    var dy = c.eye.y - c.center.y;
+    var dz = c.eye.z - c.center.z;
+    var d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    var k = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, d * f)) / d;
+    var to = mixCam(c, c, 0);
+    to.eye = { x: c.center.x + dx * k, y: c.center.y + dy * k, z: c.center.z + dz * k };
+    markView("");
+    tweenTo(to);
   }
 
   function quietMotion() {
@@ -261,6 +353,7 @@
     var quiet = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (quiet) {
       setCam(camAt(1, zoomFor()));
+      markView("tilted");
       return;
     }
     setCam(camStart);
@@ -273,6 +366,9 @@
       var e = u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
       setCam(camAt(e, zoomFor()));
       raf = u < 1 ? requestAnimationFrame(step) : 0;
+      if (u >= 1) {
+        markView("tilted");
+      }
     }
     raf = requestAnimationFrame(step);
   }
@@ -369,6 +465,13 @@
     return Plotly.newPlot(plotNode, traces, layout, { displayModeBar: false, displaylogo: false, responsive: true, scrollZoom: true }).then(function () {
       msgNode.hidden = true;
       resetBtn.hidden = false;
+      barNode.hidden = false;
+      plotNode.on("plotly_relayout", function (ev) {
+        var cam = ev && ev["scene.camera"];
+        if (cam && JSON.stringify(cam) !== lastSet) {
+          markView("");
+        }
+      });
       ready = true;
       if (quietMotion()) {
         setCam(camAt(1, zoomFor()));
@@ -392,7 +495,13 @@
   }, true);
   plotNode.addEventListener("pointerdown", function () { active = true; });
   plotNode.addEventListener("mouseleave", function () { active = false; });
-  resetBtn.addEventListener("click", animate);
+  resetBtn.addEventListener("click", function () {
+    setDrag("orbit");
+    animate();
+  });
+  viewBtns.forEach(function (b) { b.addEventListener("click", function () { goView(b.getAttribute("data-view")); }); });
+  dragBtns.forEach(function (b) { b.addEventListener("click", function () { setDrag(b.getAttribute("data-drag")); }); });
+  zoomBtns.forEach(function (b) { b.addEventListener("click", function () { zoomBy(parseFloat(b.getAttribute("data-zoom"))); }); });
 
   Promise.all([get("data/conditions.json"), get("data/outside_psi.json"), get("data/partial_g.json"), get("data/environments.json")]).then(function (r) {
     var d = build(r[0], r[1], r[2], r[3]);

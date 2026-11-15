@@ -1527,7 +1527,7 @@ function evidenceSection() {
     rv(1, "p", { class: "story-sub", text: "Moon base air sits at lunar gravity. Almost every test sits at 0 g." }),
     holder,
     el("p", { class: "pg-sr", text: evidenceSummary() }),
-    rv(3, "p", { class: "small e3d-cap", text: "Drag to rotate, click then scroll to zoom. Hover any mark for its source." }),
+    rv(3, "p", { class: "small e3d-cap", text: "Use the buttons to change view, or drag to rotate and click then scroll to zoom. Hover any mark for its source." }),
     rv(4, "div", { class: "e3d-grav" },
       el("p", { class: "story-line", text: "On the Moon, NASA Glenn's allowance for a 1-g test margin is up to " + gravityFacts().allow + " oxygen points, and drop tests measured up to " + gravityFacts().drop + "." }),
       el("a", { class: "btn ghost", href: "#/gravity", text: "See the lunar gravity check" }))

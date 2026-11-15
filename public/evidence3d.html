@@ -8,7 +8,15 @@
 @font-face { font-family: "Inter"; src: url("fonts/inter-latin.woff2") format("woff2"); font-weight: 400 800; font-style: normal; font-display: swap; }
 html, body { margin: 0; height: 100%; background: #0b1020; color: #c9d2e6; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; overflow: hidden; }
 #plot { position: absolute; inset: 0; }
-#reset { position: absolute; top: 0.6rem; right: 0.6rem; z-index: 5; padding: 0.35rem 0.9rem; font: inherit; font-size: 0.85rem; color: #eef1f8; background: rgba(24, 35, 63, 0.85); border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 999px; cursor: pointer; }
+#bar { position: absolute; top: 0.6rem; left: 0.6rem; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.5rem; max-width: calc(100% - 7.5rem); }
+#bar .grp { display: flex; gap: 0.25rem; }
+#bar button, #reset { padding: 0.35rem 0.9rem; font: inherit; font-size: 0.85rem; color: #eef1f8; background: rgba(24, 35, 63, 0.85); border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 999px; cursor: pointer; }
+#bar button { padding: 0.3rem 0.75rem; font-size: 0.8rem; }
+#bar button.sq { min-width: 2rem; padding: 0.3rem 0.5rem; }
+#bar button:hover { background: #18233f; }
+#bar button[aria-pressed="true"] { background: #e8743b; border-color: #e8743b; color: #0b1020; font-weight: 600; }
+#bar button:focus-visible { outline: 3px solid #e8743b; outline-offset: 2px; }
+#reset { position: absolute; top: 0.6rem; right: 0.6rem; z-index: 5; }
 #reset:hover { background: #18233f; }
 #reset:focus-visible { outline: 3px solid #e8743b; outline-offset: 2px; }
 #legend { position: absolute; left: 0.8rem; bottom: 0.6rem; z-index: 5; display: flex; flex-wrap: wrap; gap: 0.2rem 1rem; max-width: calc(100% - 1.6rem); margin: 0; padding: 0; list-style: none; font-size: 0.78rem; color: #97a3bf; pointer-events: none; }
@@ -19,6 +27,11 @@ html, body { margin: 0; height: 100%; background: #0b1020; color: #c9d2e6; font-
 </head>
 <body>
 <div id="plot"></div>
+<div id="bar" role="toolbar" aria-label="Chart view controls" hidden>
+<div class="grp" role="group" aria-label="View presets"><button type="button" data-view="flat" aria-pressed="false" title="Top-down view">Flat</button><button type="button" data-view="tilted" aria-pressed="false" title="Tilted view">Tilted</button><button type="button" data-view="moon" aria-pressed="false" title="Close view of the Moon base">Moon base</button></div>
+<div class="grp" role="group" aria-label="Drag mode"><button type="button" data-drag="orbit" aria-pressed="true" title="Drag to rotate">Rotate</button><button type="button" data-drag="pan" aria-pressed="false" title="Drag to pan">Pan</button></div>
+<div class="grp" role="group" aria-label="Zoom"><button type="button" class="sq" data-zoom="0.8" aria-label="Zoom in" title="Zoom in">+</button><button type="button" class="sq" data-zoom="1.25" aria-label="Zoom out" title="Zoom out">-</button></div>
+</div>
 <button type="button" id="reset" hidden>Reset view</button>
 <ul id="legend" hidden></ul>
 <p id="msg">Loading...</p>
