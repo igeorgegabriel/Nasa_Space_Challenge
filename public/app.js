@@ -869,9 +869,10 @@ function outsideTestsNote() {
 const ARTEMIS_QUOTE = "[If] you want to get somebody's attention really quick, make the fire alarm go off in your spacecraft when you're still about 80,000 miles from home.";
 
 const STORY_INCIDENTS = [
-  ["1967", "Apollo 1", "pre-launch fire", "https://sma.nasa.gov/sma-disciplines/accllp/apollo-1"],
-  ["1997", "Mir", "oxygen generator fire", "https://www.nasa.gov/history/25-years-ago-fire-aboard-space-station-mir/"],
-  ["Recent", "Artemis II", "smoke alarm", "https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/"]
+  ["1967", "Apollo 1", "pre-launch fire", "https://sma.nasa.gov/sma-disciplines/accllp/apollo-1", "NASA: Apollo 1"],
+  ["1970", "Apollo 13", "oxygen tank explosion", "https://sma.nasa.gov/sma-disciplines/accllp/apollo-13", "NASA: Apollo 13"],
+  ["1997", "Mir", "oxygen generator fire", "https://www.nasa.gov/history/25-years-ago-fire-aboard-space-station-mir/", "NASA: Fire aboard space station Mir"],
+  ["Recent", "Artemis II", "smoke alarm", "https://www.spaceappschallenge.org/2026/challenges/flame-in-freefall/", null]
 ];
 
 const HERO_VIDEO = {
@@ -3218,11 +3219,12 @@ function renderHome() {
       return el("li", null, el("span", { class: "inc-year", text: i[0] }), el("span", { class: "inc-text" }, el("strong", { text: i[1] }), " " + i[2]));
     })),
     expander("Details", el("div", null,
-      el("p", { text: "Quote and incidents as described in the NASA Space Apps challenge statement." }),
+      el("p", { text: "Quote and incidents as described in the NASA Space Apps challenge statement and its resources." }),
       el("ul", null,
         el("li", null, ntrsLink(CHALLENGE_URL, "Flame in Freefall challenge statement")),
-        el("li", null, ntrsLink(STORY_INCIDENTS[0][3], "NASA: Apollo 1")),
-        el("li", null, ntrsLink(STORY_INCIDENTS[1][3], "NASA: Fire aboard space station Mir")))))
+        STORY_INCIDENTS.filter(function (i) { return i[4]; }).map(function (i) {
+          return el("li", null, ntrsLink(i[3], i[4]));
+        }))))
   ]);
   const air = story("st-air", "s-air", [
     rv(0, "h2", { text: "Moon base air" }),
@@ -3642,6 +3644,10 @@ function renderInvestigations(params) {
   const view = setView(
     pageHead("What has NASA tested?", "Browse the " + state.data.investigations.length + " PSI combustion investigations."),
     subNav([["#/investigations", "All investigations", "investigations"], ["#/compare", "Compare", "compare"], ["#/equipment", "Equipment", "equipment"], ["#/earth", "On Earth", "earth"]], "investigations"),
+    el("p", { class: "small inv-bg" }, "Background from NASA: ",
+      ntrsLink("https://www.nasa.gov/glenn/glenn-expertise-space-exploration/physical-sciences-program/combustion-science/", "Combustion Science at NASA Glenn"), ", ",
+      ntrsLink("https://www.nasa.gov/missions/station/a-researchers-guide-to-combustion-science/", "A Researcher's Guide to ISS Combustion Science (2015)"), ", ",
+      ntrsLink("https://www.youtube.com/watch?v=W1oXykoz9zg", "ScienceCasts: The Power of Studying Combustion on the ISS (2018 video)"), "."),
     el("div", { class: "filters" },
       select("Fuel class", fuelOptions, "fuel", function (o) { return FUEL_LABELS[o]; }),
       select("Function", FUNCTION_ORDER, "fn"),

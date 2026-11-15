@@ -75,6 +75,7 @@ flowchart LR
 
 ## Data
 
+- Challenge resources, all ten used: the PSI Data Repository (every table); Apollo 1, Apollo 13 and the Mir fire (Story page timeline); the three NASA Spinoff pages (Earth page, quotes verified); NASA Glenn Combustion Science, A Researcher's Guide to ISS Combustion Science (2015) and the ScienceCasts video (Investigations page).
 - NASA PSI combustion experimental tables: `data/psi_experimental_tables/` (22 CSV files, unmodified).
 - Unified table: `data/unified/conditions.csv` (2,009 rows, each with its source file and row).
 - Investigation metadata: `data/investigations/investigations_meta.json`.

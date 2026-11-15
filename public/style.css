@@ -390,7 +390,7 @@ table.preview th, table.preview td { white-space: nowrap; }
 
 .big-quote footer { margin-top: 1.3rem; font-size: 1rem; color: var(--muted); }
 
-.incidents { list-style: none; margin: clamp(2.4rem, 7vh, 4.4rem) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem 2.4rem; max-width: 60rem; }
+.incidents { list-style: none; margin: clamp(2.4rem, 7vh, 4.4rem) 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem 2.4rem; max-width: 72rem; }
 
 .incidents li { border-top: 1px solid var(--line); padding-top: 0.9rem; max-width: none; }
 
@@ -1435,3 +1435,6 @@ body.ask-open #ask-panel { display: flex; animation: slidein 0.28s ease; }
 .rank-play { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 0.9rem; margin: 0.9rem 0 0; }
 .rank-play .small { color: var(--muted); }
 #plan-game, #test-plan, #test-next { scroll-margin-top: calc(var(--hdr, 70px) + 1rem); }
+
+.inv-bg { margin: 0.6rem 0 0; color: var(--muted); max-width: 60rem; }
+@media (max-width: 900px) and (min-width: 721px) { .incidents { grid-template-columns: repeat(2, 1fr); } }
