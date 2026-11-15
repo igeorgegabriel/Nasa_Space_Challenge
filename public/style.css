@@ -1358,3 +1358,12 @@ body.ask-open #ask-panel { display: flex; animation: slidein 0.28s ease; }
 .gv-meas-list { max-width: 52rem; padding-left: 1.1rem; }
 
 .gv-meas-list li { margin: 0.35rem 0; }
+
+@media (min-width: 721px) and (max-aspect-ratio: 4/5) {
+  .story { min-height: 0; padding-top: clamp(4.5rem, 6vh, 6.5rem); padding-bottom: clamp(4.5rem, 6vh, 6.5rem); }
+  .hero { min-height: 0; padding: calc(min(92vw, 900px) * 0.5625 + 2.5rem) 0 0; }
+  .hero-video { top: 1.5rem; left: 50%; right: auto; width: min(92vw, 900px); transform: translateX(-50%); }
+  .hero::after { background: linear-gradient(0deg, rgba(11, 16, 32, 0.7) 0%, rgba(11, 16, 32, 0) 38%); }
+  .hero-copy { padding-bottom: 4.5rem; }
+  .credit { top: calc(min(92vw, 900px) * 0.5625 + 0.6rem); bottom: auto; }
+}

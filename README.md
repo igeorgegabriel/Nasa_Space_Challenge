@@ -29,12 +29,15 @@ flowchart LR
   N["NASA reports (NTRS)<br/>and Spinoff pages"] --> Q["Quotes checked<br/>word for word"]
   U --> F["FLEX model<br/>tested on held-out days<br/>refuses outside its data"]
   Q --> L["Lunar gravity check<br/>NASA GRC 2025 allowance"]
+  M["Measured partial gravity<br/>24 points, 7 NASA sources"] --> L
+  U --> H["PSI curator flags<br/>65 rows to review"]
   U --> D["Dashboard"]
   Q --> D
   F --> D
   L --> D
   D --> R["Rank per habitat"]
   D --> G["Oxygen gap and<br/>what to test next"]
+  G --> T["Fly these tests first<br/>9 tests close 15 of 15 gaps"]
   D --> E["Equipment and<br/>Earth uses"]
   U --> K["Ask the data<br/>Claude with 6 data tools<br/>cites the NASA sentence"]
   Q --> K
@@ -47,6 +50,8 @@ flowchart LR
 - **It knows where the evidence stops.** The model refuses habitats outside the tested range and says by how much. Moon base air is 0.14 atm below any FLEX test.
 - **Gravity, not just oxygen.** The lunar gravity check uses NASA Glenn's 2025 lunar-g tests: NASA Glenn's allowance for six materials is up to 2.3 O2 points, drop tests measured larger drops for some (Mylar 21.2 to 15.6, 5.6 points, at 10.2 psia), and some materials went the other way. A chart of 24 quote-checked partial-gravity points from 7 NASA sources sits below it.
 - **The newest flights, as data.** The 9 Saffire IV-VI flight tests that are not in PSI yet are rows in the app, each tied to a verbatim quote from its NASA report. Six burned solids between 25.4% and 31.0% oxygen, above PSI's 22.2% ceiling.
+- **A short test list, not just a gap.** Rank > Fly these tests first picks the fewest test conditions that close every habitat gap (a habitat x fuel class with no PSI test inside its window): 9 tests close 15 of 15. Test 1 is one solid-material test at 33.5-35% O2 and 8.1-8.3 psia that covers the Moon base, Mars base and pressurized rover at once. Downloadable as a CSV test matrix.
+- **Flags for the PSI team.** Data > For PSI curators lists 65 rows flagged by fixed rules (43 repeated rows, 11 text in number columns, 8 negative airflow, 2 oxygen on the wrong scale, 1 impossible pressure), each linked to its file and row. They are flagged, not confirmed errors. The same scan caught a sign error in our own parser, now fixed.
 - **Checked, not just cited.** Each Ask answer shows how many of its numbers match NASA data or the cited NASA sentence. Quotes on every page are machine-checked against saved source text.
 
 ## Challenge objectives
@@ -54,7 +59,8 @@ flowchart LR
 | Objective | Where in the dashboard |
 |---|---|
 | Identify investigations most relevant to crew habitats | Rank: five habitats, re-weightable score, rank stability per row. Home: Check any cabin air for any oxygen and pressure |
-| Extract data for predictive modelling | Data: a FLEX droplet model tested on held-out test days (AUC 0.85, Brier skill +0.35) that predicts for ISS air and refuses Moon air; where a model can be trusted (oxygen x pressure map); model readiness per habitat; CSV/JSON downloads |
+| Inform next-generation fire safety | Rank > Fly these tests first: 9 tests close 15 of 15 habitat gaps, with a CSV test matrix |
+| Extract data for predictive modelling | Data: a FLEX droplet model tested on held-out test days (AUC 0.85, Brier skill +0.35) that predicts for ISS air and refuses Moon air; where a model can be trusted (oxygen x pressure map); model readiness per habitat; CSV/JSON downloads. Data > For PSI curators: 65 flagged rows linked to their source file and row |
 | Partial gravity (lunar habitat) | Data > Lunar gravity check: NASA GRC allowance per material (up to 2.3 O2 points, not a maximum), measured lunar and Martian limits, quenching vs blowoff |
 | Research for next-generation fire safety equipment | Investigations > Equipment: prevention, detection, suppression |
 | Earth applications | Investigations > On Earth: water mist, smoke detection, firefighter air tanks and clothing (NASA Spinoff, quoted) |
@@ -66,6 +72,10 @@ flowchart LR
 - Investigation metadata: `data/investigations/investigations_meta.json`.
 - Habitat atmospheres with NASA sources: `data/environment_profiles.json`.
 - Verified key findings and their source text: `data/findings/`.
+- Measured partial-gravity points with source text: `data/partial_g/`.
+- Saffire IV-VI rows and NASA-report solid pressures: `data/outside_psi/`.
+- Test plan: `public/data/test_plan.json` (built by `pipeline/test_plan.py` through `build_site_data.py`).
+- PSI curator flags: `public/data/data_health.json` (built by `pipeline/data_health.py`).
 
 ## Reproduce
 
@@ -79,6 +89,8 @@ py -3.12 pipeline/audit_unified.py
 py -3.12 pipeline/verify_earth.py
 py -3.12 pipeline/verify_lunar_g.py
 py -3.12 pipeline/verify_outside_psi.py
+py -3.12 pipeline/verify_partial_g.py
+py -3.12 pipeline/data_health.py
 py -3.12 pipeline/build_models.py
 py -3.12 -m unittest discover -s tests
 ```
@@ -87,7 +99,9 @@ The site in `public/` is static. The Ask function is `api/ask.py` (Vercel Python
 
 ## Verification
 
-- Every quoted finding is checked word for word against its NASA source text (`pipeline/verify_findings.py`, `pipeline/verify_earth.py`, `pipeline/verify_lunar_g.py`), and the Saffire IV-VI rows and sourced solid pressures against their NTRS reports (`pipeline/verify_outside_psi.py`, 57 of 57 quotes).
+- Every quoted finding is checked word for word against its NASA source text (`pipeline/verify_findings.py`, `pipeline/verify_earth.py`, `pipeline/verify_lunar_g.py`), and the Saffire IV-VI rows and sourced solid pressures against their NTRS reports (`pipeline/verify_outside_psi.py`, 57 of 57 quotes). The partial-gravity points are checked the same way (`pipeline/verify_partial_g.py`): 152 quotes and 116 numbers against saved source text in `data/partial_g/`.
+- 259 quotes in total are checked word for word: 39 key findings, 57 outside PSI, 9 lunar gravity, 2 Earth uses and 152 partial gravity.
+- `pipeline/data_health.py` flags 65 PSI rows by fixed rules for curator review. The scan also found 8 negative airflows in PSI-107 SPICE that our parser had read as positive; fixed and covered by tests in `tests/test_build_unified.py`.
 - The unified table is re-checked against the original PSI files (`pipeline/audit_unified.py`).
 - Habitat values are either cited to a NASA source or shown as not specified; nothing is assumed.
 - The Ask assistant was scored on 100 questions whose checks were committed before the run (`eval/ask_eval_set_v2.json`, `eval/run_ask_eval_v2.py`, results in `eval/results/`): 94 passed, all 25 trap questions were refused, 98.2% of the numbers in answers matched the data, with the failures listed on the Verification page.
