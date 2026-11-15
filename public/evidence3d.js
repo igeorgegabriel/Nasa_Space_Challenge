@@ -6,10 +6,13 @@
   var SHORT = { iss: "ISS cabin", gateway: "Gateway", lunar: "Moon base", rover: "Pressurized rover", mars: "Mars base" };
   var PSIA_PER_ATM = 14.6959;
   var QUALITY = ["exact", "approximate"];
-  var LABEL_BELOW = { gateway: true };
-  var LABEL_FAR = { rover: true };
+  var LABEL_BELOW = {};
+  var LABEL_SIDE = { rover: true };
+  var LEVEL_Z = { "0g": 0, moon: 1, mars: 2, "1g": 3 };
+  var P_TICKS = [4, 8, 15, 30, 60];
+  var P_RANGE = [3, 80];
   var ANIM_MS = 1600;
-  var HALF_Z = 0.03;
+  var HALF_Z = 0.08;
   var plotNode = document.getElementById("plot");
   var resetBtn = document.getElementById("reset");
   var legendNode = document.getElementById("legend");
@@ -128,7 +131,7 @@
         }
         meas.x.push(o2.value);
         meas.y.push(press.value);
-        meas.z.push(gravity[lv.id]);
+        meas.z.push(LEVEL_Z[lv.id]);
         meas.text.push("<b>" + esc(p.material) + "</b><br>" + (s.field === "ulois_percent_o2" ? "ULOI* " : "LOC ") + fmt(o2.value, 1) + " percent O2, " + fmt(press.value, 1) + " psia<br>" + esc(levelLabel[lv.id]) + ", " + fmt(gravity[lv.id], 3) + " g<br>" + esc(p.source.cite) + ", NTRS " + esc(p.source.ntrs_id) + (s.preliminary ? "<br>Preliminary poster" : ""));
       });
     });
@@ -138,8 +141,12 @@
       if (!specified(e, "o2") || !specified(e, "pressure_atm") || e.gravity.not_specified) {
         return;
       }
+      var level = ["0g", "moon", "mars", "1g"].filter(function (id) { return Math.abs(gravity[id] - e.gravity.g) < 1e-9; })[0];
+      if (level === undefined) {
+        return;
+      }
       boxes.push({
-        id: e.id, name: SHORT[e.id] || e.name, g: e.gravity.g,
+        z: LEVEL_Z[level], id: e.id, name: SHORT[e.id] || e.name, g: e.gravity.g,
         x0: e.o2.window_min * 100, x1: e.o2.window_max * 100,
         y0: e.pressure_atm.window_min * PSIA_PER_ATM, y1: e.pressure_atm.window_max * PSIA_PER_ATM
       });
@@ -149,8 +156,8 @@
   }
 
   function boxMesh(b, half, color, opacity) {
-    var z0 = b.g - half;
-    var z1 = b.g + half;
+    var z0 = b.z - half;
+    var z1 = b.z + half;
     return {
       type: "mesh3d", name: b.name, showlegend: false,
       x: [b.x0, b.x1, b.x1, b.x0, b.x0, b.x1, b.x1, b.x0],
@@ -167,8 +174,8 @@
   }
 
   function boxEdges(b, half, color, width) {
-    var z0 = b.g - half;
-    var z1 = b.g + half;
+    var z0 = b.z - half;
+    var z1 = b.z + half;
     var pts = [
       [b.x0, b.y0, z0], [b.x1, b.y0, z0], [b.x1, b.y1, z0], [b.x0, b.y1, z0], [b.x0, b.y0, z0], null,
       [b.x0, b.y0, z1], [b.x1, b.y0, z1], [b.x1, b.y1, z1], [b.x0, b.y1, z1], [b.x0, b.y0, z1], null,
@@ -282,11 +289,11 @@
     });
     traces.push({
       type: "scatter3d", mode: "text", showlegend: false, hoverinfo: "skip",
-      x: d.boxes.map(function (b) { return (b.x0 + b.x1) / 2; }),
-      y: d.boxes.map(function (b) { return LABEL_FAR[b.id] ? b.y1 : (b.y0 + b.y1) / 2; }),
-      z: d.boxes.map(function (b) { return b.g + (LABEL_BELOW[b.id] ? -1 : 1) * HALF_Z * (LABEL_FAR[b.id] ? 5.5 : 3); }),
+      x: d.boxes.map(function (b) { return LABEL_SIDE[b.id] ? b.x1 : (b.x0 + b.x1) / 2; }),
+      y: d.boxes.map(function (b) { return Math.sqrt(b.y0 * b.y1); }),
+      z: d.boxes.map(function (b) { return b.z + (LABEL_BELOW[b.id] ? -1 : LABEL_SIDE[b.id] ? 0 : 1) * HALF_Z * (b.id === "gateway" ? 4.2 : 1.8); }),
       text: d.boxes.map(function (b) { return b.name; }),
-      textposition: d.boxes.map(function (b) { return LABEL_BELOW[b.id] ? "bottom center" : "top center"; }),
+      textposition: d.boxes.map(function (b) { return LABEL_SIDE[b.id] ? "middle right" : LABEL_BELOW[b.id] ? "bottom center" : "top center"; }),
       textfont: { family: FONT, size: 12, color: d.boxes.map(function (b) { return b.id === "lunar" ? "#ffb98a" : "#97a3bf"; }) }
     });
 
@@ -296,7 +303,6 @@
     d.burned.concat(d.quiet).forEach(function (t) { xs.push(t.o2_percent); ys.push(t.pressure_psia); });
     d.boxes.forEach(function (b) { xs.push(b.x0, b.x1); ys.push(b.y0, b.y1); });
     var xr = [Math.floor(Math.min.apply(null, xs)) - 1, Math.ceil(Math.max.apply(null, xs)) + 1];
-    var yr = [Math.floor(Math.min.apply(null, ys)) - 1, Math.ceil(Math.max.apply(null, ys)) + 1];
     var ticks = ["0g", "moon", "mars", "1g"];
 
     var layout = {
@@ -307,14 +313,14 @@
       hoverlabel: { bgcolor: "#18233f", bordercolor: "#34405f", align: "left", font: { family: FONT, color: "#eef2fb", size: 12 } },
       scene: {
         bgcolor: COL.bg,
-        aspectmode: "manual", aspectratio: { x: 1.6, y: 1.1, z: 0.7 },
+        aspectmode: "manual", aspectratio: { x: 1.3, y: 1, z: 0.9 },
         xaxis: axis("Oxygen (percent)", { range: xr }),
-        yaxis: axis("Total pressure (psia)", { range: yr }),
-        zaxis: axis("Gravity", {
-          range: [-0.07, d.gravity["1g"] + 0.07],
+        yaxis: axis("Total pressure (psia)", { type: "log", range: P_RANGE.map(function (v) { return Math.log(v) / Math.LN10; }), tickmode: "array", tickvals: P_TICKS, ticktext: P_TICKS.map(String) }),
+        zaxis: axis("Gravity (levels, not to scale)", {
+          range: [-0.4, 3.4],
           tickmode: "array",
-          tickvals: ticks.map(function (t) { return d.gravity[t]; }),
-          ticktext: ticks.map(function (t) { return d.levelLabel[t].split(" (")[0]; })
+          tickvals: ticks.map(function (t) { return LEVEL_Z[t]; }),
+          ticktext: ticks.map(function (t) { return t === "moon" || t === "mars" ? d.levelLabel[t].split(" (")[0] + " " + parseFloat(Number(d.gravity[t]).toFixed(3)) + " g" : fmt(d.gravity[t], 0) + " g"; })
         }),
         camera: camStart,
         dragmode: "orbit"
