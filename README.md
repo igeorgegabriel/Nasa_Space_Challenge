@@ -10,6 +10,14 @@ Live dashboard: https://flame-in-freefall-three.vercel.app
 
 Demo video (30 s): https://youtu.be/q3KyZFqHhr4
 
+## Judge it in 3 minutes
+
+1. Story page, the oxygen gap chart: hover a dot to see its source file and row. https://flame-in-freefall-three.vercel.app/#/home
+2. Check any cabin air: pick Moon base. It shows Not tested and the model refuses to guess. https://flame-in-freefall-three.vercel.app/#/home?at=s-next
+3. Rank, Fly these tests first: the test plan and its CSV. https://flame-in-freefall-three.vercel.app/#/rank?habitat=lunar&at=test-plan
+4. Gravity page: the measured lunar and Martian limits, each with its source quote. https://flame-in-freefall-three.vercel.app/#/gravity
+5. Ask: ask a question and see the citations and the numbers check. Open it from the Ask button in the header.
+
 ## The finding
 
 A Moon base is planned to run at about 34% oxygen. Across 2,009 NASA combustion tests in the PSI database, solid materials were never tested above 22.2% oxygen. The newest flights reached about 31%, and they are not in PSI yet. The dashboard shows that gap for five crewed habitats and what NASA should test to close it.

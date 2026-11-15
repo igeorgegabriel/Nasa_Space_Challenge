@@ -2774,21 +2774,21 @@ const TOUR_STEPS = [
   },
   {
     hash: "#/home", scroll: "#s-next", ring: ".scenario",
-    text: function () { return "Pick a habitat or drag the oxygen and pressure. See what NASA has tested, and what the model says."; }
+    text: function () { return "Pick Moon base. The air shows as not tested, and the model refuses instead of guessing."; }
   },
   {
-    hash: "#/rank?habitat=lunar", scroll: null, ring: ".rank-cards",
-    text: function () { return "Every investigation, scored for the " + envShort(envById("lunar")) + ". The weights are adjustable."; }
+    hash: "#/rank?habitat=lunar", scroll: "#test-plan", ring: "#test-plan",
+    text: function () { return "Fly these tests first: " + state.data.test_plan.headline.text + ". The plan downloads as CSV."; }
+  },
+  {
+    hash: "#/gravity", scroll: null, ring: ".gv-block",
+    text: function () { return "Measured lunar and Mars gravity limits, with the source quote for each."; }
   },
   {
     hash: "#/rank?habitat=lunar", scroll: null, ring: "#ask-panel", ask: true,
-    text: function () { return "Ask anything. Each answer shows its sources and how it checked the data."; }
-  },
-  {
-    hash: "#/equipment", scroll: null, ring: "#view .page-head, #view h1",
-    text: function () { return "Research mapped to prevention, detection and suppression equipment."; }
+    text: function () { return "Ask anything. Each answer shows its citations and how the numbers were checked."; }
   }
-];
+];;
 
 function tourClearRing() {
   clearTimeout(tour.ringTimer);
@@ -2858,16 +2858,16 @@ function tourClose() {
 function tourMove(delta) {
   tourStopPlay();
   const target = tour.step + delta;
-  if (target >= TOUR_STEPS.length) {
-    tourClose();
-    return;
-  }
   if (target < 0) {
     return;
   }
   if (TOUR_STEPS[tour.step].ask && tour.openedAsk) {
     closeAskPanel(false);
     tour.openedAsk = false;
+  }
+  if (target >= TOUR_STEPS.length) {
+    tourClose();
+    return;
   }
   tour.step = target;
   tourShow();
@@ -3137,6 +3137,25 @@ function renderHome() {
   const tile = function (href, title, index) {
     return rv(index, "a", { class: "tile", href: href }, el("span", { text: title }));
   };
+  const actCard = function (index, who, line, href, label) {
+    return rv(index, "div", { class: "act-card" },
+      el("h3", { text: who }),
+      el("p", { text: line }),
+      el("a", { class: "btn ghost", href: href, text: label }));
+  };
+  const lunarQuotes = {};
+  data.lunar_g.quotes.forEach(function (item) { lunarQuotes[item.id] = item; });
+  const act = story("st-act", "s-act", [
+    rv(0, "h2", { text: "Who acts on this" }),
+    el("div", { class: "act-cards" },
+      actCard(1, "PSI curators", data.data_health.summary.flagged_rows + " PSI rows flagged for review", "#/data?at=health", "See the rows"),
+      actCard(2, "Flammability test teams", data.test_plan.headline.text, "#/rank?habitat=lunar&at=test-plan", "See the test plan"),
+      actCard(3, "Habitat designers", "Where the evidence stops for your cabin air", "#/home?at=s-next", "Check your air")),
+    rv(4, "p", { class: "story-sub act-gap", text: data.partial_g.summary.headline }),
+    rv(5, "div", { class: "act-next" },
+      el("p", { class: "small", text: "NASA's next step, in its own words:" }),
+      gravityQuote(lunarQuotes.fm2_plan))
+  ]);
   const explore = story("st-explore", "s-explore", [
     el("div", { class: "tiles" },
       tile("#/rank", "Rank experiments for a habitat", 0),
@@ -3150,7 +3169,7 @@ function renderHome() {
       TEAM_WHY ? el("blockquote", { id: "team-why", class: "team-why", text: TEAM_WHY }) : null,
       el("p", { class: "who-link" }, ntrsLink(TEAM_URL, "Meet the team on NASA Space Apps")))
   ]);
-  const view = setView(hero, quote, air, gap, grav, next, explore);
+  const view = setView(hero, quote, air, gap, grav, next, act, explore);
   watchStory(sections);
   gapNode = chart;
   drawGapChart(chart);
@@ -5994,6 +6013,18 @@ function modelChart(model, selId, narrow, animate) {
   return node;
 }
 
+function solidEvidenceCard() {
+  const data = state.data;
+  const solid = data.conditions.filter(function (r) { return r.fuel_class === "solid"; }).length;
+  const item = data.model_readiness.environments.lunar.items.find(function (i) { return i.id === "solid_flammability"; });
+  const flights = data.outside_psi.tests.filter(function (t) { return /^Saffire (IV|V|VI)$/.test(t.flight); });
+  const burned = flights.filter(function (t) { return t.outcome_short === "Burned"; }).length;
+  return el("div", { class: "solid-card", id: "solid-evidence" },
+    el("h3", { text: "Why there is no solid-fuel model" }),
+    el("p", { text: solid + " PSI solid-fuel rows, " + item.rows_with_response + " with a recorded outcome or burn time. Saffire IV to VI add " + flights.length + " flights outside PSI, " + burned + " of them burned." }),
+    el("p", { class: "small muted", text: "We do not label outcomes from report text, so no solid model is trained. The gap is shown instead, and the test plan targets it." }));
+}
+
 function modelPanel() {
   const bundle = state.data.models;
   const model = bundle.models[0];
@@ -6084,7 +6115,7 @@ function modelPanel() {
   return el("section", { class: "data-block", id: "model" },
     el("h2", { text: "A model that knows its limits" }),
     el("p", { class: "data-cap", text: "Droplet flames only. It gives an answer where NASA tested, and says no where it did not." }),
-    legend, chart, chips, verdict, card, details);
+    legend, chart, chips, verdict, card, details, solidEvidenceCard());
 }
 
 function mapPanel() {
