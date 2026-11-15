@@ -8,6 +8,7 @@ const NAV = [
   ["home", "Story"],
   ["rank", "Rank"],
   ["investigations", "Investigations"],
+  ["gravity", "Gravity"],
   ["data", "Data"]
 ];
 
@@ -16,7 +17,6 @@ const NAV_ACTIVE = {
   compare: "investigations",
   earth: "investigations",
   equipment: "investigations",
-  gravity: "data",
   verification: "data",
   brief: "rank"
 };
@@ -887,6 +887,7 @@ const CHALLENGE_URL = "https://www.spaceappschallenge.org/2026/challenges/flame-
 
 let storyObserver = null;
 let evidenceObserver = null;
+let evidencePlayObserver = null;
 let heroObserver = null;
 let gapNode = null;
 let gapWidth = 0;
@@ -904,6 +905,10 @@ function stopStory() {
     storyObserver = null;
   }
   gapStop();
+  if (evidencePlayObserver) {
+    evidencePlayObserver.disconnect();
+    evidencePlayObserver = null;
+  }
   if (evidenceObserver) {
     evidenceObserver.disconnect();
     evidenceObserver = null;
@@ -1410,7 +1415,7 @@ function playPoints() {
     return n ? Math.max(0, n.getBoundingClientRect().top + window.scrollY - hdr) : null;
   };
   const pts = [];
-  [["#s-quote", ["#s-quote .big-quote p"]], ["#s-air", ["#s-air h2", "#s-air .story-line"]]].forEach(function (p) {
+  [["#s-air", ["#s-air h2", "#s-air .story-line"]]].forEach(function (p) {
     const y = at(p[0]);
     if (y !== null) {
       pts.push({ y: y, dwell: playDwell(playWords(p[1])), settle: 600 });
@@ -1426,9 +1431,9 @@ function playPoints() {
   }
   const evY = at("#s-3d");
   if (evY !== null) {
-    pts.push({ y: evY, dwell: playDwell(playWords(["#s-3d h2", "#s-3d .story-sub"])) + EVIDENCE_READ, settle: 600 });
+    pts.push({ y: evY, dwell: EVIDENCE_READ, settle: 600 });
   }
-  [["#s-grav", ["#s-grav h2", "#s-grav .story-line"]], ["#s-next", []]].forEach(function (p) {
+  [["#s-act", ["#s-act h2"]], ["#s-next", []]].forEach(function (p) {
     const y = at(p[0]);
     if (y !== null) {
       pts.push({ y: y, dwell: p[1].length ? playDwell(playWords(p[1])) : 0, settle: p[1].length ? 600 : 0 });
@@ -1437,7 +1442,7 @@ function playPoints() {
   return pts;
 }
 
-const EVIDENCE_READ = 2200;
+const EVIDENCE_READ = 2500;
 const EVIDENCE_SRC = "evidence3d.html";
 
 function evidenceCounts() {
@@ -1473,6 +1478,33 @@ function evidenceWatch(section) {
       frame.setAttribute("src", EVIDENCE_SRC);
     }
   };
+  let seen = false;
+  let loaded = false;
+  const send = function () {
+    if (seen && loaded && frame.contentWindow) {
+      frame.contentWindow.postMessage({ type: "e3d-play" }, "*");
+    }
+  };
+  frame.addEventListener("load", function () {
+    loaded = true;
+    send();
+  });
+  if (window.IntersectionObserver) {
+    evidencePlayObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        const half = e.rootBounds ? e.rootBounds.height * 0.5 : Infinity;
+        if (e.isIntersecting && (e.intersectionRatio >= 0.5 || e.intersectionRect.height >= half)) {
+          seen = true;
+          send();
+          evidencePlayObserver.disconnect();
+          evidencePlayObserver = null;
+        }
+      });
+    }, { threshold: [0, 0.25, 0.5, 0.75, 1] });
+    evidencePlayObserver.observe(section);
+  } else {
+    seen = true;
+  }
   if (window.IntersectionObserver) {
     evidenceObserver = new IntersectionObserver(function (entries) {
       if (entries.some(function (e) { return e.isIntersecting; })) {
@@ -1495,7 +1527,10 @@ function evidenceSection() {
     rv(1, "p", { class: "story-sub", text: "Moon base air sits at lunar gravity. Almost every test sits at 0 g." }),
     holder,
     el("p", { class: "pg-sr", text: evidenceSummary() }),
-    rv(3, "p", { class: "small e3d-cap", text: "Drag to rotate, click then scroll to zoom. Hover any mark for its source." })
+    rv(3, "p", { class: "small e3d-cap", text: "Drag to rotate, click then scroll to zoom. Hover any mark for its source." }),
+    rv(4, "div", { class: "e3d-grav" },
+      el("p", { class: "story-line", text: "On the Moon, NASA Glenn's allowance for a 1-g test margin is up to " + gravityFacts().allow + " oxygen points, and drop tests measured up to " + gravityFacts().drop + "." }),
+      el("a", { class: "btn ghost", href: "#/gravity", text: "See the lunar gravity check" }))
   ];
 }
 
@@ -1628,7 +1663,14 @@ function testNextSection(env) {
     plainTable(TEST_NEXT_HEADERS, testNextRows(block, false)),
     el("p", { class: "small", text: "A test counts as inside when its ambient O2, its pressure and, where NASA specifies one, its flow speed all lie in the window. Rows of quality exact or approximate only. A row with no recorded pressure cannot count as inside." }),
     el("p", { class: "small", text: "Nearest tested condition is the row of that fuel class whose O2 is closest to the window, then pressure, then flow. Nearest NASA test outside PSI is shown for solids only and is never counted." }))));
-  holder.appendChild(planSection());
+  return holder;
+}
+
+function testPlanBlock(env) {
+  const holder = el("section", { class: "test-next plan-block" });
+  if (state.data.test_next.environments[env.id]) {
+    holder.appendChild(planSection());
+  }
   return holder;
 }
 
@@ -3156,9 +3198,16 @@ function renderHome() {
       rv(1, "p", { class: "hero-line", text: "Fire behaves differently in space. We checked every NASA test so Moon crews know where the evidence stops." }),
       rv(2, "div", { class: "hv-wrap" }, verdictBox.card),
       rv(3, "p", { class: "hero-cta" }, verdictBox.go, el("button", { type: "button", class: "btn ghost hero-play", text: "Take the tour", onclick: tourStart })),
+      rv(3, "p", { class: "hero-3d" }, el("a", { class: "textlink", href: "#s-3d", text: "See the gap in 3D", onclick: function (e) {
+        e.preventDefault();
+        const target = document.getElementById("s-3d");
+        if (target) {
+          target.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth" });
+        }
+      } })),
       rv(4, "div", { class: "hv-stats" }, heroStats())),
     el("button", { type: "button", class: "scroll-cue", "aria-label": "Scroll to the next section", onclick: function () {
-      document.getElementById("s-quote").scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth" });
+      document.getElementById("s-air").scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth" });
     } }, el("span", { text: "Scroll" }), el("i")),
     el("span", { class: "hero-alt", text: HERO_FALLBACK.alt }),
     el("span", { class: "credit", text: HERO_VIDEO.caption }));
@@ -3194,15 +3243,6 @@ function renderHome() {
     el("div", { class: "gap-more" }, gapDetails(lunar))
   ]);
   const evidence = story("st-3d", "s-3d", evidenceSection());
-  const grav = story("st-grav", "s-grav", [
-    rv(0, "h2", { text: "Gravity changes it too" }),
-    el("div", { class: "grav-wrap" },
-      rv(1, "figure", { class: "gm gm-home" }, gravityMap(true),
-        el("figcaption", { class: "small", text: "Concept drawing, not data." })),
-      el("div", { class: "grav-copy" },
-        rv(2, "p", { class: "story-line", text: "On the Moon, NASA Glenn's allowance for a 1-g test margin is up to " + gravityFacts().allow + " oxygen points, and drop tests measured up to " + gravityFacts().drop + "." }),
-        rv(3, "p", { class: "story-sub" }, el("a", { class: "btn ghost", href: "#/gravity", text: "See the lunar gravity check" }))))
-  ]);
   const next = story("st-next", "s-next", [
     rv(0, "h2", { text: "Check any cabin air" }),
     rv(1, "div", { class: "scenario" }, scenarioCard())
@@ -3242,7 +3282,7 @@ function renderHome() {
       TEAM_WHY ? el("blockquote", { id: "team-why", class: "team-why", text: TEAM_WHY }) : null,
       el("p", { class: "who-link" }, ntrsLink(TEAM_URL, "Meet the team on NASA Space Apps")))
   ]);
-  const view = setView(hero, act, quote, air, gap, evidence, grav, next, explore);
+  const view = setView(hero, air, gap, evidence, act, next, quote, explore);
   watchStory(sections);
   evidenceWatch(evidence);
   gapNode = chart;
@@ -3517,6 +3557,7 @@ function renderRank() {
 
   function drawTest() {
     clear(nextHolder);
+    nextHolder.appendChild(testPlanBlock(currentEnv()));
     nextHolder.appendChild(testNextSection(currentEnv()));
   }
 
@@ -3780,8 +3821,16 @@ function listParam(v) {
   return v ? v.split(",").filter(Boolean) : [];
 }
 
+const COMPARE_DEFAULT = ["PSI-25", "PSI-99", "PSI-69"];
+
 function renderCompare(params) {
-  const selected = listParam(params.ids).filter(function (id) { return invById(id); }).slice(0, 4);
+  let selected = listParam(params.ids).filter(function (id) { return invById(id); }).slice(0, 4);
+  if (!selected.length && params.ids === undefined) {
+    selected = COMPARE_DEFAULT.filter(function (id) { return invById(id); });
+    if (selected.length && parseHash().name === "compare") {
+      history.replaceState(null, "", "#/compare?" + qs({ ids: selected.join(",") }));
+    }
+  }
   const boxes = el("div", { class: "checks" });
   state.data.investigations.forEach(function (inv) {
     const box = el("input", { type: "checkbox", value: inv.psi_id, checked: selected.indexOf(inv.psi_id) >= 0 });

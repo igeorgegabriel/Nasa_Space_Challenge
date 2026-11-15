@@ -18,9 +18,12 @@
   var legendNode = document.getElementById("legend");
   var msgNode = document.getElementById("msg");
   var camStart = { eye: { x: 0, y: 0, z: 2.7 }, up: { x: 0, y: 1, z: 0 }, center: { x: 0, y: 0, z: 0 } };
-  var camEnd = { eye: { x: 1.45, y: -1.5, z: 0.34 }, up: { x: 0, y: 0, z: 1 }, center: { x: -0.05, y: 0, z: -0.12 } };
+  var camEnd = { eye: { x: 1.28, y: -1.32, z: 0.3 }, up: { x: 0, y: 0, z: 1 }, center: { x: -0.05, y: 0, z: -0.12 } };
   var raf = 0;
   var active = false;
+  var ready = false;
+  var wantPlay = false;
+  var played = false;
 
   function esc(t) {
     return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -225,6 +228,31 @@
     Plotly.relayout(plotNode, { "scene.camera": cam });
   }
 
+  function quietMotion() {
+    return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }
+
+  function play() {
+    if (played) {
+      return;
+    }
+    played = true;
+    animate();
+  }
+
+  window.addEventListener("message", function (e) {
+    if (!e.data || e.data.type !== "e3d-play") {
+      return;
+    }
+    if (ready) {
+      if (!quietMotion()) {
+        play();
+      }
+    } else {
+      wantPlay = true;
+    }
+  });
+
   function animate() {
     if (raf) {
       cancelAnimationFrame(raf);
@@ -319,6 +347,7 @@
       hoverlabel: { bgcolor: "#18233f", bordercolor: "#34405f", align: "left", font: { family: FONT, color: "#eef2fb", size: 12 } },
       scene: {
         bgcolor: COL.bg,
+        domain: { x: [0, 1], y: [0, 1] },
         aspectmode: "manual", aspectratio: { x: 1.3, y: 1, z: 0.9 },
         xaxis: axis("Oxygen (percent)", { range: xr }),
         yaxis: axis("Total pressure (psia)", { type: "log", range: P_RANGE.map(function (v) { return Math.log(v) / Math.LN10; }), tickmode: "array", tickvals: P_TICKS, ticktext: P_TICKS.map(String) }),
@@ -335,6 +364,12 @@
     return Plotly.newPlot(plotNode, traces, layout, { displayModeBar: false, displaylogo: false, responsive: true, scrollZoom: true }).then(function () {
       msgNode.hidden = true;
       resetBtn.hidden = false;
+      ready = true;
+      if (quietMotion()) {
+        setCam(camAt(1, zoomFor()));
+      } else if (wantPlay) {
+        play();
+      }
       legend([
         [COL.solid, "Solid fuel tests"],
         [COL.other, "Droplet and gas tests"],
@@ -342,7 +377,6 @@
         [COL.measured, "Measured limits at 1 g, Mars, Moon"],
         [COL.accent, "Moon base air"]
       ]);
-      animate();
     });
   }
 

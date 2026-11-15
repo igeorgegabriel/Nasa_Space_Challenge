@@ -170,7 +170,7 @@ async function main() {
   await sleep(1200);
 
   const navLabels = JSON.parse(await js("JSON.stringify(Array.from(document.querySelectorAll('#nav a')).map(a => a.textContent))"));
-  assert.deepStrictEqual(navLabels, ["Story", "Rank", "Investigations", "Data"]);
+  assert.deepStrictEqual(navLabels, ["Story", "Rank", "Investigations", "Gravity", "Data"]);
   assert.strictEqual(await js("document.getElementById('ask-open').hidden"), false);
   assert.strictEqual(await js("getComputedStyle(document.getElementById('ask-panel')).display"), "none");
   const mainBefore = await js("document.getElementById('view').getBoundingClientRect().width");
