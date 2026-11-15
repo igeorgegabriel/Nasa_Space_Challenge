@@ -295,7 +295,11 @@
     d.boxes.forEach(function (b) {
       var moon = b.id === "lunar";
       var half = moon ? HALF_Z : b.id === "rover" ? HALF_Z * 1.7 : HALF_Z * 1.2;
-      traces.push(boxMesh(b, half, moon ? COL.accent : COL.muted, moon ? 0.62 : 0.22));
+      var mesh = boxMesh(b, half, moon ? COL.accent : COL.muted, moon ? 0.62 : 0.22);
+      if (b.id === "rover") {
+        mesh.hoverinfo = "skip";
+      }
+      traces.push(mesh);
       traces.push(boxEdges(b, half, moon ? "#ff9a62" : "#97a3bf", moon ? 4 : 2));
       if (b.z > 0) {
         var cx = (b.x0 + b.x1) / 2;
@@ -322,7 +326,8 @@
       marker: { symbol: "circle-open", size: 6, color: COL.measured, line: { color: COL.measured, width: 2 } }
     });
     traces.push({
-      type: "scatter3d", mode: "text", showlegend: false, hoverinfo: "skip",
+      type: "scatter3d", mode: "text", showlegend: false, hoverinfo: "text",
+      hovertext: d.boxes.map(function (b) { return boxMesh(b, 0, "", 0).text; }),
       x: d.boxes.map(function (b) { return LABEL_SIDE[b.id] ? b.x1 : (b.x0 + b.x1) / 2; }),
       y: d.boxes.map(function (b) { return Math.sqrt(b.y0 * b.y1); }),
       z: d.boxes.map(function (b) { return b.z + (LABEL_BELOW[b.id] ? -1 : LABEL_SIDE[b.id] ? 0 : 1) * HALF_Z * (b.id === "gateway" ? 4.2 : 1.8); }),
