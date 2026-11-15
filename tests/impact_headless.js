@@ -121,10 +121,10 @@ async function main() {
   await cdp("Emulation.setDeviceMetricsOverride", { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
 
   const hashes = JSON.parse(await evalJs("JSON.stringify(TOUR_STEPS.map(function(s){return s.hash}))"));
-  assert.strictEqual(hashes.length, 5, "tour steps");
+  assert.strictEqual(hashes.length, 6, "tour steps");
   const landed = [];
   await evalJs("tourStart()");
-  for (let s = 0; s < 5; s += 1) {
+  for (let s = 0; s < 6; s += 1) {
     await sleep(1500);
     if (s === 0) { await evalJs("tourStopPlay()"); }
     const now = JSON.parse(await evalJs("JSON.stringify({step:tour.step,hash:location.hash,count:document.querySelector('.tour-count').textContent,text:document.querySelector('.tour-text').textContent,ring:!!document.querySelector('.tour-ring'),ringId:(document.querySelector('.tour-ring')||{}).id||(document.querySelector('.tour-ring')||{}).className||''})"));
@@ -132,7 +132,7 @@ async function main() {
     assert.strictEqual(now.hash, hashes[s], "step " + s + " hash " + now.hash);
     assert(s === 0 || now.ring, "step " + s + " ring");
     landed.push(now.count + " | " + now.hash + " | ring " + now.ringId + " | " + now.text);
-    if (s < 4) { await evalJs("document.querySelector('.tour-next').click()"); }
+    if (s < 5) { await evalJs("document.querySelector('.tour-next').click()"); }
   }
   await evalJs("document.querySelector('.tour-next').click()");
   await sleep(300);

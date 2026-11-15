@@ -60,8 +60,8 @@ const CACHE = {
     citations: [{ n: 1, psi_id: "PSI-25", title: "PSI-25 BASS-II", cited_text: "Rows in the BASS-II table record ambient O2 up to 0.222." }],
     model: "cache"
   },
-  "how many solid fuel tests were run inside moon base oxygen levels": {
-    answer: "None. No PSI solid-fuel row reaches Moon base oxygen [1].",
+  "what is the most important finding of this project": {
+    answer: "The project's most important finding is that NASA solid-fuel tests stop short of Moon base oxygen [1].",
     citations: [{ n: 1, psi_id: "PSI-25", title: "PSI-25 BASS-II", cited_text: "Rows in the BASS-II table record ambient O2 up to 0.222." }],
     steps: [{ tool: "psi", label: "Counted solid rows in the Moon base window", detail: "0 rows" }],
     actions: [{ label: "Open the lunar ranking", href: "#/rank?habitat=lunar" }],
@@ -413,8 +413,9 @@ async function main() {
   assert.strictEqual(await js("document.getElementById('tour-open').textContent"), "Tour");
   assert.strictEqual(await js("document.querySelector('.hero-play').textContent"), "Take the tour");
   await js("document.getElementById('tour-open').click()");
-  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 1 of 5");
-  assert.strictEqual(await js("document.querySelector('.tour-text').textContent"), "The story: what NASA has tested, and the gap a Moon base leaves. It plays by itself; scroll to take over.");
+  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 1 of 6");
+  assert.strictEqual(await js("document.querySelector('.tour-text').textContent"), "The story: Moon base air against what NASA has tested. It plays by itself; scroll to take over.");
+  assert.strictEqual(await js("document.querySelector('#tour').getAttribute('aria-label')"), "Guided tour");
   await waitFor("document.querySelector('.tour-next').textContent === 'Skip'", "story playing");
   await waitFor("document.querySelector('.tour-next').textContent === 'Skip'", "story playing");
   assert.strictEqual(await js("document.querySelector('.tour-btn').disabled"), true);
@@ -422,28 +423,39 @@ async function main() {
   assert.strictEqual(await js("document.querySelectorAll('.tour-ring').length"), 0);
   await shot("tour_1_1366");
   await js("document.querySelector('.tour-next').click()");
-  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 2 of 5");
-  await sleep(600);
-  assert.strictEqual(await js("document.querySelectorAll('.scenario.tour-ring').length"), 1);
+  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 2 of 6");
+  await waitFor("document.querySelectorAll('#s-3d .e3d.tour-ring').length === 1", "3D ring");
+  assert.ok((await js("document.querySelector('.tour-text').textContent")).indexOf("The gap is three-dimensional") === 0);
   await js("window.dispatchEvent(new WheelEvent('wheel', { deltaY: 10 }))");
   await js("document.querySelector('.tour-btn').click()");
-  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 1 of 5");
+  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 1 of 6");
   await waitFor("document.querySelector('.tour-next').textContent === 'Skip'", "story replays"); await sleep(400);
   await js("window.dispatchEvent(new WheelEvent('wheel', { deltaY: 10 }))");
   await sleep(200);
   assert.strictEqual(await js("document.querySelector('.tour-next').textContent"), "Next");
-  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 1 of 5");
+  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 1 of 6");
   await js("document.querySelector('.tour-next').click()");
-  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 2 of 5");
+  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 2 of 6");
   await sleep(600);
+  await js("document.querySelector('.tour-next').click()");
+  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 3 of 6");
+  await waitFor("document.querySelectorAll('.scenario.tour-ring').length === 1", "cabin air ring");
   await js("document.querySelector('.tour-next').click()");
   await waitFor("location.hash === '#/rank?habitat=lunar'", "rank hash");
-  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 3 of 5");
-  await sleep(600);
-  assert.strictEqual(await js("document.querySelectorAll('#test-plan.tour-ring').length"), 1);
+  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 4 of 6");
+  await waitFor("document.querySelectorAll('#plan-game.tour-ring').length === 1", "plan game ring");
+  await waitFor("/^3 of 3 flights picked$/.test(document.querySelector('.pg-picks').textContent)", "planner picks 3");
+  assert.strictEqual(await js("document.getElementById('pg-budget').value"), "3");
+  assert.ok(/^Plan NASA's next flights: the planner's first 3 close \d+ of \d+ habitat gaps, against [\d.]+ on average for any 3\. The full plan downloads as CSV\.$/.test(await js("document.querySelector('.tour-text').textContent")));
+  await js("document.querySelector('.tour-btn').click()");
+  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 3 of 6");
+  await sleep(300);
+  await js("document.querySelector('.tour-next').click()");
+  await waitFor("document.querySelector('.tour-count').textContent === 'Step 4 of 6'", "back at step 4");
+  await sleep(400);
   await js("document.querySelector('.tour-next').click()");
   await waitFor("location.hash === '#/gravity'", "gravity hash");
-  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 4 of 5");
+  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 5 of 6");
   await sleep(600);
   assert.ok(await js("document.querySelectorAll('.gv-block.tour-ring').length") >= 1);
   const asksBeforeTour = mock.asks.length;
@@ -451,7 +463,7 @@ async function main() {
   await waitFor("document.querySelectorAll('.ask-turn .ask-a').length === 1", "tour answer");
   assert.ok(await js("document.body.classList.contains('ask-open')"));
   assert.strictEqual(mock.asks.length, asksBeforeTour, "tour answer must come from the cache");
-  assert.ok((await js("document.querySelector('.ask-a').textContent")).indexOf("None. No PSI solid-fuel row") === 0);
+  assert.ok((await js("document.querySelector('.ask-a').textContent")).indexOf("The project's most important finding") === 0);
   assert.strictEqual(await js("document.querySelector('.ask-steps').open"), true, "tour answer opens How I checked");
   assert.strictEqual(await js("document.querySelectorAll('.ask-action').length"), 1);
   assert.strictEqual(await js("document.querySelector('.ask-more-title').textContent"), "Follow up");
@@ -460,7 +472,7 @@ async function main() {
   await sleep(1500);
   assert.strictEqual(await js("document.querySelectorAll('.ask-steps-list li.step-hide').length"), 0, "steps revealed");
   await shot("tour_4_1366");
-  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 5 of 5");
+  assert.strictEqual(await js("document.querySelector('.tour-count').textContent"), "Step 6 of 6");
   assert.strictEqual(await js("document.querySelector('.tour-next').textContent"), "Done");
   await js("document.querySelector('.tour-next').click()");
   assert.strictEqual(await js("document.querySelectorAll('#tour').length"), 0, "Done closes the tour");
@@ -481,11 +493,11 @@ async function main() {
   await js("document.querySelector('.scenario [data-key=\"fuel-solid\"]').click()");
   assert.strictEqual(await js("document.documentElement.scrollWidth > window.innerWidth"), false, "scenario overflows at 390");
   await js("document.getElementById('tour-open').click()");
-  for (let i = 1; i < 5; i += 1) {
+  for (let i = 1; i < 6; i += 1) {
     await sleep(600);
     await js("document.querySelector('.tour-next').click()");
   }
-  await waitFor("document.querySelector('.tour-count').textContent === 'Step 5 of 5'", "mobile step 5");
+  await waitFor("document.querySelector('.tour-count').textContent === 'Step 6 of 6'", "mobile step 6");
   await js("document.querySelector('.tour-close').click()");
   assert.strictEqual(await js("document.querySelectorAll('#tour').length"), 0);
 

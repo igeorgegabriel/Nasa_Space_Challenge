@@ -1430,20 +1430,9 @@ function playPoints() {
     const seen = Math.max(gapY, Math.min(gapChart.getBoundingClientRect().top + window.scrollY - hdr, gapNote.getBoundingClientRect().bottom + window.scrollY - floor + 12));
     pts.push({ y: seen, dwell: playDwell(playWords(["#s-gap h2", "#s-gap .story-sub", "#s-gap .gap-note"])) + GAP_READ, settle: GAP_DUR });
   }
-  const evY = at("#s-3d");
-  if (evY !== null) {
-    pts.push({ y: evY, dwell: EVIDENCE_READ, settle: 600 });
-  }
-  [["#s-act", ["#s-act h2"]], ["#s-next", []]].forEach(function (p) {
-    const y = at(p[0]);
-    if (y !== null) {
-      pts.push({ y: y, dwell: p[1].length ? playDwell(playWords(p[1])) : 0, settle: p[1].length ? 600 : 0 });
-    }
-  });
   return pts;
 }
 
-const EVIDENCE_READ = 2500;
 const EVIDENCE_SRC = "evidence3d.html";
 
 function evidenceCounts() {
@@ -1575,10 +1564,6 @@ function playStory(onEnd) {
     const from = window.scrollY;
     const dist = Math.abs(p.y - from);
     function dwell() {
-      if (i === pts.length - 1) {
-        playStop(true);
-        return;
-      }
       run.timer = setTimeout(function () { next(i + 1); }, p.settle + p.dwell);
     }
     if (reduceMotion() || dist < 2) {
@@ -2878,22 +2863,40 @@ function scenarioCard() {
   return ui.root;
 }
 
-const TOUR_QUESTION = "How many solid-fuel tests were run inside Moon base oxygen levels?";
+const TOUR_QUESTION = "What is the most important finding of this project?";
 
-const tour = { open: false, step: 0, node: null, nodes: null, waiting: false, playing: false, openedAsk: false, ring: null, ringTimer: null };
+const tour = { open: false, step: 0, node: null, nodes: null, waiting: false, playing: false, openedAsk: false, ring: null, timers: [], run: 0, waitLeft: 40 };
+
+const TOUR_BUDGET = 3;
+
+function tourPlanNumbers() {
+  const plan = state.data.test_plan;
+  return {
+    closed: planGameClosedCount(plan, planGameGreedy(plan, TOUR_BUDGET)),
+    total: plan.gaps.length,
+    average: fmt(planGameAverage(plan, TOUR_BUDGET).mean, 1)
+  };
+}
 
 const TOUR_STEPS = [
   {
     hash: "#/home", scroll: null, ring: null, story: true,
-    text: function () { return "The story: what NASA has tested, and the gap a Moon base leaves. It plays by itself; scroll to take over."; }
+    text: function () { return "The story: Moon base air against what NASA has tested. It plays by itself; scroll to take over."; }
+  },
+  {
+    hash: "#/home", scroll: "#s-3d", ring: "#s-3d .e3d", view: true,
+    text: function () { return "The gap is three-dimensional: oxygen, pressure and gravity. Moon base air floats alone at lunar gravity, with no NASA test beside it. Try Flat, Tilted and Moon base."; }
   },
   {
     hash: "#/home", scroll: "#s-next", ring: ".scenario",
     text: function () { return "Pick Moon base. The air shows as not tested, and the model refuses instead of guessing."; }
   },
   {
-    hash: "#/rank?habitat=lunar", scroll: "#test-plan", ring: "#test-plan",
-    text: function () { return "Fly these tests first: " + state.data.test_plan.headline.text + ". The plan downloads as CSV."; }
+    hash: "#/rank?habitat=lunar", scroll: "#plan-game", ring: "#plan-game", game: true,
+    text: function () {
+      const n = tourPlanNumbers();
+      return "Plan NASA's next flights: the planner's first " + TOUR_BUDGET + " close " + n.closed + " of " + n.total + " habitat gaps, against " + n.average + " on average for any " + TOUR_BUDGET + ". The full plan downloads as CSV.";
+    }
   },
   {
     hash: "#/gravity", scroll: null, ring: ".gv-block",
@@ -2903,14 +2906,65 @@ const TOUR_STEPS = [
     hash: "#/rank?habitat=lunar", scroll: null, ring: "#ask-panel", ask: true,
     text: function () { return "Ask anything. Each answer shows its citations and how the numbers were checked."; }
   }
-];;
+];
 
 function tourClearRing() {
-  clearTimeout(tour.ringTimer);
+  tour.timers.forEach(clearTimeout);
+  tour.timers = [];
+  tour.run += 1;
   if (tour.ring) {
     tour.ring.classList.remove("tour-ring");
     tour.ring = null;
   }
+}
+
+function tourLater(fn, ms) {
+  const run = tour.run;
+  tour.timers.push(setTimeout(function () {
+    if (tour.open && tour.run === run) {
+      fn();
+    }
+  }, ms));
+}
+
+function tourFrameReady(frame) {
+  try {
+    const win = frame.contentWindow;
+    return !!(frame.getAttribute("src") && win && win.document.readyState === "complete" && win.location.href !== "about:blank");
+  } catch (e) {
+    return false;
+  }
+}
+
+function tourWhenFrame(frame, fn, left) {
+  if (!frame.getAttribute("src")) {
+    frame.setAttribute("src", EVIDENCE_SRC);
+  }
+  if (tourFrameReady(frame)) {
+    fn();
+    return;
+  }
+  if (left > 0) {
+    tourLater(function () { tourWhenFrame(frame, fn, left - 1); }, 100);
+  }
+}
+
+function tourView(frame) {
+  tourWhenFrame(frame, function () {
+    frame.contentWindow.postMessage({ type: "e3d-play" }, "*");
+    tourLater(function () {
+      frame.contentWindow.postMessage({ type: "e3d-view", view: "moon" }, "*");
+    }, reduceMotion() ? 0 : 1800);
+  }, 80);
+}
+
+function tourGame() {
+  planGameSetBudget(TOUR_BUDGET);
+  const range = document.getElementById("pg-budget");
+  if (range) {
+    range.value = String(TOUR_BUDGET);
+  }
+  planGameChoose();
 }
 
 function tourBuild() {
@@ -2923,7 +2977,7 @@ function tourBuild() {
   const next = el("button", { type: "button", class: "tour-btn tour-next", onclick: function () { tourMove(1); } });
   const close = el("button", { type: "button", class: "tour-close", text: "Close", "aria-label": "Close tour", onclick: tourClose });
   tour.nodes = { count: count, text: text, back: back, next: next };
-  tour.node = el("div", { id: "tour", class: "tour", role: "dialog", "aria-label": "60-second tour" },
+  tour.node = el("div", { id: "tour", class: "tour", role: "dialog", "aria-label": "Guided tour" },
     count, text, el("div", { class: "tour-bar" }, back, next, close));
   document.body.appendChild(tour.node);
   window.addEventListener("keydown", function (e) {
@@ -2957,6 +3011,10 @@ function tourStopPlay() {
 
 function tourClose() {
   tourStopPlay();
+  if (tour.openedAsk) {
+    closeAskPanel(false);
+    tour.openedAsk = false;
+  }
   tour.open = false;
   tour.waiting = false;
   tourClearRing();
@@ -2997,6 +3055,7 @@ function tourShow() {
   document.documentElement.style.setProperty("--tour-h", tour.node.offsetHeight + "px");
   window.dispatchEvent(new Event("resize"));
   tourClearRing();
+  tour.waitLeft = 40;
   const here = location.hash === "" || location.hash === "#" || location.hash === "#/" ? "#/home" : location.hash;
   if (here === s.hash || (s.hash === "#/home" && here.split("?")[0] === "#/home")) {
     if (s.hash.indexOf("#/rank") === 0) {
@@ -3042,12 +3101,20 @@ function tourFocus() {
     tourStory();
     return;
   }
-  const behavior = reduceMotion() ? "auto" : "smooth";
   const anchor = s.scroll ? document.querySelector(s.scroll) : null;
+  const ringNode = s.ring ? document.querySelector(s.ring) : null;
+  if ((s.scroll && !anchor) || (s.ring && !ringNode)) {
+    tour.waitLeft -= 1;
+    if (tour.waitLeft > 0) {
+      tourLater(tourFocus, 100);
+    }
+    return;
+  }
+  tour.waitLeft = 40;
+  const behavior = reduceMotion() ? "auto" : "smooth";
   const header = document.querySelector(".top");
   const headerH = header ? header.offsetHeight : 0;
   let top = anchor ? Math.max(0, anchor.getBoundingClientRect().top + window.scrollY - headerH) : 0;
-  const ringNode = document.querySelector(s.ring);
   if (anchor && ringNode && tour.node) {
     const box = ringNode.getBoundingClientRect();
     const ringTop = box.top + window.scrollY;
@@ -3057,6 +3124,19 @@ function tourFocus() {
     }
   }
   window.scrollTo({ top: top, behavior: behavior });
+  if (ringNode) {
+    ringNode.classList.add("tour-ring");
+    tour.ring = ringNode;
+  }
+  if (s.view) {
+    const frame = document.querySelector("#s-3d .e3d-frame");
+    if (frame) {
+      tourView(frame);
+    }
+  }
+  if (s.game) {
+    tourGame();
+  }
   if (s.ask) {
     openAskPanel(false);
     tour.openedAsk = true;
@@ -3073,12 +3153,6 @@ function tourFocus() {
         thread.scrollTop += steps.getBoundingClientRect().top - thread.getBoundingClientRect().top - 140;
       }
     }, 60);
-  }
-  const ring = ringNode;
-  if (ring) {
-    ring.classList.add("tour-ring");
-    tour.ring = ring;
-    tour.ringTimer = setTimeout(tourClearRing, 2600);
   }
 }
 

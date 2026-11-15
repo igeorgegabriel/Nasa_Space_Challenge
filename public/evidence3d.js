@@ -332,7 +332,20 @@
     animate();
   }
 
+  var wantView = "";
+
   window.addEventListener("message", function (e) {
+    if (e.data && e.data.type === "e3d-view") {
+      if (e.data.view !== "flat" && e.data.view !== "tilted" && e.data.view !== "moon") {
+        return;
+      }
+      if (ready) {
+        goView(e.data.view);
+      } else {
+        wantView = e.data.view;
+      }
+      return;
+    }
     if (!e.data || e.data.type !== "e3d-play") {
       return;
     }
@@ -473,7 +486,10 @@
         }
       });
       ready = true;
-      if (quietMotion()) {
+      if (wantView) {
+        goView(wantView);
+        wantView = "";
+      } else if (quietMotion()) {
         setCam(camAt(1, zoomFor()));
       } else if (wantPlay) {
         play();
