@@ -13,10 +13,11 @@ Demo video (30 s): https://youtu.be/tlf2kCu_2FM
 ## Judge it in 3 minutes
 
 1. Story page, the oxygen gap chart: hover a dot to see its source file and row. https://flame-in-freefall-three.vercel.app/#/home
-2. Check any cabin air: pick Moon base. It shows Not tested and the model refuses to guess. https://flame-in-freefall-three.vercel.app/#/home?at=s-next
-3. Rank, Fly these tests first: the test plan and its CSV. https://flame-in-freefall-three.vercel.app/#/rank?habitat=lunar&at=test-plan
-4. Gravity page: the measured lunar and Martian limits, each with its source quote. https://flame-in-freefall-three.vercel.app/#/gravity
-5. Ask: ask a question and see the citations and the numbers check. Open it from the Ask button in the header.
+2. Story page, the 3D evidence space: oxygen x pressure x gravity. Press Flat, Tilted and Moon base: Moon base air sits alone at lunar gravity with no NASA test beside it. https://flame-in-freefall-three.vercel.app/#/home?at=s-3d
+3. Check any cabin air: pick Moon base. It shows Not tested and the model refuses to guess. https://flame-in-freefall-three.vercel.app/#/home?at=s-next
+4. Rank, Fly these tests first: plan the next flights yourself, then download the test plan as CSV. https://flame-in-freefall-three.vercel.app/#/rank?habitat=lunar&at=plan-game
+5. Gravity page: the measured lunar and Martian limits, each with its source quote. https://flame-in-freefall-three.vercel.app/#/gravity
+6. Ask: ask a question and see the citations and the numbers check. Open it from the Ask button in the header.
 
 ## The finding
 
@@ -28,37 +29,54 @@ A Moon base is planned to run at about 34% oxygen. Across 2,009 NASA combustion 
 
 ![Check any cabin air: drag oxygen and pressure; the NASA evidence, the model answer and the gravity allowance update live](docs/img/cabin_air.jpg)
 
+![3D evidence space: every PSI test, the Saffire flights and the measured partial-gravity limits in oxygen x pressure x gravity; Moon base air sits alone at lunar gravity](docs/img/evidence3d.jpg)
+
 ## How it works
 
 ```mermaid
-flowchart LR
-  P["NASA PSI<br/>24 investigations<br/>22 test tables"] --> U["Unified table<br/>2,009 tests, each linked<br/>to its file and row"]
-  U --> A["Audit vs original files<br/>1,012 of 1,012 pass"]
-  N["NASA reports (NTRS)<br/>and Spinoff pages"] --> Q["Quotes checked<br/>word for word"]
-  U --> F["FLEX model<br/>tested on held-out days<br/>refuses outside its data"]
-  Q --> L["Lunar gravity check<br/>NASA GRC 2025 allowance"]
-  M["Measured partial gravity<br/>24 points, 7 NASA sources"] --> L
-  U --> H["PSI curator flags<br/>65 rows to review"]
-  U --> D["Dashboard"]
-  Q --> D
-  F --> D
-  L --> D
-  D --> R["Rank per habitat"]
-  D --> G["Oxygen gap and<br/>what to test next"]
-  G --> T["Fly these tests first<br/>9 tests close 15 of 15 gaps"]
-  D --> E["Equipment and<br/>Earth uses"]
-  U --> K["Ask the data<br/>Claude with 6 data tools<br/>cites the NASA sentence"]
-  Q --> K
-  K --> C["Every number in the answer<br/>checked against the data"]
+flowchart TD
+  subgraph SRC["1. NASA sources"]
+    P["PSI repository<br/>24 investigations<br/>22 test tables"]
+    N["NASA reports (NTRS)<br/>and Spinoff pages"]
+  end
+  subgraph CHK["2. Checked data"]
+    U["Unified table<br/>2,009 tests, each with<br/>its file and row"]
+    A["Audit against the<br/>original files:<br/>1,012 of 1,012 pass"]
+    H["65 rows flagged<br/>for PSI curators"]
+    Q["259 quotes checked<br/>word for word"]
+  end
+  subgraph MOD["3. Models and gravity"]
+    F["FLEX droplet model<br/>refuses outside<br/>its tested air"]
+    G["Measured lunar and<br/>Mars gravity limits<br/>24 points, 7 sources"]
+  end
+  subgraph APP["4. Dashboard"]
+    R["Rank investigations<br/>for 5 habitats"]
+    W["Check any cabin air<br/>drag O2 and pressure"]
+    X["3D evidence space<br/>O2 x pressure x gravity"]
+    T["Test plan<br/>9 tests close<br/>15 of 15 gaps"]
+    K["Ask the data<br/>cited answers,<br/>numbers checked"]
+  end
+  P --> U
+  P ~~~ A
+  P ~~~ H
+  N --> Q
+  U --> F
+  Q --> G
+  F --> W
+  G --> X
+  F ~~~ R
+  G ~~~ T
+  G ~~~ K
 ```
 
 ## What sets it apart
 
 - **One gesture shows it all.** Drag a cabin's oxygen and pressure, or pick a habitat: the card counts the NASA tests in that air, names the closest one with its source row, runs the FLEX model or refuses with the distance, and adds the lunar gravity allowance. Every state has its own link.
+- **The gap in 3D.** The Story page plots every PSI test, the Saffire IV-VI flights and the measured partial-gravity limits in oxygen x pressure x gravity. Moon base air sits alone at lunar gravity, with a drop line to its empty footprint among the 0 g tests. Buttons switch between Flat, Tilted and Moon base views; hover any mark for its source.
 - **It knows where the evidence stops.** The model refuses habitats outside the tested range and says by how much. Moon base air is 0.14 atm below any FLEX test.
 - **Gravity, not just oxygen.** The lunar gravity check uses NASA Glenn's 2025 lunar-g tests: NASA Glenn's allowance for six materials is up to 2.3 O2 points, drop tests measured larger drops for some (Mylar 21.2 to 15.6, 5.6 points, at 10.2 psia), and some materials went the other way. A chart of 24 quote-checked partial-gravity points from 7 NASA sources sits below it.
 - **The newest flights, as data.** The 9 Saffire IV-VI flight tests that are not in PSI yet are rows in the app, each tied to a verbatim quote from its NASA report. Six burned solids between 25.4% and 31.0% oxygen, above PSI's 22.2% ceiling.
-- **A short test list, not just a gap.** Rank > Fly these tests first picks the fewest test conditions that close every habitat gap (a habitat x fuel class with no PSI test inside its window): 9 tests close 15 of 15. Test 1 is one solid-material test at 33.5-35% O2 and 8.1-8.3 psia that covers the Moon base, Mars base and pressurized rover at once. Downloadable as a CSV test matrix.
+- **A short test list, not just a gap.** Rank > Fly these tests first picks the fewest test conditions that close every habitat gap (a habitat x fuel class with no PSI test inside its window): 9 tests close 15 of 15. Test 1 is one solid-material test at 33.5-35% O2 and 8.1-8.3 psia that covers the Moon base, Mars base and pressurized rover at once. Downloadable as a CSV test matrix. A small planner lets you pick your own flights and compares them with the plan: the planner's first 3 close 9 gaps, against 5 on average for any 3.
 - **Flags for the PSI team.** Data > For PSI curators lists 65 rows flagged by fixed rules (43 repeated rows, 11 text in number columns, 8 negative airflow, 2 oxygen on the wrong scale, 1 impossible pressure), each linked to its file and row. They are flagged, not confirmed errors. The same scan caught a sign error in our own parser, now fixed.
 - **Checked, not just cited.** Each Ask answer shows how many of its numbers match NASA data or the cited NASA sentence. Quotes on every page are machine-checked against saved source text.
 
@@ -67,9 +85,9 @@ flowchart LR
 | Objective | Where in the dashboard |
 |---|---|
 | Identify investigations most relevant to crew habitats | Rank: five habitats, re-weightable score, rank stability per row. Home: Check any cabin air for any oxygen and pressure |
-| Inform next-generation fire safety | Rank > Fly these tests first: 9 tests close 15 of 15 habitat gaps, with a CSV test matrix |
+| Inform next-generation fire safety | Rank > Fly these tests first: 9 tests close 15 of 15 habitat gaps, with a flight planner and a CSV test matrix |
 | Extract data for predictive modelling | Data: a FLEX droplet model tested on held-out test days (AUC 0.85, Brier skill +0.35) that predicts for ISS air and refuses Moon air; where a model can be trusted (oxygen x pressure map); model readiness per habitat; CSV/JSON downloads. Data > For PSI curators: 65 flagged rows linked to their source file and row |
-| Partial gravity (lunar habitat) | Data > Lunar gravity check: NASA GRC allowance per material (up to 2.3 O2 points, not a maximum), measured lunar and Martian limits, quenching vs blowoff |
+| Partial gravity (lunar habitat) | Gravity page: NASA GRC allowance per material (up to 2.3 O2 points, not a maximum), measured lunar and Martian limits, quenching vs blowoff. Story page: 3D evidence space (oxygen x pressure x gravity) |
 | Research for next-generation fire safety equipment | Investigations > Equipment: prevention, detection, suppression |
 | Earth applications | Investigations > On Earth: water mist, smoke detection, firefighter air tanks and clothing (NASA Spinoff, quoted) |
 
