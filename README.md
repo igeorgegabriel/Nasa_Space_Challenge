@@ -8,6 +8,8 @@ Team: Kenyalang Blue Flame (Bintulu, Malaysia)
 
 Live dashboard: https://flame-in-freefall-three.vercel.app
 
+Demo video (30 s): https://youtu.be/TOJCLF_SySE
+
 ## The finding
 
 A Moon base is planned to run at about 34% oxygen. Across 2,009 NASA combustion tests in the PSI database, solid materials were never tested above 22.2% oxygen. The newest flights reached about 31%, and they are not in PSI yet. The dashboard shows that gap for five crewed habitats and what NASA should test to close it.
