@@ -18,7 +18,7 @@ MAX_HISTORY_TURNS = 3
 MAX_HISTORY_ANSWER_CHARS = 1500
 CONTEXT_PAGES = ("home", "rank", "investigations", "investigation", "equipment", "data")
 NOT_IN_DATA = "Not in the data."
-RATE_LIMIT_QUESTIONS = 10
+RATE_LIMIT_QUESTIONS = 30
 RATE_LIMIT_WINDOW_SECONDS = 600
 RATE_LIMIT_MAX_KEYS = 5000
 RATE_LIMIT_MESSAGE = "Too many questions from your connection. Please wait a few minutes and ask again."
@@ -34,6 +34,7 @@ SYSTEM = (
     "All PSI data is microgravity. Give a partial-gravity number only when it is a measured value stated in the lunar gravity or partial gravity documents, with its source and test conditions; never compute, combine or interpolate a partial-gravity value. "
     "When asked what to test next, give the dashboard test plan (how many tests close how many habitat gaps) as well as the gap for each fuel class. "
     "For a PSI solid test with no pressure in PSI, give the pressure the NASA report states, from the dashboard results document. "
+    "Questions about \"this project\", \"the dashboard\", \"the app\", \"the site\", \"the team\", \"the 3D chart\" or \"the assistant\" and its accuracy are answered from the About this project document. "
     "Never say a condition, material or atmosphere is safe. "
     "Keep MOC (minimum oxygen concentration), LOI (limiting oxygen index), ULOI (upper limit oxygen index) and extinction O2 as separate quantities. "
     "Keep ambient O2 and oxidizer-stream O2 separate. "

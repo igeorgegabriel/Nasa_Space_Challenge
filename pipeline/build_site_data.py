@@ -1270,7 +1270,7 @@ def fmt_num(value):
     return ("%.4f" % value).rstrip("0").rstrip(".")
 
 
-def build_corpus(investigations, rankings, outside=None, psi_max=None, environments=None, test_next=None, earth=None, lunar=None, partial=None, plan=None):
+def build_corpus(investigations, rankings, outside=None, psi_max=None, environments=None, test_next=None, earth=None, lunar=None, partial=None, plan=None, project=None):
     docs = []
     for inv in investigations:
         lines = []
@@ -1332,6 +1332,8 @@ def build_corpus(investigations, rankings, outside=None, psi_max=None, environme
             "title": "%s %s - %s" % (inv["psi_id"], inv["acronym"], inv["title"]),
             "body": "\n".join(lines),
         })
+    if project:
+        docs.append(project)
     if lunar:
         docs.append(lunar_g_corpus_document(lunar))
     if partial and lunar:
@@ -1440,6 +1442,88 @@ def dashboard_results_document(environments, test_next, rankings, plan=None):
         lines.append("Test plan:")
         lines.extend(test_plan_lines(plan))
     return {"psi_id": "DASHBOARD-RESULTS", "title": DASHBOARD_RESULTS_TITLE, "body": chr(10).join(lines)}
+
+
+PROJECT_ID = "PROJECT-OVERVIEW"
+PROJECT_TITLE = "About this project - Flame in Freefall dashboard: finding, features, checks, assistant accuracy, team, limits"
+PROJECT_SITE_URL = "https://flame-in-freefall-three.vercel.app"
+MODELS_PATH = os.path.join(SITE_DATA_DIR, "models.json")
+HEALTH_PATH = os.path.join(SITE_DATA_DIR, "data_health.json")
+
+
+def percent_text(value):
+    return ("%.1f" % (value * 100)).rstrip("0").rstrip(".")
+
+
+def env_display(block):
+    return block.get("display") or "not specified"
+
+
+def one_decimal(value):
+    return ("%.1f" % value).rstrip("0").rstrip(".")
+
+
+def project_document(rows, environments, insights, test_next, outside, plan, lunar, partial, verification):
+    if isinstance(environments, dict):
+        environments = environments["environments"]
+    env = {e["id"]: e for e in environments}
+    moon = env["lunar"]
+    solid = insights["insights"][0]["numbers"]["max_by_fuel_class"]["solid"]
+    solid_class = [c for c in test_next["environments"]["lunar"]["classes"] if c["fuel_class"] == "solid"][0]
+    tests = outside["tests"]
+    burned = [t for t in tests if str(t.get("outcome_short", "")).startswith("Burned")]
+    top = max(burned, key=lambda t: t["o2_percent"])
+    below = top["o2_percent"] / 100.0 < moon["o2"]["window_min"]
+    drop = partial["summary"]["largest_drop"]
+    models = read_json_file(MODELS_PATH) or {}
+    model = (models.get("models") or [None])[0]
+    health = read_json_file(HEALTH_PATH) or {}
+    audit = verification.get("audit") or {}
+    quotes = verification.get("quotes") or {}
+    partial_check = verification.get("partial_g") or {}
+    ask_eval = (verification.get("ask_eval") or {}).get("v2")
+    investigation_count = len({r["psi_id"] for r in rows})
+    lines = [
+        "About this project: the Flame in Freefall dashboard, built by team Kenyalang Blue Flame from Bintulu, Sarawak, Malaysia, for NASA Space Apps 2026, challenge Flame in Freefall.",
+        "Live site: %s. Code, data and checks: %s." % (PROJECT_SITE_URL, PSI_REPO_URL),
+        "Purpose: show where NASA's microgravity fire data stops for crewed habitats and what to test next.",
+        "Most important finding: the PSI repository holds %d test rows from %d investigations. The highest ambient O2 any PSI solid fuel was tested at is %s percent, while the Moon base window is %s at %s. Solid-fuel rows inside the Moon base window: %d of %d. NASA's Saffire IV-VI solid flammability tests outside PSI (%d tests) burned a solid at up to %s percent O2%s." % (
+            len(rows), investigation_count, pct_text(solid["max_o2"]),
+            env_display(moon["o2"]), env_display(moon["pressure_atm"]),
+            solid_class["inside"], solid_class["classified_rows"],
+            len(tests), one_decimal(top["o2_percent"]),
+            ", which is still below the Moon base window" if below else ""),
+        "Features of the dashboard:",
+        "Rank: ranks the PSI investigations for %d habitats with a score whose weights the user can change, and shows how stable the ranking is when the weights change." % len(environments),
+        "Check any cabin air: drag oxygen and pressure to any cabin air; it counts the NASA tests in that air, names the closest test, and shows the FLEX model answer or refuses when the air is outside the model's tested range.",
+        "3D evidence space (Story page): oxygen by pressure by gravity. It plots PSI tests and Saffire flights at 0 g, the measured partial-gravity limits at Moon, Mars and 1 g, and the habitat boxes at their own gravity. Moon base air sits alone at lunar gravity. The Flat, Tilted and Moon base buttons change the view.",
+        "Fly these tests first and the flight planner: %s. The planner compares the user's own picks with this plan." % plan["headline"]["text"],
+        "Gravity page: NASA Glenn's 2025 allowance is up to %s O2 points for %d materials; the largest measured drop is %s, %s to %s percent O2 (%s points); %d measured points from %d NASA sources are shown only as measured." % (
+            format(lunar["paper"]["worst_case_delta_o2_points"], "g"), len(lunar["materials"]),
+            drop["material"], drop["one_g_raw"], drop["lunar_raw"], format(drop["points"], "g"),
+            partial["meta"]["points"], partial_check.get("sources", 0)),
+    ]
+    summary = health.get("summary") or {}
+    if summary:
+        lines.append("For PSI curators: a data-health page lists the %d PSI table rows flagged by simple rules out of %d rows scanned, with the rule and source row for each; flags are not confirmed errors." % (summary.get("flagged_rows", 0), summary.get("rows_scanned", 0)))
+    lines.append("Ask: answers questions from NASA text, cites the sentences it used, and checks every number in the answer against the data.")
+    if audit:
+        lines.append("Verification: the unified audit passed %d of %d checks." % (audit["passed"], audit["checked"]))
+    if quotes:
+        lines.append("Quotes: %d NASA quotes are checked word for word against their source: %d PSI key findings, %d outside PSI, %d lunar gravity, %d Earth benefits, %d partial gravity." % (
+            verification["quotes_total"], quotes["verified"], verified_count(verification.get("outside_psi")),
+            verified_count(verification.get("lunar_g")), verified_count(verification.get("earth")),
+            max(partial_check.get("quotes", 0) - partial_check.get("failed", 0), 0)))
+    if model:
+        val = model["validation"]
+        lines.append("FLEX model (droplet flames only): AUC %s, Brier skill %s, on %d tests, cross-validated by whole test days; it refuses outside its tested air." % (
+            format(val["auc"], "g"), format(val["brier_skill"], "g"), model["rows_used"]["total"]))
+    if ask_eval:
+        lines.append("How accurate is the AI assistant: on the version %d evaluation it passed %d of %d questions, refused %d of %d trap questions, and %s percent of the numbers it claimed matched the data (%d of %d)." % (
+            ask_eval["version"], ask_eval["passed"], ask_eval["total"], ask_eval["trap_refused"], ask_eval["trap_total"],
+            percent_text(ask_eval["numeric_fidelity"]), ask_eval["numbers_matched"], ask_eval["numbers_claimed"]))
+    lines.append("Limits: all PSI data is microgravity. The model covers droplet flames only and refuses outside its tested air. Partial-gravity values are shown only as measured, never interpolated. Counts cover PSI unless marked outside PSI.")
+    return {"psi_id": PROJECT_ID, "title": PROJECT_TITLE, "body": chr(10).join(lines)}
 
 
 MIN_SUPPORTED_ROWS = 10
@@ -2198,7 +2282,9 @@ def build():
     earth = build_earth()
     lunar = build_lunar_g()
     partial = partial_g_site.build_partial_g()
-    corpus = build_corpus(investigations, default_rankings, outside, outside["summary"]["psi_solid_max_o2"], environments, test_next, earth, lunar, partial, plan)
+    verification = build_verification(verification_summary, verification_items)
+    project = project_document(rows, environments, insights, test_next, outside, plan, lunar, partial, verification)
+    corpus = build_corpus(investigations, default_rankings, outside, outside["summary"]["psi_solid_max_o2"], environments, test_next, earth, lunar, partial, plan, project)
     return {
         "investigations": investigations,
         "conditions": slim_conditions(rows),
@@ -2212,7 +2298,7 @@ def build():
         "test_next": test_next,
         "test_plan": plan,
         "outside_psi": outside,
-        "verification": build_verification(verification_summary, verification_items),
+        "verification": verification,
         "images": images,
         "corpus": corpus,
         "meta_present": bool(meta),

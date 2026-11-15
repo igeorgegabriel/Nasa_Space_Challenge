@@ -27,6 +27,10 @@ QUESTIONS = [
     "What should NASA test next for a Moon base?",
     "Which investigations studied smoke detection?",
     "Is there any partial-gravity data?",
+    "What is the most important finding of this project?",
+    "How accurate is the AI assistant?",
+    "What does the 3D chart show?",
+    "Who built this and why?",
 ]
 
 

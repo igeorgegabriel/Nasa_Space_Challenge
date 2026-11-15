@@ -311,7 +311,7 @@ class AskTest(unittest.TestCase):
         self.assertFalse(limiter.check("a", now=1100)[0])
 
     def test_rate_limiter_defaults_and_pruning(self):
-        self.assertEqual(self.ask.RATE_LIMIT_QUESTIONS, 10)
+        self.assertEqual(self.ask.RATE_LIMIT_QUESTIONS, 30)
         self.assertEqual(self.ask.RATE_LIMIT_WINDOW_SECONDS, 600)
         limiter = self.ask.RateLimiter(limit=1, window=10, max_keys=3)
         for index in range(3):
