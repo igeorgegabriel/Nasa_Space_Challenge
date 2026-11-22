@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this data or software, please cite it as below."
+title: "Flame in Freefall: fire safety insights from NASA microgravity combustion data"
+type: software
+authors:
+  - given-names: "George Gabriel"
+    family-names: "Ujai"
+    affiliation: "Kenyalang Blue Flame, NASA Space Apps Challenge 2026, Bintulu, Malaysia"
+repository-code: "https://github.com/igeorgegabriel/Nasa_Space_Challenge"
+url: "https://flame-in-freefall-three.vercel.app"
+license: Apache-2.0
+version: "1.0.0"
+date-released: "2026-11-22"
+keywords:
+  - microgravity combustion
+  - fire safety
+  - NASA PSI
+  - spacecraft habitat
+  - partial gravity
+  - oxygen flammability

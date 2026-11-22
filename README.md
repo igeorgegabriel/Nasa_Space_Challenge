@@ -6,6 +6,8 @@ Challenge: Flame in Freefall: SI-Powered Fire Safety Insights from Microgravity 
 
 Team: Kenyalang Blue Flame (Bintulu, Malaysia)
 
+Status: archived after Space Apps 2026 as a reference for researchers. The live Ask assistant is switched off; its saved answers, all charts and all data still work. Data sources: NASA PSI and NTRS. To cite this work, use "Cite this repository" on GitHub.
+
 Live dashboard: https://flame-in-freefall-three.vercel.app
 
 Demo video (30 s): https://youtu.be/tlf2kCu_2FM
@@ -17,7 +19,7 @@ Demo video (30 s): https://youtu.be/tlf2kCu_2FM
 3. Check any cabin air: pick Moon base. It shows Not tested and the model refuses to guess. https://flame-in-freefall-three.vercel.app/#/home?at=s-next
 4. Rank, Fly these tests first: plan the next flights yourself, then download the test plan as CSV. https://flame-in-freefall-three.vercel.app/#/rank?habitat=lunar&at=plan-game
 5. Gravity page: the measured lunar and Martian limits, each with its source quote. https://flame-in-freefall-three.vercel.app/#/gravity
-6. Ask: ask a question and see the citations and the numbers check. Open it from the Ask button in the header.
+6. Ask: pick a suggested question and see the citations and the numbers check. Open it from the Ask button in the header. Live questions are switched off.
 
 ## The finding
 
