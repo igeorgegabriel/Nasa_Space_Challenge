@@ -1,12 +1,14 @@
 # Flame in Freefall
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24440692.svg)](https://doi.org/10.5281/zenodo.24440692)
+
 NASA Space Apps Challenge 2026
 
 Challenge: Flame in Freefall: SI-Powered Fire Safety Insights from Microgravity Combustion Data
 
 Team: Kenyalang Blue Flame (Bintulu, Malaysia)
 
-Status: archived after Space Apps 2026 as a reference for researchers. The live Ask assistant is switched off; its saved answers, all charts and all data still work. Data sources: NASA PSI and NTRS. To cite this work, use "Cite this repository" on GitHub.
+Status: archived after Space Apps 2026 as a reference for researchers. The live Ask assistant is switched off; its saved answers, all charts and all data still work. Data sources: NASA PSI and NTRS. To cite this work, use DOI 10.5281/zenodo.24440692 or "Cite this repository" on GitHub.
 
 Live dashboard: https://flame-in-freefall-three.vercel.app
 

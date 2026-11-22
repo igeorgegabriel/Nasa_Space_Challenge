@@ -8,6 +8,7 @@ authors:
     affiliation: "Kenyalang Blue Flame, NASA Space Apps Challenge 2026, Bintulu, Malaysia"
 repository-code: "https://github.com/igeorgegabriel/Nasa_Space_Challenge"
 url: "https://flame-in-freefall-three.vercel.app"
+doi: "10.5281/zenodo.24440692"
 license: Apache-2.0
 version: "1.0.0"
 date-released: "2026-11-22"
