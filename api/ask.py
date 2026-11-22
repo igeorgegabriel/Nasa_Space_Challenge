@@ -436,6 +436,8 @@ def parse_response(response, corpus=None):
 
 
 def make_client():
+    if not os.environ.get("ANTHROPIC_API_KEY"):
+        raise anthropic.AnthropicError("no key")
     return anthropic.Anthropic()
 
 
@@ -492,7 +494,7 @@ def answer_question(question, client=None, corpus=None, context_sentence=None, h
     try:
         client = client or make_client()
     except anthropic.AnthropicError:
-        return 500, {"error": "The Ask service is not configured on this deployment."}
+        return 503, {"error": "Live questions are switched off now that the hackathon is over. The suggested questions still answer from saved results."}
     messages = build_messages(question, history, context_sentence, corpus)
     tools = DATA_TOOLS.tool_definitions() if use_tools else None
     log = []

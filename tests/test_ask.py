@@ -303,8 +303,8 @@ class AskTest(unittest.TestCase):
 
     def test_missing_key_is_reported(self):
         status, body = self.ask.answer_question("q")
-        self.assertEqual(status, 500)
-        self.assertIn("not configured", body["error"])
+        self.assertEqual(status, 503)
+        self.assertIn("switched off", body["error"])
 
     def test_rate_limiter_window_and_keys(self):
         limiter = self.ask.RateLimiter(limit=3, window=100)
